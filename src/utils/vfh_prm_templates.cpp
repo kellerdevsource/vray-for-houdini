@@ -11,6 +11,7 @@
 #include "vfh_defines.h"
 #include "vfh_prm_templates.h"
 #include "vfh_log.h"
+#include "vfh_sys_utils.h"
 
 #include <OP/OP_Node.h>
 #include <OP/OP_SpareParms.h>
@@ -19,13 +20,108 @@
 #include <PRM/PRM_ScriptParm.h>
 #include <PRM/DS_Stream.h>
 #include <UT/UT_IStream.h>
-#include <FS/FS_Info.h>
+
+#include <QDirIterator>
+#include <QMap>
+#include <QSet>
 
 #include <unordered_map>
 
-
 using namespace VRayForHoudini;
 
+static const char dsExt[] = ".ds";
+
+/// *.ds files storage directory path.
+static Sys::GetEnvVar uiRootPath("VRAY_UI_DS_PATH");
+
+/// *.ds file paths storage.
+struct DsFilesLocations
+{
+	typedef QMap<QString, QString> DsNameToPathMap;
+	typedef QSet<QString> DsIncludePaths;
+
+	DsFilesLocations()
+		: initialized(false)
+	{}
+
+	/// Returns *.ds file location.
+	/// @param fileName *.ds file name. Could be without extension.
+	QString getFilePath(const char *fileName) {
+		initFilesMap();
+
+		QFileInfo requestedFileInfo(fileName);
+
+		// We need only the file name here.
+		QString requestedFile = requestedFileInfo.fileName();
+
+		// Check extension.
+		if (!requestedFile.endsWith(dsExt)) {
+			requestedFile.append(dsExt);
+		}
+
+		DsNameToPathMap::const_iterator it = dsFiles.find(requestedFile);
+		if (it != dsFiles.end()) {
+			return it.value();
+		}
+
+		Log::getLog().error("Requested .ds file is not found: \"%s\"!", fileName);
+
+		// vassert(false && "Requested .ds file is not found!");
+
+		return QString();
+	}
+
+	/// Returns *.ds include paths.
+	const DsIncludePaths &getIncludePaths() {
+		initFilesMap();
+
+		return dsIncludePaths;
+	}
+
+private:
+	/// Iterates through *.ds files storage and builds name-path map.
+	void initFilesMap() {
+		if (initialized)
+			return;
+
+		QDir uiDir(uiRootPath.getValue());
+		if (!uiDir.exists()) {
+			Log::getLog().error("Invalid UI path!");
+			Log::getLog().error("Please, check if VRAY_UI_DS_PATH environment "
+								"variable is pointing to the correct location!");
+			_exit(0);
+		}
+
+		QDirIterator it(uiDir, QDirIterator::Subdirectories);
+		while (it.hasNext()) {
+			const QString &fileName = it.fileName();
+			const QString &filePath = it.fileInfo().absoluteFilePath();
+			const QString &dirPath  = it.fileInfo().path();
+
+			it.next();
+
+			if (!fileName.endsWith(dsExt))
+				continue;
+
+			// No duplicate file names are allowed.
+			vassert(!dsFiles.contains(fileName));
+
+			dsFiles.insert(fileName, filePath);
+			dsIncludePaths.insert(dirPath);
+		}
+
+		initialized = true;
+	}
+
+	/// A map of *.ds files locations.
+	DsNameToPathMap dsFiles;
+
+	/// Include paths for parsing *.ds files.
+	DsIncludePaths dsIncludePaths;
+
+	/// Initialization flag.
+	int initialized;
+} dsFilesLocations;
 
 int VRayForHoudini::Parm::isParmExist(const OP_Node &node, const std::string &attrName)
 {
@@ -109,75 +205,9 @@ float VRayForHoudini::Parm::getParmFloat(const OP_Node &node, const std::string 
 }
 
 
-int VRayForHoudini::Parm::getParmEnumExt(const OP_Node &node, const VRayForHoudini::Parm::AttrDesc &attrDesc, const std::string &attrName, fpreal t)
+std::string Parm::expandUiPath(const char *filePath)
 {
-	int value = node.evalInt(attrName.c_str(), 0, t);
-
-	if (value < attrDesc.value.defEnumItems.size()) {
-		const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems[value];
-		if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
-			value = enumItem.value;
-		}
-	}
-
-	return value;
-}
-
-
-std::string Parm::expandUiPath(const std::string &relPath)
-{
-	static const char *uiroot = getenv("VRAY_UI_DS_PATH");
-	if (!UTisstring(uiroot)) {
-		Log::getLog().error("Invalid UI path. Please check if VRAY_UI_DS_PATH env var is pointing to the correct path.");
-	}
-
-	static FS_Info fsuiroot(uiroot);
-	if (   !fsuiroot.exists()
-		|| !fsuiroot.getIsDirectory() ) {
-		Log::getLog().error("Invalid UI path: %s. Please check if VRAY_UI_DS_PATH env var is pointing to the correct path.",
-							uiroot);
-		return "";
-	}
-
-	UT_String uipath = fsuiroot.path().c_str();
-	uipath += "/";
-	uipath += relPath;
-	FS_Info fsuipath(uipath);
-	if (fsuipath.fileExists()) {
-		return uipath.toStdString();
-	}
-
-	UT_StringArray files;
-	UT_StringArray dirs;
-	dirs.append(uiroot);
-
-	do {
-		uipath = dirs.last();
-		dirs.removeLast();
-
-		int idx = dirs.size();
-		FS_Info::getContentsFromDiskPath(uipath, files, &dirs);
-		for (int i = 0; i < files.size(); ++i) {
-			UT_String path = uipath;
-			path += "/";
-			path += files(i);
-			if (path.endsWith(relPath.c_str())) {
-				return path.toStdString();
-			}
-		}
-
-		for (int i = idx; i < dirs.size(); ++i) {
-			UT_String path = uipath;
-			path += "/";
-			path += dirs(i);
-			dirs(i) = path;
-		}
-
-	} while (dirs.size() > 0);
-
-	Log::getLog().error("Invalid UI path requested: %s.",
-						relPath.c_str());
-	return "";
+	return dsFilesLocations.getFilePath(filePath).toStdString();
 }
 
 
@@ -187,8 +217,7 @@ bool Parm::addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &p
 		return false;
 	}
 
-	static boost::format dspath("plugins/%s.ds");
-	const std::string dsfullpath = Parm::expandUiPath( boost::str(dspath % pluginID) );
+	const std::string dsfullpath = Parm::expandUiPath(pluginID.c_str());
 	if (dsfullpath.empty()) {
 		return false;
 	}
@@ -375,21 +404,15 @@ Parm::PRMList& Parm::PRMList::switcherBegin(const char *token, const char *label
 Parm::PRMList& Parm::PRMList::switcherEnd()
 {
 	SwitcherInfo* info = getCurrentSwitcher();
-	if (NOT(info)) {
-		throw std::runtime_error("endSwitcher() called with no corresponding beginSwitcher()");
-	}
-	else {
-		if (info->m_folders.empty()) {
-			throw std::runtime_error("added switcher with no folders");
-		}
-		else {
-			// set correct folder count and folder info on
-			// the current switcher parameter (i.e the one created with last beginSwitcher())
-			PRM_Template& switcherParm = m_prmVec[info->m_parmIdx];
-			switcherParm.assign(switcherParm, info->m_folders.size(), &info->m_folders.front());
-		}
-		m_switcherStack.pop_back();
-	}
+	vassert(info && "endSwitcher() called with no corresponding beginSwitcher()");
+	vassert(!info->m_folders.empty() && "Adding switcher with no folders!");
+
+	// set correct folder count and folder info on
+	// the current switcher parameter (i.e the one created with last beginSwitcher())
+	PRM_Template& switcherParm = m_prmVec[info->m_parmIdx];
+	switcherParm.assign(switcherParm, info->m_folders.size(), &info->m_folders.front());
+
+	m_switcherStack.pop_back();
 
 	return *this;
 }
@@ -398,43 +421,36 @@ Parm::PRMList& Parm::PRMList::switcherEnd()
 Parm::PRMList& Parm::PRMList::addFolder(const char *label)
 {
 	SwitcherInfo *info = getCurrentSwitcher();
-	if (NOT(info)) {
-		throw std::runtime_error("folder added to nonexistent switcher");
-	}
-	else {
-		info->m_folders.emplace_back(/*numParms=*/0, ::strdup(label));
-	}
+	vassert(info && "Adding folder to non-existing switcher!");
+
+	info->m_folders.emplace_back(/*numParms=*/0, ::strdup(label));
 
 	return *this;
 }
 
 
-Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath, const char *includePath)
+Parm::PRMList& Parm::PRMList::addFromFile(const char *dsFileName)
 {
-	if (!UTisstring(filepath)) {
-		return *this;
+	const QString &dsFilePath = dsFilesLocations.getFilePath(dsFileName);
+	const DsFilesLocations::DsIncludePaths &incPaths = dsFilesLocations.getIncludePaths();
+
+	DS_Stream stream(dsFilePath.toLocal8Bit().constData());
+	for (const QString &incPath : incPaths) {
+		stream.addIncludePath(incPath.toLocal8Bit().constData());
 	}
 
-	DS_Stream stream(filepath);
-	if (includePath && *includePath) {
-		stream.addIncludePath(includePath);
+	// Need to keep all the pages as myTemplate will have references to it.
+	std::shared_ptr<PRM_ScriptGroup> group = std::make_shared<PRM_ScriptGroup>(nullptr);
+
+	PRM_ScriptPage *currentPage = new PRM_ScriptPage();
+
+	const int res = currentPage->parse(stream, true, nullptr, true, true);
+	if (res > 0) {
+		group->addPage(currentPage);
 	}
-
-	// need to keep all the pages as myTemplate will have references to it
-	std::shared_ptr< PRM_ScriptGroup > group = std::make_shared< PRM_ScriptGroup >(nullptr);
-
-	int res = -1;
-	while ((res = stream.getOpenBrace()) > 0) {
-		PRM_ScriptPage *currentPage = new PRM_ScriptPage();
-
-		res = currentPage->parse(stream, false, nullptr, true, true);
-		if (res > 0) {
-			group->addPage(currentPage);
-		}
-		else {
-			Log::getLog().error("Parse error in file %s.", filepath);
-			delete currentPage;
-		}
+	else {
+		Log::getLog().error("Error parsing file: \"%s\"!", dsFilePath.toLocal8Bit().constData());
+		FreePtr(currentPage);
 	}
 
 	int size = group->computeTemplateSize();
@@ -452,7 +468,7 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *filepath, const char *incl
 	// resize to accomodate space for new params
 	m_prmVec.resize(m_prmVec.size() + size);
 
-	PRM_ScriptImports *imports = 0;
+	PRM_ScriptImports *imports = nullptr;
 	group->fillTemplate(m_prmVec.data(), idx, imports, 0);
 
 	UT_ASSERT_MSG(idx == this->size(), "Read unexpected number of params from file.");
@@ -547,16 +563,13 @@ void Parm::PRMList::incCurrentFolderPrmCnt(int cnt)
 		return;
 	}
 
-	if (info->m_folders.empty()) {
-		throw std::runtime_error("parameter added to switcher with no folders");
-	} else {
-		// If a parameter is added to this ParmList while a switcher with at least
-		// one folder is active, increment the folder's parameter count.
-		PRM_Default& def = info->m_folders.back();
-		cnt = std::max(-def.getOrdinal(), cnt);
-		def.setOrdinal(def.getOrdinal() + cnt);
-	}
+	vassert(!info->m_folders.empty() && "parameter added to switcher with no folders");
 
+	// If a parameter is added to this ParmList while a switcher with at least
+	// one folder is active, increment the folder's parameter count.
+	PRM_Default& def = info->m_folders.back();
+	cnt = std::max(-def.getOrdinal(), cnt);
+	def.setOrdinal(def.getOrdinal() + cnt);
 }
 
 

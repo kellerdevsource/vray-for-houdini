@@ -1,0 +1,71 @@
+{
+    name    TexVectorOp
+    label   "Vector Operations"
+    parmtag { spare_category "Vector Operations" }
+    parmtag { vray_plugin "TexVectorOp" }
+    parm {
+        name    "vector_a"
+        label   "Vector A"
+        type    direction
+        size    3
+        default { "1" "1" "1" }
+        help    "The first vector"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexVectorOp" }
+        parmtag { "vray_pluginattr" "vector_a" }
+        parmtag { "vray_type" "TextureVector" }
+    }
+    parm {
+        name    "vector_b"
+        label   "Vector B"
+        type    direction
+        size    3
+        default { "1" "1" "1" }
+        help    "The first vector"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexVectorOp" }
+        parmtag { "vray_pluginattr" "vector_b" }
+        parmtag { "vray_type" "TextureVector" }
+    }
+    parm {
+        name    "mult_a"
+        label   "Mult A"
+        type    float
+        default { "1" }
+        help    "Multiplier for the first vector"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexVectorOp" }
+        parmtag { "vray_pluginattr" "mult_a" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+    parm {
+        name    "mult_b"
+        label   "Mult B"
+        type    float
+        default { "1" }
+        help    "Multiplier for the second vector"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexVectorOp" }
+        parmtag { "vray_pluginattr" "mult_b" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+
+#include "vfh_texture_defines.ds"
+    VFH_TEXTURE_OUTPUT_FLOAT(dot_product)
+    VFH_TEXTURE_OUTPUT_VECTOR(cross_product)
+    VFH_TEXTURE_OUTPUT_VECTOR(sum)
+    VFH_TEXTURE_OUTPUT_VECTOR(difference)
+    VFH_TEXTURE_OUTPUT_VECTOR(result_a)
+    VFH_TEXTURE_OUTPUT_VECTOR(result_b)
+    VFH_TEXTURE_OUTPUT_FLOAT(x)
+    VFH_TEXTURE_OUTPUT_FLOAT(y)
+    VFH_TEXTURE_OUTPUT_FLOAT(z)
+}

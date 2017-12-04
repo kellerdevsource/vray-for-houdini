@@ -1,0 +1,181 @@
+{
+    name    PhxShaderOceanTex
+    label   "PhxShader Ocean"
+
+    groupsimple {
+        name "VfhTexNoiseMain"
+        label "Settings"
+
+        parm {
+            name    "vector"
+            label   "Vector"
+            type    toggle
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "vector" }
+            parmtag { "vray_type" "boolean" }
+        }
+
+        parm {
+            name    "usewind"
+            label   "Usewind"
+            type    toggle
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "usewind" }
+            parmtag { "vray_type" "boolean" }
+        }
+
+        parm {
+            name    "wind"
+            label   "Wind"
+            type    float
+            default { "3" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "wind" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "lod"
+            label   "Lod"
+            type    integer
+            default { "10" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "lod" }
+            parmtag { "vray_type" "int" }
+        }
+
+        parm {
+            name    "sharpness"
+            label   "Sharpness"
+            type    float
+            default { "0.9" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "sharpness" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "velmult"
+            label   "Velmult"
+            type    float
+            default { "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "velmult" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "velcoh"
+            label   "Velcoh"
+            type    float
+            default { "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "velcoh" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "rgbmult"
+            label   "Rgbmult"
+            type    float
+            default { "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "rgbmult" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "rgboffset"
+            label   "Rgboffset"
+            type    float
+            default { "0" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "rgboffset" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "meter_scale"
+            label   "Meter Scale"
+            type    float
+            default { "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "meter_scale" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "up_vector"
+            label   "Up Vector"
+            type    integer
+            default { "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "up_vector" }
+            parmtag { "vray_type" "int" }
+        }
+
+        parm {
+            name    "seed"
+            label   "Seed"
+            type    integer
+            default { "1.23457e+08" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "seed" }
+            parmtag { "vray_type" "int" }
+        }
+
+        parm {
+            name    "bell"
+            label   "Bell"
+            type    float
+            default { "0.5" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderOceanTex" }
+            parmtag { "vray_pluginattr" "bell" }
+            parmtag { "vray_type" "float" }
+        }
+    }
+
+#define VFH_USE_3DMAPPING
+#include "vfh_texture_common.ds"
+}

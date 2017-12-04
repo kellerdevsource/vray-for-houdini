@@ -1,0 +1,22 @@
+{
+    name    TexFloatToColor
+    label   "Float To Color"
+    parmtag { spare_category "Float To Color" }
+    parmtag { vray_plugin "TexFloatToColor" }
+
+    parm {
+        name    "input"
+        label   "Input"
+        type    float
+        default { "0" }
+        help    "The float value"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexFloatToColor" }
+        parmtag { "vray_pluginattr" "input" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+
+#include "vfh_texture_default_output_color.ds"
+}

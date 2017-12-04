@@ -1,0 +1,19 @@
+{
+    name    TexAColor
+    label   "Color"
+    parmtag { spare_category "Color" }
+    parmtag { vray_plugin "TexAColor" }
+    parm {
+        name    "texture"
+        label   "Color"
+        type    color4
+        size    4
+        default { "1" "1" "1" "1" }
+        help    "Color"
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexAColor" }
+        parmtag { "vray_pluginattr" "texture" }
+        parmtag { "vray_type" "Texture" }
+    }
+#include "vfh_texture_default_output_color.ds"
+}

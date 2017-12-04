@@ -1,0 +1,146 @@
+{
+    name    TexEdges
+    label   "Edges"
+    parmtag { spare_category "Edges" }
+    parmtag { vray_plugin "TexEdges" }
+    parm {
+        name    "edges_tex"
+        label   "Edge Color"
+        type    color4
+        size    4
+        default { "1" "1" "1" "1" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexEdges" }
+        parmtag { "vray_pluginattr" "edges_tex" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "bg_tex"
+        label   "Background Color"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexEdges" }
+        parmtag { "vray_pluginattr" "bg_tex" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "width_type"
+        label   "Width Type"
+        type    ordinal
+        default { "1" }
+        help    "Width Type"
+        menu    {
+            "0" "World"
+            "1" "Pixels"
+        }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexEdges" }
+        parmtag { "vray_pluginattr" "width_type" }
+        parmtag { "vray_type" "enum" }
+    }
+    parm {
+        name    "pixel_width"
+        label   "Width"
+        type    float
+        default { "1" }
+        hidewhen "{ width_type != 1 }"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexEdges" }
+        parmtag { "vray_pluginattr" "pixel_width" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+    parm {
+        name    "world_width"
+        label   "Width"
+        type    float
+        default { "1" }
+        hidewhen "{ width_type != 0 }"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexEdges" }
+        parmtag { "vray_pluginattr" "world_width" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+    parm {
+        name    "show_hidden_edges"
+        label   "Show Hidden Edges"
+        type    toggle
+        default { "0" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexEdges" }
+        parmtag { "vray_pluginattr" "show_hidden_edges" }
+        parmtag { "vray_type" "boolean" }
+    }
+    parm {
+        name    "show_subtriangles"
+        label   "Show Sub-triangles"
+        type    toggle
+        default { "0" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexEdges" }
+        parmtag { "vray_pluginattr" "show_subtriangles" }
+        parmtag { "vray_type" "boolean" }
+    }
+    parm {
+        name    "raytraced"
+        label   "Raytraced"
+        type    toggle
+        default { "1" }
+        help    "true to use raytracing to compute the rounded corners and false to use static mesh analysis"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexEdges" }
+        parmtag { "vray_pluginattr" "raytraced" }
+        parmtag { "vray_type" "boolean" }
+    }
+    parm {
+        name    "raytraced_consider_same_object_only"
+        label   "Consider Same Object Only"
+        type    toggle
+        default { "1" }
+        help    "true to consider only corners on the same object, and false to consider other intersecting objects"
+        hidewhen "{ raytraced != 1 }"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexEdges" }
+        parmtag { "vray_pluginattr" "raytraced_consider_same_object_only" }
+        parmtag { "vray_type" "boolean" }
+    }
+    parm {
+        name    "raytraced_mode"
+        label   "Mode"
+        type    ordinal
+        default { "0" }
+        help    "Which corners to smooth"
+        hidewhen "{ raytraced != 1 }"
+        menu    {
+            "0" "Convex and Concave"
+            "1" "Convex Only"
+            "2" "Concave Only"
+        }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexEdges" }
+        parmtag { "vray_pluginattr" "raytraced_mode" }
+        parmtag { "vray_type" "enum" }
+    }
+#include "vfh_texture_default_output_color.ds"
+}

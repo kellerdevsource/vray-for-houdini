@@ -599,26 +599,6 @@ voptoolutils.genericTool(kwargs, 'VRayNodeBakeView', nodename="bake")
 </tool>
 
 
-<tool name="vop_VRayNodeBitmapBuffer" label="Image File" icon="ROP_vray">
-    <readOnly/>
-    <toolMenuContext name="viewer">
-        <contextNetType>VOP</contextNetType>
-    </toolMenuContext>
-    <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodeBitmapBuffer</contextOpType>
-    </toolMenuContext>
-    <toolSubmenu>Texture</toolSubmenu>
-    <script scriptType="python">
-<![CDATA[
-
-import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeBitmapBuffer', nodename="imagefile")
-
-]]>
-    </script>
-</tool>
-
-
 <tool name="vop_VRayNodeCameraPhysical" label="Physical Camera" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
@@ -2858,7 +2838,47 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexBerconWood', nodename="berconwood")
 </tool>
 
 
-<tool name="vop_VRayNodeTexBitmap" label="Image Texture" icon="ROP_vray">
+<tool name="vop_VRayNodeMetaImageFile" label="V-Ray Image File" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMetaImageFile</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>Texture</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMetaImageFile', nodename="imagefile")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBitmapBuffer" label="V-Ray Bitmap File" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBitmapBuffer</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>Texture</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBitmapBuffer', nodename="bitmapfile")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeTexBitmap" label="V-Ray Bitmap Texture" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -2871,7 +2891,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexBerconWood', nodename="berconwood")
 <![CDATA[
 
 import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeTexBitmap', nodename="imagetexture")
+voptoolutils.genericTool(kwargs, 'VRayNodeTexBitmap', nodename="bitmaptexture")
 
 ]]>
     </script>
@@ -3498,7 +3518,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexMix', nodename="mix")
 </tool>
 
 
-<tool name="vop_VRayNodeTexNoise" label="Noise (Maya)" icon="ROP_vray">
+<tool name="vop_VRayNodeTexNoise" label="Noise" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -3511,27 +3531,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexMix', nodename="mix")
 <![CDATA[
 
 import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeTexNoise', nodename="noise_maya")
-
-]]>
-    </script>
-</tool>
-
-
-<tool name="vop_VRayNodeTexNoiseMax" label="Noise (3ds Max)" icon="ROP_vray">
-    <readOnly/>
-    <toolMenuContext name="viewer">
-        <contextNetType>VOP</contextNetType>
-    </toolMenuContext>
-    <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodeTexNoiseMax</contextOpType>
-    </toolMenuContext>
-    <toolSubmenu>Texture</toolSubmenu>
-    <script scriptType="python">
-<![CDATA[
-
-import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeTexNoiseMax', nodename="noise_3dsmax")
+voptoolutils.genericTool(kwargs, 'VRayNodeTexNoise', nodename="noise")
 
 ]]>
     </script>

@@ -1,0 +1,43 @@
+{
+    name    TexMeshVertexColorChannel
+    label   "Mesh Map Channel"
+    parmtag { spare_category "Mesh Map Channel" }
+
+    parm {
+        name    "channel_name"
+        label   "Channel Name"
+        type    string
+        default { "uv" }
+        help    "Name of the channel to use"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_type" "string" }
+    }
+
+    parm {
+        name    "channelIndex"
+        label   "Channel Index"
+        type    integer
+        default { "0" }
+        range   { 0 2 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_type" "int" }
+        invisible
+    }
+
+    parm {
+        name    "default_color"
+        label   "Default Color"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_type" "Texture" }
+    }
+
+#include "vfh_texture_default_output_color.ds"
+}

@@ -1,0 +1,62 @@
+{
+    name    TexBezierCurve
+    label    "Bezier Curve"
+    parmtag    { spare_category "Bezier Curve" }
+    parmtag    { vray_plugin "TexBezierCurve" }
+
+    parm {
+        name    "curve"
+        label   "Curve"
+        type    ramp_flt
+        default { "2" }
+        parmtag { "rampbasis_var" "types" }
+        parmtag { "rampkeys_var" "points" }
+        parmtag { "rampbasisdefault" "linear" }
+        parmtag { "rampshowcontrolsdefault" "0" }
+    }
+
+    parm {
+        name    "input_float"
+        label    "Input Float"
+        type    float
+        default { "0" }
+        help    "The input texture"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexBezierCurve" }
+        parmtag { "vray_pluginattr" "input_float" }
+        parmtag { "vray_type" "TextureFloat" }
+        invisible
+    }
+
+    parm {
+        name    "num_bezier_points"
+        label   "Num Bezier Points"
+        type    integer
+        default { "256" }
+        help    "The number of precisely calculated points from bezier curves: default 256"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexBezierCurve" }
+        parmtag { "vray_pluginattr" "num_bezier_points" }
+        parmtag { "vray_type" "int" }
+    }
+
+    parm {
+        name    "use_end_tangents"
+        label   "Use End Tangents"
+        type    toggle
+        default { "1" }
+        help    "true to extrapolate beyound the control points"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexBezierCurve" }
+        parmtag { "vray_pluginattr" "use_end_tangents" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+#include "vfh_texture_default_output_float.ds"
+}

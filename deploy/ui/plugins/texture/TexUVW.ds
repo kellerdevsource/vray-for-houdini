@@ -1,0 +1,38 @@
+{
+    name    TexUVW
+    label   "UVW"
+    parmtag { spare_category "UVW" }
+    parmtag { vray_plugin "TexUVW" }
+    parm {
+        name    "component"
+        label   "Component"
+        type    ordinal
+        default { "0" }
+        help    "Specifies which component to show"
+        menu    {
+            0 "All"
+            1 "U"
+            2 "V"
+            3 "W"
+        }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_enumkeys" "0,1,2,3" }
+        parmtag { "vray_plugin" "TexUVW" }
+        parmtag { "vray_pluginattr" "component" }
+        parmtag { "vray_type" "enum" }
+    }
+    parm {
+        name "uvwgen"
+        label "uvwgen"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_label" "uvwgen" }
+        parmtag { "vray_plugin" "TexUVW" }
+        parmtag { "vray_pluginattr" "uvwgen" }
+        parmtag { "vray_type" "Plugin" }
+        invisible
+    }
+#include "vfh_texture_default_output_color.ds"
+}

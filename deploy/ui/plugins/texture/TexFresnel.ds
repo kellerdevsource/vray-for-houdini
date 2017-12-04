@@ -1,0 +1,112 @@
+{
+    name    TexFresnel
+    label   "Fresnel"
+    parmtag { spare_category "Fresnel" }
+    parmtag { vray_plugin "TexFresnel" }
+
+    parm {
+        name    "white_color"
+        label   "Front Color"
+        type    color4
+        size    4
+        default { "1" "0" "0" "1" }
+        help    "Refraction (front) color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexFresnel" }
+        parmtag { "vray_label" "front_color" }
+        parmtag { "vray_pluginattr" "white_color" }
+        parmtag { "vray_type" "Texture" }
+    }
+
+    parm {
+        name    "black_color"
+        label   "Side Color"
+        type    color4
+        size    4
+        default { "0" "1" "0" "1" }
+        help    "Reflection (side) color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexFresnel" }
+        parmtag { "vray_label" "side_color" }
+        parmtag { "vray_pluginattr" "black_color" }
+        parmtag { "vray_type" "Texture" }
+    }
+
+    parm {
+        name    "fresnel_ior"
+        label   "Fresnel IOR"
+        type    float
+        default { "1.55" }
+        help    "Fresnel ior"
+        range   { 0.001 5 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexFresnel" }
+        parmtag { "vray_pluginattr" "fresnel_ior" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "fresnel_ior_tex"
+        label   "Fresnel IOR"
+        type    float
+        default { "1" }
+        range   { 0.001 5 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexFresnel" }
+        parmtag { "vray_label" "fresnel_ior" }
+        parmtag { "vray_pluginattr" "fresnel_ior_tex" }
+        parmtag { "vray_type" "TextureFloat" }
+        parmtag { "vray_linked_only" "1" }
+        invisible
+    }
+
+    parm {
+        name    "refract_ior"
+        label   "Refract IOR"
+        type    float
+        default { "1.55" }
+        help    "Refraction ior of the underlying surface; this is ignored if the surface has a volume shader"
+        range   { 0.001 5 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexFresnel" }
+        parmtag { "vray_pluginattr" "refract_ior" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "refract_ior_tex"
+        label   "Refract IOR"
+        type    float
+        default { "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexFresnel" }
+        parmtag { "vray_label" "refract_ior" }
+        parmtag { "vray_pluginattr" "refract_ior_tex" }
+        parmtag { "vray_type" "TextureFloat" }
+        parmtag { "vray_linked_only" "1" }
+        invisible
+    }
+
+    parm {
+        name    contribute_to_fresnel_ior_re
+        label   "Contribute to Fresnel IOR Render Element"
+        help    "Flag that allows the texture to contribute to the Fresnel IOR render element."
+        type    toggle
+        default { "0" }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexFresnel" }
+        parmtag { "vray_pluginattr" "contribute_to_fresnel_ior_re" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+#include "vfh_texture_default_output_color.ds"
+}

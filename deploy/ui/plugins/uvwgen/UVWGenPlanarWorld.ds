@@ -1,0 +1,9 @@
+{
+    name	UVWGenPlanarWorld
+    label	"World"
+    parmtag	{ spare_category "World" }
+    parmtag	{ vray_plugin "UVWGenPlanarWorld" }
+
+#include "UVWGenPlanarWorldParms.ds"
+#include "vfh_uvwgen_common.ds"
+}

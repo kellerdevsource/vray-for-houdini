@@ -28,17 +28,16 @@ class PRM_ScriptGroup;
 namespace VRayForHoudini {
 namespace Parm {
 
-
 class PRMFactory;
 class PRMList;
-
 
 /// Prepend the passed path with the UI root determined by VRAY_UI_DS_PATH env var
 /// if resulting file path doesn't exist searches for the relPath inside UI root
 /// does minimal validation if UI root and file path exist
 /// @relPath - relative path to the VRAY_UI_DS_PATH env var
 /// @return the full path
-std::string expandUiPath(const std::string &relPath);
+std::string expandUiPath(const char *relPath);
+
 /// Load params from DS file for this plugin if the DS file exists
 /// @pluginID - the plugin ID
 /// @prmList - list to append params to
@@ -47,7 +46,6 @@ std::string expandUiPath(const std::string &relPath);
 bool addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &prmList);
 PRMList* generatePrmTemplate(const std::string &pluginID);
 PRM_Template* getPrmTemplate(const std::string &pluginID);
-
 
 /// List of PRM_Templates which is always terminated
 class PRMList
@@ -142,7 +140,7 @@ public:
 	/// PRM_ScriptPages used by the loaded PRM_Templates
 	/// @filepath - full path to the .ds file
 	/// @return *this
-	PRMList& addFromFile(const char *filepath, const char *includePath=nullptr);
+	PRMList& addFromFile(const char *filepath);
 
 	/// Append all templates from a terminated list of templates
 	/// NOTE: tmpl should be list terminated array of parameters
@@ -342,14 +340,6 @@ int getParmInt(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
 /// @t - the time at which to eval at
 /// @return the value of the param
 float getParmFloat(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
-
-/// Find and eval node's param as enum
-/// @node - the node which will be used for eval
-/// @attrDesc - to check the enum value
-/// @attrName - the name of the param
-/// @t - the time at which to eval at
-/// @return the value of the param
-int getParmEnumExt(const OP_Node &node, const AttrDesc &attrDesc, const std::string &attrName, fpreal t=0.0);
 
 } // namespace Parm
 } // namespace VRayForHoudini

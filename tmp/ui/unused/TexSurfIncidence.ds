@@ -1,0 +1,89 @@
+{
+    name    TexSurfIncidence
+    label   "Surf Incidence"
+    parmtag { spare_category "Surf Incidence" }
+    parmtag { vray_plugin "TexSurfIncidence" }
+    parm {
+        name    "inc_mode"
+        label   "Inc Mode"
+        type    integer
+        default { "0" }
+        help    "Incidence mode"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSurfIncidence" }
+        parmtag { "vray_pluginattr" "inc_mode" }
+        parmtag { "vray_type" "int" }
+    }
+    parm {
+        name    "bias"
+        label   "Bias"
+        type    float
+        default { "100" }
+        help    "Controls the contrast between dark and light areas of shading"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSurfIncidence" }
+        parmtag { "vray_pluginattr" "bias" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "gain"
+        label   "Gain"
+        type    float
+        default { "100" }
+        help    "Controls the brightness of the effect"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSurfIncidence" }
+        parmtag { "vray_pluginattr" "gain" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "custom_vector"
+        label   "Custom Vector"
+        type    direction
+        size    3
+        default { "0" "0" "0" }
+        help    "custom vector"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSurfIncidence" }
+        parmtag { "vray_pluginattr" "custom_vector" }
+        parmtag { "vray_type" "vector" }
+    }
+    parm {
+        name    "invert"
+        label   "Invert"
+        type    toggle
+        default { "0" }
+        help    "Invert if enabled"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexSurfIncidence" }
+        parmtag { "vray_pluginattr" "invert" }
+        parmtag { "vray_type" "int" }
+    }
+    parm {
+        name    "range"
+        label   "Range"
+        type    ordinal
+        default { "0" }
+        help    "Range (0 - 0 to 90 degrees, 1 - 0 to 180 degrees)"
+        menu    {
+            "0" "0 to 90 degrees"
+            "1" "0 to 180 degrees"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_enumkeys" "0,1" }
+        parmtag { "vray_plugin" "TexSurfIncidence" }
+        parmtag { "vray_pluginattr" "range" }
+        parmtag { "vray_type" "int" }
+    }
+#include "vfh_texture_default_output_float.ds"
+}

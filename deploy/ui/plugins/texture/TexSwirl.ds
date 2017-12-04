@@ -1,0 +1,143 @@
+{
+    name    TexSwirl
+    label   "Swirl"
+    parmtag { spare_category "Swirl" }
+    parmtag { vray_plugin "TexSwirl" }
+    groupsimple {
+        name "folder_swirl_settings"
+        label "Settings"
+        parm {
+            name    "color1"
+            label   "Color1"
+            type    color4
+            size    4
+            default { "1" "0.35" "1" "1" }
+            help    "First color"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSwirl" }
+            parmtag { "vray_pluginattr" "color1" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "color2"
+            label   "Color2"
+            type    color4
+            size    4
+            default { "0.9" "0.77" "0.35" "1" }
+            help    "Second color"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSwirl" }
+            parmtag { "vray_pluginattr" "color2" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "swirl_amount"
+            label   "Swirl Amount"
+            type    float
+            default { "1" }
+            help    "Swirl Amount"
+            range   { 0 5 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSwirl" }
+            parmtag { "vray_pluginattr" "swirl_amount" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "swirl_intensity"
+            label   "Swirl Intensity"
+            type    float
+            default { "2" }
+            help    "Swirl Intensity"
+            range   { 0 5 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSwirl" }
+            parmtag { "vray_pluginattr" "swirl_intensity" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "twist"
+            label   "Twist"
+            type    float
+            default { "1" }
+            help    "Twist"
+            range   { 0 5 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSwirl" }
+            parmtag { "vray_pluginattr" "twist" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "constant_detail"
+            label   "Constant Detail"
+            type    integer
+            default { "4" }
+            help    "Constant Detail"
+            range   { 0 5 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSwirl" }
+            parmtag { "vray_pluginattr" "constant_detail" }
+            parmtag { "vray_type" "int" }
+        }
+        parm {
+            name    "color_contrast"
+            label   "Color Contrast"
+            type    float
+            default { "0.4" }
+            help    "Color Contrast"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSwirl" }
+            parmtag { "vray_pluginattr" "color_contrast" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "center_x"
+            label   "Center X"
+            type    float
+            default { "-0.5" }
+            help    "Center Position X"
+            range   { -1 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSwirl" }
+            parmtag { "vray_pluginattr" "center_x" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "center_y"
+            label   "Center Y"
+            type    float
+            default { "-0.5" }
+            help    "Center Position Y"
+            range   { -1 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSwirl" }
+            parmtag { "vray_pluginattr" "center_y" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "random_seed"
+            label   "Random Seed"
+            type    float
+            default { "0" }
+            help    "Random Seed"
+            range   { 0 2 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSwirl" }
+            parmtag { "vray_pluginattr" "random_seed" }
+            parmtag { "vray_type" "float" }
+        }
+    }
+#include "vfh_texture_common.ds"
+}

@@ -1,6 +1,0 @@
-{
-    name	TexUVWGenToTexture
-label	"UVW Gen To Texture"
-parmtag	{ spare_category "UVW Gen To Texture" }
-parmtag	{ vray_plugin "TexUVWGenToTexture" }
-}

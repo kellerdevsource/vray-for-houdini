@@ -1,0 +1,83 @@
+{
+    name    TexOutput
+    label   "Output"
+    parmtag { spare_category "Output" }
+    parmtag { vray_plugin "TexOutput" }
+    groupsimple {
+        name "folder_settings"
+        label "Settings"
+        parm {
+            name    "Texture"
+            label   "Texture"
+            type    color4
+            size    4
+            default { "1" "1" "1" "1" }
+            help    "The texture"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOutput" }
+            parmtag { "vray_pluginattr" "texmap" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "bump_amount"
+            label   "Bump Amount"
+            type    float
+            default { "1" }
+            help    "Bump amount if the texture is used for bump mapping"
+            range   { 0 2 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOutput" }
+            parmtag { "vray_pluginattr" "bump_amount" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "output_mult"
+            label   "Multiply By"
+            type    color4
+            size    4
+            default { "1" "1" "1" "1" }
+            help    "A multiplier for the output AColor"
+            range   { 0 2 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOutput" }
+            parmtag { "vray_pluginattr" "output_mult" }
+            parmtag { "vray_type" "Texture" }
+            invisible
+        }
+        parm {
+            name    "output_clamp"
+            label   "Clamp Output "
+            type    toggle
+            default { "0" }
+            help    "Clamp the output in [0.0,1.0] range"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOutput" }
+            parmtag { "vray_pluginattr" "output_clamp" }
+            parmtag { "vray_type" "boolean" }
+        }
+    }
+    parm {
+    name    "compatibility_with"
+    label   "Compatibility With"
+    type    ordinal
+    default { "0" }
+    help    "This is used to differentiate between textures exported from different applications"
+    menu    {
+        "0"   "Max"
+        "1"  "Maya"
+    }
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_pluginattr" "compatibility_with" }
+    parmtag { "vray_type" "enum" }
+    invisible
+    }
+#include "vfh_texture_common_color.ds"
+#include "vfh_texture_common_alpha.ds"
+#include "vfh_texture_common_outputs.ds"
+}

@@ -1,0 +1,211 @@
+{
+    name	BakeView
+    label	"Bake"
+    parmtag	{ spare_category "Bake" }
+    parmtag	{ vray_plugin "BakeView" }
+    parm {
+	name	"dilation"
+	label	"Dilation"
+	type	float
+	default	{ "2" }
+	help	"Number of pixels to expand around geometry"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BakeView" }
+	parmtag	{ "vray_pluginattr" "dilation" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"flip_derivs"
+	label	"Flip Derivs"
+	type	toggle
+	default	{ "0" }
+	help	"true to flip the texture direction derivatives (reverses bump mapping)"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BakeView" }
+	parmtag	{ "vray_pluginattr" "flip_derivs" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"u_min"
+	label	"U Min"
+	type	float
+	default	{ "0" }
+	help	"The minimum u value to bake"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BakeView" }
+	parmtag	{ "vray_pluginattr" "u_min" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"v_min"
+	label	"V Min"
+	type	float
+	default	{ "0" }
+	help	"The minimum v value to bake"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BakeView" }
+	parmtag	{ "vray_pluginattr" "v_min" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"u_max"
+	label	"U Max"
+	type	float
+	default	{ "1" }
+	help	"The maximum u value to bake"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BakeView" }
+	parmtag	{ "vray_pluginattr" "u_max" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"v_max"
+	label	"V Max"
+	type	float
+	default	{ "1" }
+	help	"The maximum v value to bake"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BakeView" }
+	parmtag	{ "vray_pluginattr" "v_max" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"fov"
+	label	"Fov"
+	type	float
+	default	{ "0.785398" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BakeView" }
+	parmtag	{ "vray_pluginattr" "fov" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"projection_baking"
+	label	"Projection Baking"
+	type	ordinal
+	default	{ "0" }
+	help	"Projection baking"
+	menu	{
+	    "0"	"Normal"
+	    "1"	"Projection"
+	}
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_pluginattr" "projection_baking" }
+	parmtag	{ "vray_type" "enum" }
+    }
+    parm {
+	name	"mode"
+	label	"Mode"
+	type	ordinal
+	default	{ "0" }
+	help	"Bake mode"
+	menu	{
+	    "0"	"Outside"
+	    "1"	"Inside"
+	    "2"	"Outside - Inside"
+	    "3"	"Inside - Outside"
+	    "4"	"Closest"
+	}
+	parmtag	{ "vray_plugin" "BakeView" }
+	parmtag	{ "vray_pluginattr" "mode" }
+	parmtag	{ "vray_type" "enum" }
+    }
+    parm {
+	name	"normal"
+	label	"Normal"
+	type	ordinal
+	default	{ "0" }
+	help	"Normal mode"
+	menu	{
+	    "0"	"Smooth"
+	    "1"	"Geometry"
+	}
+	parmtag	{ "vray_plugin" "BakeView" }
+	parmtag	{ "vray_pluginattr" "normal" }
+	parmtag	{ "vray_type" "enum" }
+    }
+    parm {
+	name	"max_depth"
+	label	"Max Depth"
+	type	float
+	default	{ "0" }
+	help	"Geometry that is intersected further than this value along the ray will be ignored. If the value is zero then no geometry will be ignored"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BakeView" }
+	parmtag	{ "vray_pluginattr" "max_depth" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"ray_offset"
+	label	"Ray Offset"
+	type	float
+	default	{ "0" }
+	help	"The ray's beginning will be offseted this much along the normal"
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "BakeView" }
+	parmtag	{ "vray_pluginattr" "ray_offset" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"use"
+	label	"Use"
+	type	toggle
+	default	{ "0" }
+	help	"Use texture baking"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_custom_handling" "1" }
+    }
+    parm {
+	name	"uv_channel"
+	label	"Uv Channel"
+	type	integer
+	default	{ "0" }
+	help	"UV channel to use"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_custom_handling" "1" }
+    }
+    parm {
+	name	"bake_material"
+	label	"Bake Material"
+	type	string
+	default	{ "" }
+	help	"Material for \"Bake By Material\""
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_custom_handling" "1" }
+    }
+    parm {
+	name	"square_resolution"
+	label	"Square Resolution"
+	type	toggle
+	default	{ "1" }
+	help	"Set square resolution"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_custom_handling" "1" }
+    }
+}

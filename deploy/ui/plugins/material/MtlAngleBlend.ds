@@ -1,0 +1,81 @@
+{
+    name	MtlAngleBlend
+    label	"Angle Blend"
+    parmtag	{ spare_category "Angle Blend" }
+    parmtag	{ vray_plugin "MtlAngleBlend" }
+
+#include "$VRAY_UI_DS_PATH/common/vfh_material_common.ds"
+
+    parm {
+        name "first"
+        label "First"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "mtl_one" }
+        parmtag { "vray_type" "PluginMaterial" }
+        invisible
+    }
+
+    parm {
+        name "second"
+        label "Second"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "mtl_two" }
+        parmtag { "vray_type" "PluginMaterial" }
+        invisible
+    }
+
+    parm {
+	name	"start_angle"
+	label	"Start Angle"
+	type	float
+	default	{ "25" }
+	help	"angle where blending begins ( degrees ) - anything before this will be material one only"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "MtlAngleBlend" }
+	parmtag	{ "vray_pluginattr" "start_angle" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"stop_angle"
+	label	"Stop Angle"
+	type	float
+	default	{ "75" }
+	help	"angle where blending ends ( degrees ) - anything after this will be material two only"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "MtlAngleBlend" }
+	parmtag	{ "vray_pluginattr" "stop_angle" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"blend_function"
+	label	"Blend Function"
+	type	integer
+	default	{ "0" }
+	help	"The function to use to blend the materials. 0:Linear 1:Normal Distribution 2:Sigmoid 3:Gompertz 4:Cube Root 5:Cubic 6: Cubic Polynomial"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "MtlAngleBlend" }
+	parmtag	{ "vray_pluginattr" "blend_function" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"flip_view_dir"
+	label	"Flip View Dir"
+	type	toggle
+	default	{ "0" }
+	help	"If this is true we will flip the view direction prior to doing calculations on it"
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "MtlAngleBlend" }
+	parmtag	{ "vray_pluginattr" "flip_view_dir" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

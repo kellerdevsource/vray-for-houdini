@@ -1,0 +1,651 @@
+{
+    name    TexSoftbox
+    label   "Soft Box"
+    parmtag { spare_category "Soft Box" }
+    parmtag { vray_plugin "TexSoftbox" }
+    groupsimple {
+        name "folder_rock_settings"
+        label "Settings"
+        parm {
+            name    "base_tex_on"
+            label   "Use Base Texture"
+            type    toggle
+            default { "1" }
+            help    "Turn on base texture"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSoftbox" }
+            parmtag { "vray_pluginattr" "base_tex_on" }
+            parmtag { "vray_type" "boolean" }
+        }
+        parm {
+            name    "base_tex"
+            label   "Base Texture"
+            type    color4
+            size    4
+            default { "1" "1" "1" "1" }
+            help    "Base texture"
+            hidewhen "{ base_tex_on != 1 }"
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSoftbox" }
+            parmtag { "vray_pluginattr" "base_tex" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "base_color"
+            label   "Base Color"
+            type    color
+            size    3
+            default { "1" "1" "1" }
+            help    "Base color"
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_custom_handling" "1" }
+            parmtag { "vray_plugin" "TexSoftbox" }
+            parmtag { "vray_pluginattr" "base_color" }
+            parmtag { "vray_type" "color" }
+            hidewhen "{ base_tex_on == 1 }"
+        }
+        parm {
+            name    "base_mult"
+            label   "Base Multiplier"
+            type    float
+            default { "1" }
+            help    "Base multiplier"
+            range   { 0 5 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSoftbox" }
+            parmtag { "vray_pluginattr" "base_mult" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "base_gamma"
+            label   "Base Gamma"
+            type    float
+            default { "1" }
+            help    "Base gamma"
+            range   { 0 2.2 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSoftbox" }
+            parmtag { "vray_pluginattr" "base_gamma" }
+            parmtag { "vray_type" "float" }
+        }
+            parm {
+            name    "base_tint_on"
+            label   "Use Base Tint"
+            type    toggle
+            default { "0" }
+            help    "Turn on base tint"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSoftbox" }
+            parmtag { "vray_pluginattr" "base_tint_on" }
+            parmtag { "vray_type" "boolean" }
+        }
+        parm {
+            name    "base_tint"
+            label   "Tint Color"
+            type    color
+            size    3
+            default { "1" "1" "1" }
+            help    "Base tint color"
+            hidewhen "{ base_tint_on != 1 }"
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSoftbox" }
+            parmtag { "vray_pluginattr" "base_tint" }
+            parmtag { "vray_type" "color" }
+        }
+        parm {
+            name    "base_tint_strength"
+            label   "Tint Strength"
+            type    float
+            default { "0.5" }
+            help    "Base tint strength"
+            hidewhen "{ base_tint_on != 1 }"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSoftbox" }
+            parmtag { "vray_pluginattr" "base_tint_strength" }
+            parmtag { "vray_type" "float" }
+        }
+        groupsimple {
+            name "folder_softbox_spots"
+            label "Spots"
+            parm {
+                name    "spots_on"
+                label   "Enable"
+                type    toggle
+                default { "0" }
+                help    "Turn on hot/dark spots"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "spots_on" }
+                parmtag { "vray_type" "boolean" }
+            }
+            parm {
+                name    "spots_mode"
+                label   "Spots Mode"
+                type    ordinal
+                default { "0" }
+                help    "Spots mode"
+                hidewhen "{ spots_on != 1 }"
+                menu    {
+                    "Hot Spot"  "Hot Spot"
+                    "Dark Spot" "Dark Spot"
+                }
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_enumkeys" "0,1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "spots_mode" }
+                parmtag { "vray_type" "enum" }
+            }
+            parm {
+                name    "spots_exp"
+                label   "Softness"
+                type    float
+                default { "1" }
+                help    "Fading softness"
+                hidewhen "{ spots_on != 1 }"
+                range   { 0 20 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "spots_exp" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "spots_iradius"
+                label   "Inner Radius"
+                type    float
+                default { "0.4" }
+                help    "Fading inner radius"
+                hidewhen "{ spots_on != 1 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "spots_iradius" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "spots_oradius"
+                label   "Outer Radius"
+                type    float
+                default { "0.5" }
+                help    "Fading outer radius"
+                hidewhen "{ spots_on != 1 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "spots_oradius" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "spots_mult"
+                label   "Spots Multiplier"
+                type    float
+                default { "1" }
+                help    "Spots multiplier"
+                hidewhen "{ spots_on != 1 }"
+                range   { 0 5 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "spots_mult" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "u_offset"
+                label   "U Offset"
+                type    float
+                default { "0" }
+                help    "Spots u offset"
+                hidewhen "{ spots_on != 1 }"
+                range   { -100 100 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "u_offset" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "v_offset"
+                label   "V Offset"
+                type    float
+                default { "0" }
+                help    "Spots v offset"
+                hidewhen "{ spots_on != 1 }"
+                range   { -100 100 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "v_offset" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "u_tiling_on"
+                label   " "
+                type    toggle
+                default { "0" }
+                help    "Turn on spots u tiling"
+                hidewhen "{ spots_on != 1 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "u_tiling_on" }
+                parmtag { "vray_type" "boolean" }
+                joinnext
+            }
+            parm {
+                name    "u_tiling"
+                label   "U Tiling"
+                type    float
+                default { "1" }
+                help    "Spots u tiling"
+                disablewhen "{ u_tiling_on != 1 } "
+                hidewhen " { spots_on != 1 } "
+                range   { 0 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "u_tiling" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "v_tiling_on"
+                label   " "
+                type    toggle
+                default { "0" }
+                help    "Turn on v tiling"
+                hidewhen "{ spots_on != 1 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "v_tiling_on" }
+                parmtag { "vray_type" "boolean" }
+                joinnext
+            }
+            parm {
+                name    "v_tiling"
+                label   "V Tiling"
+                type    float
+                default { "1" }
+                help    "Spots v tiling"
+                disablewhen "{ v_tiling_on != 1 } "
+                hidewhen " { spots_on != 1 } "
+                range   { 0 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "v_tiling" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "spots_tint_on"
+                label   "Spots Tint On"
+                type    toggle
+                default { "0" }
+                help    "Turn on spots tint"
+                hidewhen "{ spots_on != 1 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "spots_tint_on" }
+                parmtag { "vray_type" "boolean" }
+            }
+            parm {
+                name    "spots_tint"
+                label   "Spots Tint Color"
+                type    color
+                size    3
+                default { "1" "1" "1" }
+                help    "Spots tint color"
+                hidewhen "{ spots_tint_on != 1 } { spots_on != 1 }"
+                range   { 0 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "spots_tint" }
+                parmtag { "vray_type" "color" }
+            }
+            parm {
+                name    "spots_tint_strength"
+                label   "Spots Tint Strength"
+                type    float
+                default { "0.5" }
+                help    "Spots tint strength"
+                hidewhen "{ spots_tint_on != 1 } { spots_on != 1 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "spots_tint_strength" }
+                parmtag { "vray_type" "float" }
+            }
+        }
+        groupsimple {
+            name "folder_softbox_vert_vignette"
+            label "Vertical Vignette"
+            parm {
+                name    "grad_vert_on"
+                label   "Enable"
+                type    toggle
+                default { "0" }
+                help    "Turn on vertical gradient"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "grad_vert_on" }
+                parmtag { "vray_type" "boolean" }
+            }
+            parm {
+                name    "ramp_grad_vert"
+                label   "Ramp Grad Vert"
+                type    ramp_rgb
+                default { "2" }
+                help    "Vertical gradient"
+                range   { 1! 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "rampbasisdefault" "linear" }
+                parmtag { "rampcolordefault" "1pos ( 0 ) 1c ( 0 0 1 ) 1interp ( linear )  2pos ( 1 ) 2c ( 1 0 0 ) 2interp ( linear )" }
+                parmtag { "rampkeys_var" "grad_vert_pos" }
+                parmtag { "rampvalues_var" "grad_vert_col" }
+                hidewhen "{ grad_vert_on != 1 }"
+            }
+            parm {
+                name    "grad_vert_flip"
+                label   "V Vignette Flip"
+                type    toggle
+                default { "0" }
+                help    "Flip vertical gradient"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "grad_vert_flip" }
+                parmtag { "vray_type" "boolean" }
+                hidewhen "{ grad_vert_on != 1 }"
+            }
+        }
+        groupsimple {
+            name "folder_softbox_horiz_vignette"
+            label "Horizontal Vignette"
+            parm {
+                name    "grad_horiz_on"
+                label   "Enable"
+                type    toggle
+                default { "0" }
+                help    "Turn on horizontal gradient"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "grad_horiz_on" }
+                parmtag { "vray_type" "boolean" }
+            }
+            parm {
+                name    "ramp_grad_horiz"
+                label   "Ramp Grad Horiz"
+                type    ramp_rgb
+                default { "2" }
+                help    "Horizontal gradient"
+                range   { 1! 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "rampbasisdefault" "linear" }
+                parmtag { "rampcolordefault" "1pos ( 0 ) 1c ( 0 0 1 ) 1interp ( linear )  2pos ( 1 ) 2c ( 1 0 0 ) 2interp ( linear )" }
+                parmtag { "rampkeys_var" "grad_horiz_pos" }
+                parmtag { "rampvalues_var" "grad_horiz_col" }
+                hidewhen "{ grad_horiz_on != 1 }"
+            }
+            parm {
+                name    "grad_horiz_flip"
+                label   "U Vignette Flip"
+                type    toggle
+                default { "0" }
+                help    "Flip horizontal gradient"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "grad_horiz_flip" }
+                parmtag { "vray_type" "boolean" }
+                hidewhen "{ grad_horiz_on != 1 }"
+            }
+        }
+        groupsimple {
+            name "folder_softbox_rad_vignette"
+            label "Radial Vignette"
+            parm {
+                name "radial_vignette_enable"
+                label "Enable"
+                type toggle
+                default { "0" }
+            }
+            parm {
+                name    "grad_rad_on"
+                label   "Radial Vignette On"
+                type    ramp_rgb
+                default { "2" }
+                help    "Radial gradient"
+                range   { 1! 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "rampbasisdefault" "linear" }
+                parmtag { "rampcolordefault" "1pos ( 0 ) 1c ( 0 0 1 ) 1interp ( linear )  2pos ( 1 ) 2c ( 1 0 0 ) 2interp ( linear )" }
+                parmtag { "rampkeys_var" "grad_rad_pos" }
+                parmtag { "rampvalues_var" "grad_rad_col" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "grad_rad_on" }
+                parmtag { "vray_type" "boolean" }
+                hidewhen "{ radial_vignette_enable == 0 }"
+            }
+            parm {
+                name    "grad_rad_flip"
+                label   "Radial Vignette Flip"
+                type    toggle
+                default { "0" }
+                help    "Flip radial gradient"
+                disablewhen "{ grad_rad_on != 1 }"
+                hidewhen "{ radial_vignette_enable == 0 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "grad_rad_flip" }
+                parmtag { "vray_type" "boolean" }
+            }
+        }
+        groupsimple {
+            name "folder_softbox_frame_vignette"
+            label "Frame Vignette"
+            parm {
+                name "frame_vignette_enable"
+                label "Enable"
+                type toggle
+                default { "0" }
+            }
+            parm {
+                name    "frame_on"
+                label   "Frame Vignette On"
+                type    ramp_rgb
+                default { "1" }
+                help    "Frame gradient"
+                range   { 1! 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "rampbasisdefault" "linear" }
+                parmtag { "rampcolordefault" "1pos ( 0 ) 1c ( 0 0 1 ) 1interp ( linear )  2pos ( 1 ) 2c ( 1 0 0 ) 2interp ( linear )" }
+                parmtag { "rampkeys_var" "frame_pos" }
+                parmtag { "rampvalues_var" "frame_col" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "frame_on" }
+                parmtag { "vray_type" "boolean" }
+                hidewhen "{ frame_vignette_enable == 0 }"
+            }
+            parm {
+                name    "frame_flip"
+                label   "Frame Vignette Flip"
+                type    toggle
+                default { "0" }
+                help    "Flip frame"
+                disablewhen "{ frame_on != 1 }"
+                hidewhen "{ frame_vignette_enable == 0 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "frame_flip" }
+                parmtag { "vray_type" "boolean" }
+            }
+            parm {
+                name    "frame_tint_on"
+                label   "Use Frame Tint"
+                type    toggle
+                default { "0" }
+                help    "Turn on frame tint"
+                disablewhen "{ frame_on != 1 }"
+                hidewhen "{ frame_vignette_enable == 0 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "frame_tint_on" }
+                parmtag { "vray_type" "boolean" }
+            }
+            parm {
+                name    "frame_tint"
+                label   "Tint Color"
+                type    color
+                size    3
+                default { "1" "1" "1" }
+                help    "Frame tint color"
+                disablewhen "{ frame_on != 1 } { frame_tint_on != 1 }"
+                hidewhen "{ frame_vignette_enable == 0 }"
+                range   { 0 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "frame_tint" }
+                parmtag { "vray_type" "color" }
+            }
+            parm {
+                name    "frame_tint_strength"
+                label   "Tint Strength"
+                type    float
+                default { "0.5" }
+                help    "Frame tint strength"
+                disablewhen "{ frame_on != 1 } { frame_tint_on != 1 }"
+                hidewhen "{ frame_vignette_enable == 0 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "frame_tint_strength" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name "frame_noise_enable"
+                label "Enable Frame Noise"
+                type toggle
+                default { "0" }
+                disablewhen "{ frame_on != 1 }"
+                hidewhen "{ frame_vignette_enable == 0 }"
+            }
+            parm {
+                name    "noise_amount"
+                label   "Noise Amount"
+                type    float
+                default { "0" }
+                help    "Frame noise amount"
+                disablewhen "{ frame_on != 1 } { frame_noise_enable != 1}"
+                hidewhen "{ frame_vignette_enable == 0 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "noise_amount" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "noise_size"
+                label   "Noise Size"
+                type    float
+                default { "1" }
+                help    "Frame noise size"
+                disablewhen "{ frame_on != 1 } { frame_noise_enable != 1}"
+                hidewhen "{ frame_vignette_enable == 0 }"
+                range   { 0.0001 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "noise_size" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "noise_phase"
+                label   "Noise Phase"
+                type    float
+                default { "0" }
+                help    "Frame noise phase"
+                disablewhen "{ frame_on != 1 } { frame_noise_enable != 1}"
+                hidewhen "{ frame_vignette_enable == 0 }"
+                range   { -1000 1000 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "noise_phase" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "noise_fractal"
+                label   "Fractal Noise"
+                type    toggle
+                default { "0" }
+                help    "Turn on frame fractal noise"
+                disablewhen "{ frame_on != 1 } { frame_noise_enable != 1}"
+                hidewhen "{ frame_vignette_enable == 0 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "noise_fractal" }
+                parmtag { "vray_type" "boolean" }
+            }
+            parm {
+                name    "noise_levels"
+                label   "Fractal Levels"
+                type    integer
+                default { "3" }
+                help    "Frame noise levels"
+                disablewhen "{ frame_on != 1 } { frame_noise_enable != 1} { noise_fractal != 1 }"
+                hidewhen "{ frame_vignette_enable == 0 }"
+                range   { 1 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "TexSoftbox" }
+                parmtag { "vray_pluginattr" "noise_levels" }
+                parmtag { "vray_type" "int" }
+            }
+        }
+    }
+#include "vfh_texture_common.ds"
+}

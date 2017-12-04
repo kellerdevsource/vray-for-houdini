@@ -1,6 +1,0 @@
-{
-    name	CustomGlsl
-label	"Custom Glsl"
-parmtag	{ spare_category "Custom Glsl" }
-parmtag	{ vray_plugin "CustomGlsl" }
-}

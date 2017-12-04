@@ -312,19 +312,14 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 	if (Parm::isParmExist(opNode, parmName)) {
 		const PRM_Parm *parm = Parm::getParm(opNode, parmName);
 		if (parm->getParmOwner()->isPendingOverride()) {
-			Log::getLog().msg("Pending override: %s %s",
-							  opNode.getName().buffer(), parmName.c_str());
+			Log::getLog().debug("Pending override: %s %s",
+								opNode.getName().buffer(), parmName.c_str());
 		}
 
-		const fpreal &t = m_context.getTime();
-#if 0
-		Log::getLog().info("Setting: [%s] %s_%s (from %s_%s)",
-						   pluginDesc.pluginID.c_str(),
-						   pluginDesc.pluginName.c_str(), attrDesc.attr.c_str(),
-						   opNode.getName().buffer(), parmName.c_str());
-#endif
+		const fpreal t = m_context.getTime();
+
 		Attrs::PluginAttr attr;
-		attr.paramName = attrDesc.attr;
+		attr.paramName = attrDesc.attr.ptr();
 
 		if (attrDesc.value.type == Parm::eBool ||
 			attrDesc.value.type == Parm::eInt  ||
@@ -334,21 +329,22 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 			attr.paramValue.valInt = opNode.evalInt(parmName.c_str(), 0, t);
 		}
 		else if (attrDesc.value.type == Parm::eEnum) {
-			const int menuIndex = opNode.evalInt(parmName.c_str(), 0, t);
+			UT_String enumValue;
+			opNode.evalString(enumValue, parmName.c_str(), 0, t);
 
-			if (menuIndex < 0 || menuIndex >= attrDesc.value.defEnumItems.size()) {
-				Log::getLog().error("Param enum value out-of-bounds index %s::%s",
-					pluginDesc.pluginID.c_str(), attrDesc.attr.c_str());
-			} else {
-				const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems[menuIndex];
-				if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
-					attr.paramType = Attrs::PluginAttr::AttrTypeInt;
-					attr.paramValue.valInt = enumItem.value;
-				}
-				else {
-					attr.paramType = Attrs::PluginAttr::AttrTypeString;
-					attr.paramValue.valString = enumItem.valueString;
-				}
+			if (enumValue.isInteger()) {
+				attr.paramType = Attrs::PluginAttr::AttrTypeInt;
+				attr.paramValue.valInt = enumValue.toInt();
+			}
+			else if (pluginDesc.pluginID == "UVWGenEnvironment") {
+				// UVWGenEnvironment is the only plugin with enum with the string keys.
+				attr.paramType = Attrs::PluginAttr::AttrTypeString;
+				attr.paramValue.valString = enumValue.buffer();
+			}
+			else {
+				Log::getLog().error("Incorrect enum: %s.%s!",
+									pluginDesc.pluginID.c_str(),
+									attrDesc.attr.ptr());
 			}
 		}
 		else if (attrDesc.value.type == Parm::eFloat ||
@@ -356,7 +352,7 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc, cons
 			attr.paramType = Attrs::PluginAttr::AttrTypeFloat;
 			attr.paramValue.valFloat = (float)opNode.evalFloat(parmName.c_str(), 0, t);
 
-			if (attrDesc.convert_to_radians) {
+			if (attrDesc.flags & Parm::attrFlagToRadians) {
 				attr.paramValue.valFloat *= Attrs::RAD_TO_DEG;
 			}
 		}
@@ -447,7 +443,7 @@ struct ConnectedPluginInfo {
 /// @param pluginDesc Plugin description to add parameter on.
 /// @param attrName Attribute name.
 /// @param conPluginInfo Connected plugin info.
-static void setPluginValueFromConnectedPluginInfo(Attrs::PluginDesc &pluginDesc, const std::string &attrName, const ConnectedPluginInfo &conPluginInfo)
+static void setPluginValueFromConnectedPluginInfo(Attrs::PluginDesc &pluginDesc, const char *attrName, const ConnectedPluginInfo &conPluginInfo)
 {
 	if (!conPluginInfo.plugin)
 		return;
@@ -476,31 +472,36 @@ static int isConnectedToTexTriplanar(VOP_Node &vopNode)
 
 void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext)
 {
-	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo( pluginDesc.pluginID );
+	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID.c_str());
 	if (!pluginInfo) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 							vopNode->getName().buffer(), pluginDesc.pluginID.c_str());
 		return;
 	}
 
-	for (const Parm::SocketDesc &curSockInfo : pluginInfo->inputs) {
-		const std::string attrName = curSockInfo.name.getToken();
+	OP::VRayNode *vrayNode = dynamic_cast<OP::VRayNode*>(vopNode);
+	vassert(vrayNode);
 
-		if (!pluginInfo->attributes.count(attrName) ||
-			pluginDesc.contains(attrName))
+	for (int i = 0; i < pluginInfo->inputs.count(); ++i) {
+		const Parm::SocketDesc &curSockInfo = pluginInfo->inputs[i];
+
+		const VUtils::CharString &attrName = curSockInfo.attrName.ptr();
+
+		if (!pluginInfo->hasAttribute(attrName.ptr()) ||
+			pluginDesc.contains(attrName.ptr()))
 		{
 			continue;
 		}
 
-		const Parm::AttrDesc &attrDesc = pluginInfo->attributes.at(attrName);
-		if (attrDesc.custom_handling) {
+		const Parm::AttrDesc &attrDesc = pluginInfo->getAttribute(attrName.ptr());
+		if (attrDesc.flags & Parm::attrFlagCustomHandling) {
 			continue;
 		}
 
-		VRay::Plugin conPlugin = exportConnectedVop(vopNode, attrName.c_str(), parentContext);
+		VRay::Plugin conPlugin = exportConnectedVop(vopNode, attrName.ptr(), parentContext);
 		if (!conPlugin) {
-			if (!attrDesc.linked_only &&
-				pluginInfo->pluginType == Parm::PluginTypeTexture &&
+			if (!(attrDesc.flags & Parm::attrFlagLinkedOnly) &&
+				vrayNode->getVRayPluginType() == VRayPluginType::TEXTURE  &&
 				attrName == "uvwgen")
 			{
 				if (!isConnectedToTexTriplanar(*vopNode)) {
@@ -513,25 +514,23 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 				}
 			}
 			else {
-				const unsigned inpidx = vopNode->getInputFromName(attrName.c_str());
+				const unsigned inpidx = vopNode->getInputFromName(attrName.ptr());
 				VOP_Node *inpvop = vopNode->findSimpleInput(inpidx);
 				if (inpvop) {
 					if (inpvop->getOperator()->getName() == "makexform") {
-						switch (curSockInfo.type) {
+						switch (curSockInfo.attrType) {
 							case Parm::eMatrix: {
-								bool shouldRotate = pluginInfo->pluginType == Parm::PluginTypeUvwgen;
-								if (shouldRotate) {
-									shouldRotate = pluginDesc.pluginID == "UVWGenPlanar" ||
-									               pluginDesc.pluginID == "UVWGenProjection" ||
-									               pluginDesc.pluginID == "UVWGenObject" ||
-									               pluginDesc.pluginID == "UVWGenEnvironment";
-								}
+								const bool shouldRotate = pluginDesc.pluginID == "UVWGenPlanar" ||
+								                          pluginDesc.pluginID == "UVWGenProjection" ||
+								                          pluginDesc.pluginID == "UVWGenObject" ||
+								                          pluginDesc.pluginID == "UVWGenEnvironment";
+
 								const VRay::Transform &transform = exportTransformVop(*inpvop, parentContext, shouldRotate);
-								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, transform.matrix));
+								pluginDesc.addAttribute(Attrs::PluginAttr(attrName.ptr(), transform.matrix));
 								break;
 							}
 							case Parm::eTransform: {
-								pluginDesc.addAttribute(Attrs::PluginAttr(attrName, exportTransformVop(*inpvop, parentContext)));
+								pluginDesc.addAttribute(Attrs::PluginAttr(attrName.ptr(), exportTransformVop(*inpvop, parentContext)));
 								break;
 							}
 							default:
@@ -544,58 +543,45 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 
 		if (conPlugin) {
 			ConnectedPluginInfo conPluginInfo(conPlugin);
-			const Parm::VRayPluginInfo &conPluginDescInfo = *Parm::GetVRayPluginInfo(conPluginInfo.plugin.getType());
 
-			// If connected plugin type is BRDF, but we expect a Material, wrap it into "MtlSingleBRDF".
-			if (conPluginDescInfo.pluginType == Parm::PluginType::PluginTypeBRDF &&
-				curSockInfo.vopType          == VOP_SURFACE_SHADER)
-			{
-				const std::string &convName = str(fmtPluginTypeConverterName2
-												  % pluginDesc.pluginName
-												  % attrName);
-
-				Attrs::PluginDesc brdfToMtl(convName, "MtlSingleBRDF");
-				brdfToMtl.addAttribute(Attrs::PluginAttr("brdf", conPluginInfo.plugin));
-
-				conPluginInfo.plugin = exportPlugin(brdfToMtl);
-				conPluginInfo.output.clear();
-			}
-
-			// Set "scene_name" for Cryptomatte.
-			if (vutils_strcmp(conPluginInfo.plugin.getType(), "MtlSingleBRDF") == 0) {
-				VRay::ValueList sceneName(1);
-				sceneName[0] = VRay::Value(vopNode->getName().buffer());
-				conPluginInfo.plugin.setValue("scene_name", sceneName);
-			}
-
-			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.c_str());
+			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.ptr());
 			if (fromSocketInfo) {
-				// Check if some specific output was connected.
-				if (fromSocketInfo->type >= Parm::ParmType::eOutputColor &&
-				    fromSocketInfo->type  < Parm::ParmType::eUnknown)
-				{
-					conPluginInfo.output = fromSocketInfo->name.getToken();
-				}
-
 				// Check if we need to auto-convert color / float.
 				std::string floatColorConverterType;
 
-				if (fromSocketInfo->vopType == VOP_TYPE_COLOR &&
-				    curSockInfo.vopType     == VOP_TYPE_FLOAT)
+				// Check if some specific output was connected.
+				conPluginInfo.output = fromSocketInfo->attrName.ptr();
+
+				// If connected plugin type is BRDF, but we expect a Material, wrap it into "MtlSingleBRDF".
+				if (fromSocketInfo->socketType == VOP_TYPE_BSDF &&
+					curSockInfo.socketType     == VOP_SURFACE_SHADER)
+				{
+					const std::string &convName = str(fmtPluginTypeConverterName2
+													  % pluginDesc.pluginName
+													  % attrName.ptr());
+
+					Attrs::PluginDesc brdfToMtl(convName, "MtlSingleBRDF");
+					brdfToMtl.addAttribute(Attrs::PluginAttr("brdf", conPluginInfo.plugin));
+
+					conPluginInfo.plugin = exportPlugin(brdfToMtl);
+					conPluginInfo.output.clear();
+				}
+				else if (fromSocketInfo->socketType == VOP_TYPE_COLOR &&
+						 curSockInfo.socketType     == VOP_TYPE_FLOAT)
 				{
 					floatColorConverterType = "TexColorToFloat";
 				}
-				else if (fromSocketInfo->vopType == VOP_TYPE_FLOAT &&
-				         curSockInfo.vopType     == VOP_TYPE_COLOR)
+				else if (fromSocketInfo->socketType == VOP_TYPE_FLOAT &&
+						 curSockInfo.socketType     == VOP_TYPE_COLOR)
 				{
 					floatColorConverterType = "TexFloatToColor";
 				}
 
 				if (!floatColorConverterType.empty()) {
 					const std::string &convName = str(fmtPluginTypeConverterName
-					                                  % pluginDesc.pluginName
-					                                  % floatColorConverterType
-					                                  % attrName);
+														% pluginDesc.pluginName
+														% floatColorConverterType
+														% attrName.ptr());
 
 					Attrs::PluginDesc convDesc(convName, floatColorConverterType);
 					setPluginValueFromConnectedPluginInfo(convDesc, "input", conPluginInfo);
@@ -607,7 +593,14 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 				}
 			}
 
-			setPluginValueFromConnectedPluginInfo(pluginDesc, attrName, conPluginInfo);
+			// Set "scene_name" for Cryptomatte.
+			if (vutils_strcmp(conPlugin.getType(), "MtlSingleBRDF") == 0) {
+				VRay::ValueList sceneName(1);
+				sceneName[0] = VRay::Value(vopNode->getName().buffer());
+				conPlugin.setValue("scene_name", sceneName);
+			}
+
+			setPluginValueFromConnectedPluginInfo(pluginDesc, attrName.ptr(), conPluginInfo);
 		}
 	}
 }
@@ -615,20 +608,20 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 
 void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, const std::string &prefix, bool remapInterp)
 {
-	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginDesc.pluginID);
+	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID.c_str());
 	if (NOT(pluginInfo)) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 							opNode->getName().buffer(), pluginDesc.pluginID.c_str());
 	}
 	else {
-		for (const auto &aIt : pluginInfo->attributes) {
-			const std::string    &attrName = aIt.first;
-			const Parm::AttrDesc &attrDesc = aIt.second;
+		FOR_CONST_IT (Parm::AttributeDescs, aIt, pluginInfo->attributes) {
+			const std::string    &attrName = aIt.key();
+			const Parm::AttrDesc &attrDesc = aIt.data();
 
-			if (!(pluginDesc.contains(attrName) || attrDesc.custom_handling)) {
+			if (!(pluginDesc.contains(attrName) || attrDesc.flags & Parm::attrFlagCustomHandling)) {
 				const std::string &parmName = prefix.empty()
-											  ? attrDesc.attr
-											  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr);
+											  ? attrDesc.attr.ptr()
+											  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr.ptr());
 
 				const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
 
@@ -640,9 +633,8 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 					}
 				}
 
-				bool isTextureAttr = (   attrDesc.value.type == Parm::eTextureInt
-									|| attrDesc.value.type == Parm::eTextureFloat
-									|| attrDesc.value.type == Parm::eTextureColor);
+				const bool isTextureAttr = attrDesc.value.type >= Parm::eTextureColor &&
+				                           attrDesc.value.type <= Parm::eTextureTransform;
 
 				if ( isTextureAttr
 					&& parm
@@ -656,7 +648,7 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 						pluginDesc.addAttribute(Attrs::PluginAttr(attrName, opPlugin));
 					}
 				}
-				else if (!attrDesc.linked_only) {
+				else if (!(attrDesc.flags & Parm::attrFlagLinkedOnly)) {
 					if (attrDesc.value.type == Parm::eRamp) {
 						static StringSet rampColorAsPluginList;
 						if (rampColorAsPluginList.empty()) {
@@ -668,9 +660,9 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 
 						Texture::exportRampAttribute(*this, pluginDesc, opNode,
 													 /* Houdini ramp attr */ parmName,
-													 /* V-Ray attr: colors */ attrDesc.value.defRamp.colors,
-													 /* V-Ray attr: pos    */ attrDesc.value.defRamp.positions,
-													 /* V-Ray attr: interp */ attrDesc.value.defRamp.interpolations,
+													 /* V-Ray attr: colors */ attrDesc.value.colorRampInfo.colors,
+													 /* V-Ray attr: pos    */ attrDesc.value.colorRampInfo.positions,
+													 /* V-Ray attr: interp */ attrDesc.value.colorRampInfo.interpolations,
 													 /* As color list not plugin */ asColorList,
 													 /* Remap to vray interpolations*/ remapInterp);
 
@@ -681,7 +673,7 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 						VRay::IntList    interpolations;
 						VRay::FloatList  positions;
 						VRay::FloatList  values;
-						VRay::FloatList *valuesPtr = attrDesc.value.defCurve.values.empty()
+						VRay::FloatList *valuesPtr = attrDesc.value.curveRampInfo.values.empty()
 													 ? nullptr
 													 : &values;
 
@@ -693,10 +685,10 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 											  /* Don't need handles */ false,
 											  /* Remap to vray interpolations*/ remapInterp);
 
-						pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.interpolations, interpolations));
-						pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.positions,      positions));
+						pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.curveRampInfo.interpolations, interpolations));
+						pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.curveRampInfo.positions,      positions));
 						if (valuesPtr) {
-							pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.defCurve.values,     values));
+							pluginDesc.addAttribute(Attrs::PluginAttr(attrDesc.value.curveRampInfo.values,     values));
 						}
 					}
 					else {
@@ -713,14 +705,14 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 {
 	bool res = false;
 
-	const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(pluginDesc.pluginID);
+	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID.c_str());
 	if (NOT(pluginInfo)) {
 		return res;
 	}
 
-	for (const auto &aIt : pluginInfo->attributes) {
-		const std::string    &attrName = aIt.first;
-		const Parm::AttrDesc &attrDesc = aIt.second;
+	FOR_CONST_IT (Parm::AttributeDescs, aIt, pluginInfo->attributes) {
+		const std::string    &attrName = aIt.key();
+		const Parm::AttrDesc &attrDesc = aIt.data();
 
 		if (!options.hasOption(attrName) ||
 			pluginDesc.contains(attrName))
@@ -729,7 +721,7 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 		}
 
 		Attrs::PluginAttr attr;
-		attr.paramName = attrDesc.attr;
+		attr.paramName = attrDesc.attr.ptr();
 
 		if (   attrDesc.value.type == Parm::eBool
 			|| attrDesc.value.type == Parm::eInt
@@ -739,15 +731,8 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 			attr.paramValue.valInt = options.getOptionI(attrName);
 		}
 		else if (attrDesc.value.type == Parm::eEnum) {
-			const Parm::EnumItem &enumItem = attrDesc.value.defEnumItems.at(0);
-			if (enumItem.valueType == Parm::EnumItem::EnumValueInt) {
-				attr.paramType = Attrs::PluginAttr::AttrTypeInt;
-				attr.paramValue.valInt = options.getOptionI(attrName);
-			}
-			else {
-				attr.paramType = Attrs::PluginAttr::AttrTypeString;
-				attr.paramValue.valString = options.getOptionS(attrName);
-			}
+			attr.paramType = Attrs::PluginAttr::AttrTypeInt;
+			attr.paramValue.valInt = options.getOptionI(attrName);
 		}
 		else if (   attrDesc.value.type == Parm::eFloat
 				 || attrDesc.value.type == Parm::eTextureFloat)
@@ -755,7 +740,7 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 			attr.paramType = Attrs::PluginAttr::AttrTypeFloat;
 			attr.paramValue.valFloat = options.getOptionF(attrName);
 
-			if (attrDesc.convert_to_radians) {
+			if (attrDesc.flags & Parm::attrFlagToRadians) {
 				attr.paramValue.valFloat *= Attrs::RAD_TO_DEG;
 			}
 		}
@@ -958,7 +943,7 @@ ReturnValue VRayExporter::exportSettings()
 	}
 
 	for (const auto &sp : RenderSettingsPlugins) {
-		const Parm::VRayPluginInfo *pluginInfo = Parm::GetVRayPluginInfo(sp);
+		const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(sp.c_str());
 		if (!pluginInfo) {
 			Log::getLog().error("Plugin \"%s\" description is not found!",
 								sp.c_str());
@@ -1052,7 +1037,7 @@ const Parm::SocketDesc* VRayExporter::getConnectedOutputType(OP_Node *op_node, c
 
 				const int &fromOutputIdx = fromOutput->getNodeOutputIndex();
 
-				if (fromOutputIdx < pluginInfo->outputs.size()) {
+				if (fromOutputIdx < pluginInfo->outputs.count()) {
 					return &pluginInfo->outputs[fromOutputIdx];
 				}
 			}
@@ -1369,19 +1354,18 @@ int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &
 			// Check if plugin has "out_intensity" output
 			bool hasOutIntensity = false;
 
-			const Parm::VRayPluginInfo *texPluginInfo = Parm::GetVRayPluginInfo(texture.getType());
+			const Parm::VRayPluginInfo *texPluginInfo = Parm::getVRayPluginInfo(texture.getType());
 			if (!texPluginInfo) {
 				Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 									opNode.getName().buffer(), texture.getType());
 				return false;
 			}
 
-			if (texPluginInfo->outputs.size()) {
-				for (const auto &sock : texPluginInfo->outputs) {
-					if (StrEq(sock.name.getToken(), "out_intensity")) {
-						hasOutIntensity = true;
-						break;
-					}
+			for (int i = 0; i < texPluginInfo->outputs.count(); ++i) {
+				const Parm::SocketDesc &sock = texPluginInfo->outputs[i];
+				if (VUtils::isEqual(sock.attrName, "out_intensity")) {
+					hasOutIntensity = true;
+					break;
 				}
 			}
 
@@ -1411,9 +1395,9 @@ int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &
 			if (texture) {
 				const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(&opNode, "displacement_tex_color");
 				if (fromSocketInfo
-				    && fromSocketInfo->type >= Parm::ParmType::eOutputColor
-				    && fromSocketInfo->type < Parm::ParmType::eUnknown) {
-					pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_color", texture, fromSocketInfo->name.getToken()));
+				    && fromSocketInfo->attrType >= Parm::ParmType::eOutputColor
+				    && fromSocketInfo->attrType < Parm::ParmType::eUnknown) {
+					pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_color", texture, fromSocketInfo->attrName.ptr()));
 				}
 				else {
 					pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_color", texture));
@@ -1421,20 +1405,21 @@ int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &
 				if (NOT(texFloat)) {
 					// Check if plugin has "out_intensity" output
 					bool hasOutIntensity = false;
-					const Parm::VRayPluginInfo *texPluginInfo = Parm::GetVRayPluginInfo(texture.getType());
+					const Parm::VRayPluginInfo *texPluginInfo = Parm::getVRayPluginInfo(texture.getType());
 					if (NOT(texPluginInfo)) {
 						Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 						                    opNode.getName().buffer(), texture.getType());
 						return OP::VRayNode::PluginResultError;
 					}
-					if (texPluginInfo->outputs.size()) {
-						for (const auto &sock : texPluginInfo->outputs) {
-							if (StrEq(sock.name.getToken(), "out_intensity")) {
-								hasOutIntensity = true;
-								break;
-							}
+
+					for (int i = 0; i < texPluginInfo->outputs.count(); ++i) {
+						const Parm::SocketDesc &sock = texPluginInfo->outputs[i];
+						if (VUtils::isEqual(sock.attrName, "out_intensity")) {
+							hasOutIntensity = true;
+							break;
 						}
 					}
+
 					// Wrap texture with TexOutput
 					if (NOT(hasOutIntensity)) {
 						Attrs::PluginDesc texOutputDesc(VRayExporter::getPluginName(texCol, "Out@"), "TexOutput");
@@ -1450,9 +1435,9 @@ int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &
 			if (texture) {
 				const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(&opNode, "displacement_tex_float");
 				if (fromSocketInfo
-				    && fromSocketInfo->type >= Parm::ParmType::eOutputColor
-				    && fromSocketInfo->type < Parm::ParmType::eUnknown) {
-					pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_float", texture, fromSocketInfo->name.getToken()));
+				    && fromSocketInfo->attrType >= Parm::ParmType::eOutputColor
+				    && fromSocketInfo->attrType < Parm::ParmType::eUnknown) {
+					pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_float", texture, fromSocketInfo->attrName.ptr()));
 				}
 				else {
 					pluginDesc.addAttribute(Attrs::PluginAttr("displacement_tex_float", texture));

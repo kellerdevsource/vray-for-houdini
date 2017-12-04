@@ -1,0 +1,20 @@
+{
+    name    TexRGBToHSV
+    label   "RGB To HSV"
+    parmtag { spare_category "RGB To HSV" }
+    parmtag { vray_plugin "TexRGBToHSV" }
+    parm {
+        name    "inRgb"
+        label   "RGB"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexRGBToHSV" }
+        parmtag { "vray_pluginattr" "inRgb" }
+        parmtag { "vray_type" "Texture" }
+    }
+#include "vfh_texture_default_output_color.ds"
+}

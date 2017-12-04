@@ -1,0 +1,564 @@
+{
+    name    LightDome
+    label   "Dome"
+    parmtag { spare_category "Dome" }
+    parmtag { vray_plugin "LightDome" }
+
+    parm {
+        name    "enabled"
+        label   "Enabled"
+        type    toggle
+        default { "1" }
+        help    "true if the light is casting light (turned on) and false otherwise; it only makes sense to use this parameter if it is animated, or if another object depends on this node but it must not be rendered"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "LightDome" }
+        parmtag { "vray_pluginattr" "enabled" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    groupsimple {
+        name    "folder_main"
+        label   "Main"
+        disablewhen "{ enabled == 0 }"
+        parm {
+            name    "dome_spherical"
+            label   "Dome Spherical"
+            type    toggle
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "dome_spherical" }
+            parmtag { "vray_type" "boolean" }
+        }
+        parm {
+            name    "invisible"
+            label   "Invisible"
+            type    toggle
+            default { "0" }
+            help    "True if the light is NOT directly visible from the camera and false otherwise."
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "invisible" }
+            parmtag { "vray_type" "boolean" }
+        }
+        parm {
+            name    "use_intensity_tex"
+            label   "Use Intensity Texture"
+            type    toggle
+            default { "0" }
+            help    "Enable to map intensity"
+            range   { 0 1 }
+            export  none
+        }
+        parm {
+            hidewhen  "{ use_intensity_tex == 1 }"
+            name    "intensity"
+            label   "Intensity"
+            type    float
+            default { "1" }
+            help    "Light intensity"
+            range   { 0 8 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "intensity" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            hidewhen  "{ use_intensity_tex == 0 }"
+            name    "intensity_tex"
+            label   "Intensity"
+            help  "A float texture that if present will override the intensity parameter"
+            type    file
+            default { "" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "oprelative" "." }
+            parmtag { "vray_linked_only" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "intensity_tex" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+        parm {
+            name  "use_dome_tex"
+            label "Use Dome Texture"
+            help  "Use Dome texture"
+            type  toggle
+            default { "1" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "use_dome_tex" }
+            parmtag { "vray_type" "boolean" }
+        }
+        parm {
+            hidewhen "{ use_dome_tex == 0 }"
+            name    "dome_tex"
+            label   "Dome Texture"
+            type    file
+            default { "" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "oprelative" "." }
+            parmtag { "vray_linked_only" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "dome_tex" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            hidewhen "{ use_dome_tex == 0 }"
+            name  "tex_resolution"
+            label "Texture Resolution"
+            type  integer
+            default { "1024" }
+            help  "The texture presampling resolution"
+            range { 0 2048 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "tex_resolution" }
+            parmtag { "vray_type" "int" }
+        }
+        parm {
+            hidewhen   "{ use_dome_tex == 0 }"
+            name  "tex_adaptive"
+            label "Texture Adaptivity"
+            type  float
+            default   { "1" }
+            help  "The adaptivity of the sampling to the texture brightness (0.0 - no adaptivity; 1.0 - full adaptivity"
+            range { 0 1 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "tex_adaptive" }
+            parmtag   { "vray_type" "float" }
+        }
+        parm {
+            hidewhen "{ use_dome_tex == 1 }"
+            name  "use_color_tex"
+            label "Use Color Texture"
+            help  "Use color texture"
+            type  toggle
+            default { "0" }
+        }
+        parm {
+            hidewhen "{ use_dome_tex == 1 } { use_color_tex == 1 } "
+            name    "color"
+            label   "Color"
+            help  "Color of the light"
+            type    color
+            size    3
+            default { "1" "1" "1" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "color" }
+            parmtag { "vray_type" "color" }
+        }
+        parm {
+            hidewhen "{ use_dome_tex == 1 } { use_color_tex == 0 } "
+            name  "color_tex"
+            label "Color"
+            help  "The color texture"
+            type  file
+            default { "" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_linked_only" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "color_tex" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "subdivs"
+            label   "Subdivs"
+            type    integer
+            default { "8" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "subdivs" }
+            parmtag { "vray_type" "int" }
+        }
+        parm {
+            name    "objectID"
+            label   "Object ID"
+            type    integer
+            default { "0" }
+            range   { 0 5 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "objectID" }
+            parmtag { "vray_type" "int" }
+        }
+        parm {
+            name "units"
+            label "Units"
+            type ordinal
+            help "Intensity units"
+            menu {
+              "0"   "Default"
+              "1"   "Lumens"
+              "2"   "Lm/m/m/sr"
+              "3"   "Watts"
+              "4"   "W/m/m/sr"
+            }
+            default { "0" }
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_pluginattr" "units" }
+            parmtag   { "vray_type" "enum" }
+        }
+        parm {
+            name    "use_global_light_level"
+            label   "Use Global Light Level"
+            type    toggle
+            default { "1" }
+            help    "true if the light should use the global light level setting"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "use_global_light_level" }
+            parmtag { "vray_type" "boolean" }
+        }
+    }
+
+    groupcollapsible {
+        name "folder_shadows"
+        label "Shadows"
+        disablewhen "{ enabled == 0 }"
+        parm {
+            name  "shadows"
+            label "Shadows"
+            type  toggle
+            default   { "1" }
+            help  "true if the light casts shadows and false otherwise"
+            range { 0 1 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "shadows" }
+            parmtag   { "vray_type" "boolean" }
+        }
+        parm {
+            disablewhen "{ shadows == 0 }"
+            name  "use_shadowColor_tex"
+            label "Use Shadow Color Texture"
+            type  toggle
+            default   { "0" }
+            help  "Enable to map shadow color"
+            range { 0 1 }
+            export    none
+        }
+        parm {
+            hidewhen "{ use_shadowColor_tex == 1 }"
+            disablewhen "{ shadows == 0 }"
+            name    "shadowColor"
+            label   "Color"
+            type    color
+            size    3
+            default { "0" "0" "0" }
+            help    "The shadow color. Anything but black is not physically accurate"
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "shadowColor" }
+            parmtag { "vray_type" "color" }
+        }
+        parm {
+            hidewhen "{ use_shadowColor_tex == 0 }"
+            disablewhen "{ shadows == 0 }"
+            name    "shadowColor_tex"
+            label   "Color"
+            type    file
+            default { "" }
+            help    "A color texture that if present will override the shadowColor parameter"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "oprelative" "." }
+            parmtag { "vray_linked_only" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "shadowColor_tex" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "shadowBias"
+            disablewhen "{ shadows == 0 }"
+            label   "Bias"
+            type    float
+            default { "0" }
+            help    "Shadow offset from the surface. Helps to prevent polygonal shadow artifacts on low-poly surfaces"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "shadowBias" }
+            parmtag { "vray_type" "float" }
+        }
+    }
+
+    groupcollapsible {
+        name "folder_advanced"
+        label "Advanced"
+        disablewhen "{ enabled == 0 }"
+        parm {
+            name  "affect_alpha"
+            label "Affect Alpha"
+            type  toggle
+            default   { "1" }
+            help  "true if the light appears in the alpha and false otherwise"
+            range { 0 1 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "affect_alpha" }
+            parmtag   { "vray_type" "boolean" }
+        }
+        parm {
+            name  "affectDiffuse"
+            label "Affect Diffuse"
+            type  toggle
+            default   { "1" }
+            help  "true if the light produces diffuse lighting and false otherwise"
+            range { 0 1 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "affectDiffuse" }
+            parmtag   { "vray_type" "boolean" }
+        }
+        parm {
+            name  "affectSpecular"
+            label "Affect Specular"
+            type  toggle
+            default   { "1" }
+            help  "true if the light produces specular hilights and false otherwise"
+            range { 0 1 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "affectSpecular" }
+            parmtag   { "vray_type" "boolean" }
+        }
+        parm {
+            name  "affectReflections"
+            label "Affect Reflections"
+            type  toggle
+            default   { "1" }
+            help  "true if the light appears in reflections and false otherwise"
+            range { 0 1 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "affectReflections" }
+            parmtag   { "vray_type" "boolean" }
+        }
+        parm {
+            name  "diffuse_contribution"
+            label "Diffuse Contribution"
+            type  float
+            disablewhen "{ affectDiffuse == 0 }"
+            default   { "1" }
+            help  "Diffuse contribution for the light"
+            range { 0 1 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "diffuse_contribution" }
+            parmtag   { "vray_type" "float" }
+        }
+        parm {
+            name  "specular_contribution"
+            label "Specular Contribution"
+            type  float
+            disablewhen "{ affectSpecular == 0 }"
+            default   { "1" }
+            help  "Specular contribution for the light"
+            range { 0 1 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "specular_contribution" }
+            parmtag   { "vray_type" "float" }
+        }
+        parm {
+            name  "nsamples"
+            label "MoBlur Nsamples"
+            type  integer
+            default   { "0" }
+            help  "Number of parameter samples for motion blur"
+            range { 0 10 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "nsamples" }
+            parmtag   { "vray_type" "int" }
+        }
+        parm {
+            name  "dome_targetRadius"
+            label "Dome Target Radius"
+            type  float
+            default   { "100" }
+            range { 0 200 }
+            help " Defines a sphere around the center of the dome light TOWARD which photons are fired. This radius should encompass all glass and metal surfaces that you want to create caustics"
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "dome_targetRadius" }
+            parmtag   { "vray_type" "float" }
+        }
+        parm {
+            name  "dome_emitRadius"
+            label "Dome Emit Radius"
+            type  float
+            default   { "150" }
+            range { 0 500 }
+            help " Defines a sphere around the center of the dome light FROM which photons are fired. This radius should encompass all geometry in the scene."
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "dome_emitRadius" }
+            parmtag   { "vray_type" "float" }
+        }
+        parm {
+            name  "dome_rayDistance"
+            label "Dome Ray Distance"
+            type  float
+            default   { "100000" }
+            range { 0 200000 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "dome_rayDistance" }
+            parmtag   { "vray_type" "float" }
+        }
+        parm {
+            name  "dome_rayDistanceMode"
+            label "Dome Ray Distance Mode"
+            type  integer
+            default   { "0" }
+            range { 0 10 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "dome_rayDistanceMode" }
+            parmtag   { "vray_type" "int" }
+        }
+        parm {
+            name  "cutoffThreshold"
+            label "Cut-off Threshold"
+            type  float
+            default   { "0.001" }
+            help  "Light cut-off threshold (speed optimization). If the light intensity for a point is below this threshold, the light will not be computed"
+            range { 0 0.1 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "cutoffThreshold" }
+            parmtag   { "vray_type" "float" }
+        }
+        parm {
+            name  "bumped_below_surface_check"
+            label "Bumped Normal Check"
+            type  toggle
+            default   { "0" }
+            help  "true if the bumped normal should be used to check if the light dir is below the surface"
+            range { 0 1 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "bumped_below_surface_check" }
+            parmtag   { "vray_type" "boolean" }
+        }
+        parm {
+            name  "useMIS"
+            label "Use Multiple Importance Sampling"
+            type  toggle
+            default   { "1" }
+            help  "This parameter is for debugging only. It should always be set to true in user scenes. When set to false, rendering quality is not optimal"
+            range { 0 1 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "useMIS" }
+            parmtag   { "vray_type" "boolean" }
+        }
+    }
+
+    groupcollapsible {
+        name "folder_gi"
+        label "GI"
+        disablewhen "{ enabled == 0 }"
+        parm {
+            name  "storeWithIrradianceMap"
+            label "Store With Irradiance Map"
+            type  toggle
+            default   { "0" }
+            help  "When this option is on and GI calculation is set to Irradiance map V-Ray will calculate the effects of this light and store them in the irradiance map. The result is that the irradiance map is computed more slowly but the rendering takes less time. You can also save the irradiance map and reuse it later."
+            range { 0 1 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "storeWithIrradianceMap" }
+            parmtag   { "vray_type" "boolean" }
+        }
+        parm {
+            name    "diffuseMult"
+            label   "Diffuse Multiplier"
+            type    float
+            default { "1" }
+            help    "Multiplier for the diffuse photons"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "diffuseMult" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "causticMult"
+            label   "Caustics Multiplier"
+            type    float
+            default { "1" }
+            help    "Multiplier for the caustic photons"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightDome" }
+            parmtag { "vray_pluginattr" "causticMult" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name  "photonSubdivs"
+            label "Photon Subdivs"
+            type  integer
+            default   { "500" }
+            help  "Determines the number of photons emitted by this light when calculating the Global Photon Map. 1000 subdivs equal 1 million photons."
+            range { 0 2000 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "photonSubdivs" }
+            parmtag   { "vray_type" "int" }
+        }
+        parm {
+            name  "causticSubdivs"
+            label "Caustics Subdivs"
+            type  integer
+            default   { "1000" }
+            help  "Determines the number of photons emitted by this light when calculating the Caustics Photon Map. 1000 subdivs equal 1 million photons."
+            range { 0 2000 }
+            export    none
+            parmtag   { "cook_dependent" "1" }
+            parmtag   { "vray_plugin" "LightDome" }
+            parmtag   { "vray_pluginattr" "causticSubdivs" }
+            parmtag   { "vray_type" "int" }
+        }
+    }
+
+}

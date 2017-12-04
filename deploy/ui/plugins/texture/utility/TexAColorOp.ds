@@ -1,0 +1,107 @@
+{
+    name    TexAColorOp
+    label   "Color Operations"
+    parmtag { spare_category "Color Operations" }
+    parmtag { vray_plugin "TexAColorOp" }
+    parm {
+        name    "mode"
+        label   "Output Mode"
+        type    ordinal
+        default { "0" }
+        help    "Which output should be considered for the 'Output'"
+        menu    {
+            "0" "Result A"
+            "1" "Result B"
+            "2" "Product"
+            "3" "Sum"
+            "4" "Difference"
+            "5" "Power"
+            "6" "Division"
+            "7" "Minimum"
+            "8" "Maximum"
+            "9" "Absolute Difference"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "mode" }
+        parmtag { "vray_type" "enum" }
+    }
+    parm {
+        name    "color_a"
+        label   "Color A"
+        type    color4
+        size    4
+        default { "1" "0" "0" "1" }
+        help    "The first color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "color_a" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "mult_a"
+        label   "Mult A"
+        type    float
+        default { "1" }
+        help    "Multiplier for the first color"
+        range   { 0 3 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "mult_a" }
+        invisible
+    }
+    parm {
+        name    "color_b"
+        label   "Color B"
+        type    color4
+        size    4
+        default { "0" "1" "0" "1" }
+        help    "The second color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "color_b" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "mult_b"
+        label   "Mult B"
+        type    float
+        default { "1" }
+        help    "Multiplier for the second color"
+        range   { 0 3 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "mult_b" }
+        invisible
+    }
+    parm {
+        name    "result_alpha"
+        label   "Result Alpha"
+        type    float
+        default { "1" }
+        help    "The alpha for the result; if not specified, the resulting alpha taken from the first color)"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "result_alpha" }
+        parmtag { "vray_type" "TextureFloat" }
+        invisible
+    }
+#include "vfh_texture_default_output_color.ds"
+#include "vfh_texture_defines.ds"
+    VFH_TEXTURE_OUTPUT(result_a)
+    VFH_TEXTURE_OUTPUT(result_b)
+    VFH_TEXTURE_OUTPUT(red)
+    VFH_TEXTURE_OUTPUT(green)
+    VFH_TEXTURE_OUTPUT(blue)
+    VFH_TEXTURE_OUTPUT(alpha)
+    VFH_TEXTURE_OUTPUT(difference)
+    VFH_TEXTURE_OUTPUT(division)
+    VFH_TEXTURE_OUTPUT(intensity)
+    VFH_TEXTURE_OUTPUT(maximum)
+    VFH_TEXTURE_OUTPUT(minimum)
+    VFH_TEXTURE_OUTPUT(power)
+    VFH_TEXTURE_OUTPUT(product)
+    VFH_TEXTURE_OUTPUT(sum)
+}

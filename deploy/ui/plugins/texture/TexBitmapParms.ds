@@ -1,0 +1,9 @@
+#include "vfh_texture_common.ds"
+
+parm {
+    NAMEM("bitmap")
+    label "Bitmap"
+    parmtag { "vray_pluginattr" "bitmap" }
+    parmtag { "vray_type" "Plugin" }
+    invisible
+}

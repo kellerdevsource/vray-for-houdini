@@ -1,8 +1,0 @@
-{
-    name	TexBitmap
-    label	"Image Texture"
-    parmtag	{ spare_category "Image Texture" }
-    parmtag	{ vray_plugin "TexBitmap" }
-
-#include "$VRAY_UI_DS_PATH/plugins/TexBitmapParms.ds"
-}

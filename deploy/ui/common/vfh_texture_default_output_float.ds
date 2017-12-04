@@ -1,0 +1,11 @@
+parm {
+    name "output"
+    label "Output"
+    type float
+    parmtag { "cook_dependent" "0" }
+    parmtag { "vray_label" "output" }
+    parmtag { "vray_pluginattr" "" }
+    parmtag { "vray_type" "OutputTextureFloat" }
+    export none
+    invisible
+}

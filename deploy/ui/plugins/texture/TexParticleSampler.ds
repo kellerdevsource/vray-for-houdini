@@ -1,0 +1,38 @@
+{
+    name    TexParticleSampler
+    label   "Particle Sampler"
+    parmtag { spare_category "Particle Sampler" }
+    parmtag { vray_plugin "TexParticleSampler" }
+    parm {
+        name    "def_color_tex"
+        label   "Default Color"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexParticleSampler" }
+        parmtag { "vray_pluginattr" "def_color_tex" }
+        parmtag { "vray_type" "Texture" }
+    }
+#include "vfh_texture_defines.ds"
+    VFH_TEXTURE_OUTPUT(rgbPP)
+    VFH_TEXTURE_OUTPUT(incandescencePP)
+    VFH_TEXTURE_OUTPUT(acceleration)
+    VFH_TEXTURE_OUTPUT(worldVelocity)
+    VFH_TEXTURE_OUTPUT(userVector1PP)
+    VFH_TEXTURE_OUTPUT(userVector2PP)
+    VFH_TEXTURE_OUTPUT(userVector3PP)
+    VFH_TEXTURE_OUTPUT(userVector4PP)
+    VFH_TEXTURE_OUTPUT(userVector5PP)
+    VFH_TEXTURE_OUTPUT_FLOAT(age)
+    VFH_TEXTURE_OUTPUT_FLOAT(lifespanPP)
+    VFH_TEXTURE_OUTPUT_FLOAT(opacityPP)
+    VFH_TEXTURE_OUTPUT_FLOAT(userScalar1PP)
+    VFH_TEXTURE_OUTPUT_FLOAT(userScalar2PP)
+    VFH_TEXTURE_OUTPUT_FLOAT(userScalar3PP)
+    VFH_TEXTURE_OUTPUT_FLOAT(userScalar4PP)
+    VFH_TEXTURE_OUTPUT_FLOAT(userScalar5PP)
+}
+

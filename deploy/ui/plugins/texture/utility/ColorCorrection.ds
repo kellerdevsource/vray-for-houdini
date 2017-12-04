@@ -1,0 +1,397 @@
+{
+    name    ColorCorrection
+    label   "Color Correction"
+    parmtag { spare_category "Color Correction" }
+    parmtag { vray_plugin "ColorCorrection" }
+
+#include "vfh_texture_default_output_color.ds"
+
+    parm {
+        name    "source_color"
+        label   "Source Color"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "Source color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "source_color" }
+        parmtag { "vray_type" "acolor" }
+    }
+
+    parm {
+        name    "texture_map"
+        label   "Texture Map"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "The texture being color corrected"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "texture_map" }
+        parmtag { "vray_type" "Texture" }
+    }
+
+    parm {
+        name    "rewire_red"
+        label   "Rewire Red"
+        type    ordinal
+        default { "0" }
+        help    ""
+        menu    {
+            "0"  "Red"
+            "1"  "Green"
+            "2"  "Blue"
+            "3"  "Alpha"
+            "4"  "Red Invert"
+            "5"  "Green Invert"
+            "6"  "Blue Invert"
+            "7"  "Alpha Invert"
+            "8"  "Mono"
+            "9"  "One"
+            "10" "Zero"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "rewire_red" }
+        parmtag { "vray_type" "enum" }
+    }
+
+    parm {
+        name    "rewire_green"
+        label   "Rewire Green"
+        type    ordinal
+        default { "1" }
+        help    ""
+        menu    {
+            "0"  "Red"
+            "1"  "Green"
+            "2"  "Blue"
+            "3"  "Alpha"
+            "4"  "Red Invert"
+            "5"  "Green Invert"
+            "6"  "Blue Invert"
+            "7"  "Alpha Invert"
+            "8"  "Mono"
+            "9"  "One"
+            "10" "Zero"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "rewire_green" }
+        parmtag { "vray_type" "enum" }
+    }
+
+    parm {
+        name    "rewire_blue"
+        label   "Rewire Blue"
+        type    ordinal
+        default { "2" }
+        help    ""
+        menu    {
+            "0"  "Red"
+            "1"  "Green"
+            "2"  "Blue"
+            "3"  "Alpha"
+            "4"  "Red Invert"
+            "5"  "Green Invert"
+            "6"  "Blue Invert"
+            "7"  "Alpha Invert"
+            "8"  "Mono"
+            "9"  "One"
+            "10" "Zero"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "rewire_blue" }
+        parmtag { "vray_type" "enum" }
+    }
+
+    parm {
+        name    "rewire_alpha"
+        label   "Rewire Alpha"
+        type    ordinal
+        default { "3" }
+        help    ""
+        menu    {
+            "0"  "Red"
+            "1"  "Green"
+            "2"  "Blue"
+            "3"  "Alpha"
+            "4"  "Red Invert"
+            "5"  "Green Invert"
+            "6"  "Blue Invert"
+            "7"  "Alpha Invert"
+            "8"  "Mono"
+            "9"  "One"
+            "10" "Zero"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "rewire_alpha" }
+        parmtag { "vray_type" "enum" }
+    }
+
+    parm {
+        name    "hue_shift"
+        label   "Hue Shift"
+        type    float
+        default { "0" }
+        help    "added to the color hue"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "hue_shift" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "saturation"
+        label   "Saturation"
+        type    float
+        default { "0" }
+        help    "added to the color saturation"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "saturation" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "hue_tint"
+        label   "Hue Tint"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "Hue tint"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "hue_tint" }
+        parmtag { "vray_type" "acolor" }
+    }
+
+    parm {
+        name    "tint_strength"
+        label   "Tint Strength"
+        type    float
+        default { "0" }
+        help    "default = 0"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "tint_strength" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "brightness"
+        label   "Brightness"
+        type    float
+        default { "0" }
+        help    "default = 0.0 - value is added to the texture brightness"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "brightness" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "contrast"
+        label   "Contrast"
+        type    float
+        default { "1" }
+        help    "default = 1.0f"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "contrast" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "lightness_mode"
+        label   "Lightness Mode"
+        type    ordinal
+        default { "0" }
+        help    "Lightness mode"
+        menu    {
+            "0" "Standard"
+            "1" "Advanced"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "lightness_mode" }
+        parmtag { "vray_type" "enum" }
+    }
+
+    parm {
+        name    "adv_brightness"
+        label   "Adv Brightness"
+        type    float
+        default { "1" }
+        help    "Color multiplier"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "adv_brightness" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "adv_contrast"
+        label   "Adv Contrast"
+        type    float
+        default { "1" }
+        help    "Color contrast"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "adv_contrast" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "adv_base"
+        label   "Adv Base"
+        type    float
+        default { "1" }
+        help    "Contrast base"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "adv_base" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "adv_offset"
+        label   "Adv Offset"
+        type    float
+        default { "0" }
+        help    "Color offset"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "adv_offset" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "adv_use_red"
+        label   "Adv Use Red"
+        type    toggle
+        default { "0" }
+        help    "true to use the red component ov the adv_rgb_* parameters"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "adv_use_red" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    parm {
+        name    "adv_use_green"
+        label   "Adv Use Green"
+        type    toggle
+        default { "0" }
+        help    "true to use the green component ov the adv_rgb_* parameters"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "adv_use_green" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    parm {
+        name    "adv_use_blue"
+        label   "Adv Use Blue"
+        type    toggle
+        default { "0" }
+        help    "true to use the blue component ov the adv_rgb_* parameters"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "adv_use_blue" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    parm {
+        name    "adv_rgb_brightness"
+        label   "Adv Rgb Brightness"
+        type    color
+        size    3
+        default { "1" "1" "1" }
+        help    "Color multiplier rgb"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "adv_rgb_brightness" }
+        parmtag { "vray_type" "color" }
+    }
+
+    parm {
+        name    "adv_rgb_contrast"
+        label   "Adv Rgb Contrast"
+        type    color
+        size    3
+        default { "1" "1" "1" }
+        help    "Color contrast rgb"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "adv_rgb_contrast" }
+        parmtag { "vray_type" "color" }
+    }
+
+    parm {
+        name    "adv_rgb_base"
+        label   "Adv Rgb Base"
+        type    color
+        size    3
+        default { "1" "1" "1" }
+        help    "Contrast base rgb"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "adv_rgb_base" }
+        parmtag { "vray_type" "color" }
+    }
+
+    parm {
+        name    "adv_rgb_offset"
+        label   "Adv Rgb Offset"
+        type    color
+        size    3
+        default { "0" "0" "0" }
+        help    "Color offset rgb"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "ColorCorrection" }
+        parmtag { "vray_pluginattr" "adv_rgb_offset" }
+        parmtag { "vray_type" "color" }
+    }
+}

@@ -1,0 +1,395 @@
+{
+    name    BRDFScanned
+    label   "Scanned"
+    parmtag { spare_category "Scanned" }
+    parmtag { vray_plugin "BRDFScanned" }
+
+#include "vfh_brdf_common.ds"
+
+    parm {
+        name    "twoside"
+        label   "Two Sided"
+        type    toggle
+        default { "0" }
+        help    "Same as two sided in the standard material"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+    }
+
+    group {
+    name    "folder1"
+    label   "Common"
+
+    parm {
+        name    "file"
+        label   "File"
+        type    file
+        default { "" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "filechooser_pattern" "*.vrscan" }
+        parmtag { "vray_plugin" "BRDFScanned" }
+        parmtag { "vray_pluginattr" "file" }
+        parmtag { "vray_type" "string" }
+    }
+    parm {
+        name    "tiling_factor"
+        label   "Tiling Factor"
+        type    float
+        default { "1" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFScanned" }
+        parmtag { "vray_pluginattr" "tiling_factor" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "ccmult"
+        label   "Clear Coat Mult"
+        type    float
+        default { "1" }
+        help    "Clear Coat Multiplier"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFScanned" }
+        parmtag { "vray_pluginattr" "ccmult" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+    parm {
+        name    "paintcolor"
+        label   "Paint Color"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "Paint replacement color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFScanned" }
+        parmtag { "vray_pluginattr" "paintcolor" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "filtercolor"
+        label   "Filter Color"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "Filter color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFScanned" }
+        parmtag { "vray_pluginattr" "filtercolor" }
+        parmtag { "vray_type" "Texture" }
+    }
+    }
+
+    group {
+    name    "folder1_1"
+    label   "Advanced"
+    parm {
+        name    "gamma"
+        label   "Gamma"
+        type    float
+        default { "1" }
+        help    "Gamma correction"
+        range   { 0 2.2 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+    }
+    parm {
+        name    "saturation"
+        label   "Saturation"
+        type    float
+        default { "1" }
+        range   { 0 2 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+    }
+    parm {
+        name    "depth_mult"
+        label   "Depth Mult"
+        type    float
+        default { "1" }
+        help    "Displacement/paralax multiplier"
+        range   { 0 2 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+    }
+    parm {
+        name    "filter"
+        label   "Tint"
+        type    color
+        size    3
+        default { "1" "1" "1" }
+        help    "General result multiplier (tint)"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+    }
+    parm {
+        name    "bumpmul"
+        label   "Bump Mult"
+        type    float
+        default { "1" }
+        help    "Bump multiplier for the inclined views"
+        range   { 0 2 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+    }
+    parm {
+        name    "bumpstart"
+        label   "Bump Start"
+        type    float
+        default { "0" }
+        help    "The z value of the view vector below which bump is gradualy applied"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+    }
+    parm {
+        name    "ccbump"
+        label   "Clear Coat Bump"
+        type    float
+        default { "1" }
+        help    "Used to make the clear coat not perfect"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+    }
+    parm {
+        name    "ccior"
+        label   "Clear Coat IOR"
+        type    float
+        default { "1" }
+        help    "The clear coat ior, used for carpaints and other materials with thin refractive layer"
+        range   { 0.01 6 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+    }
+    parm {
+        name    "cchlight"
+        label   "Clear Coat Highlights"
+        type    toggle
+        default { "1" }
+        help    "The clear coat highlights"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+    }
+    parm {
+        name    "map_channel"
+        label   "Map Channel"
+        type    integer
+        default { "0" }
+        help    "The mapping channel"
+        range   { 0 3 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+    }
+
+    groupsimple {
+        name "folder_options"
+        label "Options"
+        parm {
+            name    "plain"
+            label   "Plain Materials"
+            type    ordinal
+            default { "0" }
+            help    "This option modifies the rendering in order to improve the result for materials without large details"
+            menu    {
+                "0" "None"
+                "1" "Average BRDF"
+                "2" "Average Isotropic BRDF"
+                "3" "Scramble"
+            }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name    "scramble_size"
+            label   "Scramble Size"
+            type    float
+            default { "0.066" }
+            help    "Used when the plain option is set to PL_SCRAMBLE, determines the size of the pieces that are continuous in the uv space, measured in cm"
+            range   { 0 0.1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            hidewhen "{ plain != 3}"
+        }
+        parm {
+            name    "scene_scale"
+            label   "Scene Scale"
+            type    float
+            default { "100" }
+            help    "The size of one scene unit in cm"
+            range   { 0 1000 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "multdirect"
+            label   "Direct Mult"
+            type    float
+            default { "1" }
+            help    "Multiplier for direct light"
+            range   { 0 2 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "multrefl"
+            label   "Reflection Mult"
+            type    float
+            default { "1" }
+            help    "Multiplier for reflected light"
+            range   { 0 2 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "multgi"
+            label   "Gi Mult"
+            type    float
+            default { "1" }
+            help    "Multiplier for GI light"
+            range   { 0 2 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "transparency_mult"
+            label   "Transparency Mult"
+            type    float
+            default { "1" }
+            help    "Multiplies the transparency (only the transparency, the translucency remains!)"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "unf_refl"
+            label   "Sampling Type"
+            type    ordinal
+            default { "0" }
+            help    "Uniform reflections distribution"
+            menu    {
+                "0" "Importance Sampling"
+                "1" "Uniform Sampling"
+            }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_pluginattr" "unf_refl" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name    "trace_depth"
+            label   "Trace Depth"
+            type    integer
+            default { "-1" }
+            help    "The maximum reflection depth limit (-1 is controlled by the global options)"
+            range   { -1 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "cutoff"
+            label   "Cutoff"
+            type    float
+            default { "0.01" }
+            help    "Stop of the indirect ray if the total weight is below this value"
+            range   { 0 0.1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "subdivs"
+            label   "Subdivs"
+            type    integer
+            default { "8" }
+            help    "The reflection rays count"
+            range   { 0 16 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "retrace"
+            label   "Retrace"
+            type    float
+            default { "0" }
+            help    "The minimal path length of a reflected ray that allows to use GI, if the path is shorter 'fear' ray tracing is used"
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "no_prim_gi"
+            label   "Don't use GI for Primary Rays"
+            type    toggle
+            default { "1" }
+            help    "The primary rays are rendered without using the GI engine (better acuracity, lower speed)"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "displace"
+            label   "Displace"
+            type    toggle
+            default { "0" }
+            help    "Edge displacement, used to prevent the flat appearance of the edges"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "no_transparency"
+            label   "No Transparency"
+            type    toggle
+            default { "0" }
+            help    "Force opaque rendering even if backside lighting is present"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "dome"
+            label   "Dome"
+            type    toggle
+            default { "0" }
+            help    "Prevent double lighting by direct and reflection rays"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
+            name    "disablewmap"
+            label   "Disable Enlargement"
+            type    toggle
+            default { "0" }
+            help    "Disable use of the enlargement, directly the original small sample is used for rendering"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    }
+
+
+}

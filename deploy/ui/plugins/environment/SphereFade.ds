@@ -1,0 +1,43 @@
+{
+    name	SphereFade
+    label	"Sphere Fade"
+    parmtag	{ spare_category "Sphere Fade" }
+    parmtag	{ vray_plugin "SphereFade" }
+    parm {
+	name	"empty_color"
+	label	"Empty Color"
+	type	color
+	size	3
+	default	{ "0.5" "0.5" "0.5" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SphereFade" }
+	parmtag	{ "vray_pluginattr" "empty_color" }
+	parmtag	{ "vray_type" "color" }
+    }
+    parm {
+	name	"affect_alpha"
+	label	"Affect Alpha"
+	type	toggle
+	default	{ "0" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SphereFade" }
+	parmtag	{ "vray_pluginattr" "affect_alpha" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+    parm {
+	name	"falloff"
+	label	"Falloff"
+	type	float
+	default	{ "0.2" }
+	range	{ 0 64 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "SphereFade" }
+	parmtag	{ "vray_pluginattr" "falloff" }
+	parmtag	{ "vray_type" "float" }
+    }
+}

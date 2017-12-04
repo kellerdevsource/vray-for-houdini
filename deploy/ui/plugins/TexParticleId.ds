@@ -1,6 +1,0 @@
-{
-    name	TexParticleId
-label	"Particle ID"
-parmtag	{ spare_category "Particle ID" }
-parmtag	{ vray_plugin "TexParticleId" }
-}

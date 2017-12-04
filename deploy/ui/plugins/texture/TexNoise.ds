@@ -1,0 +1,253 @@
+{
+    name    TexNoise
+    label   "Noise"
+    parmtag { spare_category "Noise" }
+    parmtag { vray_plugin "TexNoise" }
+
+    groupsimple {
+        name "VfhTexMain"
+        label "Settings"
+        parm {
+            name    "noiseType"
+            label   "Type"
+            type    string
+            help    "Noise type"
+            menu    {
+                "0" "Noise"
+                "1" "Perlin Noise"
+                "2" "Inflected Perlin Noise"
+                "3" "Marble (With Perlin)"
+            }
+            default { "0" }
+            parmtag { "vray_pluginattr" "noiseType" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name    "dimensions"
+            label   "Dimensions"
+            type    string
+            help    "Two or Three dimensional noise"
+            menu    {
+                "0"    "2D"
+                "1"    "3D"
+            }
+            default { "0" }
+            parmtag { "vray_pluginattr" "dimensions" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name    "color1"
+            label   "Color A"
+            type    color
+            size    3
+            default { "0" "0" "0" }
+            parmtag { "vray_pluginattr" "color1" }
+            parmtag { "vray_type" "color" }
+            invisible
+        }
+        parm {
+            name    "color1_tex"
+            label   "Color A"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            parmtag { "vray_pluginattr" "color1_tex" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "color1_tex_mult"
+            label   "Color A Mult"
+            type    float
+            default { "1" }
+            parmtag { "vray_pluginattr" "color1_tex_mult" }
+            parmtag { "vray_type" "float" }
+            invisible
+        }
+        parm {
+            name    "color2"
+            label   "Color B"
+            type    color
+            size    3
+            default { "1" "1" "1" }
+            parmtag { "vray_pluginattr" "color2" }
+            parmtag { "vray_type" "color" }
+            invisible
+        }
+        parm {
+            name    "color2_tex"
+            label   "Color B"
+            type    color4
+            size    4
+            default { "1" "1" "1" "1" }
+            parmtag { "vray_pluginattr" "color2_tex" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "color2_tex_mult"
+            label   "Color B Mult"
+            type    float
+            default { "1" }
+            parmtag { "vray_pluginattr" "color2_tex_mult" }
+            parmtag { "vray_type" "float" }
+            invisible
+        }
+        parm {
+            name    "amplitude1"
+            label   "Amplitude"
+            type    float
+            default { "1" }
+            help    "The starting amplitude"
+            parmtag { "vray_pluginattr" "amplitude1" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "threshold"
+            label   "Threshold"
+            type    float
+            default { "0" }
+            help    "Value added to the noise function, noise function values above 1.0 are clamped"
+            parmtag { "vray_pluginattr" "threshold" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+        parm {
+            name    "amplitude_mult"
+            label   "Amplitude Mult"
+            type    float
+            default { "1" }
+            parmtag { "vray_pluginattr" "amplitude_mult" }
+            parmtag { "vray_type" "float" }
+            invisible
+        }
+        parm {
+            name    "persistence"
+            label   "Amplitude Decay"
+            type    float
+            default { "2" }
+            help    "amplitude(i+1) = amplitude(i) / persistence"
+            parmtag { "vray_pluginattr" "persistence" }
+            parmtag { "vray_type" "float" }
+            invisible
+        }
+        parm {
+            name    "amplitude_ratio"
+            label   "Amplitude Ratio"
+            type    float
+            default { "1" }
+            help    "amplitude(i+1) = amplitude(i) * amplitude_ratio"
+            parmtag { "vray_pluginattr" "amplitude_ratio" }
+            parmtag { "vray_type" "float" }
+            invisible
+        }
+
+        parm {
+            name    "frequency1"
+            label   "Frequency"
+            type    float
+            default { "3" }
+            help    "The starting frequency"
+            parmtag { "vray_pluginattr" "frequency1" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "frequency_ratio"
+            label   "Lacunarity"
+            type    float
+            default { "2.0123" }
+            help    "frequency(i+1) = frequency(i) * frequency_ratio"
+            parmtag { "vray_pluginattr" "frequency_ratio" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "frequency_mult"
+            label   "Frequency Mult"
+            type    float
+            default { "0.001" }
+            parmtag { "vray_pluginattr" "frequency_mult" }
+            parmtag { "vray_type" "float" }
+            invisible
+        }
+        parm {
+            name    "octaves"
+            label   "Octaves"
+            type    integer
+            default { "3" }
+            parmtag { "vray_pluginattr" "octaves" }
+            parmtag { "vray_type" "int" }
+        }
+        parm {
+            name    "time"
+            label   "Time"
+            type    float
+            default { "0" }
+            help    "The time of the noise, this will act as a third or fourth dimension to the noise generating function"
+            parmtag { "vray_pluginattr" "time" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "inflection"
+            label   "Inflection"
+            type    toggle
+            default { "0" }
+            help    "Inflection"
+            parmtag { "vray_pluginattr" "inflection" }
+            parmtag { "vray_type" "int" }
+        }
+        parm {
+            name    "clamp"
+            label   "Clamp"
+            type    toggle
+            default { "1" }
+            parmtag { "vray_pluginattr" "clamp" }
+            parmtag { "vray_type" "boolean" }
+        }
+        parm {
+            name    "implode"
+            label   "Implode"
+            type    float
+            default { "0" }
+            help    "Amount of implode performed on the UVW coordinates"
+            parmtag { "vray_pluginattr" "implode" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+        parm {
+            name    "implode_center"
+            label   "Implode Center"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            help    "The center of the implode effect"
+            parmtag { "vray_pluginattr" "implode_center" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "origin"
+            label   "Origin"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            help    "Translation for the noise UVW coordinates"
+            parmtag { "vray_pluginattr" "origin" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "scale"
+            label   "Scale"
+            type    color4
+            size    4
+            default { "0.01" "0.01" "0.01" "1" }
+            help    "Scale for the noise UVW coordinates"
+            parmtag { "vray_pluginattr" "scale" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "wrap"
+            label   "Wrap"
+            type    toggle
+            default { "1" }
+            parmtag { "vray_pluginattr" "wrap" }
+            parmtag { "vray_type" "boolean" }
+        }
+    }
+#define VFH_USE_3DMAPPING
+#include "vfh_texture_common.ds"
+}

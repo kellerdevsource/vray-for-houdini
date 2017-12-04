@@ -1,0 +1,339 @@
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
+
+groupsimple {
+    name "folder_rt_shading"
+    label "Shading"
+
+    parm {
+        name    "SettingsRTEngine_trace_depth"
+        label   "Trace Depth"
+        type    integer
+        default { "5" }
+        help    "Maximum trace depth for reflections/refractions etc"
+        help    "Maximum trace depth for reflections/refractions etc"
+        range   { 0 64 }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "trace_depth" }
+        parmtag { "vray_type" "int" }
+    }
+
+    parm {
+        name    "SettingsRTEngine_gi_depth"
+        label   "GI Depth"
+        type    integer
+        default { "3" }
+        help    "Maximum trace depth for GI"
+        range   { 0 64 }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "gi_depth" }
+        parmtag { "vray_type" "int" }
+    }
+}
+
+groupsimple {
+    name "folder_rt_rendering"
+    label "Rendering"
+
+    parm {
+        name    "SettingsRTEngine_max_render_time"
+        label   "Max. Render Time (min)"
+        type    float
+        default { "0" }
+        help    "Max render time (0 = inf)"
+        range   { 0 64 }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "max_render_time" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "SettingsRTEngine_max_sample_level"
+        label   "Max. Paths Per Pixel"
+        type    integer
+        default { "0" }
+        help    "Max sample level (0 = inf)"
+        range   { 0 64 }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "max_sample_level" }
+        parmtag { "vray_type" "int" }
+    }
+
+    parm {
+        name    "SettingsRTEngine_noise_threshold"
+        label   "Max. Noise"
+        type    float
+        default { "0.001" }
+        help    "Noise threshold for the image sampler (0 = inf)"
+        range   { 0 64 }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "noise_threshold" }
+        parmtag { "vray_type" "float" }
+    }
+
+    VFH_UI_PARM_TOGGLE("SettingsRTEngine_auto", "Auto. Settings", "Set predefined optimal defaults depending on render mode (IPR / Production)", 1)
+}
+
+groupsimple {
+    name "folder_rt_performace"
+    label "Performance"
+
+    VFH_PLUGIN_PARM_TOGGLE("SettingsRTEngine", "SettingsRTEngine_low_gpu_thread_priority", "Low GPU thread priority", "When true, RT GPU tries to utilize the GPUs with attached displays less.", 1)
+
+    parm {
+        name    "SettingsRTEngine_undersampling"
+        label   "Undersampling"
+        type    integer
+        default { "4" }
+        help    "Non-zero to use undersampling, 0 otherwise. The value specifies the blur resolution. Value of n means 1/(2^n) initial resolution in each dimension."
+        range   { 0 5 }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "undersampling" }
+        parmtag { "vray_type" "int" }
+    }
+
+    parm {
+        name    "SettingsRTEngine_progressive_samples_per_pixel"
+        label   "Progressive RPP"
+        type    integer
+        default { "1" }
+        help    "Progressive increase for samples_per_pixel (from 1 to real value). Use this for faster feadback"
+        range   { 1 10 }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "progressive_samples_per_pixel" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    groupsimple {
+        name "folder_rt_cpu_settings"
+        label "CPU settings"
+        hidewhen " { render_rt_mode != 0 render_render_mode != 0 }"
+
+        parm {
+            name    "SettingsRTEngine_cpu_bundle_size"
+            label   "Ray Bundle Size"
+            type    integer
+            default { "128" }
+            help    "Number of samples to transfer over the network for RT-CPU"
+            range   { 0 64 }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "SettingsRTEngine" }
+            parmtag { "vray_pluginattr" "cpu_bundle_size" }
+            parmtag { "vray_type" "int" }
+        }
+
+        parm {
+            name    "SettingsRTEngine_cpu_samples_per_pixel"
+            label   "Rays Per Pixel"
+            type    integer
+            default { "4" }
+            help    "Number of samples per pixel for RT-CPU"
+            range   { 0 64 }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "SettingsRTEngine" }
+            parmtag { "vray_pluginattr" "cpu_samples_per_pixel" }
+            parmtag { "vray_type" "int" }
+        }
+    }
+
+    groupsimple {
+        name "folder_rt_gpu_settings"
+        label "GPU Settings"
+        hidewhen " { render_rt_mode == 0 render_render_mode == 0 }"
+
+        parm {
+            name    "SettingsRTEngine_gpu_bundle_size"
+            label   "Ray Bundle Size"
+            type    integer
+            default { "128" }
+            help    "Number of samples to transfer over the network for RT-GPU"
+            range   { 0 64 }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "SettingsRTEngine" }
+            parmtag { "vray_pluginattr" "gpu_bundle_size" }
+            parmtag { "vray_type" "int" }
+        }
+
+        parm {
+            name    "SettingsRTEngine_gpu_samples_per_pixel"
+            label   "Rays Per Pixel"
+            type    integer
+            default { "1" }
+            help    "Number of samples per pixel for RT-GPU"
+            range   { 0 64 }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "SettingsRTEngine" }
+            parmtag { "vray_pluginattr" "gpu_samples_per_pixel" }
+            parmtag { "vray_type" "int" }
+        }
+
+        parm {
+            label   "Resize Textures"
+            help    "Textures transfer mode for the GPU"
+            name    "SettingsRTEngine_opencl_resizeTextures"
+            type    string
+            menu    {
+                "0" "Transfer \"As Is\" (Don't Resize, Don't Use Paging)"
+                "1" "Resize Textures"
+                "2" "Use Texture Paging (Out-Of-Core Textures, CUDA Only)"
+            }
+            default { "1" }
+            parmtag { "vray_pluginattr" "opencl_resizeTextures" }
+            parmtag { "vray_type" "enum" }
+        }
+
+        parm {
+            name    "SettingsRTEngine_opencl_textureFormat"
+            label   "Texture Format"
+            type    ordinal
+            default { "1" }
+            help    "Format for the textures on the GPU"
+            menu    {
+                "0" "32-Bit (Float)"
+                "1" "16-Bit (Half Float)"
+                "2" "8-Bit"
+            }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "SettingsRTEngine" }
+            parmtag { "vray_pluginattr" "opencl_textureFormat" }
+            parmtag { "vray_type" "enum" }
+        }
+
+        parm {
+            name    "SettingsRTEngine_opencl_texsize"
+            label   "Texture Size"
+            type    integer
+            default { "512" }
+            help    "OpenCL Single Kernel maximum texture size - bigger textures are scaled to fit this size"
+            range   { 0 64 }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "SettingsRTEngine" }
+            parmtag { "vray_pluginattr" "opencl_texsize" }
+            parmtag { "vray_type" "int" }
+        }
+    }
+
+    parm {
+        name    "SettingsRTEngine_min_draw_interval"
+        label   "Min. Draw Interval"
+        type    integer
+        invisible
+        default { "0" }
+        help    "Min time, in milliseconds, between image updates (0=show all frames)"
+        range   { 0 10 }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "min_draw_interval" }
+        parmtag { "vray_type" "int" }
+    }
+
+    parm {
+        name    "SettingsRTEngine_max_draw_interval"
+        label   "Max. Draw Interval"
+        type    integer
+        invisible
+        default { "0" }
+        help    "Max time, in milliseconds, between (partial) image updates (0=disable partial image updates)"
+        range   { 0 10 }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "max_draw_interval" }
+        parmtag { "vray_type" "int" }
+    }
+}
+
+
+groupsimple {
+    name "folder_rt_options"
+    label "Options"
+    invisible
+
+    parm {
+        name    "SettingsRTEngine_coherent_tracing"
+        label   "Coherent Tracing"
+        type    toggle
+        default { "0" }
+        help    "true to enable coherent tracing of gi/reflections/refractions etc"
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "coherent_tracing" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    parm {
+        name    "SettingsRTEngine_disable_render_elements"
+        label   "Disable Render Elements"
+        type    toggle
+        default { "0" }
+        help    "Produce only RGBA"
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "disable_render_elements" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    parm {
+        name    "SettingsRTEngine_enable_mask"
+        label   "Show AA Mask"
+        type    toggle
+        default { "0" }
+        help    "Show AA mask"
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "enable_mask" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    parm {
+        name    "SettingsRTEngine_stereo_mode"
+        label   "Enable Stereo"
+        type    toggle
+        default { "0" }
+        help    "Enable side-by-side stereo rendering"
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "stereo_mode" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    parm {
+        name    "SettingsRTEngine_stereo_eye_distance"
+        label   "Stereo Eye Distance"
+        type    float
+        hidewhen " { SettingsRTEngine_stereo_mode == 0} "
+        default { "0.065" }
+        help    "Distance between the two cameras for stereo mode"
+        disablewhen "{ SettingsRTEngine_stereo_mode != 1 }"
+        range   { 0 64 }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "stereo_eye_distance" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name "SettingsRTEngine_stereo_focus"
+        label "Stereo Focus Mode"
+        type string
+        help "Focus mode"
+        menu {
+            "0" "None"
+            "1" "Rotation"
+            "2" "Shear"
+        }
+        default { "2" }
+        hidewhen "{ SettingsRTEngine_stereo_mode == 0 }"
+        disablewhen "{ SettingsRTEngine_stereo_mode != 1 }"
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_enumkeys" "0,1,2" }
+        parmtag { "vray_plugin" "SettingsRTEngine" }
+        parmtag { "vray_pluginattr" "stereo_focus" }
+        parmtag { "vray_type" "int" }
+    }
+}

@@ -1,6 +1,0 @@
-{
-    name	TransformToTex
-label	"Transform To Tex"
-parmtag	{ spare_category "Transform To Tex" }
-parmtag	{ vray_plugin "TransformToTex" }
-}

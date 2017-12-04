@@ -1,0 +1,63 @@
+{
+    name    TexGrid
+    label   "Grid"
+    parmtag { spare_category "Grid" }
+    parmtag { vray_plugin "TexGrid" }
+    groupsimple {
+        name "folder_grid_settings"
+        label "Settings"
+        parm {
+            name    "line_color"
+            label   "Line Color"
+            type    color4
+            size    4
+            default { "1" "1" "1" "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexGrid" }
+            parmtag { "vray_pluginattr" "line_color" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "fill_color"
+            label   "Fill Color"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexGrid" }
+            parmtag { "vray_pluginattr" "fill_color" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "u_width"
+            label   "U Width"
+            type    float
+            default { "0.01" }
+            help    "U Width"
+            range   { 0 0.1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexGrid" }
+            parmtag { "vray_pluginattr" "u_width" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+        parm {
+            name    "v_width"
+            label   "V Width"
+            type    float
+            default { "0.01" }
+            help    "V Width"
+            range   { 0 0.1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexGrid" }
+            parmtag { "vray_pluginattr" "v_width" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+    }
+#include "vfh_texture_common.ds"
+}

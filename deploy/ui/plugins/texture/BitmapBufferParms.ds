@@ -1,0 +1,295 @@
+#ifdef PREFIX
+#define NAMEM(n) \
+    name PREFIX##n##""
+#else
+#define NAMEM(n) \
+    name n##""
+#endif
+
+parm {
+    NAMEM("file")
+    label   "File"
+    type    file
+    default { "" }
+    help    "The file name; can contain <UDIM> or <UVTILE> tags for Mari or Mudbox tiles respectively,or $nU and $nV for explicit tiles; lower-case tags consider the tiles as starting from 0 whereas upper-case tags start from 1"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "filechooser_pattern" "*.exr,*.png,*.bmp,*.tga,*.hdr,*.jpg,*.jpeg,*.pic,*.tif,*.tiff,*.psd,*.vrimg,*.sgi,*.rgb,*.rgba" }
+    parmtag { "vray_plugin" "BitmapBuffer" }
+    parmtag { "vray_pluginattr" "file" }
+    parmtag { "vray_type" "string" }
+}
+
+parm {
+    NAMEM("filter_type")
+    label   "Filter"
+    type    string
+    default { "1" }
+    help    "Filtering"
+    menu    {
+        "-1" "Nearest"
+        "0" "None"
+        "1" "Mip-Map"
+        "2" "Area"
+    }
+    parmtag { "vray_pluginattr" "filter_type" }
+    parmtag { "vray_type" "enum" }
+}
+
+parm {
+    NAMEM("interpolation")
+    label   "Interpolation"
+    type    string
+    default { "0" }
+    help    "Interpolation method for the Mip-Map filtering"
+    menu    {
+        "0" "Bilinear"
+        "1" "Bicubic"
+        "2" "Quadratic"
+    }
+    parmtag { "vray_pluginattr" "interpolation" }
+    parmtag { "vray_type" "enum" }
+    disablewhen "{ filter_type != 1 }"
+}
+
+parm {
+    NAMEM("filter_blur")
+    label   "Blur"
+    type    float
+    default { "1" }
+    disablewhen "{ filter_type == 0 }"
+    range   { 0 3 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "BitmapBuffer" }
+    parmtag { "vray_pluginattr" "filter_blur" }
+    parmtag { "vray_type" "float" }
+}
+
+parm {
+    NAMEM("color_space")
+    label   "Color Space"
+    type    string
+    default { "2" }
+    help    "Color space"
+    menu    {
+        "0" "Linear"
+        "1" "Gamma Corrected"
+        "2" "sRGB"
+    }
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "BitmapBuffer" }
+    parmtag { "vray_pluginattr" "color_space" }
+    parmtag { "vray_type" "enum" }
+}
+
+parm {
+    NAMEM("gamma")
+    label   "Gamma"
+    type    float
+    default { "1" }
+    disablewhen "{ color_space != 1 }"
+    range   { 0.4545 2.2 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "BitmapBuffer" }
+    parmtag { "vray_pluginattr" "gamma" }
+    parmtag { "vray_type" "float" }
+}
+
+parm {
+    NAMEM("maya_compatible")
+    label   "Maya Compatible"
+    type    toggle
+    default { "0" }
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "BitmapBuffer" }
+    parmtag { "vray_pluginattr" "maya_compatible" }
+    parmtag { "vray_type" "boolean" }
+    invisible
+}
+
+parm {
+    NAMEM("allow_negative_colors")
+    label   "Allow Negative Colors"
+    type    toggle
+    default { "1" }
+    help    "if false negative colors will be clamped"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "BitmapBuffer" }
+    parmtag { "vray_pluginattr" "allow_negative_colors" }
+    parmtag { "vray_type" "boolean" }
+}
+
+parm {
+    NAMEM("load_file")
+    label   "Load File"
+    type    toggle
+    default { "1" }
+    help    "if set to false, the file would not be loaded"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "BitmapBuffer" }
+    parmtag { "vray_pluginattr" "load_file" }
+    parmtag { "vray_type" "boolean" }
+    invisible
+}
+
+parm {
+    NAMEM("use_data_window")
+    label   "Use Data Window"
+    type    toggle
+    default { "1" }
+    help    "Use the data window information in e.g. OpenEXR files"
+    range   { 0 1 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "BitmapBuffer" }
+    parmtag { "vray_pluginattr" "use_data_window" }
+    parmtag { "vray_type" "boolean" }
+}
+
+groupcollapsible {
+    name "VfhBitmapBufferSequence"
+    label "Sequence"
+
+    parm {
+        NAMEM("frame_sequence")
+        label   "Frame Sequence"
+        type    toggle
+        default { "0" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "frame_sequence" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    parm {
+        NAMEM("frame_number")
+        label   "Frame Number"
+        type    integer
+        default { "0" }
+        help    "When working with image sequences, this parameter specifies which image out of the sequence should be used.  If parameter is omitted or defaulted, the frame number depends on the current frame time value."
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "frame_number" }
+        parmtag { "vray_type" "int" }
+    }
+
+    parm {
+        NAMEM("frame_offset")
+        label   "Frame Offset"
+        type    integer
+        default { "0" }
+        help    "Start frame offset for image sequences"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "frame_offset" }
+        parmtag { "vray_type" "int" }
+    }
+}
+
+groupcollapsible {
+    name "VfhBitmapBufferIFD"
+    label "Image File List"
+
+    parm {
+        NAMEM("ifl_start_frame")
+        label   "Start Frame"
+        type    integer
+        default { "0" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "ifl_start_frame" }
+        parmtag { "vray_type" "int" }
+    }
+
+    parm {
+        NAMEM("ifl_playback_rate")
+        label   "Playback Rate"
+        type    float
+        default { "1" }
+        range   { 0 3 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "ifl_playback_rate" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        NAMEM("ifl_end_condition")
+        label   "End Condition"
+        type    string
+        default { "0" }
+        help    "Image file list (IFL) end condition"
+        menu    {
+            "0" "Loop"
+            "1" "Ping Pong"
+            "2" "Hold"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "ifl_end_condition" }
+        parmtag { "vray_type" "enum" }
+    }
+}
+
+groupcollapsible {
+    name "VfhBitmapBufferPSD"
+    label "PSD"
+
+    parm {
+        NAMEM("psd_group_name")
+        label   "Group Name"
+        type    string
+        default { "" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "psd_group_name" }
+        parmtag { "vray_type" "List<Integer>" }
+    }
+
+    parm {
+        NAMEM("psd_alpha_name")
+        label   "Alpha Name"
+        type    string
+        default { "" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "psd_alpha_name" }
+        parmtag { "vray_type" "List<Integer>" }
+    }
+}
+
+parm {
+    name "bitmap"
+    label "Bitmap"
+    type int
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_label" "bitmap" }
+    parmtag { "vray_pluginattr" "output" }
+    parmtag { "vray_type" "OutputPlugin" }
+    invisible
+}
+
+#undef NAMEM
+#undef PREFIX

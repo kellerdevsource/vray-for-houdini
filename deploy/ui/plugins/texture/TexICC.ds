@@ -1,0 +1,60 @@
+{
+    name    TexICC
+    label   "ICC"
+    parmtag { spare_category "ICC" }
+    parmtag { vray_plugin "TexICC" }
+    parm {
+        name    "file"
+        label   "File"
+        type    file
+        default { "" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "filechooser_pattern" "*.icc" }
+        parmtag { "vray_plugin" "TexICC" }
+        parmtag { "vray_pluginattr" "file" }
+        parmtag { "vray_type" "string" }
+    }
+    parm {
+        name    "basemap"
+        label   "Basemap"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexICC" }
+        parmtag { "vray_pluginattr" "basemap" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "render_intent"
+        label   "Render Intent"
+        type    ordinal
+        default { "0" }
+        menu    {
+            0 "Perceptual"
+            1 "Relative Colorimetric"
+            2 "Saturation"
+            3 "Absolute Colorimetric"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "render_intent" }
+        parmtag { "vray_type" "enum" }
+    }
+    parm {
+        name    "blackpoint"
+        label   "Black point compensation"
+        type    toggle
+        default { "0" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexICC" }
+        parmtag { "vray_pluginattr" "blackpoint" }
+        parmtag { "vray_type" "boolean" }
+    }
+#include "vfh_texture_default_output_color.ds"
+}

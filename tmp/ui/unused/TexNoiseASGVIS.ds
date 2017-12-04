@@ -1,0 +1,236 @@
+{
+    name	TexNoiseASGVIS
+    label	"Noise ASGVIS"
+    parmtag	{ spare_category "Noise ASGVIS" }
+    parmtag	{ vray_plugin "TexNoiseASGVIS" }
+    parm {
+	name	"persistence"
+	label	"Persistence"
+	type	float
+	default	{ "1" }
+	help	"amplitude(i+1) = amplitude(i) / persistence"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "persistence" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"amplitude_ratio"
+	label	"Amplitude Ratio"
+	type	float
+	default	{ "1" }
+	help	"amplitude(i+1) = amplitude(i) * amplitude_ratio"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "amplitude_ratio" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"frequency_ratio"
+	label	"Frequency Ratio"
+	type	float
+	default	{ "2" }
+	help	"frequency(i+1) = frequency(i) * frequency_ratio"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "frequency_ratio" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"frequency1"
+	label	"Frequency1"
+	type	float
+	default	{ "1" }
+	help	"The starting frequency (just like size)"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "frequency1" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"amplitude1"
+	label	"Amplitude1"
+	type	float
+	default	{ "1" }
+	help	"The starting amplitude"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "amplitude1" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"octaves"
+	label	"Octaves"
+	type	integer
+	default	{ "3" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "octaves" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"noiseType"
+	label	"Noisetype"
+	type	integer
+	default	{ "0" }
+	help	"0: just noise(), 1: Perlin noise, 2: inflected Perlin noise, 3: marble (with Perlin)"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "noiseType" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"size"
+	label	"Size"
+	type	float
+	default	{ "1" }
+	help	"scale"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "size" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"inflection"
+	label	"Inflection"
+	type	integer
+	default	{ "0" }
+	help	"1: inflected, 0: not inflected"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "inflection" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"mix_ratio"
+	label	"Mix Ratio"
+	type	float
+	default	{ "0.5" }
+	help	"0: color1 only, 1: color2 only, 0.5(def.): 50%-50%"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "mix_ratio" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"bias"
+	label	"Bias"
+	type	float
+	default	{ "0" }
+	help	"similiar to contrast"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "bias" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"color1"
+	label	"Color1"
+	type	color
+	size	3
+	default	{ "1" "1" "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "color1" }
+	parmtag	{ "vray_type" "color" }
+    }
+    parm {
+	name	"color2"
+	label	"Color2"
+	type	color
+	size	3
+	default	{ "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "color2" }
+	parmtag	{ "vray_type" "color" }
+    }
+    parm {
+	name	"color1_tex"
+	label	"Color1 Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "color1_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"color2_tex"
+	label	"Color2 Tex"
+	type	color4
+	size	4
+	default	{ "0" "0" "0" "0" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "color2_tex" }
+	parmtag	{ "vray_type" "Texture" }
+    }
+    parm {
+	name	"color1_tex_mult"
+	label	"Color1 Tex Mult"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "color1_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"color2_tex_mult"
+	label	"Color2 Tex Mult"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "color2_tex_mult" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+	name	"use_3d_mapping"
+	label	"Use 3d Mapping"
+	type	toggle
+	default	{ "1" }
+	range	{ 0 1 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "TexNoiseASGVIS" }
+	parmtag	{ "vray_pluginattr" "use_3d_mapping" }
+	parmtag	{ "vray_type" "boolean" }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    name    TexInvertFloat
+    label   "Invert Float"
+    parmtag { spare_category "Invert Float" }
+    parmtag { vray_plugin "TexInvertFloat" }
+    parm {
+        name    "texture"
+        label   "Float"
+        type    float
+        default { "0" }
+        help    "The value to be inverted"
+        range   { -1 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexInvertFloat" }
+        parmtag { "vray_pluginattr" "texture" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+#include "vfh_texture_default_output_float.ds"
+}

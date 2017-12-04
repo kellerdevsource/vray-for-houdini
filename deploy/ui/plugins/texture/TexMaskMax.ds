@@ -1,0 +1,48 @@
+{
+    name    TexMaskMax
+    label   "MaskMax"
+    parmtag { spare_category "MaskMax" }
+    parmtag { vray_plugin "TexMaskMax" }
+    parm {
+        name    "texture"
+        label   "Texture"
+        type    color4
+        size    4
+        default { "1" "1" "1" "1" }
+        help    "The base texture"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexMaskMax" }
+        parmtag { "vray_pluginattr" "texture" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "mask"
+        label   "Mask"
+        type    color4
+        size    4
+        default { "1" "1" "1" "1" }
+        help    "The mask texture"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexMaskMax" }
+        parmtag { "vray_pluginattr" "mask" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "invert_mask"
+        label   "Invert Mask"
+        type    toggle
+        default { "0" }
+        help    "true to invert the mask"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexMaskMax" }
+        parmtag { "vray_pluginattr" "invert_mask" }
+        parmtag { "vray_type" "boolean" }
+    }
+#include "vfh_texture_default_output_color.ds"
+}

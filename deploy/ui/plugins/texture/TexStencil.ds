@@ -1,0 +1,165 @@
+{
+    name    TexStencil
+    label   "Stencil"
+    parmtag { spare_category "Stencil" }
+    parmtag { vray_plugin "TexStencil" }
+
+    groupsimple {
+        name "folder_options"
+        label "Settings"
+        parm {
+            name    "default_color"
+            label   "Default Color"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            help    "Represents the texture that is underneath"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexStencil" }
+            parmtag { "vray_pluginattr" "default_color" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "color_key"
+            label   "Key Color"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            help    "The color to be masked in the texture"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexStencil" }
+            parmtag { "vray_pluginattr" "color_key" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "image"
+            label   "Image (Stencil)"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            help    "The texture that is used as a stencil"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexStencil" }
+            parmtag { "vray_pluginattr" "image" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "mask"
+            label   "Mask"
+            type    float
+            default { "0" }
+            help    "Represents the Stencil's transparency"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexStencil" }
+            parmtag { "vray_pluginattr" "mask" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+        parm {
+            name    "key_masking"
+            label   "Key Masking"
+            type    toggle
+            default { "0" }
+            help    "If true, selects the areas in the texture similar to or equal to the Key Color and masks them out"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexStencil" }
+            parmtag { "vray_pluginattr" "key_masking" }
+            parmtag { "vray_type" "boolean" }
+        }
+        parm {
+            name    "positive_key"
+            label   "Positive Key"
+            type    toggle
+            default { "0" }
+            help    "If true, inverts the Chroma Key mask(only the colors specified in the Color Key and HSV Range are displayed)"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexStencil" }
+            parmtag { "vray_pluginattr" "positive_key" }
+            parmtag { "vray_type" "boolean" }
+        }
+        parm {
+            name    "hue_range"
+            label   "Hue Range"
+            type    float
+            default { "1" }
+            help    "The range of hues centered on the Color Key color which are also masked"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexStencil" }
+            parmtag { "vray_pluginattr" "hue_range" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+        parm {
+            name    "sat_range"
+            label   "Sat Range"
+            type    float
+            default { "1" }
+            help    "The range of saturations centered on the Color Key color which are also masked"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexStencil" }
+            parmtag { "vray_pluginattr" "sat_range" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+        parm {
+            name    "val_range"
+            label   "Val Range"
+            type    float
+            default { "1" }
+            help    "The range of values centered on the Color Key color which are also masked"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexStencil" }
+            parmtag { "vray_pluginattr" "val_range" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+        parm {
+            name    "edge_blend"
+            label   "Edge Blend"
+            type    float
+            default { "0" }
+            help    "Controls the sharpness of the texture edges"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexStencil" }
+            parmtag { "vray_pluginattr" "edge_blend" }
+            parmtag { "vray_type" "float" }
+        }
+    }
+    parm {
+        name    "compatibility_with"
+        label   "Compatibility With"
+        type    ordinal
+        default { "0" }
+        help    "This is used to differentiate between textures exported from different applications"
+        menu    {
+            0   "3ds Max"
+            1  "Maya"
+        }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexStencil" }
+        parmtag { "vray_pluginattr" "compatibility_with" }
+        parmtag { "vray_type" "enum" }
+        invisible
+    }
+#include "vfh_texture_common_color.ds"
+#include "vfh_texture_common_alpha.ds"
+#include "vfh_texture_common_outputs.ds"
+}

@@ -1,0 +1,20 @@
+{
+    name    TexIntToFloat
+    label   "Int To Float"
+    parmtag { spare_category "Int To Float" }
+    parmtag { vray_plugin "TexIntToFloat" }
+    parm {
+        name    "input"
+        label   "Int"
+        type    integer
+        default { "0" }
+        help    "The integer value"
+        range   { -1 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexIntToFloat" }
+        parmtag { "vray_pluginattr" "input" }
+        parmtag { "vray_type" "TextureInt" }
+    }
+#include "vfh_texture_default_output_float.ds"
+}

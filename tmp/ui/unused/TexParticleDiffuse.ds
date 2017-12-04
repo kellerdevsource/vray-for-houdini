@@ -1,0 +1,7 @@
+{
+    name    TexParticleDiffuse
+label   "Particle Diffuse"
+parmtag { spare_category "Particle Diffuse" }
+parmtag { vray_plugin "TexParticleDiffuse" }
+#include "vfh_texture_default_output_color.ds"
+}

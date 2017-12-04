@@ -1,0 +1,85 @@
+{
+    name    TexTemperature
+    label   "Temperature"
+    parmtag { spare_category "Temperature" }
+    parmtag { vray_plugin "TexTemperature" }
+
+    parm {
+        name    "color_mode"
+        label   "Mode"
+        type    ordinal
+        help    "Choose color or temperature mode"
+        menu    {
+            "0" "Color"
+            "1" "Temperature"
+        }
+        default { "1" }
+        parmtag { "vray_pluginattr" "color_mode" }
+        parmtag { "vray_type" "enum" }
+    }
+
+    parm {
+        name    "temperature"
+        label   "Temperature"
+        type    float
+        default { "6500" }
+        range { 0 9000 }
+        help    "Material temperature in kelvins"
+        parmtag { "vray_pluginattr" "temperature" }
+        parmtag { "vray_type" "TextureFloat" }
+        hidewhen "{ color_mode == 0 }"
+    }
+
+    parm {
+        name    "color"
+        label   "Color"
+        type    color
+        size    3
+        default { "0.5" "0.5" "0.5" }
+        help    "Texture color"
+        parmtag { "vray_pluginattr" "color" }
+        parmtag { "vray_type" "color" }
+        hidewhen "{ color_mode == 1 }"
+    }
+
+    parm {
+        name    "rgb_multiplier"
+        label   "RGB Multiplier"
+        type    float
+        default { "1" }
+        help    "Color multiplier"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "rgb_multiplier" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "alpha"
+        label   "Alpha"
+        type    float
+        default { "1" }
+        help    "Alpha color channel"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "alpha" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        name    "gamma_correction"
+        label   "Gamma Correction"
+        type    float
+        default { "1" }
+        help    "Gamma correction value"
+        range   { 0 2.2 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "gamma_correction" }
+        parmtag { "vray_type" "float" }
+    }
+
+#include "vfh_texture_default_output_color.ds"
+}

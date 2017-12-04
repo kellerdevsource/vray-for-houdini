@@ -1,0 +1,92 @@
+{
+    name    TexSplat
+    label   "Splat"
+    parmtag { spare_category "Splat" }
+    parmtag { vray_plugin "TexSplat" }
+    groupsimple {
+        name "folder_splat_settings"
+        label "Settings"
+        parm {
+            name    "color1"
+            label   "Color 1"
+            type    color4
+            size    4
+            default { "1" "1" "1" "1" }
+            help    "First color"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSplat" }
+            parmtag { "vray_pluginattr" "color1" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "color2"
+            label   "Color 2"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            help    "Second color"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSplat" }
+            parmtag { "vray_pluginattr" "color2" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "size"
+            label   "Size"
+            type    float
+            default { "0.5" }
+            help    "Size"
+            range   { 0 2 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSplat" }
+            parmtag { "vray_pluginattr" "size" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "iterations"
+            label   "Iterations"
+            type    integer
+            default { "4" }
+            help    "Number of iterations for the fractal generator"
+            range   { 0 12 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSplat" }
+            parmtag { "vray_pluginattr" "iterations" }
+            parmtag { "vray_type" "int" }
+        }
+        parm {
+            name    "threshold"
+            label   "Threshold"
+            type    float
+            default { "0.2" }
+            help    "Threshold"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSplat" }
+            parmtag { "vray_pluginattr" "threshold" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "smoothing"
+            label   "Smoothing"
+            type    float
+            default { "0.02" }
+            help    "Transition smoothing"
+            range   { 0 0.2 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSplat" }
+            parmtag { "vray_pluginattr" "smoothing" }
+            parmtag { "vray_type" "float" }
+        }
+    }
+#define VFH_USE_3DMAPPING
+#include "vfh_texture_common.ds"
+}

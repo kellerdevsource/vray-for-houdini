@@ -1,0 +1,207 @@
+{
+    name    BRDFSampled
+    label   "Sampled"
+    parmtag { spare_category "Sampled" }
+    parmtag { vray_plugin "BRDFSampled" }
+
+#include "vfh_brdf_common.ds"
+
+    parm {
+        name    "back_side"
+        label   "Double - Sided"
+        type    toggle
+        default { "0" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "back_side" }
+        parmtag { "vray_type" "boolean" }
+    }
+    parm {
+        name    "color"
+        label   "Color"
+        type    color
+        size    3
+        default { "1" "1" "1" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "color" }
+        parmtag { "vray_type" "color" }
+        invisible
+    }
+    parm {
+        name    "color_tex"
+        label   "Color"
+        type    color4
+        size    4
+        default { "1" "1" "1" "1" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "color_tex" }
+        parmtag { "vray_type" "Texture" }
+        parmtag { "ogl_diff" "1" }
+    }
+    parm {
+        name    "color_tex_mult"
+        label   "Color Tex Mult"
+        type    float
+        default { "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "color_tex_mult" }
+        parmtag { "vray_type" "float" }
+        invisible
+    }
+    parm {
+        name    "transparency"
+        label   "Transparency"
+        type    color
+        size    3
+        default { "1" "1" "1" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "transparency" }
+        parmtag { "vray_type" "color" }
+        invisible
+    }
+    parm {
+        name    "transparency_tex"
+        label   "Transparency"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "transparency_tex" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "transparency_tex_mult"
+        label   "Transparency Tex Mult"
+        type    float
+        default { "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "transparency_tex_mult" }
+        parmtag { "vray_type" "float" }
+        invisible
+    }
+    parm {
+        name    "brdf_nsamples_d_theta"
+        label   "Brdf Nsamples D Theta"
+        type    integer
+        default { "0" }
+        help    "Number of d_theta samples"
+        range   { 0 5 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "brdf_nsamples_d_theta" }
+        parmtag { "vray_type" "int" }
+    }
+    parm {
+        name    "brdf_nsamples_d_phi"
+        label   "Brdf Nsamples D Phi"
+        type    integer
+        default { "1" }
+        help    "Number of d_phi samples (1 means isotropic BRDF)"
+        range   { 0 5 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "brdf_nsamples_d_phi" }
+        parmtag { "vray_type" "int" }
+    }
+    parm {
+        name    "brdf_importance_sampling_on"
+        label   "Importance Sampling"
+        type    toggle
+        default { "1" }
+        help    "true to use importance sampling for the reflections"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "brdf_importance_sampling_on" }
+        parmtag { "vray_type" "boolean" }
+    }
+    parm {
+        name    "brdf_importance_sampling_resolution"
+        label   "Resolution"
+        type    integer
+        default { "32" }
+        help    "Resolution for the resampling of the BRDF used for importance sampling of reflections"
+        disablewhen "{ brdf_importance_sampling_on != 1 }"
+        range   { 0 256 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "brdf_importance_sampling_resolution" }
+        parmtag { "vray_type" "int" }
+    }
+    parm {
+        name    "brdf_importance_sampling_view_terms"
+        label   "View Terms"
+        type    integer
+        default { "4" }
+        help    "Number of terms to decompose the view-dependent portion of the resampling matrix"
+        disablewhen "{ brdf_importance_sampling_on != 1 }"
+        range   { 0 16 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "brdf_importance_sampling_view_terms" }
+        parmtag { "vray_type" "int" }
+    }
+    parm {
+        name    "brdf_importance_sampling_half_terms"
+        label   "Half Terms"
+        type    integer
+        default { "2" }
+        help    "Number of terms to decompose the half-angle portion of the resampling matrix"
+        disablewhen "{ brdf_importance_sampling_on != 1 }"
+        range   { 0 8 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "brdf_importance_sampling_half_terms" }
+        parmtag { "vray_type" "int" }
+    }
+    parm {
+        name    "subdivs"
+        label   "Subdivs"
+        type    integer
+        default { "8" }
+        range   { 0 16 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "subdivs" }
+        parmtag { "vray_type" "int" }
+    }
+    parm {
+        name    "cutoff"
+        label   "Cutoff"
+        type    float
+        default { "0.01" }
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFSampled" }
+        parmtag { "vray_pluginattr" "cutoff" }
+        parmtag { "vray_type" "float" }
+        }
+}

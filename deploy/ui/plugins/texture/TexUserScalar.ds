@@ -1,0 +1,39 @@
+{
+    name    TexUserScalar
+    label   "User Scalar"
+    parmtag { spare_category "User Scalar" }
+    parmtag { vray_plugin "TexUserScalar" }
+
+    parm {
+        name    "user_attribute"
+        label   "Attribute"
+        type    string
+        default { "Alpha" }
+        help    "User attribute name of type float or color"
+        parmtag { "vray_pluginattr" "user_attribute" }
+        parmtag { "vray_type" "string" }
+    }
+
+    parm {
+        name    "default_value"
+        label   "Default Value"
+        type    float
+        default { "0" }
+        help    "Default value if the attribute is not found"
+        parmtag { "vray_pluginattr" "default_value" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+
+    parm {
+        name "attribute_priority"
+        label "Attribute Priority"
+        type ordinal
+        menu {
+            "0" "Map Channel"
+            "1" "User Attribute"
+        }
+        default { "1" }
+    }
+
+#include "vfh_texture_default_output_float.ds"
+}

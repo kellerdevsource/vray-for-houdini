@@ -1,0 +1,9 @@
+{
+    name    UVWGenMayaPlace2dTexture
+    label   "Channel (Named)"
+    parmtag { spare_category "Channel (Named)" }
+    parmtag { vray_plugin "UVWGenMayaPlace2dTexture" }
+
+#include "UVWGenMayaPlace2dTextureParms.ds"
+#include "vfh_uvwgen_common.ds"
+}

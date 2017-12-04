@@ -1,8 +1,0 @@
-{
-    name	UVWGenObject
-    label	"Object"
-    parmtag	{ spare_category "Object" }
-    parmtag	{ vray_plugin "UVWGenObject" }
-    
-#include "$VRAY_UI_DS_PATH/plugins/UVWGenObjectParms.ds"
-}

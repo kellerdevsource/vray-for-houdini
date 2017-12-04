@@ -1,0 +1,463 @@
+{
+    name    TexOCIO
+    label   "OCIO"
+    parmtag { spare_category "OCIO" }
+    parmtag { vray_plugin "TexOCIO" }
+
+    parm {
+        name    "basemap"
+        label   "Color"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexOCIO" }
+        parmtag { "vray_pluginattr" "basemap" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "inout_type"
+        label   "Inout Type"
+        type    ordinal
+        default { "0" }
+        help    "Input / output type"
+        menu    {
+            "0" "Colorspaces"
+            "1" "Roles"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_enumkeys" "0,1" }
+        parmtag { "vray_plugin" "TexOCIO" }
+        parmtag { "vray_pluginattr" "inout_type" }
+        parmtag { "vray_type" "enum" }
+        invisible
+    }
+    parm {
+        name    "config_src"
+        label   "Config Source"
+        type    ordinal
+        default { "0" }
+        help    "Config source: 0 - auto (env, stored env for slaves, file, internal), 1 - environment, 2 - file, 3 - internal"
+        menu    {
+            "0" "Auto"
+            "1" "Environment"
+            "2" "File"
+            "3" "Internal"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_enumkeys" "0,1,2,3" }
+        parmtag { "vray_plugin" "TexOCIO" }
+        parmtag { "vray_pluginattr" "config_src" }
+        parmtag { "vray_type" "enum" }
+    }
+    parm {
+        name    "ocio_stored_env"
+        label   "OCIO Env"
+        type    file
+        default { "" }
+        help    "stored OCIO environment config for slave renders (*.ocio)"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexOCIO" }
+        parmtag { "vray_pluginattr" "ocio_stored_env" }
+        parmtag { "vray_type" "string" }
+        hidewhen "{ config_src != 1 }"
+    }
+    parm {
+        name    "config_file"
+        label   "Config File"
+        type    file
+        default { "" }
+        help    "OCIO configuration file (*.ocio)"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "filechooser_pattern" "*.ocio" }
+        parmtag { "vray_plugin" "TexOCIO" }
+        parmtag { "vray_pluginattr" "config_file" }
+        parmtag { "vray_type" "string" }
+        hidewhen "{ config_src != 2 }"
+    }
+    parm {
+        name    "mode"
+        label   "Mode"
+        type    ordinal
+        default { "0" }
+        help    "Operation mode (0 - ColorSpace, 1 - CDL Transform, 2 - File Transform, 3 - LogConvert, 4 - Display, 5 - Look)"
+        menu    {
+            "0" "ColorSpace"
+            "1" "CDL Transform"
+            "2" "File Transform"
+            "3" "LogConvert"
+            "4" "Display"
+            "5" "Look"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_enumkeys" "0,1,2,3,4,5" }
+        parmtag { "vray_plugin" "TexOCIO" }
+        parmtag { "vray_pluginattr" "mode" }
+        parmtag { "vray_type" "enum" }
+    }
+    groupsimple {
+        name "folder_ocio_mode_colorspace"
+        label "Color Space Parameters"
+        hidewhentab "{ mode != 0 }"
+        parm {
+            name    "colorspace_in"
+            label   "In"
+            type    string
+            default { "" }
+            help    "ColorSpace: input colorspace/role"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "colorspace_in" }
+            parmtag { "vray_type" "string" }
+        }
+        parm {
+            name    "colorspace_out"
+            label   "Out"
+            type    string
+            default { "" }
+            help    "ColorSpace: output colorspace/role"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "colorspace_out" }
+            parmtag { "vray_type" "string" }
+        }
+    }
+    groupsimple {
+        name "folder_ocio_mode_cdl"
+        label "CDL Transform Parameters"
+        hidewhentab "{ mode != 1 }"
+        parm {
+            name    "cdl_use_file"
+            label   "Use File"
+            type    toggle
+            default { "0" }
+            help    "CDLTransform: true - get slope, offset, power and saturation from the specified file"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "cdl_use_file" }
+            parmtag { "vray_type" "boolean" }
+        }
+        parm {
+            name    "cdl_file"
+            label   "File"
+            type    file
+            default { "" }
+            help    "CDLTransform: file (.cc or .ccc)"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "filechooser_pattern" "*.cc,*.ccc" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "cdl_file" }
+            parmtag { "vray_type" "string" }
+            hidewhen "{ cdl_use_file == 0 }"
+        }
+        parm {
+            name    "cdl_slope"
+            label   "Slope RGB"
+            type    color
+            size    3
+            default { "1" "1" "1" }
+            help    "CDLTransform: slope"
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "cdl_slope" }
+            parmtag { "vray_type" "color" }
+            hidewhen "{ cdl_use_file == 1 }"
+        }
+        parm {
+            name    "cdl_offset"
+            label   "Offset RGB"
+            type    color
+            size    3
+            default { "0" "0" "0" }
+            help    "CDLTransform: offset"
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "cdl_offset" }
+            parmtag { "vray_type" "color" }
+            hidewhen "{ cdl_use_file == 1 }"
+        }
+        parm {
+            name    "cdl_power"
+            label   "Power RGB"
+            type    color
+            size    3
+            default { "1" "1" "1" }
+            help    "CDLTransform: power"
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "cdl_power" }
+            parmtag { "vray_type" "color" }
+            hidewhen "{ cdl_use_file == 1 }"
+        }
+        parm {
+            name    "cdl_saturation"
+            label   "Saturation"
+            type    float
+            default { "1" }
+            help    "CDLTransform: saturation"
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "cdl_saturation" }
+            parmtag { "vray_type" "float" }
+            hidewhen "{ cdl_use_file == 1 }"
+        }
+        parm {
+            name    "cdl_cccid"
+            label   "CCCID"
+            type    string
+            default { "" }
+            help    "CDLTransform: cccid (if needed)"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "cdl_cccid" }
+            parmtag { "vray_type" "string" }
+        }
+        parm {
+            name    "cdl_direction"
+            label   "Direction"
+            type    ordinal
+            default { "0" }
+            help    "CDLTransform: direction (0 - forward, 1 - inverse)"
+            menu    {
+                "0" "Forward"
+                "1" "Inverse"
+            }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_enumkeys" "0,1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "cdl_direction" }
+            parmtag { "vray_type" "enum" }
+        }
+    }
+    groupsimple {
+        name "folder_ocio_mode_file_transform"
+        label "File Transform Parameters"
+        hidewhentab "{ mode != 2 }"
+        parm {
+            name    "filetr_file"
+            label   "File"
+            type    file
+            default { "" }
+            help    "FileTransform: color correction file"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "filechooser_pattern" "*.3dl,*.ccc,*.cc,*.csp,*.lut,*.itx,*.cube,*.mga,*.spi1d,*.spi3d,*.spimtx,*.cub,*.vf" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "filetr_file" }
+            parmtag { "vray_type" "string" }
+        }
+        parm {
+            name    "filetr_cccid"
+            label   "CCCID"
+            type    string
+            default { "" }
+            help    "FileTransform: cccid (if needed)"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "filetr_cccid" }
+            parmtag { "vray_type" "string" }
+        }
+        parm {
+            name    "filetr_direction"
+            label   "Direction"
+            type    ordinal
+            default { "0" }
+            help    "FileTransform: direction (0 - forward, 1 - inverse)"
+            menu    {
+                "0" "Forward"
+                "1" "Inverse"
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_enumkeys" "0,1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "filetr_direction" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name    "filetr_interpolation"
+            label   "Interpolation"
+            type    ordinal
+            default { "0" }
+            help    "FileTransform: interpolation (0 - nearest, 1 - linear, 2 - tetrahedral, 3 - best)"
+            menu    {
+                "0" "Nearest"
+                "1" "Linear"
+                "2" "Tetrahedral"
+                "3" "Best"
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_enumkeys" "0,1,2,3" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "filetr_interpolation" }
+            parmtag { "vray_type" "enum" }
+        }
+    }
+    groupsimple {
+        name "folder_ocio_mode_logconvert"
+        label "Log Convert Parameters"
+        hidewhentab "{ mode != 3 }"
+        parm {
+            name    "logconvert_operation"
+            label   "Operation"
+            type    ordinal
+            default { "0" }
+            help    "LogConvert: operation (0 - log to lin, 1 - lin to log)"
+            menu    {
+                "0" "Log to lin"
+                "1" "Lin to log"
+            }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_enumkeys" "0,1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "logconvert_operation" }
+            parmtag { "vray_type" "enum" }
+        }
+    }
+    groupsimple {
+        name "folder_ocio_mode_display"
+        label "Display Parameters"
+        hidewhentab "{ mode != 4 }"
+        parm {
+            name    "disp_input_colorspace"
+            label   "Colorspace"
+            type    string
+            default { "" }
+            help    "Display: input colorspace/role"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "disp_input_colorspace" }
+            parmtag { "vray_type" "string" }
+        }
+        parm {
+            name    "disp_display_device"
+            label   "Device"
+            type    string
+            default { "" }
+            help    "Display: device"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "disp_display_device" }
+            parmtag { "vray_type" "string" }
+        }
+        parm {
+            name    "disp_view_transform"
+            label   "Transform"
+            type    string
+            default { "" }
+            help    "Display: view transform"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "disp_view_transform" }
+            parmtag { "vray_type" "string" }
+        }
+    }
+    groupsimple {
+        name "folder_ocio_mode_look"
+        label "Look Parameters"
+        hidewhentab "{ mode != 5 }"
+        parm {
+            name    "look_input_colorspace"
+            label   "Input Colorspace"
+            type    string
+            default { "" }
+            help    "Look: input colorspace/role"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "look_input_colorspace" }
+            parmtag { "vray_type" "string" }
+        }
+        parm {
+            name    "look_looks"
+            label   "Looks"
+            type    string
+            default { "" }
+            help    "Look: looks"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "look_looks" }
+            parmtag { "vray_type" "string" }
+        }
+        parm {
+            name    "look_output_colorspace"
+            label   "Output Colorspace"
+            type    string
+            default { "" }
+            help    "Look: output colorspace/role"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "look_output_colorspace" }
+            parmtag { "vray_type" "string" }
+        }
+        parm {
+            name    "look_direction"
+            label   "Direction"
+            type    ordinal
+            default { "0" }
+            help    "Look: direction (0 - forward, 1 - inverse)"
+            menu    {
+                "0" "Forward"
+                "1" "Inverse"
+            }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_enumkeys" "0,1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "look_direction" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name    "look_ignore_errors"
+            label   "Ignore Errors"
+            type    toggle
+            default { "0" }
+            help    "Look: ignore errors"
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexOCIO" }
+            parmtag { "vray_pluginattr" "look_ignore_errors" }
+            parmtag { "vray_type" "int" }
+        }
+    }
+#include "vfh_texture_default_output_color.ds"
+}

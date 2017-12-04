@@ -1,0 +1,127 @@
+{
+    name    TexBlendBumpNormal
+    label   "Blend Bump Normal"
+    parmtag { spare_category "Blend Bump Normal" }
+    parmtag { vray_plugin "TexBlendBumpNormal" }
+    parm {
+        name    "normalMap1"
+        label   "Normal Map 1"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "First tangent space normal map"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexBlendBumpNormal" }
+        parmtag { "vray_pluginattr" "normalMap1" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "normalMapWeight1"
+        label   "Normal Map 1 Weight"
+        type    float
+        default { "1" }
+        help    "Weight of first tangent space normal map"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexBlendBumpNormal" }
+        parmtag { "vray_pluginattr" "normalMapWeight1" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+    parm {
+        name    "normalMap2"
+        label   "Normal Map 2"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "Second tangent space normal map"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexBlendBumpNormal" }
+        parmtag { "vray_pluginattr" "normalMap2" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "normalMapWeight2"
+        label   "Normal Map 2 Weight"
+        type    float
+        default { "1" }
+        help    "Weight of second tangent space normal map"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexBlendBumpNormal" }
+        parmtag { "vray_pluginattr" "normalMapWeight2" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+    parm {
+        name    "bumpMap1"
+        label   "Bump Map 1"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "First bump map"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexBlendBumpNormal" }
+        parmtag { "vray_pluginattr" "bumpMap1" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "bumpMapWeight1"
+        label   "Bump Map 1 Weight"
+        type    float
+        default { "1" }
+        help    "Weight of first bump map"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexBlendBumpNormal" }
+        parmtag { "vray_pluginattr" "bumpMapWeight1" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+    parm {
+        name    "bumpMap2"
+        label   "Bump Map 2"
+        type    color4
+        size    4
+        default { "0" "0" "0" "1" }
+        help    "Second bump map"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexBlendBumpNormal" }
+        parmtag { "vray_pluginattr" "bumpMap2" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "bumpMapWeight2"
+        label   "Bump Map 2 Weight"
+        type    float
+        default { "1" }
+        help    "Weight of second bump map"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexBlendBumpNormal" }
+        parmtag { "vray_pluginattr" "bumpMapWeight2" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+    parm {
+        name    "sharpen"
+        label   "Sharpen"
+        type    toggle
+        default { "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexBlendBumpNormal" }
+        parmtag { "vray_pluginattr" "sharpen" }
+        parmtag { "vray_type" "boolean" }
+    }
+#include "vfh_texture_default_output_color.ds"
+}

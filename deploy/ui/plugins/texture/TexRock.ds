@@ -1,0 +1,86 @@
+{
+    name    TexRock
+    label   "Rock"
+    parmtag { spare_category "Rock" }
+    parmtag { vray_plugin "TexRock" }
+    groupsimple {
+        name "folder_rock_settings"
+        label "Settings"
+        parm {
+            name    "color1_tex"
+            label   "Color 1"
+            type    color4
+            size    4
+            default { "1" "1" "1" "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexRock" }
+            parmtag { "vray_pluginattr" "color1_tex" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "color2_tex"
+            label   "Color 2"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexRock" }
+            parmtag { "vray_pluginattr" "color2_tex" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "mix_ratio"
+            label   "Mix Ratio"
+            type    float
+            default { "0.5" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexRock" }
+            parmtag { "vray_pluginattr" "mix_ratio" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "grain_size"
+            label   "Grain Size"
+            type    float
+            default { "0.03" }
+            range   { 0 0.2 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexRock" }
+            parmtag { "vray_pluginattr" "grain_size" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "diffusion"
+            label   "Diffusion"
+            type    float
+            default { "1" }
+            range   { 0 5 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexRock" }
+            parmtag { "vray_pluginattr" "diffusion" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "wrap"
+            label   "Wrap"
+            type    toggle
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexRock" }
+            parmtag { "vray_pluginattr" "wrap" }
+            parmtag { "vray_type" "boolean" }
+        }
+    }
+#define VFH_USE_3DMAPPING
+#include "vfh_texture_common.ds"
+}

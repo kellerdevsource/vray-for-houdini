@@ -1,8 +1,0 @@
-{
-    name	UVWGenChannel
-    label	"Channel"
-    parmtag	{ spare_category "Channel" }
-    parmtag	{ vray_plugin "UVWGenChannel" }
-
-#include "$VRAY_UI_DS_PATH/plugins/UVWGenChannelParms.ds"
-}

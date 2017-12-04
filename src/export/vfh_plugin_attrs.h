@@ -11,7 +11,6 @@
 #ifndef VRAY_FOR_HOUDINI_PLUGIN_ATTRS_H
 #define VRAY_FOR_HOUDINI_PLUGIN_ATTRS_H
 
-#include "vfh_defines.h"
 #include "vfh_vray.h"
 
 namespace VRayForHoudini {
@@ -284,6 +283,7 @@ struct PluginDesc {
 	/// Append an attrubute to our description. If an attribute with the same
 	/// name already exists, it will overwrite it.
 	/// @param attr[in] - attribute
+	// VRAY_DEPRECATED("Use add()")
 	void addAttribute(const PluginAttr &attr);
 
 	/// Append an attrubute to our description. If an attribute with the same

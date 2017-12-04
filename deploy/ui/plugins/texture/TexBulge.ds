@@ -1,0 +1,34 @@
+{
+    name    TexBulge
+    label   "Bulge"
+    parmtag { spare_category "Bulge" }
+    parmtag { vray_plugin "TexBulge" }
+
+    groupsimple {
+        name "VfhTexMain"
+        label "Settings"
+
+        parm {
+            name    "u_width"
+            label   "U Width"
+            type    float
+            default { "0.1" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_pluginattr" "u_width" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "v_width"
+            label   "V Width"
+            type    float
+            default { "0.1" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_pluginattr" "v_width" }
+            parmtag { "vray_type" "float" }
+        }
+
+    }
+
+#include "vfh_texture_common.ds"
+}

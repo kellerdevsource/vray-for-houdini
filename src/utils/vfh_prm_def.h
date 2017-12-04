@@ -13,6 +13,8 @@
 
 #include "vfh_prm_defaults.h"
 
+#include <hash_map.h>
+
 #include <PRM/PRM_Name.h>
 #include <PRM/PRM_Shared.h>
 #include <PRM/PRM_ChoiceList.h>
@@ -47,6 +49,9 @@ enum ParmType {
 	eTextureColor,
 	eTextureFloat,
 	eTextureInt,
+	eTextureVector,
+	eTextureMatrix,
+	eTextureTransform,
 	eManualExportStart,
 	eCurve,
 	eRamp,
@@ -63,23 +68,6 @@ enum ParmType {
 	eUnknown,
 };
 
-/// Types of plugins
-enum PluginType {
-	PluginTypeUnknown = 0,
-	PluginTypeBRDF,
-	PluginTypeCamera,
-	PluginTypeRenderChannel,
-	PluginTypeEffect,
-	PluginTypeFilter,
-	PluginTypeGeometry,
-	PluginTypeLight,
-	PluginTypeMaterial,
-	PluginTypeObject,
-	PluginTypeSettings,
-	PluginTypeTexture,
-	PluginTypeUvwgen,
-};
-
 /// String type subtypes
 enum ParmSubtype {
 	eFilepath = 0,
@@ -87,213 +75,95 @@ enum ParmSubtype {
 	eNone
 };
 
-/// Descriptor for a color ramp param
-struct ParmRampDesc {
-	std::string  colors; ///< The name of the property for values
-	std::string  positions; ///< The name of the property for positions
-	std::string  interpolations; ///< The name of the property for interpolations
-};
-
-/// Descriptor for a curve param
-struct ParmCurveDesc {
-	std::string  positions; ///< The name of the property for positions
-	std::string  values; ///< The name of the property for values
-	std::string  interpolations; ///< The name of the property for itnerpolations
-};
-
-/// Descriptor for enum param
-struct ParmEnumItem {
-	std::string  value; ///< The value as string for the param
-	std::string  label; ///< The display label for this valu
-	std::string  desc; ///< The desctription for the value
-};
-typedef std::vector<ParmEnumItem> ParmEnumItems;
-
-/// Descriptor for enum plugin parameter
-struct EnumItem {
-	enum EnumValueType {
-		EnumValueInt = 0,
-		EnumValueString
-	};
-
-	EnumItem():
-		valueType(EnumItem::EnumValueInt)
-	{}
-
-	std::string    label; ///< The label for this enum
-	std::string    desc; ///< The desctiption
-
-	EnumValueType  valueType; ///< The type of the enum
-	int            value; ///< Value as int
-
-	/// For string enum
-	/// NOTE: UVWGenEnvironment "mapping_type" only
-	std::string    valueString;
-};
-typedef std::vector<EnumItem> EnumItems;
-
 /// Factory for PRM_Default objects based on provided values
 struct ParmDefValue {
-	typedef std::vector<PRM_Default*> PRM_DefaultPtrList;
+	/// Descriptor for a color ramp param
+	struct ParmRampDesc {
+		std::string colors; ///< The name of the property for values
+		std::string positions; ///< The name of the property for positions
+		std::string interpolations; ///< The name of the property for interpolations
+	};
 
-	static PRM_DefaultPtrList PrmDefPtrList;
-	static PRM_DefaultPtrList PrmDefArrPtrList;
+	/// Descriptor for a curve param
+	struct ParmCurveDesc {
+		std::string positions; ///< The name of the property for positions
+		std::string values; ///< The name of the property for values
+		std::string interpolations; ///< The name of the property for itnerpolations
+	};
 
-	/// Free all alocated data for default values
-	static void FreeData() {
-		for (auto pIt : ParmDefValue::PrmDefPtrList) {
-			delete pIt;
-		}
-		for (auto pIt : ParmDefValue::PrmDefArrPtrList) {
-			delete [] pIt;
-		}
-		ParmDefValue::PrmDefPtrList.clear();
-		ParmDefValue::PrmDefArrPtrList.clear();
-	}
+	ParmDefValue()
+		: type(eUnknown)
+	{}
 
-	/// Initialize all values to 0
-	ParmDefValue():
-		type(eUnknown),
-		subType(eNone),
-		defInt(0),
-		defEnum(0),
-		defFloat(1.0f),
-		defBool(false)
-#ifndef _WIN32
-		,defColor{0.0f,0.0f,0.0f}
-		,defAColor{0.0f,0.0f,0.0f,1.0f}
-		,defMatrix{1.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,0.0f}
-#endif
-	{
-#ifdef _WIN32
-		memset(defColor, 0, sizeof(defColor) * sizeof(defColor[0]));
-		memset(defAColor, 0, sizeof(defAColor) * sizeof(defAColor[0]));
-		defAColor[3] = 1.0f;
-		memset(defMatrix, 0, sizeof(defMatrix) * sizeof(defMatrix[0]));
-		// identity matrix
-		for (int c = 0; c < 4; ++c) {
-			defMatrix[c * 4 + c] = 1.0f;
-		}
-#endif
-	}
+	/// Parameter type.
+	ParmType type;
 
-	/// Get bool default
-	PRM_Default* getDefBool() const {
-		if (defBool)
-			return PRMoneDefaults;
-		return PRMzeroDefaults;
-	}
+	/// Data for exporting color ramp.
+	ParmRampDesc colorRampInfo;
 
-	/// Get float default
-	PRM_Default* getDefFloat() const {
-		PRM_Default *prm_def = new PRM_Default((fpreal)defFloat);
-		PrmDefPtrList.push_back(prm_def);
-		return prm_def;
-	}
+	/// Data for exporting curve ramp.
+	ParmCurveDesc curveRampInfo;
+};
 
-	/// Get int default
-	PRM_Default* getDefInt() const {
-		PRM_Default *prm_def = new PRM_Default((fpreal)defInt);
-		PrmDefPtrList.push_back(prm_def);
-		return prm_def;
-	}
-
-	/// Get string default
-	PRM_Default* getDefString() const {
-		PRM_Default *prm_def = new PRM_Default(0.0f, defString.c_str());
-		PrmDefPtrList.push_back(prm_def);
-		return prm_def;
-	}
-
-	/// Get color default
-	PRM_Default* getDefColor() const {
-		PRM_Default *prm_def = new PRM_Default[4];
-		if (type == eColor) {
-			for (int i = 0; i < 3; ++i)
-				prm_def[i].setFloat(defColor[i]);
-			prm_def[3].setFloat(1.0f);
-		}
-		else {
-			for (int i = 0; i < 4; ++i)
-				prm_def[i].setFloat(defAColor[i]);
-		}
-		PrmDefArrPtrList.push_back(prm_def);
-		return prm_def;
-	}
-
-	/// Get vector default
-	PRM_Default* getDefVector() const {
-		PRM_Default *prm_def = new PRM_Default[4];
-
-		for (int i = 0; i < 3; ++i) {
-			prm_def[i].setFloat(defColor[i]);
-		}
-		prm_def[3].setFloat(0.0f);
-
-		PrmDefArrPtrList.push_back(prm_def);
-		return prm_def;
-	}
-
-	/// Get the current type as string
-	const char     *typeStr() const;
-
-	ParmType        type; ///< Param type
-	ParmSubtype     subType; ///< Param subtype
-
-	/// Values for all supported types
-	int             defInt;
-	float           defFloat;
-	bool            defBool;
-	float           defColor[3];
-	float           defAColor[4];
-	std::string     defString;
-	int             defEnum;
-	EnumItems       defEnumItems;
-	float           defMatrix[16];
-
-	ParmRampDesc    defRamp;
-	ParmCurveDesc   defCurve;
-
+enum AttrDescFlags {
+	attrFlagNone           = 0,
+	attrFlagCustomHandling = (1 << 0), ///< Parameter requires custom handling.
+	attrFlagLinkedOnly     = (1 << 1), ///< Skip parameter if socket is not connected.
+	attrFlagToRadians      = (1 << 2), ///< Value needs to be converted from degrees to radians.
 };
 
 /// Descriptor for a single param
 struct AttrDesc {
 	AttrDesc()
-		: custom_handling(false)
-		, linked_only(false)
-		, convert_to_radians(false)
+		: flags(attrFlagNone)
 	{}
 
-	std::string  attr; ///< Attribute name
-	std::string  label; ///< Attribute label
-	std::string  desc; ///< Attribute description
+	/// Plugin attribute name.
+	VUtils::CharString attr;
 
-	ParmDefValue value; ///< Default value for this param
-	int          custom_handling; ///< 1 if this param requires custom handling
-	int          linked_only; ///< 1 if this link should be skipped during auto export
-	int          convert_to_radians; ///< 1 if this needs to be converted from degrees to radians
+	/// UI label.
+	VUtils::CharString label;
+
+	/// UI help.
+	VUtils::CharString desc;
+
+	/// Value type for this parameter.
+	ParmDefValue value;
+
+	/// Parameter export flags.
+	uint32_t flags;
 };
 
-typedef std::map<std::string, AttrDesc>       AttributeDescs;
-typedef std::map<std::string, AttributeDescs> PluginDescriptions;
+typedef VUtils::HashMap<AttrDesc, true, 512, false, 32> AttributeDescs;
 
-/// Descriptor for a plugin's socket
 struct SocketDesc {
-	SocketDesc() {}
-
-	SocketDesc(PRM_Name name, VOP_Type vopType, ParmType type=ParmType::eUnknown):
-		name(name),
-		vopType(vopType),
-		type(type)
+	SocketDesc()
+		: attrType(eUnknown)
+		, socketType(VOP_TYPE_UNDEF)
 	{}
 
-	PRM_Name  name; ///< Name for UI
-	ParmType  type;	///< UI type
+	/// UI label.
+	VUtils::CharString label;
 
-	VOP_Type  vopType; ///< Socket type
+	/// Plugin attribute name.
+	/// May be empty for the default outputs.
+	VUtils::CharString attrName;
+
+	/// Plugin attribute type.
+	ParmType attrType;
+
+	/// UI token.
+	VUtils::CharString socketLabel;
+
+	/// Socket type.
+	VOP_Type socketType;
 };
-typedef std::vector<SocketDesc> SocketsDesc;
 
+typedef VUtils::Table<SocketDesc, 10> VRayNodeSockets;
+
+/// Returns true if current parameter template represents V-Ray Plugin parameter.
+/// @param prm PRM_Parm instance. May be nullptr.
+bool isVRayParm(const PRM_Template *prm);
 
 } // namespace Parm
 } // namespace VRayForHoudini

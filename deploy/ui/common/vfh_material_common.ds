@@ -1,0 +1,10 @@
+parm {
+    name "material"
+    label "Material"
+    type int
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_label" "material" }
+    parmtag { "vray_pluginattr" "" }
+    parmtag { "vray_type" "OutputPluginMaterial" }
+    invisible
+}

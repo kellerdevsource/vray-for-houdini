@@ -1,0 +1,199 @@
+{
+    name    TexCellular
+    label   "Cellular"
+    parmtag { spare_category "Cellular" }
+    parmtag { vray_plugin "TexCellular" }
+
+    groupsimple {
+        name "VfhTexMain"
+        label "Settings"
+
+        parm {
+            name    "type"
+            label   "Type"
+            type    ordinal
+            default { "0" }
+            help    "Type"
+            menu {
+                "0" "Dots"
+                "1" "Chips"
+                "2" "Cells"
+                "3" "Chess Cells"
+                "4" "Plasma"
+            }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_pluginattr" "type" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name    "bg_color"
+            label   "Background Color"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "bg_color" }
+            parmtag { "vray_type" "Texture" }
+        }
+
+        parm {
+            name    "center_color"
+            label   "Center Color"
+            type    color4
+            size    4
+            default { "1" "0.1" "1" "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "center_color" }
+            parmtag { "vray_type" "Texture" }
+        }
+
+        parm {
+            name    "edge_color"
+            label   "Edge Color"
+            type    color4
+            size    4
+            default { "1" "1" "0" "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "edge_color" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "size"
+            label   "Size"
+            type    float
+            default { "0.1" }
+            range   { 0.01 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "size" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "spread"
+            label   "Spread"
+            type    float
+            default { "0.1" }
+            range   { 0.01 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "spread" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "density"
+            label   "Density"
+            type    float
+            default { "1" }
+            range   { 0.1 5 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "density" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "low"
+            label   "Low"
+            type    float
+            default { "0" }
+            help    "Low threshold (for the bg color)"
+            disablewhen "{ type < 2 }"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "low" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "middle"
+            label   "Middle"
+            type    float
+            default { "0.5" }
+            help    "Middle threshold (for the edge color)"
+            disablewhen "{ type < 2 }"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "middle" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "high"
+            label   "High"
+            type    float
+            default { "1" }
+            help    "High threshold (for the center color)"
+            disablewhen "{ type < 2 }"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "high" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "fractal"
+            label   "Fractal"
+            type    toggle
+            default { "0" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "fractal" }
+            parmtag { "vray_type" "boolean" }
+        }
+
+        parm {
+            name    "fractal_iterations"
+            label   "Fractal Iterations"
+            type    float
+            default { "3" }
+            help    "The number of fractal iterations"
+            disablewhen " { fractal == 0 }"
+            range   { 0 9 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "fractal_iterations" }
+            parmtag { "vray_type" "float" }
+        }
+
+        parm {
+            name    "fractal_roughness"
+            label   "Fractal Roughness"
+            type    float
+            default { "0.6" }
+            help    "The fractal roughness (0.0f is very rough; 1.0 is smooth - i.e. no fractal)"
+            disablewhen " { fractal == 0 }"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCellular" }
+            parmtag { "vray_pluginattr" "fractal_roughness" }
+            parmtag { "vray_type" "float" }
+        }
+    }
+
+#define VFH_USE_3DMAPPING
+#include "vfh_texture_common.ds"
+}

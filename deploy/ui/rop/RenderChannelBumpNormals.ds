@@ -1,0 +1,32 @@
+{
+    name    RenderChannelBumpNormals
+    label   "Bump Normals"
+    parmtag { spare_category "Bump Normals" }
+    parmtag { vray_plugin "RenderChannelBumpNormals" }
+    parm {
+        name    "name"
+        label   "Name"
+        type    string
+        default { "Bump_Normals" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "RenderChannelBumpNormals" }
+        parmtag { "vray_pluginattr" "name" }
+        parmtag { "vray_type" "string" }
+    }
+    parm {
+        name    "filtering"
+        label   "Filtering"
+        type    toggle
+        default { "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "RenderChannelBumpNormals" }
+        parmtag { "vray_pluginattr" "filtering" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+#include "vfh_renderchannel_common.ds"
+}

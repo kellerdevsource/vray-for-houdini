@@ -1,0 +1,9 @@
+{
+    name	UVWGenObjectBBox
+    label	"Bounding Box"
+    parmtag	{ spare_category "Bounding Box" }
+    parmtag	{ vray_plugin "UVWGenObjectBBox" }
+
+#include "UVWGenObjectBBoxParms.ds"
+#include "vfh_uvwgen_common.ds"
+}

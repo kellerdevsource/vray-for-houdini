@@ -10,16 +10,12 @@
 
 #include "op_node_base.h"
 
-
 using namespace VRayForHoudini;
 using namespace Parm;
-
 
 void OP::VRayNode::init()
 {
 	setPluginType();
 
-	if (NOT(pluginID.empty())) {
-		pluginInfo = Parm::GetVRayPluginInfo(pluginID);
-	}
+	pluginInfo = Parm::getVRayPluginInfo(pluginID.c_str());
 }

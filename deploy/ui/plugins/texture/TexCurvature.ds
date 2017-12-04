@@ -1,0 +1,97 @@
+{
+    name    TexCurvature
+    label   "Curvature"
+    parmtag { spare_category "Curvature" }
+    parmtag { vray_plugin "TexCurvature" }
+    parm {
+        name    "trace_distance"
+        label   "Trace Distance"
+        type    float
+        default { "1" }
+        help    "The maximum distance to search for intersections. Bigger values will decrease the performance, but may produce more correct result."
+        range { 0.001 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexCurvature" }
+        parmtag { "vray_pluginattr" "trace_distance" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "sample_spread"
+        label   "Radius"
+        type    float
+        default { "0.1" }
+        help    "Sampling radius"
+        range   { 0.001 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexCurvature" }
+        parmtag { "vray_pluginattr" "sample_spread" }
+        parmtag { "vray_type" "TextureFloat" }
+    }
+    parm {
+        name    "scale"
+        label   "Scale"
+        type    float
+        default { "1" }
+        help    "The scale relative to which the curvature is computed"
+        range { 0.01 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexCurvature" }
+        parmtag { "vray_pluginattr" "scale" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "threshold"
+        label   "Threshold"
+        type    float
+        default { "0.0" }
+        help    "Curvature values below this threshold will be ignored."
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexCurvature" }
+        parmtag { "vray_pluginattr" "threshold" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "out_color_min"
+        label   "Color Min"
+        type    float
+        default { "0" }
+        help    "Output color min value"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexCurvature" }
+        parmtag { "vray_pluginattr" "out_color_min" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "out_color_max"
+        label   "Color Max"
+        type    float
+        default { "1" }
+        help    "Output color max value"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexCurvature" }
+        parmtag { "vray_pluginattr" "out_color_max" }
+        parmtag { "vray_type" "float" }
+    }
+    parm {
+        name    "subdivs"
+        label   "Subdivs"
+        type    integer
+        default { "4" }
+        help    "Number of samples to take when sampling normals around intersection (subdivs*subdivs)"
+        range   { 1 32 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexCurvature" }
+        parmtag { "vray_pluginattr" "subdivs" }
+        parmtag { "vray_type" "int" }
+    }
+#include "vfh_texture_default_output_color.ds"
+}

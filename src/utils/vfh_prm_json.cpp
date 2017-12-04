@@ -8,6 +8,8 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#if 0
+
 #include "vfh_defines.h"
 #include "vfh_prm_def.h"
 #include "vfh_prm_json.h"
@@ -184,36 +186,6 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 	if (jsonPluginDesc) {
 		const std::string &pluginTypeStr = jsonPluginDesc->get_child("Type").data();
 
-		Parm::PluginType pluginType = Parm::PluginTypeUnknown;
-
-		if (pluginTypeStr == "BRDF") {
-			pluginType = Parm::PluginTypeBRDF;
-		}
-		else if (pluginTypeStr == "MATERIAL") {
-			pluginType = Parm::PluginTypeMaterial;
-		}
-		else if (pluginTypeStr == "UVWGEN") {
-			pluginType = Parm::PluginTypeUvwgen;
-		}
-		else if (pluginTypeStr == "TEXTURE") {
-			pluginType = Parm::PluginTypeTexture;
-		}
-		else if (pluginTypeStr == "GEOMETRY") {
-			pluginType = Parm::PluginTypeGeometry;
-		}
-		else if (pluginTypeStr == "RENDERCHANNEL") {
-			pluginType = Parm::PluginTypeRenderChannel;
-		}
-		else if (pluginTypeStr == "EFFECT") {
-			pluginType = Parm::PluginTypeEffect;
-		}
-		else if (pluginTypeStr == "SETTINGS") {
-			pluginType = Parm::PluginTypeSettings;
-		}
-		else if (pluginTypeStr == "LIGHT") {
-			pluginType = Parm::PluginTypeLight;
-		}
-
 		pluginInfo = Parm::NewVRayPluginInfo(pluginID);
 		pluginInfo->pluginType = pluginType;
 
@@ -296,14 +268,6 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 				// Skip was used in a meaning of non-automatic export,
 				// so param should be generated
 				attrDesc.custom_handling = v.second.get<bool>("skip");
-			}
-
-			if (v.second.count("name")) {
-				attrDesc.label = v.second.get_child("name").data();
-			}
-			else {
-				attrDesc.label = attrName;
-				makeSpaceSeparatedTitleCase(attrDesc.label);
 			}
 
 			if (v.second.count("options")) {
@@ -567,3 +531,5 @@ VRayPluginInfo* Parm::generatePluginInfo(const std::string &pluginID)
 
 	return pluginInfo;
 }
+
+#endif

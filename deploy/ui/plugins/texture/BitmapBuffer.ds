@@ -1,0 +1,8 @@
+{
+    name BitmapBuffer
+    label "Image File"
+    parmtag { spare_category "Image File" }
+    parmtag { vray_plugin "BitmapBuffer" }
+
+#include "BitmapBufferParms.ds"
+}

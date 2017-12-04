@@ -23,7 +23,7 @@
     group {
         name "VRayRendererFolderOutput"
         label "Images"
-#include "$VRAY_UI_DS_PATH/rop/SettingsOutput.ds"
+#include "$VRAY_UI_DS_PATH/rop/SettingsOutputParm.ds"
     }
 
     group {

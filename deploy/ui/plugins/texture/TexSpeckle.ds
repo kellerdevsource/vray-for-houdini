@@ -1,0 +1,53 @@
+{
+    name    TexSpeckle
+    label   "Speckle"
+    parmtag { spare_category "Speckle" }
+    parmtag { vray_plugin "TexSpeckle" }
+    groupsimple {
+        name "folder_speckle_settings"
+        label "Settings"
+        parm {
+            name    "color1"
+            label   "Color1"
+            type    color4
+            size    4
+            default { "1" "1" "1" "1" }
+            help    "First color"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSpeckle" }
+            parmtag { "vray_pluginattr" "color1" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "color2"
+            label   "Color2"
+            type    color4
+            size    4
+            default { "0" "0" "0" "1" }
+            help    "Second color"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSpeckle" }
+            parmtag { "vray_pluginattr" "color2" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "size"
+            label   "Size"
+            type    float
+            default { "1" }
+            help    "Size"
+            range   { 0 2 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSpeckle" }
+            parmtag { "vray_pluginattr" "size" }
+            parmtag { "vray_type" "float" }
+        }
+    }
+#define VFH_USE_3DMAPPING
+#include "vfh_texture_common.ds"
+}

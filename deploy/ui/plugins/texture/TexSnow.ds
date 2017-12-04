@@ -1,0 +1,86 @@
+{
+    name    TexSnow
+    label   "Snow"
+    parmtag { spare_category "Snow" }
+    parmtag { vray_plugin "TexSnow" }
+    groupsimple {
+        name "folder_snow_settings"
+        label "Settings"
+        parm {
+            name    "snow_tex"
+            label   "Snow Color"
+            type    color4
+            size    4
+            default { "1" "1" "1" "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSnow" }
+            parmtag { "vray_pluginattr" "snow_tex" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "surface_tex"
+            label   "Surface Color"
+            type    color4
+            size    4
+            default { "1" "0" "0" "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSnow" }
+            parmtag { "vray_pluginattr" "surface_tex" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "threshold"
+            label   "Threshold"
+            type    float
+            default { "0" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSnow" }
+            parmtag { "vray_pluginattr" "threshold" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+        parm {
+            name    "depth_decay"
+            label   "Depth Decay"
+            type    float
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSnow" }
+            parmtag { "vray_pluginattr" "depth_decay" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+        parm {
+            name    "thickness"
+            label   "Thickness"
+            type    float
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSnow" }
+            parmtag { "vray_pluginattr" "thickness" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+        parm {
+            name    "wrap"
+            label   "Wrap"
+            type    toggle
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexSnow" }
+            parmtag { "vray_pluginattr" "wrap" }
+            parmtag { "vray_type" "boolean" }
+        }
+    }
+#define VFH_USE_3DMAPPING
+#include "vfh_texture_common.ds"
+}

@@ -1,0 +1,48 @@
+{
+    name    BRDFHair
+    label   "Hair"
+    parmtag { spare_category "Hair" }
+    parmtag { vray_plugin "BRDFHair" }
+
+#include "vfh_brdf_common.ds"
+
+    parm {
+        name    "diffuse_color_tex"
+        label   "Diffuse Color"
+        type    color4
+        size    4
+        default { "0.2" "0.15" "0.1" "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFHair" }
+        parmtag { "vray_pluginattr" "diffuse_color_tex" }
+        parmtag { "vray_type" "Texture" }
+        parmtag { "ogl_diff" "1" }
+    }
+    parm {
+        name    "specular_color_tex"
+        label   "Specular Color"
+        type    color4
+        size    4
+        default { "0.99" "0.9" "0.6" "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFHair" }
+        parmtag { "vray_pluginattr" "specular_color_tex" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "specular_power"
+        label   "Specular Power"
+        type    float
+        default { "1" }
+        range   { 0 8 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BRDFHair" }
+        parmtag { "vray_pluginattr" "specular_power" }
+        parmtag { "vray_type" "float" }
+    }
+}

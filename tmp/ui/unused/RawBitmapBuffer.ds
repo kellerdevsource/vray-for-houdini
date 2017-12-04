@@ -1,0 +1,165 @@
+#ifdef PREFIX
+#define NAMEM(n) \
+    name PREFIX##n##""
+#else
+#define NAMEM(n) \
+    name n##""
+#endif
+
+{
+    name	RawBitmapBuffer
+    label	"Raw Bitmap Buffer"
+    parmtag	{ spare_category "Raw Bitmap Buffer" }
+    parmtag	{ vray_plugin "RawBitmapBuffer" }
+
+    parm {
+        NAMEM("filter_type")
+        label   "Filter"
+        type    ordinal
+        default { "1" }
+        help    "Filtering"
+        menu    {
+            "-1" "Nearest"
+            "0" "None"
+            "1" "Mip-Map"
+            "2" "Area"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "filter_type" }
+        parmtag { "vray_type" "enum" }
+    }
+
+    parm {
+        NAMEM("interpolation")
+        label   "Interpolation"
+        type    ordinal
+        default { "0" }
+        help    "Interpolation method for the Mip-Map filtering"
+        menu    {
+            "0" "Bilinear"
+            "1" "Bicubic"
+            "2" "Quadratic"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "interpolation" }
+        parmtag { "vray_type" "enum" }
+        disablewhen "{ filter_type != 1 }"
+    }
+
+    parm {
+        NAMEM("filter_blur")
+        label   "Blur"
+        type    float
+        default { "1" }
+        disablewhen "{ filter_type == None }"
+        range   { 0 64 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "filter_blur" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        NAMEM("color_space")
+        label   "Color Space"
+        type    ordinal
+        default { "2" }
+        help    "Color space"
+        menu    {
+            "0" "Linear"
+            "1" "Gamma Corrected"
+            "2" "sRGB"
+        }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "BitmapBuffer" }
+        parmtag { "vray_pluginattr" "color_space" }
+        parmtag { "vray_type" "enum" }
+    }
+    parm {
+	name	"gamma"
+	label	"Gamma"
+	type	float
+	default	{ "1" }
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
+	parmtag	{ "vray_pluginattr" "gamma" }
+	parmtag	{ "vray_type" "float" }
+    }
+    parm {
+    	name	"maya_compatible"
+    	label	"Maya Compatible"
+    	type	toggle
+    	default	{ "0" }
+    	range	{ 0 1 }
+    	export	none
+    	parmtag	{ "cook_dependent" "1" }
+    	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
+    	parmtag	{ "vray_pluginattr" "maya_compatible" }
+    	parmtag	{ "vray_type" "boolean" }
+        invisible
+    }
+    parm {
+    	name	"allow_negative_colors"
+    	label	"Allow Negative Colors"
+    	type	toggle
+    	default	{ "0" }
+    	help	"if false negative colors will be clamped"
+    	range	{ 0 1 }
+    	export	none
+    	parmtag	{ "cook_dependent" "1" }
+    	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
+    	parmtag	{ "vray_pluginattr" "allow_negative_colors" }
+    	parmtag	{ "vray_type" "boolean" }
+    }
+
+
+    parm {
+    	name	"pixels_type"
+    	label	"Pixels Type"
+    	type	ordinal
+    	default	{ "0" }
+    	help	""
+    	menu	{
+    	    "0"	"8-bit RBGA"
+    	    "1"	"Float RGBA"
+    	    "2"	"8-bit RBGE"
+    	    "3"	"16-bit RBGA"
+    	    "4"	"Float RGBA"
+    	}
+    	parmtag	{ "cook_dependent" "1" }
+    	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
+    	parmtag	{ "vray_pluginattr" "pixels_type" }
+    	parmtag	{ "vray_type" "enum" }
+    }
+    parm {
+	name	"width"
+	label	"Width"
+	type	integer
+	default	{ "0" }
+	help	"The width of the raw bitmap"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
+	parmtag	{ "vray_pluginattr" "width" }
+	parmtag	{ "vray_type" "int" }
+    }
+    parm {
+	name	"height"
+	label	"Height"
+	type	integer
+	default	{ "0" }
+	help	"The height of the raw bitmap"
+	range	{ 0 10 }
+	export	none
+	parmtag	{ "cook_dependent" "1" }
+	parmtag	{ "vray_plugin" "RawBitmapBuffer" }
+	parmtag	{ "vray_pluginattr" "height" }
+	parmtag	{ "vray_type" "int" }
+    }
+}

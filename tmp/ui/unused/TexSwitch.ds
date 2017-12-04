@@ -1,0 +1,22 @@
+{
+    name    TexSwitch
+    label   "Switch"
+    parmtag { spare_category "Switch" }
+    parmtag { vray_plugin "TexSwitch" }
+
+    parm {
+    name    "default_texture"
+    label   "Default Texture"
+    type    color4
+    size    4
+    default { "0" "0" "0" "0" }
+    range   { 0 10 }
+    export  none
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "TexSwitch" }
+    parmtag { "vray_pluginattr" "default_texture" }
+    parmtag { "vray_type" "Texture" }
+    }
+
+
+}

@@ -1,0 +1,63 @@
+{
+    name    TexRGBTintMax
+    label   "RGB Tint Max"
+    parmtag { spare_category "RGB Tint Max" }
+    parmtag { vray_plugin "TexRGBTintMax" }
+    parm {
+        name    "texture"
+        label   "Texture"
+        type    color4
+        size    4
+        default { "1" "1" "1" "1" }
+        help    "The texture"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexRGBTintMax" }
+        parmtag { "vray_pluginattr" "texture" }
+        parmtag { "vray_type" "Texture" }
+    }
+    parm {
+        name    "red"
+        label   "Red"
+        type    color
+        size    3
+        default { "1" "0" "0" }
+        help    "The red color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexRGBTintMax" }
+        parmtag { "vray_pluginattr" "red" }
+        parmtag { "vray_type" "color" }
+    }
+    parm {
+        name    "green"
+        label   "Green"
+        type    color
+        size    3
+        default { "0" "1" "0" }
+        help    "The green color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexRGBTintMax" }
+        parmtag { "vray_pluginattr" "green" }
+        parmtag { "vray_type" "color" }
+    }
+    parm {
+        name    "blue"
+        label   "Blue"
+        type    color
+        size    3
+        default { "0" "0" "1" }
+        help    "The blue color"
+        range   { 0 10 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexRGBTintMax" }
+        parmtag { "vray_pluginattr" "blue" }
+        parmtag { "vray_type" "color" }
+    }
+#include "vfh_texture_default_output_color.ds"
+}

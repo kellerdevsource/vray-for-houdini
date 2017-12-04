@@ -1,0 +1,83 @@
+{
+    name    TexCompMax
+    label   "Comp Max"
+    parmtag { spare_category "Comp Max" }
+    parmtag { vray_plugin "TexCompMax" }
+    groupsimple {
+        name "folder_compmax_settings"
+        label "Settings"
+        parm {
+            name    "operator"
+            label   "Operator"
+            type    ordinal
+            default { "0" }
+            help    "Operator"
+            menu    {
+                0   "Add"
+                1  "Subtract"
+                2    "Difference"
+                3  "Multiply"
+                4    "Divide"
+                5   "Minimum"
+                6   "Maximum"
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_enumkeys" "0,1,2,3,4,5,6" }
+            parmtag { "vray_plugin" "TexCompMax" }
+            parmtag { "vray_pluginattr" "operator" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name    "sourceA"
+            label   "Source A"
+            type    color4
+            size    4
+            default { "1" "0" "0" "1" }
+            help    "Left hand side texture"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCompMax" }
+            parmtag { "vray_pluginattr" "sourceA" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "sourceB"
+            label   "Source B"
+            type    color4
+            size    4
+            default { "0" "0" "1" "1" }
+            help    "Right hand side texture"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "TexCompMax" }
+            parmtag { "vray_pluginattr" "sourceB" }
+            parmtag { "vray_type" "Texture" }
+        }
+    }
+    parm {
+        name    "compatibility_with"
+        label   "Compatibility With"
+        type    ordinal
+        default { "0" }
+        help    "This is used to differentiate between textures exported from different applications"
+        menu    {
+            0   "3ds Max"
+            1  "Maya"
+        }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_enumkeys" "0,1" }
+        parmtag { "vray_plugin" "TexCompMax" }
+        parmtag { "vray_pluginattr" "compatibility_with" }
+        parmtag { "vray_type" "int" }
+        invisible
+    }
+#include "vfh_texture_common_color.ds"
+#include "vfh_texture_common_alpha.ds"
+#include "vfh_texture_common_outputs.ds"
+}

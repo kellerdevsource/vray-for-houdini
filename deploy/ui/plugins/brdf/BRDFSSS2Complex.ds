@@ -1,0 +1,574 @@
+{
+    name    BRDFSSS2Complex
+    label   "SSS 2 Complex"
+    parmtag { spare_category "SSS 2 Complex" }
+    parmtag { vray_plugin "BRDFSSS2Complex" }
+
+#include "vfh_brdf_common.ds"
+
+    group {
+        name "folder_main"
+        label "Overall"
+        parm {
+            name    "overall_color"
+            label   "Color"
+            type    color4
+            size    4
+            default { "1" "1" "1" "1" }
+            range   { 0 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFSSS2Complex" }
+            parmtag { "vray_pluginattr" "overall_color" }
+            parmtag { "vray_type" "Texture" }
+        }
+        parm {
+            name    "ior"
+            label   "Index Of Refraction"
+            type    float
+            default { "1.5" }
+            range   { 0.01 5 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFSSS2Complex" }
+            parmtag { "vray_pluginattr" "ior" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "refraction_depth"
+            label   "Refraction Depth"
+            type    integer
+            default { "-1" }
+            range   { -1 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFSSS2Complex" }
+            parmtag { "vray_pluginattr" "refraction_depth" }
+            parmtag { "vray_type" "int" }
+        }
+        parm {
+            name    "linear_workflow"
+            label   "Linear Workflow"
+            type    toggle
+            default { "0" }
+            help    "Set to true to apply the inverse of gamma correction"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFSSS2Complex" }
+            parmtag { "vray_pluginattr" "linear_workflow" }
+            parmtag { "vray_type" "boolean" }
+            invisible
+        }
+        parm {
+            name    "opacity"
+            label   "Opacity"
+            type    float
+            default { "1" }
+            help    "Opacity texture"
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFSSS2Complex" }
+            parmtag { "vray_pluginattr" "opacity" }
+            parmtag { "vray_type" "TextureFloat" }
+            invisible
+        }
+        groupsimple {
+            name "folder_overall_diffuse"
+            label "Diffuse"
+            parm {
+                name    "diffuse_amount"
+                label   "Amount"
+                type    float
+                default { "0" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "diffuse_amount" }
+                parmtag { "vray_type" "TextureFloat" }
+            }
+            parm {
+                name    "diffuse_color"
+                label   "Color"
+                type    color4
+                size    4
+                default { "0.5" "0.5" "0.5" "1" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "diffuse_color" }
+                parmtag { "vray_type" "Texture" }
+                parmtag { "ogl_diff" "1" }
+                disablewhen "{ diffuse_amount == 0 }"
+            }
+        }
+        groupsimple {
+            name "folder_overall_sss"
+            label "SSS"
+            parm {
+                name    "scale"
+                label   "Scale"
+                type    float
+                default { "1" }
+                help    "Values below 1.0 will make the object look as if it is bigger. Values above 1.0 will make it look as if it is smaller"
+                range   { 0.01 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "scale" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "color_mode"
+                label   "Color Mode"
+                type    ordinal
+                default { "0" }
+                help    "Determines the meaning of the two colors: 0 - diffuse surface reflectance and scatter radius; 1 - scatter coefficient and fog color"
+                menu    {
+                    "0" "Diffuse surface reflectance and scatter radius"
+                    "1" "Scatter coefficient and fog color"
+                }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "color_mode" }
+                parmtag { "vray_type" "enum" }
+            }
+            parm {
+                name    "sub_surface_color"
+                label   "SSS Color"
+                type    color4
+                size    4
+                default { "0.5" "0.5" "0.5" "1" }
+                range   { 0 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "sub_surface_color" }
+                parmtag { "vray_type" "Texture" }
+            }
+            parm {
+                name    "scatter_radius"
+                label   "Scatter Radius"
+                type    color4
+                size    4
+                default { "0.92" "0.52" "0.175" "1" }
+                help    "This is measured in centimeters"
+                range   { 0 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "scatter_radius" }
+                parmtag { "vray_type" "Texture" }
+            }
+            parm {
+                name    "scatter_radius_mult"
+                label   "Radius Mult"
+                type    float
+                default { "2" }
+                help    "The scatter radius will be multiplied by this number"
+                range   { 0 5 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "scatter_radius_mult" }
+                parmtag { "vray_type" "TextureFloat" }
+            }
+            parm {
+                name    "phase_function"
+                label   "Phase Function"
+                type    float
+                default { "0" }
+                range   { -1 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "phase_function" }
+                parmtag { "vray_type" "float" }
+            }
+        }
+    }
+    group {
+        name "folder_specular"
+        label "Specular"
+        parm {
+            name    "specular_amount"
+            label   "Amount"
+            type    float
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFSSS2Complex" }
+            parmtag { "vray_pluginattr" "specular_amount" }
+            parmtag { "vray_type" "TextureFloat" }
+        }
+        parm {
+            name    "specular_color"
+            label   "Color"
+            type    color4
+            size    4
+            default { "1" "1" "1" "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFSSS2Complex" }
+            parmtag { "vray_pluginattr" "specular_color" }
+            parmtag { "vray_type" "Texture" }
+            disablewhen "{ specular_amount == 0 }"
+        }
+        parm {
+            name    "specular_glossiness"
+            label   "Glossiness"
+            type    float
+            default { "0.6" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFSSS2Complex" }
+            parmtag { "vray_pluginattr" "specular_glossiness" }
+            parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ specular_amount == 0 }"
+        }
+        parm {
+            name    "cutoff_threshold"
+            label   "Cutoff Threshold"
+            type    float
+            default { "0.01" }
+            range   { 0 64 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFSSS2Complex" }
+            parmtag { "vray_pluginattr" "cutoff_threshold" }
+            parmtag { "vray_type" "float" }
+            disablewhen "{ specular_amount == 0 }"
+        }
+        parm {
+            name    "specular_subdivs"
+            label   "Subdivs"
+            type    integer
+            default { "8" }
+            range   { 0 32 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFSSS2Complex" }
+            parmtag { "vray_pluginattr" "specular_subdivs" }
+            parmtag { "vray_type" "int" }
+            disablewhen "{ specular_amount == 0 }"
+        }
+        parm {
+            name    "trace_reflections"
+            label   "Trace Reflections"
+            type    toggle
+            default { "0" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFSSS2Complex" }
+            parmtag { "vray_pluginattr" "trace_reflections" }
+            parmtag { "vray_type" "boolean" }
+            disablewhen "{ specular_amount == 0 }"
+        }
+        parm {
+            name    "reflection_depth"
+            label   "Max Depth"
+            type    integer
+            default { "5" }
+            range   { -1 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFSSS2Complex" }
+            parmtag { "vray_pluginattr" "reflection_depth" }
+            parmtag { "vray_type" "int" }
+            disablewhen "{ specular_amount == 0 } { trace_reflections == 0 }"
+        }
+    }
+    group {
+        name "folder_scattering"
+        label "Scattering"
+        groupsimple {
+            name "folder_scattering_single"
+            label "Single Scattering"
+            parm {
+                name    "single_scatter"
+                label   "Type"
+                type    ordinal
+                default { "1" }
+                help    ""
+                menu    {
+                    "0" "None"
+                    "1" "Simple"
+                    "2" "Raytraced (Solid)"
+                    "3" "Raytraced (Refractive)"
+                }
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "single_scatter" }
+                parmtag { "vray_type" "enum" }
+            }
+            parm {
+                name    "subdivs"
+                label   "Subdivs"
+                type    integer
+                default { "8" }
+                help    "Single scatter subdivisions"
+                range   { 0 16 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "subdivs" }
+                parmtag { "vray_type" "int" }
+            }
+        }
+        groupsimple {
+            name "folder_scattering_multi"
+            label "Multiscatter"
+            parm {
+                name    "geometry_based_sampling"
+                label   "Multiple Scattering"
+                type    ordinal
+                default { "2" }
+                help    "0 - Prepass-based illumination map; 1 - Object-based illumination map; 2 - Raytraced; 3 - None (diffuse approx.);"
+                menu    {
+                    "0" "Prepass-Based Illumination Map"
+                    "1" "Object-Based Illumination Map"
+                    "2" "Raytraced"
+                    "3" "None (Diffuse Approximation)"
+                }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "geometry_based_sampling" }
+                parmtag { "vray_type" "enum" }
+            }
+            parm {
+                name    "front_scatter"
+                label   "Front Lighting"
+                type    toggle
+                default { "1" }
+                hidewhen    "{ geometry_based_sampling != 0 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "front_scatter" }
+                parmtag { "vray_type" "boolean" }
+            }
+            parm {
+                name    "back_scatter"
+                label   "Back Lighting"
+                type    toggle
+                default { "1" }
+                hidewhen    "{ geometry_based_sampling != 0 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "back_scatter" }
+                parmtag { "vray_type" "boolean" }
+            }
+            parm {
+                name    "auto_density"
+                label   "Auto Density"
+                type    toggle
+                default { "0" }
+                help    "If this parameter is true then 'Samples per unit area' will be computed automatically."
+                hidewhen    "{ geometry_based_sampling != 1 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "auto_density" }
+                parmtag { "vray_type" "boolean" }
+            }
+            parm {
+                name    "samples_per_unit_area"
+                label   "Samples / Unit Area"
+                type    float
+                default { "16" }
+                hidewhen    "{ geometry_based_sampling != 1 } { auto_density != 0 }"
+                range   { 0 32 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "samples_per_unit_area" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "surface_offset"
+                label   "Surface Offset"
+                type    float
+                default { "0.001" }
+                help    "An offset along the geometric surface normal at which to perform shading in order to avoid surface acne"
+                hidewhen    "{ geometry_based_sampling != 1 } { auto_density != 0 }"
+                range   { 0.001 0.1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "surface_offset" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "prepass_blur"
+                label   "Prepass Blur"
+                type    float
+                default { "1.2" }
+                hidewhen    "{ geometry_based_sampling >= 2 }"
+                range   { 0 2 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "prepass_blur" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "scatter_gi"
+                label   "Scatter Gi"
+                type    toggle
+                default { "0" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "scatter_gi" }
+                parmtag { "vray_type" "boolean" }
+                hidewhen "{ geometry_based_sampling > 2 }"
+            }
+            parm {
+                name    "prepass_rate"
+                label   "Prepass Rate"
+                type    integer
+                default { "-1" }
+                help    "Sampling density for the illumination map"
+                hidewhen    "{ geometry_based_sampling != 0 } { scatter_gi == 0 }"
+                range   { -1 3 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "prepass_rate" }
+                parmtag { "vray_type" "int" }
+            }
+            parm {
+                name    "prepass_id"
+                label   "Prepass Id"
+                type    integer
+                default { "0" }
+                help    "0 to calculate a separate illuminataion map for this shader; otherwise all shaders with the same prepass ID will share the same illumination map"
+                hidewhen    "{ geometry_based_sampling != 0 } { scatter_gi == 0 }"
+                range   { 0 5 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "prepass_id" }
+                parmtag { "vray_type" "int" }
+            }
+            parm {
+                name    "interpolation_accuracy"
+                label   "Interpolation Accuracy"
+                type    float
+                default { "1" }
+                help    "Interpolation accuracy for the illumination map; normally 1.0 is fine"
+                hidewhen    "{ geometry_based_sampling >= 2 } { scatter_gi == 0 }"
+                range   { 0 4 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "interpolation_accuracy" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "preview_samples"
+                label   "Preview Samples"
+                type    toggle
+                default { "0" }
+                hidewhen    "{ geometry_based_sampling != 1 }"
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "preview_samples" }
+                parmtag { "vray_type" "boolean" }
+            }
+            parm {
+                name    "max_distance"
+                label   "Max Distance"
+                type    float
+                default { "0.1" }
+                hidewhen    "{ preview_samples != 1 } { geometry_based_sampling != 1 }"
+                range   { 0 0.2 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "max_distance" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "background_color"
+                label   "Background Color"
+                type    color
+                size    3
+                default { "0" "0" "0" }
+                hidewhen    "{ preview_samples != 1 } { geometry_based_sampling != 1 }"
+                range   { 0 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "background_color" }
+                parmtag { "vray_type" "color" }
+            }
+            parm {
+                name    "samples_color"
+                label   "Samples Color"
+                type    color
+                size    3
+                default { "1" "1" "1" }
+                hidewhen    "{ preview_samples != 1 } { geometry_based_sampling != 1 }"
+                range   { 0 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "samples_color" }
+                parmtag { "vray_type" "color" }
+            }
+            parm {
+                name    "prepass_mode"
+                label   "Prepass Mode"
+                type    ordinal
+                default { "0" }
+                help    "Prepass mode"
+                hidewhen    "{ geometry_based_sampling == 2 } { geometry_based_sampling == 3 } "
+                menu    {
+                    "0" "New"
+                    "1" "Save (Per-Frame)"
+                    "2" "Load (Per-Frame)"
+                    "3" "Save (First Frame)"
+                    "4" "Load (First Frame)"
+                }
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "prepass_mode" }
+                parmtag { "vray_type" "enum" }
+            }
+            parm {
+                name    "prepass_fileName"
+                label   "Prepass File"
+                type    file
+                default { "" }
+                help    "File path template for saved irradiance map files, frame number is appended for modes \"Save / Load (Per-Frame)\""
+                hidewhen    "{ geometry_based_sampling == 2 } { geometry_based_sampling == 3 } "
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "filechooser_pattern" "*.vrsssmap" }
+                parmtag { "vray_file_names" "VRayFastSSS2 illumination map" }
+                parmtag { "vray_plugin" "BRDFSSS2Complex" }
+                parmtag { "vray_pluginattr" "prepass_fileName" }
+                parmtag { "vray_type" "string" }
+            }
+        }
+    }
+}

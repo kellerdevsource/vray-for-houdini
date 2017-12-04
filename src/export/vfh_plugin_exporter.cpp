@@ -8,6 +8,7 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_defines.h"
 #include "vfh_hou_utils.h"
 #include "vfh_plugin_exporter.h"
 #include "vfh_vray_instances.h"
@@ -287,11 +288,11 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 			plugin.setValue(p.paramName, p.paramValue.valRawListCharString);
 		}
 		else if (p.paramType == PluginAttr::AttrTypeRawListValue) {
-			const int curAnimValue = m_vray->getUseAnimatedValuesState();
+			const bool curAnimValue = m_vray->getUseAnimatedValuesState();
 
 			// Force animated generic list key-frames.
 			if (curAnimValue && !p.isAnimatedGenericList) {
-				m_vray->useAnimatedValues(0);
+				m_vray->useAnimatedValues(false);
 			}
 
 			plugin.setValue(p.paramName, p.paramValue.valRawListValue);
