@@ -6,7 +6,6 @@
 // the dlimiter is '!' since it cannot be contained in any path
 
 #define VFH_LAUNCHER_VRAY_APPSDK R"!(@APPSDK_ROOT@)!"
-#define VFH_LAUNCHER_VRAY_PLUGIN_DESC_PATH R"!(@CMAKE_SOURCE_DIR@/deploy/plugins_desc)!"
 #define VFH_LAUNCHER_VRAY_UI_DS_PATH R"!(@CMAKE_SOURCE_DIR@/deploy/ui)!"
 #define VFH_LAUNCHER_VRAY_FOR_HOUDINI_AURA_LOADERS R"!(@Phoenix_LIBRARIES@)!"
 #define VFH_LAUNCHER_PYTHONPATH R"!(@VFH_PYTHON_DIRPATH@;&)!"

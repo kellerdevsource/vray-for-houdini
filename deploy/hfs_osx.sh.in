@@ -26,9 +26,6 @@ export VRAY_APPSDK=@_vfh_appsdk_path@
 # Set VFB on top
 export VRAY_VFB_ALWAYS_ON_TOP=1
 
-# V-Ray JSON plugin descriptions
-export VRAY_PLUGIN_DESC_PATH="@_vfh_config_path@/plugins_desc"
-
 # V-Ray UI dialog scripts
 export VRAY_UI_DS_PATH="@_vfh_config_path@/ui"
 

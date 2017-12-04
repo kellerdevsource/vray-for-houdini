@@ -24,8 +24,6 @@ if(BUILD_TESTING)
 	set_property( TEST vfhpytests
 				APPEND PROPERTY ENVIRONMENT "HFS=${HOUDINI_INSTALL_ROOT}")
 	set_property( TEST vfhpytests
-				APPEND PROPERTY ENVIRONMENT "VRAY_PLUGIN_DESC_PATH=${CMAKE_SOURCE_DIR}/deploy/plugins_desc")
-	set_property( TEST vfhpytests
 				APPEND PROPERTY ENVIRONMENT "VRAY_SDK=${APPSDK_ROOT}")
 	set_property( TEST vfhpytests
 				APPEND PROPERTY ENVIRONMENT "VRAY_PATH=${APPSDK_ROOT}/bin")

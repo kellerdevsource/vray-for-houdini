@@ -21,9 +21,6 @@ set LAUNCHER_LOCATION=%~dp0
 :: V-Ray Application SDK variables
 set VRAY_APPSDK=%LAUNCHER_LOCATION%/appsdk
 
-:: V-Ray JSON plugin descriptions
-set VRAY_PLUGIN_DESC_PATH=%LAUNCHER_LOCATION%\plugins_desc
-
 :: V-Ray UI dialog scripts
 set VRAY_UI_DS_PATH=%LAUNCHER_LOCATION%\ui
 
