@@ -1,4 +1,3 @@
-
 group {
     name    "VfhOSLBase"
     label   "OSL Code"
@@ -132,15 +131,4 @@ multiparm {
             language    python
         }
     }
-
-}
-
-
-group {
-    name    "folder1"
-    label   "Texture Common"
-
-#include "$VRAY_UI_DS_PATH/vfh_texture_common_color.ds"
-#include "$VRAY_UI_DS_PATH/vfh_texture_common_alpha.ds"
-#include "$VRAY_UI_DS_PATH/vfh_texture_common_outputs.ds"
 }

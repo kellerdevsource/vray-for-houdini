@@ -6,13 +6,11 @@
 
 #include "$VRAY_UI_DS_PATH/vfh_osl_base.ds"
 
+    group {
+        name    "VfhTexOSLFolderMain"
+        label   "Texture Common"
 
-group {
-    name    "VfhTexOSLFolderMain"
-    label   "Texture Common"
-
-#include "$VRAY_UI_DS_PATH/vfh_texture_common_color.ds"
-#include "$VRAY_UI_DS_PATH/vfh_texture_common_alpha.ds"
-}
-
+#include "$VRAY_UI_DS_PATH/common/vfh_texture_common_color.ds"
+#include "$VRAY_UI_DS_PATH/common/vfh_texture_common_alpha.ds"
+    }
 }
