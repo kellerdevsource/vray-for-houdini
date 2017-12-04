@@ -55,7 +55,7 @@ struct MtlOverrideItem {
 	QString valueString;
 };
 
-typedef VUtils::HashMap<MtlOverrideItem> MtlOverrideItems;
+typedef VUtils::StringHashMap<MtlOverrideItem> MtlOverrideItems;
 
 enum OverrideAppendMode {
 	overrideAppend = 0, ///< Append new keys only.

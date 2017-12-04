@@ -43,7 +43,7 @@ static FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
 	return mode;
 }
 
-static VrsceneDescManager vrsceneMan;
+static VrsceneDescManager vrsceneMan(NULL);
 static GA_PrimitiveTypeId theTypeId(-1);
 
 static class VRaySceneFactory

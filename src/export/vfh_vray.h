@@ -31,6 +31,7 @@
 #include <mesh_file.h>
 #include <mesh_objects_info.h>
 #include <mesh_sets_info.h>
+#include <hash_set.h>
 
 // For HDK to work properly
 #ifdef INT64

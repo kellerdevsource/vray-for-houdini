@@ -267,7 +267,7 @@ struct PluginAttr {
 	int isAnimatedGenericList{0};
 };
 
-typedef VUtils::HashMap<PluginAttr, true, 512, false, 50> PluginAttrs;
+typedef VUtils::StringHashMap<PluginAttr> PluginAttrs;
 
 /// Description of a plugin instance and its attributes. It is used to
 /// accumulate attribute changes and to allow to batch changes together for

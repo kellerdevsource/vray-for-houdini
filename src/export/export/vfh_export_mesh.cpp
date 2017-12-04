@@ -428,8 +428,8 @@ VRay::Plugin MeshExporter::getMaterial()
 
 	VRay::VUtils::IntRefList face_mtlIDs(numFaces);
 
-	typedef VUtils::HashMapKey<OP_Node*, VRay::Plugin> OpPluginCache;
-	typedef VUtils::HashMapKey<OP_Node*, int> MatOpToID;
+	typedef VUtils::HashMap<OP_Node*, VRay::Plugin> OpPluginCache;
+	typedef VUtils::HashMap<OP_Node*, int> MatOpToID;
 
 	MatOpToID matNameToID;
 	OpPluginCache matPluginCache;

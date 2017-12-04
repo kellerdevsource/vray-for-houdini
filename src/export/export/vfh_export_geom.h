@@ -137,11 +137,11 @@ class VRayExporter;
 class VRayRendererNode;
 class ObjectExporter
 {
-	typedef VUtils::HashMap<PluginSet> OpPluginGenCache;
-	typedef VUtils::HashMap<VRay::Plugin> OpPluginCache;
-	typedef VUtils::HashMapKey<int, VRay::Plugin> PrimPluginCache;
-	typedef VUtils::HashMapKey<Hash::MHash, VRay::Plugin> HashPluginCache;
-	typedef VUtils::HashMap<VRay::Plugin> GeomNodeCache;
+	typedef VUtils::StringHashMap<PluginSet> OpPluginGenCache;
+	typedef VUtils::StringHashMap<VRay::Plugin> OpPluginCache;
+	typedef VUtils::HashMap<int, VRay::Plugin> PrimPluginCache;
+	typedef VUtils::HashMap<Hash::MHash, VRay::Plugin> HashPluginCache;
+	typedef VUtils::StringHashMap<VRay::Plugin> GeomNodeCache;
 
 public:
 	explicit ObjectExporter(VRayExporter &pluginExporter);

@@ -18,13 +18,13 @@ using namespace VRayForHoudini;
 using namespace Parm;
 
 /// A hash map for VOP types.
-typedef VUtils::HashMap<VOP_Type, true, 512, false, 32> VRayVopTypes;
+typedef VUtils::StringHashMap<VOP_Type> VRayVopTypes;
 
 /// A hash map for parameters types.
-typedef VUtils::HashMap<ParmType, true, 512, false, 32> VRayParmTypes;
+typedef VUtils::StringHashMap<ParmType> VRayParmTypes;
 
 /// A hash map type for plugins info storage.
-typedef VUtils::HashMap<VRayPluginInfo*, true, 512, false, 512> VRayPluginsInfo;
+typedef VUtils::StringHashMap<VRayPluginInfo*> VRayPluginsInfo;
 
 /// A mapping between "vray_type" spare and VOP_Type.
 /// Used to set socket type.

@@ -14,6 +14,8 @@
 #include "vfh_prm_defaults.h"
 
 #include <hash_map.h>
+#include <charstring.h>
+#include <table.h>
 
 #include <PRM/PRM_Name.h>
 #include <PRM/PRM_Shared.h>
@@ -134,7 +136,7 @@ struct AttrDesc {
 	uint32_t flags;
 };
 
-typedef VUtils::HashMap<AttrDesc, true, 512, false, 32> AttributeDescs;
+typedef VUtils::StringHashMap<AttrDesc> AttributeDescs;
 
 struct SocketDesc {
 	SocketDesc()
