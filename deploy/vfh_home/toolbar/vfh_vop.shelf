@@ -3398,26 +3398,6 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexLayeredMax', nodename="layered")
 </tool>
 
 
-<tool name="vop_VRayNodeTexLeather" label="Leather" icon="ROP_vray">
-    <readOnly/>
-    <toolMenuContext name="viewer">
-        <contextNetType>VOP</contextNetType>
-    </toolMenuContext>
-    <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodeTexLeather</contextOpType>
-    </toolMenuContext>
-    <toolSubmenu>Texture</toolSubmenu>
-    <script scriptType="python">
-<![CDATA[
-
-import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeTexLeather', nodename="leather")
-
-]]>
-    </script>
-</tool>
-
-
 <tool name="vop_VRayNodeTexMarbleMax" label="MarbleMax" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
