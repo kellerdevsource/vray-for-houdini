@@ -170,7 +170,7 @@ int isMeshLightSupportedGeometryType(const VRay::Plugin &geometry) {
 
 int fillPluginDesc(Attrs::PluginDesc &pluginDesc, const PrimitiveItem &item, const VRay::Transform &objTm) {
 	if (!item.geometry || !isMeshLightSupportedGeometryType(item.geometry)) {
-		Log::getLog().warning("Unsupported geometry type for Mesh Light: %s ! Node name: %s", item.geometry.getType(), pluginDesc.pluginName);
+		Log::getLog().warning("Unsupported geometry type for Mesh Light: %s ! Node name: %s", item.geometry.getType(), pluginDesc.pluginName.c_str());
 		return 0;
 	}
 	pluginDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
