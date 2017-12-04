@@ -81,8 +81,9 @@ else()
 		aurloader
 		aurloader_s
 		aurramps_s
-		guiwin_qt_s
-		iutils_s
+		gui_utils_qt_s
+		phx_utils_s
+		vutils_s
 	)
 
 	foreach(phx_static_lib_name IN ITEMS ${CGR_PHOENIX_LIB_NAMES})
@@ -102,6 +103,10 @@ else()
 			aura_ver.h
 			aurinterface.h
 			aurloader.h
+			phx_render_sets.h
+			phx_types.h
+			phx_vector3f.h
+			phx_vol_rend_sampler.h
 			ramps.h
 		PATHS
 			${Phoenix_INCLUDES}
