@@ -60,43 +60,36 @@ groupcollapsible {
 	parm {
 		name    "SettingsRegionsGenerator_xymeans"
 		label   "Bucket Type"
-		type    ordinal
-		default { "0" }
 		help    "Size in pixels or number of regions"
+		type    string
 		menu    {
-			"Bucket W/H"    "Bucket W/H"
-			"Region Count"  "Region Count"
+			"0" "Bucket W/H"
+			"1" "Region Count"
 		}
-		range   { 0 1 }
-		export  none
-		parmtag { "cook_dependent" "1" }
-		parmtag { "vray_enumkeys" "0,1" }
+		default { "0" }
 		parmtag { "vray_plugin" "SettingsRegionsGenerator" }
 		parmtag { "vray_pluginattr" "xymeans" }
-		parmtag { "vray_type" "int" }
+		parmtag { "vray_type" "enum" }
 	}
 
 	parm {
 		name    "SettingsRegionsGenerator_seqtype"
 		label   "Sequence Type"
-		type    ordinal
-		default { "4" }
 		help    "Determines the order in which the regions are rendered"
+		type    string
 		menu    {
-			"Top-Bottom"    "Top-Bottom"
-			"Left-Right"    "Left-Right"
-			"Checker"   "Checker"
-			"Spiral"    "Spiral"
-			"Triangulation" "Triangulation"
-			"Hilbert"   "Hilbert"
+			"0" "Top-Bottom"
+			"1" "Left-Right"
+			"2" "Checker"
+			"3" "Spiral"
+			"4" "Triangulation"
+			"5" "Hilbert"
 		}
-		range   { 0 1 }
-		export  none
+		default { "4" }
 		parmtag { "cook_dependent" "1" }
-		parmtag { "vray_enumkeys" "0,1,2,3,4,5" }
 		parmtag { "vray_plugin" "SettingsRegionsGenerator" }
 		parmtag { "vray_pluginattr" "seqtype" }
-		parmtag { "vray_type" "int" }
+		parmtag { "vray_type" "enum" }
 	}
 
 	parm {

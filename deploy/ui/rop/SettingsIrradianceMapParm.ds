@@ -141,30 +141,25 @@ groupsimple {
   groupsimple {
     name "folder_gi_IRmap_mode"
     label "Mode"
-
     parm {
     	name	"SettingsIrradianceMap_mode"
     	label	"Mode"
-    	type	ordinal
+    	type	string
     	default	{ "0" }
     	help	"Irradiance map mode"
     	menu	{
-    	    "Single Frame"	"Single Frame"
-    	    "Multiframe Incremental"	"Multiframe Incremental"
-    	    "From File"	"From File"
-    	    "Add To Current Map"	"Add To Current Map"
-    	    "Incremental Add To Current Map"	"Incremental Add To Current Map"
-    	    "Bucket Mode"	"Bucket Mode"
-    	    "Animation (Prepass)"	"Animation (Prepass)"
-    	    "Animation (Rendering)"	"Animation (Rendering)"
+        "0" "Single Frame"
+        "1" "Multiframe Incremental"
+        "2" "From File"
+        "3" "Add To Current Map"
+        "4" "Incremental Add To Current Map"
+        "5" "Bucket Mode"
+        "6" "Animation (Prepass)"
+        "7" "Animation (Rendering)"
     	}
-    	range	{ 0 1 }
-    	export	none
-    	parmtag	{ "cook_dependent" "1" }
-    	parmtag	{ "vray_enumkeys" "0,1,2,3,4,5,6,7" }
     	parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
     	parmtag	{ "vray_pluginattr" "mode" }
-    	parmtag	{ "vray_type" "int" }
+    	parmtag	{ "vray_type" "enum" }
     }
 
     parm {
@@ -255,21 +250,17 @@ groupsimple {
 		parm {
 			name	"SettingsIrradianceMap_detail_scale"
 			label	"Scale"
-			type	ordinal
+			type	string
 			default	{ "0" }
 			help	"Detail enhancement scale"
 			disablewhen	"{ SettingsIrradianceMap_detailEnhancement_enable != 1 }"
 			menu	{
-				"Screen"	"Screen"
-				"World"	"World"
+        "0" "Screen"
+        "1" "World"
 			}
-			range	{ 0 1 }
-			export	none
-			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1" }
 			parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 			parmtag	{ "vray_pluginattr" "detail_scale" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"SettingsIrradianceMap_detail_radius"
@@ -363,42 +354,34 @@ groupsimple {
 		parm {
 			name	"SettingsIrradianceMap_interpolation_mode"
 			label	"Interpolation Mode"
-			type	ordinal
-			default	{ "2" }
-			help	"Method for interpolating the GI value from the samples in the irradiance map"
+			type	string
+			default	{ "1" }
+			help	"Method for interpolating the GI value from the samples in the Irradiance Map"
 			menu	{
-				"Least Squares With Voronoi Weights"	"Least Squares With Voronoi Weights"
-				"Delone Triangulation"	"Delone Triangulation (good/exact)"
-				"Least Squares Fit"	"Least Squares Fit (good/smooth)"
-				"Weighted Average"	"Weighted Average (good/robust)"
+        "0" "Weighted Average"
+        "1" "Least-Squares Fit"
+        "2" "Local Delaunay Triangulation"
+        "3" "Least-Squares with Voronoi Weights"
 			}
-			range	{ 0 1 }
-			export	none
-			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "3,2,1,0" }
 			parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 			parmtag	{ "vray_pluginattr" "interpolation_mode" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"SettingsIrradianceMap_lookup_mode"
 			label	"Lookup Mode"
-			type	ordinal
+			type	string
 			default	{ "3" }
 			help	"Method of choosing suitable points from the irradiance map to be used as basis for the interpolation"
 			menu	{
-				"Quad-Balanced"	"Quad-Balanced (good)"
-				"Nearest"	"Nearest (draft)"
-				"Overlapping"	"Overlapping (very good/fast)"
-				"Density-Based"	"Density-Based (best)"
+        "0" "Quad-Balanced (good)"
+        "1" "Nearest (draft)"
+        "2" "Overlapping (very good/fast)"
+        "3" "Density-Based (best)"
 			}
-			range	{ 0 1 }
-			export	none
-			parmtag	{ "cook_dependent" "1" }
-			parmtag	{ "vray_enumkeys" "0,1,2,3" }
 			parmtag	{ "vray_plugin" "SettingsIrradianceMap" }
 			parmtag	{ "vray_pluginattr" "lookup_mode" }
-			parmtag	{ "vray_type" "int" }
+			parmtag	{ "vray_type" "enum" }
 		}
 		parm {
 			name	"SettingsIrradianceMap_check_sample_visibility"

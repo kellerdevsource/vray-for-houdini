@@ -245,27 +245,6 @@ groupsimple {
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_custom_handling" "1" }
   }
-
-  parm {
-    name    "SettingsImageSampler_dmc_adaptive_method"
-    label   "Adaptive Method"
-    type    ordinal
-    invisible
-    default { "1" }
-    help    "Switches between legacy and new adaptive sampling"
-    menu    {
-        "Legacy"    "Legacy"
-        "Default"   "Default"
-    }
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_enumkeys" "0,1" }
-    parmtag { "vray_plugin" "SettingsImageSampler" }
-    parmtag { "vray_pluginattr" "dmc_adaptive_method" }
-    parmtag { "vray_type" "int" }
-  }
-
 }
 
 groupsimple {

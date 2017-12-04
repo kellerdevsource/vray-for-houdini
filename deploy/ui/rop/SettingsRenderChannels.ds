@@ -1,56 +1,48 @@
 {
-    name	SettingsRenderChannels
-    label	"Render Channels"
-    parmtag	{ spare_category "Render Channels" }
-    parmtag	{ vray_plugin "SettingsRenderChannels" }
+    name    SettingsRenderChannels
+    label   "Render Channels"
+    parmtag { spare_category "Render Channels" }
+    parmtag { vray_plugin "SettingsRenderChannels" }
+
     parm {
-	name	"unfiltered_fragment_method"
-	label	"Unfiltered Fragment Method"
-	type	ordinal
-	default	{ "0" }
-	help	"Determines which fragment to use for unfiltered render elements"
-	menu	{
-	    "Best Coverage"	"Best Coverage"
-	    "Closest To Camera"	"Closest To Camera"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
-	parmtag	{ "vray_plugin" "SettingsRenderChannels" }
-	parmtag	{ "vray_pluginattr" "unfiltered_fragment_method" }
-	parmtag	{ "vray_type" "int" }
+        name    "unfiltered_fragment_method"
+        label   "Unfiltered Fragment Method"
+        help    "Determines which fragment to use for unfiltered render elements"
+        type    string
+        menu    {
+            "0" "Best Coverage"
+            "1" "Closest To Camera"
+        }
+        default { "0" }
+        parmtag { "vray_plugin" "SettingsRenderChannels" }
+        parmtag { "vray_pluginattr" "unfiltered_fragment_method" }
+        parmtag { "vray_type" "enum" }
     }
+
     parm {
-	name	"deep_merge_mode"
-	label	"Deep Merge Mode"
-	type	ordinal
-	default	{ "0" }
-	help	"Determines how to blend fragments within a pixel"
-	menu	{
-	    "By Render ID"	"By Render ID"
-	    "By Z-Depth"	"By Z-Depth"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,1" }
-	parmtag	{ "vray_plugin" "SettingsRenderChannels" }
-	parmtag	{ "vray_pluginattr" "deep_merge_mode" }
-	parmtag	{ "vray_type" "int" }
+        name    "deep_merge_mode"
+        label   "Deep Merge Mode"
+        help    "Determines how to blend fragments within a pixel"
+        type    string
+        menu    {
+            "0" "By Render ID"
+            "1" "By Z-Depth"
+        }
+        default { "0" }
+        parmtag { "vray_plugin" "SettingsRenderChannels" }
+        parmtag { "vray_pluginattr" "deep_merge_mode" }
+        parmtag { "vray_type" "enum" }
     }
+
     parm {
-	name	"deep_merge_coeff"
-	label	"Deep Merge Z-depth Threshold"
-	type	float
-	default	{ "1" }
-	help	"Determines the z-depth blending sensitivity when deep_merge_mode is '1'"
-	disablewhen	"{ deep_merge_mode != \"By Z-Depth\" }"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "SettingsRenderChannels" }
-	parmtag	{ "vray_pluginattr" "deep_merge_coeff" }
-	parmtag	{ "vray_type" "float" }
+        name    "deep_merge_coeff"
+        label   "Deep Merge Z-depth Threshold"
+        help    "Determines the z-depth blending sensitivity when deep_merge_mode is '1'"
+        type    float
+        default { "1" }
+        parmtag { "vray_plugin" "SettingsRenderChannels" }
+        parmtag { "vray_pluginattr" "deep_merge_coeff" }
+        parmtag { "vray_type" "float" }
+        disablewhen "{ deep_merge_mode != 1 }"
     }
 }

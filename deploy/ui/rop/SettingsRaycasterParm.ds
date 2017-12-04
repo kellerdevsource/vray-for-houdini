@@ -128,23 +128,14 @@ groupsimple {
 	parmtag	{ "vray_type" "int" }
     }
     parm {
-	name	"SettingsRaycaster_optLevel"
-	label	"Tree Build Quality"
-	type	ordinal
-	invisible
-	default	{ "0" }
-	help	"Optimization level (must be 0)"
-	menu	{
-	    "Low"	"Low"
-	    "Average"	"Average"
-	    "High"	"High"
-	}
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_enumkeys" "0,2,4" }
-	parmtag	{ "vray_plugin" "SettingsRaycaster" }
-	parmtag	{ "vray_pluginattr" "optLevel" }
-	parmtag	{ "vray_type" "int" }
+		name	"SettingsRaycaster_optLevel"
+		label	"Tree Build Quality"
+		type	integer
+		default	{ "0" }
+		help	"Optimization level (must be 0)"
+		parmtag	{ "vray_plugin" "SettingsRaycaster" }
+		parmtag	{ "vray_pluginattr" "optLevel" }
+		parmtag	{ "vray_type" "int" }
+		invisible
     }
 }

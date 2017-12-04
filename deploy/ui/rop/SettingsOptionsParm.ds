@@ -135,21 +135,17 @@ groupsimple {
   parm {
     name    "SettingsOptions_probabilistic_lights_on"
     label   "Light Evaluation Mode"
-    type    ordinal
-    default { "2" }
     help    "Lights evaluation mode"
+    type    string
     menu    {
-        "Full Lights Evaluation"    "Full Lights Evaluation"
-        "Uniform Probabilistic Lights"  "Uniform Probabilistic Lights"
-        "Adaptive Lights"   "Adaptive Lights"
+        "0" "Full Lights Evaluation"
+        "1" "Uniform Probabilistic Lights"
+        "2" "Adaptive Lights"
     }
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_enumkeys" "0,1,2" }
+    default { "2" }
     parmtag { "vray_plugin" "SettingsOptions" }
     parmtag { "vray_pluginattr" "probabilistic_lights_on" }
-    parmtag { "vray_type" "int" }
+    parmtag { "vray_type" "enum" }
   }
   parm {
     name    "SettingsOptions_num_probabilistic_lights"
