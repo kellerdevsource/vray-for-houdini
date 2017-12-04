@@ -224,7 +224,7 @@ void VRaySceneRef::detailBuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 			const VUtils::TraceTransform &tm = ob->getTransform(t);
 
 			VrsceneObjectNode     *node = static_cast<VrsceneObjectNode*>(ob);
-			VrsceneObjectDataBase *nodeData = vrsceneDesc->getObjectData(node->getDataName().ptr());
+			VrsceneObjectDataBase *nodeData = node->getData();
 			if (nodeData && nodeData->getDataType() == ObjectDataTypeMesh) {
 				VrsceneObjectDataMesh *mesh = static_cast<VrsceneObjectDataMesh*>(nodeData);
 
