@@ -61,7 +61,7 @@ static struct PrimPackedTypeIDs {
 		vrayProxyRef = GU_PrimPacked::lookupTypeId("VRayProxyRef");
 		vrayVolumeGridRef = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
 		vraySceneRef = GU_PrimPacked::lookupTypeId("VRaySceneRef");
-		geomPlaneRef = GU_PrimPacked::lookupTypeId("GeomInfinitePlaneRef");
+		geomPlaneRef = GU_PrimPacked::lookupTypeId("GeomPlaneRef");
 		pgYetiRef = GU_PrimPacked::lookupTypeId("VRayPgYetiRef");
 
 		initialized = true;
@@ -100,6 +100,7 @@ static const char intrGeometryID[] = "geometryid";
 static const char intrFilename[] = "filename";
 
 static const UT_String vrayPluginTypeGeomStaticMesh = "GeomStaticMesh";
+static const UT_String vrayPluginTypeGeomPlane = "GeomPlane";
 static const UT_String vrayPluginTypeNode = "Node";
 
 static const UT_String vrayUserAttrSceneName = "VRay_Scene_Node_Name";
@@ -918,6 +919,13 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		vel.matrix.makeZero();
 
 		VRay::Transform tm = primItem.tm;
+
+		const int forceFlipTm =
+			vrayPluginTypeGeomPlane.equal(primItem.geometry.getType());
+		if (forceFlipTm) {
+			tm = flipYZTm * tm;
+		}
+
 		tm.offset -= vel.offset;
 
 		VRay::VUtils::ValueRefList item(itemSize);
@@ -1342,9 +1350,7 @@ VRay::Plugin ObjectExporter::exportGeomPlaneRef(OBJ_Node &objNode, const GU_Prim
 	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
 
 	const int key = getPrimPackedID(prim);
-	Attrs::PluginDesc pluginDesc(boost::str(vrsceneNameFmt % key % primname.buffer()), "GeomInfinitePlane");
-
-	pluginDesc.addAttribute(Attrs::PluginAttr("normal", VRay::Vector(0.f, 1.f, 0.f)));
+	const Attrs::PluginDesc pluginDesc(boost::str(vrsceneNameFmt % key % primname.buffer()), "GeomPlane");
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }

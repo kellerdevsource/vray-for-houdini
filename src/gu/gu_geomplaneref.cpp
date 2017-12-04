@@ -17,7 +17,7 @@ static class GeomPlaneFactory
 {
 public:
 	GeomPlaneFactory()
-		: GU_PackedFactory("GeomInfinitePlaneRef", "GeomInfinitePlaneRef")
+		: GU_PackedFactory("GeomPlaneRef", "GeomPlaneRef")
 	{
 		GeomPlaneRef::registerIntrinsics<GeomPlaneRef>(*this);
 	}

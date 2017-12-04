@@ -20,7 +20,7 @@ using namespace VRayForHoudini;
 void SOP::GeomPlane::setPluginType()
 {
 	pluginType = VRayPluginType::GEOMETRY;
-	pluginID   = "GeomInfinitePlane";
+	pluginID   = "GeomPlane";
 }
 
 OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
@@ -29,9 +29,9 @@ OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 
 	gdp->stashAll();
 	
-	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "GeomInfinitePlaneRef");
+	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "GeomPlaneRef");
 	if (NOT(pack)) {
-		addWarning(SOP_MESSAGE, "Can't create packed primitive GeomInfinitePlaneRef");
+		addWarning(SOP_MESSAGE, "Can't create packed primitive GeomPlaneRef");
 	}
 	else {
 		// Set the location of the packed primitive's point.
@@ -59,13 +59,4 @@ OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 	gdp->destroyStashed();
 
 	return error();
-}
-
-OP::VRayNode::PluginResult SOP::GeomPlane::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
-{
-	pluginDesc.pluginID   = pluginID.c_str();
-	pluginDesc.pluginName = VRayExporter::getPluginName(this);
-	pluginDesc.addAttribute(Attrs::PluginAttr("normal", VRay::Vector(0.f,1.f,0.f)));
-
-	return OP::VRayNode::PluginResultSuccess;
 }
