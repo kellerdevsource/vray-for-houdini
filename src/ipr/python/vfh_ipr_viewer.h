@@ -13,16 +13,14 @@
 
 #include "vfh_vray.h"
 #include "vfh_ipr_imdisplay_viewer.h"
-#include <functional>
 
 namespace VRayForHoudini {
 
-/// Initialize the imdisplay thread
-void initImdisplay(VRay::VRayRenderer &renderer);
-/// Stop the imdisplay thread
-void closeImdisplay();
-/// Get the instanced imdisplay thread
-ImdisplayThread & getImdisplay();
+/// Returns image writer thread instance.
+ImdisplayThread &getImdisplay();
+
+/// Initializes writer thread instance.
+void initImdisplay(VRay::VRayRenderer &renderer, const char *ropName);
 
 void onRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *image, void *userData);
 void onImageReady(VRay::VRayRenderer &renderer, void *userData);

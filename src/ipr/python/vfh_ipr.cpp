@@ -15,73 +15,12 @@
 #include "vfh_ipr_viewer.h"
 #include "vfh_vray_instances.h"
 #include "vfh_attr_utils.h"
-#include "vfh_process_check.h"
 
 #include <HOM/HOM_Module.h>
 
 #include <mutex>
 
 using namespace VRayForHoudini;
-
-/// Class wrapping callback function and flag to call it only once
-/// the flag is protected by mutex so the callback is called only once
-/// NOTE: consider doing this with atomic bool
-class CallOnceUntilReset {
-public:
-	typedef std::function<void()> CB;
-
-	explicit CallOnceUntilReset(CB callback)
-		: m_isCalled(false)
-		, m_callback(callback)
-	{}
-
-	/// Get function that when called will inturn call the callback if flag is not set
-	/// Used to avoid the need to pass the object and function pointer
-	CB getCallableFunction() {
-		return std::bind(&CallOnceUntilReset::call, this);
-	}
-
-	/// Reset the "called" flag to false
-	void reset() {
-		std::lock_guard<std::mutex> lock(m_mtx);
-		m_isCalled = false;
-	}
-
-	/// Manually set the "called" flag to false
-	void set() {
-		std::lock_guard<std::mutex> lock(m_mtx);
-		m_isCalled = true;
-	}
-
-	/// Manually call the saved callback if the "called" flag is false
-	/// This function call's are serialized with mutex
-	void call() {
-		if (!m_isCalled) {
-			std::lock_guard<std::mutex> lock(m_mtx);
-			if (!m_isCalled) {
-				m_isCalled = true;
-				m_callback();
-			}
-		}
-	}
-
-	/// Return the "called" flag
-	/// NOTE: until this function returns the flag could have changed already
-	bool isCalled() const {
-		return m_isCalled;
-	}
-
-	CallOnceUntilReset(const CallOnceUntilReset &) = delete;
-	CallOnceUntilReset & operator=(const CallOnceUntilReset &) = delete;
-
-private:
-	/// Lock protecting the called flag
-	std::mutex m_mtx;
-	/// Flag so that we call the callback only once
-	bool m_isCalled;
-	/// The saved callback function
-	CB m_callback;
-} * stopCallback;
 
 FORCEINLINE int getInt(PyObject *list, int idx)
 {
@@ -112,8 +51,6 @@ FORCEINLINE float getFloat(PyObject *dict, const char *key, float defValue)
 		return defValue;
 	return PyFloat_AS_DOUBLE(item);
 }
-
-static ProcessCheckPtr procCheck = nullptr;
 
 /// RAII wrapper over the lock of the vrayExporter pointer
 /// Has bool cast operator so it can be used directly in if statements
@@ -192,8 +129,6 @@ static void setExportTime(VRayExporter &exp, float time)
 
 static void freeExporter()
 {
-	closeImdisplay();
-
 	if (WithExporter lk{}) {
 		lk.getExporter().reset();
 		lk.freeExporter();
@@ -202,10 +137,6 @@ static void freeExporter()
 
 struct VRayExporterIprUnload {
 	~VRayExporterIprUnload() {
-		if (stopCallback) {
-			// Prevent stop cb from being called here
-			stopCallback->set();
-		}
 		deleteVRayInit();
 		Log::Logger::stopLogging();
 	}
@@ -345,7 +276,7 @@ static PyObject* vfhExportView(PyObject*, PyObject *args, PyObject *keywds)
 		// Update pipe if needed.
 		if (oldViewParams.changedSize(viewParams)) {
 			getImdisplay().restart();
-			initImdisplay(exporter.getRenderer().getVRay());
+			initImdisplay(exporter.getRenderer().getVRay(), exporter.getRopPtr()->getFullPath().buffer());
 		}
 	}
 
@@ -454,27 +385,6 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 	HOM_AutoLock autoLock;
 
-	getImdisplay().setPort(port);
-
-	if (!stopCallback) {
-		stopCallback = new CallOnceUntilReset(freeExporter);
-		getImdisplay().setOnStopCallback(stopCallback->getCallableFunction());
-	}
-
-	if (!procCheck) {
-#ifdef _WIN32
-		const char * ipr_proc_exe = "vfh_ipr.exe";
-#else
-		const char * ipr_proc_exe = "vfh_ipr";
-#endif
-		procCheck = makeProcessChecker(stopCallback->getCallableFunction(), ipr_proc_exe);
-	}
-	getImdisplay().setProcCheck(procCheck);
-	procCheck->stop();
-	procCheck->start();
-	// Reset the cb's flag so it can be called asap
-	stopCallback->reset();
-
 	UT_String ropPath(rop);
 	OP_Node *ropNode = getOpNodeFromPath(ropPath);
 	if (ropNode) {
@@ -483,10 +393,6 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			WithExporter lk;
 			vassert(!lk && "Exporter should be NULL in vfhInit");
 			lk.allocExporter();
-		}
-		if (WithExporter lk{}) {
-			getImdisplay().init();
-			getImdisplay().restart();
 		}
 
 		if (WithExporter lk{}) {
@@ -514,7 +420,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 			exporter.getRenderer().getVRay().setKeepBucketsInCallback(true);
 			exporter.getRenderer().getVRay().setKeepRTframesInCallback(true);
-			exporter.getRenderer().getVRay().setRTImageUpdateTimeout(250);
+			exporter.getRenderer().getVRay().setRTImageUpdateTimeout(1000);
 		}
 
 		if (WithExporter lk{}) {
@@ -534,7 +440,13 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 				exporter.exportScene();
 				exporter.renderFrame();
-				initImdisplay(exporter.getRenderer().getVRay());
+
+				getImdisplay().setPort(port);
+				getImdisplay().restart();
+
+				QObject::connect(&getImdisplay(), &QThread::finished, freeExporter);
+
+				initImdisplay(exporter.getRenderer().getVRay(), exporter.getRopPtr()->getFullPath().buffer());
 			}
 		}
 	}
@@ -648,7 +560,6 @@ static PyMethodDef methods[] = {
 
 PyMODINIT_FUNC init_vfh_ipr()
 {
-	disableSIGPIPE();
 	Log::Logger::startLogging();
 	Py_InitModule("_vfh_ipr", methods);
 }

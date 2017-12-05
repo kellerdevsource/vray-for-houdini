@@ -21,18 +21,12 @@ include_directories(${CMAKE_SOURCE_DIR}/src/utils)
 set(SOURCES
 	vfh_ipr.cpp
 	vfh_ipr_viewer.cpp
+	vfh_ipr_imdisplay_viewer.cpp
 )
-
-if (WIN32)
-	list(APPEND SOURCES vfh_process_check_win32.cpp)
-else()
-	list(APPEND SOURCES vfh_process_check_linux.cpp)
-endif()
 
 set(HEADERS
 	vfh_ipr_viewer.h
 	vfh_ipr_imdisplay_viewer.h
-	vfh_process_check.h
 )
 
 list(APPEND SOURCES moc_vfh_ipr_imdisplay_viewer.cpp)
