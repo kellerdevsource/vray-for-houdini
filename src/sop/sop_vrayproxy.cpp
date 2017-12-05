@@ -97,7 +97,7 @@ void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 	evalString(objectPath, "object_path", 0, 0.0);
 	primOptions.setOptionS("object_path", objectPath);
 
-	primOptions.setOptionI("lod", true ? LOD_PREVIEW : evalInt("loadtype", 0, 0.0)); // XXX: Revert after fix.
+	primOptions.setOptionI("lod", evalInt("loadtype", 0, 0.0));
 	primOptions.setOptionF("current_frame", previewMeshAnimated ? context.getFloatFrame() : 0.0f);
 
 	if (m_primOptions != primOptions) {
