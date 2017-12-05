@@ -87,7 +87,7 @@ static boost::format hairNameFmt("GeomMayaHair|%i@%s");
 static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
 static boost::format alembicNameFmt("Alembic|%i@%s");
 static boost::format vrmeshNameFmt("VRayProxy|%i");
-static boost::format vrsceneNameFmt("VRayScene|%i@%s");
+static boost::format vrsceneNameFmt("VRayScene|%X@%X");
 static boost::format pgYetiNameFmt("VRayPgYeti|%i@%s");
 
 static const char intrAlembicFilename[] = "abcfilename";
@@ -1257,11 +1257,8 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 		return VRay::Plugin();
 	}
 
-	UT_String primname;
-	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
-
 	const int key = getPrimPackedID(prim);
-	Attrs::PluginDesc pluginDesc(boost::str(vrsceneNameFmt % key % primname.buffer()), "VRayScene");
+	Attrs::PluginDesc pluginDesc(str(vrsceneNameFmt % key % prim.getMapOffset()), "VRayScene");
 
 	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
 
