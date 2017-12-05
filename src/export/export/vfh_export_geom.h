@@ -217,7 +217,7 @@ public:
 	/// @returns unique primitive id.
 	int getPrimPackedID(const GU_PrimPacked &prim) const;
 
-	void exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList);
+	void exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, Hash::MHash styleHash);
 
 	void exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList);
 
@@ -370,6 +370,12 @@ private:
 
 		/// Mesh primitive plugin cache.
 		PrimPluginCache meshPrim;
+
+		/// Mesh material override cache.
+		HashPluginCache polyMaterial;
+
+		/// Mesh map channel overrides cache.
+		HashPluginCache polyMapChannels;
 
 		/// Wrapper nodes cache for Instancer plugin.
 		GeomNodeCache instancerNodeWrapper;

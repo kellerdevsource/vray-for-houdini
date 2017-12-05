@@ -2249,7 +2249,7 @@ void VRayExporter::setTime(fpreal time)
 	getRenderer().getVRay().setCurrentTime(m_context.getFloatFrame());
 
 	Log::getLog().debug("Time:  %g", m_context.getTime());
-	Log::getLog().debug("Frame: %i", m_context.getFrame());
+	Log::getLog().debug("Frame: %g", m_context.getFloatFrame());
 	Log::getLog().debug("V-Ray time:  %g", getRenderer().getVRay().getCurrentTime());
 	Log::getLog().debug("V-Ray frame: %i", getRenderer().getVRay().getCurrentFrame());
 }
@@ -2303,7 +2303,7 @@ void VRayExporter::restoreCurrentTake()
 
 void VRayExporter::exportFrame(fpreal time)
 {
-	Log::getLog().debug("VRayExporter::exportFrame(time=%.3f)", time);
+	Log::getLog().debug("VRayExporter::exportFrame(time = %.3f)", time);
 
 	if (isAborted()) {
 		Log::getLog().info("Operation is aborted by the user!");

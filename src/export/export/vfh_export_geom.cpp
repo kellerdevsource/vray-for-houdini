@@ -16,6 +16,7 @@
 #include "vfh_exporter.h"
 #include "vfh_geoutils.h"
 #include "vfh_log.h"
+#include "vfh_material_override.h"
 
 #include "gu/gu_vrayproxyref.h"
 #include "gu/gu_volumegridref.h"
@@ -118,6 +119,7 @@ typedef std::vector<bool> DynamicBitset;
 /// We'll XOR getUniqueId() with those values to get a cache key.
 static const int keyDataHair = 0xA41857F8;
 static const int keyDataPoly = 0xF1625C6B;
+static const int keyDataPoints = 0xE163445C;
 
 /// Plugin is always the same.
 static const int keyDataSphereID = 100;
@@ -612,10 +614,6 @@ void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &it
 
 void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange)
 {
-	// TODO: Preallocate at least some space.
-	GEOPrimList polyPrims;
-	GEOPrimList hairPrims;
-
 	const GA_Size numPoints = gdp.getNumPoints();
 	const GA_Size numPrims = gdp.getNumPrimitives();
 
@@ -633,6 +631,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 	const GA_Range &primitiveRange = primRange.isValid() ? primRange : gdp.getPrimitiveRange();
 
+	// Packed, volumes, etc.
 	for (GA_Iterator jt(primitiveRange); !jt.atEnd(); jt.advance()) {
 		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
 		if (!prim) {
@@ -643,6 +642,13 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		const GA_Index primIndex = prim->getMapIndex();
 
 		const GA_PrimitiveTypeId &primTypeID = prim->getTypeId();
+
+		if (primTypeID == GEO_PRIMPOLYSOUP ||
+		    primTypeID == GEO_PRIMPOLY ||
+		    primTypeID == GEO_PRIMNURBCURVE ||
+		    primTypeID == GEO_PRIMBEZCURVE) {
+			continue;
+		}
 
 		const bool isPackedPrim = GU_PrimPacked::isPackedPrimitive(*prim);
 		const bool isVolumePrim = primTypeID == primPackedTypeIDs.vrayVolumeGridRef ||
@@ -779,7 +785,22 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 				}
 			}
 		}
-		else if (primTypeID == GEO_PRIMPOLYSOUP) {
+
+		if (item.geometry) {
+			instancerItems += item;
+		}
+	}
+
+	// Polygon / hair.
+	// NOTE: For polygon and hair material overrides are baked as map channels.
+	GEOPrimList polyPrims;
+	GEOPrimList hairPrims;
+
+	for (GA_Iterator jt(primitiveRange); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = gdp.getGEOPrimitive(*jt);
+		const GA_PrimitiveTypeId &primTypeID = prim->getTypeId();
+
+		if (primTypeID == GEO_PRIMPOLYSOUP) {
 			polyPrims.append(prim);
 		}
 		else if (primTypeID == GEO_PRIMPOLY) {
@@ -795,19 +816,54 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			}
 		}
 		else if (primTypeID == GEO_PRIMNURBCURVE ||
-				 primTypeID == GEO_PRIMBEZCURVE)
+		         primTypeID == GEO_PRIMBEZCURVE)
 		{
 			hairPrims.append(prim);
 		}
-
-		if (item.geometry) {
-			instancerItems += item;
-		}
 	}
 
-	// NOTE: For polygon and hair material overrides are baked as map channels.
-	exportPolyMesh(objNode, gdp, polyPrims);
-	exportHair(objNode, gdp, hairPrims);
+	if (polyPrims.size()) {
+		Hash::MHash meshStylerHash = 0;
+
+		const GSTY_SubjectPrimGroup gdpStyler(gdp, polyPrims);
+
+		STY_StylerGroup gdpStylers;
+		gdpStylers.append(geoStyler, gdpStyler);
+
+		const STY_OverrideValuesFilter filter(NULL);
+		UT_Array<STY_OverrideValues> results;
+#if HDK_16_5
+		gdpStylers.getResults(results, filter);
+#else
+		gdpStylers.getOverrides(results, filter);
+#endif
+
+		int numStylerHashes = 0;
+		for (const STY_Results &result : results) {
+			for (const auto &res : result) {
+				numStylerHashes++;
+			}
+		}
+
+		if (numStylerHashes) {
+			VUtils::IntRefList stylerHashes(numStylerHashes);
+			numStylerHashes = 0;
+			for (const STY_Results &result : results) {
+				for (const auto &res : result) {
+					const STY_ResultMap &resMap = res.second;
+					stylerHashes[numStylerHashes++] = resMap.hash();
+				}
+			}
+
+			Hash::MurmurHash3_x64_128(stylerHashes.get(), numStylerHashes * sizeof(int), 42, &meshStylerHash);
+		}
+
+		exportPolyMesh(objNode, gdp, polyPrims, meshStylerHash);
+	}
+
+	if (hairPrims.size()) {
+		exportHair(objNode, gdp, hairPrims);
+	}
 }
 
 /// Add object's scene name as user attribute.
@@ -968,7 +1024,26 @@ void ObjectExporter::exportDetail(OBJ_Node &objNode, const GU_Detail &gdp, const
 {
 	const VMRenderPoints renderPoints = getParticlesMode(objNode);
 	if (renderPoints != vmRenderPointsNone) {
-		VRay::Plugin fromPart = exportPointParticles(objNode, gdp, renderPoints);
+#pragma pack(push, 1)
+		const struct MeshParticlesKey {
+			MeshParticlesKey(exint detailID, exint dataKey)
+				: detailID(detailID)
+				, dataKey(dataKey)
+			{}
+
+			exint detailID;
+			exint dataKey;
+		} meshParticlesKey(getDetailID(), keyDataPoints);
+#pragma pack(pop)
+
+		Hash::MHash meshParticlesHash;
+		Hash::MurmurHash3_x86_32(&meshParticlesKey, sizeof(MeshParticlesKey), 42, &meshParticlesHash);
+
+		VRay::Plugin fromPart;
+		if (!getMeshPluginFromCache(meshParticlesHash, fromPart)) {
+			fromPart = exportPointParticles(objNode, gdp, renderPoints);
+			addMeshPluginToCache(meshParticlesHash, fromPart);
+		}
 		if (fromPart) {
 			instancerItems += PrimitiveItem(fromPart);
 		}
@@ -1011,7 +1086,7 @@ void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const G
 	}
 }
 
-void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList)
+void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, const GEOPrimList &primList, Hash::MHash styleHash)
 {
 	MeshExporter polyMeshExporter(objNode, gdp, ctx, pluginExporter, *this, primList);
 	if (!polyMeshExporter.hasData())
@@ -1020,28 +1095,66 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	// The top of the stack contains the final tranform.
 	const PrimitiveItem topItem(primContextStack.back().parentItem);
 
+#pragma pack(push, 1)
+	struct MeshPrimKey {
+		MeshPrimKey(exint parentID, exint detailID, exint keyDataPoly)
+			: parentID(parentID)
+			, detailID(detailID)
+			, keyDataPoly(keyDataPoly)
+		{}
+		exint parentID;
+		exint detailID;
+		exint keyDataPoly;
+	} meshPrimKey(topItem.primID, getDetailID(), keyDataPoly);
+#pragma pack(pop)
+
+	Hash::MHash meshKey;
+	Hash::MurmurHash3_x86_32(&meshPrimKey, sizeof(MeshPrimKey), 42, &meshKey);
+
 	PrimitiveItem item;
 	getPrimMaterial(item.primMaterial);
 	item.tm = topItem.tm;
 	item.vel = topItem.vel;
-	item.primID = topItem.primID ^ keyDataPoly;
+	item.primID = meshKey;
 
-	OP_Node *matNode = item.primMaterial.matNode
-		? item.primMaterial.matNode
-		: objNode.getMaterialNode(ctx.getTime());
-
-	const SubdivInfo &subdivInfo = getSubdivInfo(objNode, matNode);
-
-	polyMeshExporter.setSubdivApplied(subdivInfo.hasSubdiv());
-	polyMeshExporter.setDetailID(item.primID);
+	polyMeshExporter.setDetailID(meshKey);
 
 	// This will set/update material/override.
-	item.material = polyMeshExporter.getMaterial();
-	item.mapChannels = polyMeshExporter.getExtMapChannels();
+#pragma pack(push, 1)
+	struct MeshOverridesKey {
+		MeshOverridesKey(Hash::MHash meshKey, Hash::MHash styleHash)
+			: meshKey(meshKey)
+			, styleHash(styleHash)
+		{}
+		Hash::MHash meshKey;
+		Hash::MHash styleHash;
+	} meshOverridesKey(meshKey, styleHash);
+#pragma pack(pop)
+
+	Hash::MHash styleKey;
+	Hash::MurmurHash3_x86_32(&meshOverridesKey, sizeof(MeshOverridesKey), 42, &styleKey);
+
+	if (!getPluginFromCacheImpl(pluginCache.polyMaterial, styleKey, item.material)) {
+		item.material = polyMeshExporter.getMaterial();
+
+		addPluginToCacheImpl(pluginCache.polyMaterial, styleKey, item.material);
+	}
+	if (!getPluginFromCacheImpl(pluginCache.polyMapChannels, styleKey, item.mapChannels)) {
+		item.mapChannels = polyMeshExporter.getExtMapChannels();
+
+		addPluginToCacheImpl(pluginCache.polyMapChannels, styleKey, item.mapChannels);
+	}
 
 	if (doExportGeometry) {
 		if (!getMeshPluginFromCache(item.primID, item.geometry)) {
-			Attrs::PluginDesc geomDesc(boost::str(polyNameFmt % item.primID % objNode.getName().buffer()),
+			OP_Node *matNode = item.primMaterial.matNode
+				? item.primMaterial.matNode
+				: objNode.getMaterialNode(ctx.getTime());
+
+			const SubdivInfo &subdivInfo = getSubdivInfo(objNode, matNode);
+			polyMeshExporter.setSubdivApplied(subdivInfo.hasSubdiv());
+
+			Attrs::PluginDesc geomDesc(str(polyNameFmt % item.primID % objNode.getName().buffer()),
 									   "GeomStaticMesh");
 			if (polyMeshExporter.asPluginDesc(gdp, geomDesc)) {
 				item.geometry = pluginExporter.exportPlugin(geomDesc);
@@ -1052,10 +1165,10 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 
 			addMeshPluginToCache(item.primID, item.geometry);
 		}
-	}
 
-	if (item.geometry) {
-		instancerItems += item;
+		if (item.geometry) {
+			instancerItems += item;
+		}
 	}
 }
 

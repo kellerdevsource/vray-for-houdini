@@ -14,7 +14,6 @@
 #include "vfh_prm_templates.h"
 #include "vfh_log.h"
 #include "vfh_attr_utils.h"
-#include "vfh_includes.h"
 
 #include <SHOP/SHOP_GeoOverride.h>
 #include <GA/GA_AttributeFilter.h>
@@ -22,35 +21,10 @@
 
 #include <STY/STY_StylerGroup.h>
 #include <STY/STY_TargetMatchStatus.h>
-#if HDK_16_5
-#include <STY/STY_Results.h>
-#include <STY/STY_ResultsFilter.h>
-#else
-#include <STY/STY_OverrideValues.h>
-#include <STY/STY_OverrideValuesFilter.h>
-#endif
 #include <GSTY/GSTY_SubjectPrim.h>
 #include <GSTY/GSTY_SubjectGeoObject.h>
 #include <GSTY/GSTY_BundleMap.h>
 #include <OP/OP_StyleManager.h>
-
-#if HDK_16_5
-typedef STY_OverrideScript STY_OverrideScriptEntry;
-typedef STY_Override STY_OverrideEntry;
-typedef STY_OverrideCategory STY_OverridesEntry;
-typedef STY_OverrideBlock  STY_OverrideSetsEntry;
-typedef STY_Style STY_StyleEntry;
-typedef STY_StyleFlags STY_StyleEntryFlags;
-typedef STY_Material STY_MaterialEntry;
-typedef STY_Result STY_OverrideValue;
-typedef STY_ResultMap STY_OverrideValueMap;
-typedef STY_Results STY_OverrideValues;
-typedef STY_ResultsFilter STY_OverrideValuesFilter;
-typedef STY_Constant STY_Value;
-typedef STY_OverrideHandle STY_OverrideEntryHandle;
-typedef STY_OverrideMap STY_OverrideEntryMap;
-typedef STY_ConstantHandle STY_OptionEntryHandle;
-#endif
 
 using namespace VRayForHoudini;
 
