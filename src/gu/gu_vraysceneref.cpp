@@ -218,7 +218,7 @@ void VRaySceneRef::detailBuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 
 	int meshVertexOffset = 0;
 
-	for (VrsceneObjects::iterator obIt = vrsceneDesc->m_objects.begin(); obIt != vrsceneDesc->m_objects.end(); ++obIt) {
+	FOR_IT (VrsceneObjects, obIt, vrsceneDesc->m_objects) {
 		VrsceneObjectBase *ob = obIt.data();
 		if (ob && ob->getType() == ObjectTypeNode) {
 			const VUtils::TraceTransform &tm = ob->getTransform(t);
