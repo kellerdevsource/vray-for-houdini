@@ -1574,6 +1574,46 @@ voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelBumpNormals', nodename="b
 </tool>
 
 
+<tool name="vop_VRayNodeRenderChannelNodeID" label="Node ID" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeRenderChannelNodeID</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Render Channel</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelNodeID', nodename="nodeId")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeRenderChannelDenoiser" label="Denoiser" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeRenderChannelDenoiser</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Render Channel</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeRenderChannelDenoiser', nodename="denoiser")
+
+]]>
+    </script>
+</tool>
+
+
 <tool name="vop_VRayNodeRenderChannelColor" label="Color Channel" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
