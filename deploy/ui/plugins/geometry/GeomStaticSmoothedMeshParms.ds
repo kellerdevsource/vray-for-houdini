@@ -1,7 +1,5 @@
 #include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 
-VFH_UI_PARM_FILE("displacement_texture", "Texture", "The displacement texture", "")
-
 parm {
     VFH_NAME("displacement_tex_color")
     label "Color"
@@ -36,6 +34,8 @@ parm {
 groupsimple {
     name "folder_main"
     label "Main"
+
+    VFH_UI_PARM_FILE("displacement_texture", "Texture", "The displacement texture", "")
 
     parm {
         VFH_NAME("vector_displacement")
@@ -296,7 +296,7 @@ groupcollapsible {
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "GeomStaticSmoothedMesh" }
         parmtag { "vray_pluginattr" "min_bound" }
-        parmtag { "vray_type" "Color" }
+        parmtag { "vray_type" "color" }
         VFH_DISABLE_WHEN_PARAM_FALSE("use_bounds")
     }
 
@@ -311,7 +311,7 @@ groupcollapsible {
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "GeomStaticSmoothedMesh" }
         parmtag { "vray_pluginattr" "max_bound" }
-        parmtag { "vray_type" "Color" }
+        parmtag { "vray_type" "color" }
         VFH_DISABLE_WHEN_PARAM_FALSE("use_bounds")
     }
 }

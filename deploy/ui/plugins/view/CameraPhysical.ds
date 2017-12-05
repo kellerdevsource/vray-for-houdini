@@ -215,7 +215,7 @@
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "CameraPhysical" }
             parmtag { "vray_pluginattr" "white_balance" }
-            parmtag { "vray_type" "Color" }
+            parmtag { "vray_type" "color" }
         }
 
         VFH_UI_PARM_TOGGLE(

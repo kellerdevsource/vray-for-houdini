@@ -1,7 +1,7 @@
 {
     name    BRDFSSS2Complex
-    label   "SSS 2 Complex"
-    parmtag { spare_category "SSS 2 Complex" }
+    label   "SSS"
+    parmtag { spare_category "SSS" }
     parmtag { vray_plugin "BRDFSSS2Complex" }
 
 #include "vfh_brdf_common.ds"

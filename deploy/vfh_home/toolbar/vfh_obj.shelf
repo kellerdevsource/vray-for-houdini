@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shelfDocument>
 
-<tool name="object_VRayNodeLightAmbient" label="V-Ray LightAmbient" icon="ROP_vray">
+<tool name="object_VRayNodeVRayClipper" label="V-Ray Clipper" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>OBJ</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Object/VRayNodeVRayClipper</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Geometry</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import objecttoolutils;
+objecttoolutils.genericTool(kwargs, 'VRayNodeVRayClipper', nodename="vrayClipper")
+
+]]>
+    </script>
+</tool>
+
+<tool name="object_VRayNodeLightAmbient" label="V-Ray Ambient" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -9,7 +28,7 @@
     <toolMenuContext name="network">
         <contextOpType>Object/VRayNodeLightAmbient</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>V-Ray</toolSubmenu>
+    <toolSubmenu>V-Ray/Light</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
@@ -20,7 +39,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightAmbient', nodename="vrayLightA
     </script>
 </tool>
 
-<tool name="object_VRayNodeLightDirect" label="V-Ray LightDirect" icon="ROP_vray">
+<tool name="object_VRayNodeLightDirect" label="V-Ray Direct" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -28,7 +47,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightAmbient', nodename="vrayLightA
     <toolMenuContext name="network">
         <contextOpType>Object/VRayNodeLightDirect</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>V-Ray</toolSubmenu>
+    <toolSubmenu>V-Ray/Light</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
@@ -39,7 +58,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightDirect', nodename="vrayLightDi
     </script>
 </tool>
 
-<tool name="object_VRayNodeLightDome" label="V-Ray LightDome" icon="ROP_vray">
+<tool name="object_VRayNodeLightDome" label="V-Ray Dome" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -47,7 +66,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightDirect', nodename="vrayLightDi
     <toolMenuContext name="network">
         <contextOpType>Object/VRayNodeLightDome</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>V-Ray</toolSubmenu>
+    <toolSubmenu>V-Ray/Light</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
@@ -58,7 +77,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightDome', nodename="vrayLightDome
     </script>
 </tool>
 
-<tool name="object_VRayNodeLightIES" label="V-Ray LightIES" icon="ROP_vray">
+<tool name="object_VRayNodeLightIES" label="V-Ray IES" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -66,7 +85,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightDome', nodename="vrayLightDome
     <toolMenuContext name="network">
         <contextOpType>Object/VRayNodeLightIES</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>V-Ray</toolSubmenu>
+    <toolSubmenu>V-Ray/Light</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
@@ -77,7 +96,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightIES', nodename="vrayLightIES")
     </script>
 </tool>
 
-<tool name="object_VRayNodeLightMesh" label="V-Ray LightMesh" icon="ROP_vray">
+<tool name="object_VRayNodeLightMesh" label="V-Ray Mesh Light" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -85,7 +104,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightIES', nodename="vrayLightIES")
     <toolMenuContext name="network">
         <contextOpType>Object/VRayNodeLightMesh</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>V-Ray</toolSubmenu>
+    <toolSubmenu>V-Ray/Light</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
@@ -96,7 +115,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightMesh', nodename="vrayLightMesh
     </script>
 </tool>
 
-<tool name="object_VRayNodeLightOmni" label="V-Ray LightOmni" icon="ROP_vray">
+<tool name="object_VRayNodeLightOmni" label="V-Ray Omni" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -104,7 +123,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightMesh', nodename="vrayLightMesh
     <toolMenuContext name="network">
         <contextOpType>Object/VRayNodeLightOmni</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>V-Ray</toolSubmenu>
+    <toolSubmenu>V-Ray/Light</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
@@ -115,7 +134,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightOmni', nodename="vrayLightOmni
     </script>
 </tool>
 
-<tool name="object_VRayNodeLightRectangle" label="V-Ray LightRectangle" icon="ROP_vray">
+<tool name="object_VRayNodeLightRectangle" label="V-Ray Rectangle" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -123,7 +142,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightOmni', nodename="vrayLightOmni
     <toolMenuContext name="network">
         <contextOpType>Object/VRayNodeLightRectangle</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>V-Ray</toolSubmenu>
+    <toolSubmenu>V-Ray/Light</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
@@ -134,7 +153,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightRectangle', nodename="vrayLigh
     </script>
 </tool>
 
-<tool name="object_VRayNodeLightSphere" label="V-Ray LightSphere" icon="ROP_vray">
+<tool name="object_VRayNodeLightSphere" label="V-Ray Sphere" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -142,7 +161,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightRectangle', nodename="vrayLigh
     <toolMenuContext name="network">
         <contextOpType>Object/VRayNodeLightSphere</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>V-Ray</toolSubmenu>
+    <toolSubmenu>V-Ray/Light</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
@@ -153,7 +172,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightSphere', nodename="vrayLightSp
     </script>
 </tool>
 
-<tool name="object_VRayNodeLightSpot" label="V-Ray LightSpot" icon="ROP_vray">
+<tool name="object_VRayNodeLightSpot" label="V-Ray Spot" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -161,7 +180,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightSphere', nodename="vrayLightSp
     <toolMenuContext name="network">
         <contextOpType>Object/VRayNodeLightSpot</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>V-Ray</toolSubmenu>
+    <toolSubmenu>V-Ray/Light</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
@@ -172,7 +191,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightSpot', nodename="vrayLightSpot
     </script>
 </tool>
 
-<tool name="object_VRayNodeSunLight" label="V-Ray SunLight" icon="ROP_vray">
+<tool name="object_VRayNodeSunLight" label="V-Ray Sun" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>OBJ</contextNetType>
@@ -180,7 +199,7 @@ objecttoolutils.genericTool(kwargs, 'VRayNodeLightSpot', nodename="vrayLightSpot
     <toolMenuContext name="network">
         <contextOpType>Object/VRayNodeSunLight</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>V-Ray</toolSubmenu>
+    <toolSubmenu>V-Ray/Light</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
