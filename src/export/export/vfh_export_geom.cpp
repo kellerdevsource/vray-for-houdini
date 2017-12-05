@@ -296,6 +296,8 @@ void ObjectExporter::clearPrimPluginCache()
 
 	pluginCache.prim.clear();
 	pluginCache.meshPrim.clear();
+	pluginCache.polyMapChannels.clear();
+	pluginCache.polyMaterial.clear();
 	pluginCache.hashCache.clear();
 	pluginCache.instancerNodeWrapper.clear();
 }
