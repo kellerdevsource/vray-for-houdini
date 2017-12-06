@@ -255,7 +255,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeBRDFGlassGlossy', nodename="glassgloss
 </tool>
 
 
-<tool name="vop_VRayNodeBRDFHair3" label="Hair" icon="ROP_vray">
+<tool name="vop_VRayNodeBRDFHair3" label="Hair 3" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -263,12 +263,32 @@ voptoolutils.genericTool(kwargs, 'VRayNodeBRDFGlassGlossy', nodename="glassgloss
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeBRDFHair3</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <toolSubmenu>V-Ray/Material/BRDF</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
 import voptoolutils;
 voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHair3', nodename="hair3")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFHair4" label="Hair" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFHair4</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHair4', nodename="vrayHair")
 
 ]]>
     </script>

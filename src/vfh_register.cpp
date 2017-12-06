@@ -265,6 +265,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair2);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair3);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair4);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFLayered);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFLight);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFMirror);
