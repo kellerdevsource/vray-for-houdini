@@ -147,7 +147,7 @@
         name    "anim_length"
         label   "Sequence Length"
         type    integer
-        default { "0" }
+        default { "100" }
         help    "Specifies the length of the animation sequence"
         disablewhen "{ anim_override != 1 } { anim_override == 0 }"
         range   { 0 64 }
