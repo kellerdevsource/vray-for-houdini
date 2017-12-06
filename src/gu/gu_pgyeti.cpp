@@ -20,8 +20,6 @@
 #include <GU/GU_PackedContext.h>
 #include <GU/GU_PackedGeometry.h>
 
-#include <UT/UT_MemoryCounter.h>
-
 #include <FS/UT_DSO.h>
 
 #define hdf5_cpp_EXPORTS
@@ -69,14 +67,11 @@ void VRayPgYetiRef::install(GA_PrimitiveFactory *gafactory)
 }
 
 VRayPgYetiRef::VRayPgYetiRef()
-	: GU_PackedImpl()
-	, m_detail()
+	: VRayPgYetiRefOptions()
 {}
 
 VRayPgYetiRef::VRayPgYetiRef(const VRayPgYetiRef &src)
-	: GU_PackedImpl(src)
-	, VRayPgYetiRefOptions(src)
-	, m_detail(src.m_detail)
+	: VRayPgYetiRefOptions(src)
 {}
 
 VRayPgYetiRef::~VRayPgYetiRef()
@@ -97,80 +92,10 @@ GU_PackedImpl *VRayPgYetiRef::copy() const
 	return new VRayPgYetiRef(*this);
 }
 
-bool VRayPgYetiRef::isValid() const
+bool VRayPgYetiRef::unpack(GU_Detail&) const
 {
-	return m_detail.isValid();
+	return false;
 }
-
-void VRayPgYetiRef::clearData()
-{
-}
-
-bool VRayPgYetiRef::save(UT_Options &options, const GA_SaveMap&) const
-{
-	options.merge(m_options);
-	return true;
-}
-
-bool VRayPgYetiRef::getBounds(UT_BoundingBox &box) const
-{
-	box = m_bbox;
-	return true;
-}
-
-bool VRayPgYetiRef::getRenderingBounds(UT_BoundingBox &box) const
-{
-	return getBounds(box);
-}
-
-void VRayPgYetiRef::getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const
-{
-	min = 0;
-	max = 0;
-}
-
-void VRayPgYetiRef::getWidthRange(fpreal &wmin, fpreal &wmax) const
-{
-	wmin = 0;
-	wmax = 0;
-}
-
-bool VRayPgYetiRef::unpack(GU_Detail &destgdp) const
-{
-	GU_DetailHandleAutoReadLock gdl(getPackedDetail());
-	if (!gdl.isValid())
-		return false;
-	return unpackToDetail(destgdp, gdl.getGdp());
-}
-
-GU_ConstDetailHandle VRayPgYetiRef::getPackedDetail(GU_PackedContext*) const
-{
-	return m_detail;
-}
-
-int64 VRayPgYetiRef::getMemoryUsage(bool inclusive) const
-{
-	int64 mem = inclusive ? sizeof(VRayPgYetiRef) : 0;
-	mem += m_detail.getMemoryUsage(false);
-	return mem;
-}
-
-void VRayPgYetiRef::countMemory(UT_MemoryCounter &counter, bool inclusive) const
-{
-	if (counter.mustCountUnshared()) {
-		int64 mem = inclusive ? sizeof(VRayPgYetiRef) : 0;
-		mem += m_detail.getMemoryUsage(false);
-		UT_MEMORY_DEBUG_LOG(theFactory->name(), mem);
-		counter.countUnshared(mem);
-	}
-}
-
-void VRayPgYetiRef::detailClear()
-{
-	m_bbox.initBounds();
-	m_detail = GU_ConstDetailHandle();
-}
-
 
 static int yetiIsFurGroup(const H5::Group &group)
 {
@@ -267,7 +192,7 @@ static void buildHairDetailFromGroup(const H5::Group &furGroup, GU_Detail &gdp, 
 	}
 }
 
-void VRayPgYetiRef::detailBuild()
+void VRayPgYetiRef::detailRebuild()
 {
 	GU_Detail *gdp = new GU_Detail();
 
@@ -304,20 +229,4 @@ void VRayPgYetiRef::detailBuild()
 	gdpHndl.allocateAndSet(gdp);
 
 	m_detail = gdpHndl;
-}
-
-int VRayPgYetiRef::updateFrom(const UT_Options &options)
-{
-	if (m_options == options)
-		return false;
-
-	// Store new options
-	m_options = options;
-	m_bbox.initBounds();
-
-	detailBuild();
-
-	topologyDirty();
-
-	return true;
 }

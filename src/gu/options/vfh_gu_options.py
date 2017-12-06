@@ -209,6 +209,8 @@ def main(fileRoot, jsonFilePath):
 #ifndef VRAY_FOR_HOUDINI_%CLASS_NAME_UPPER%_H
 #define VRAY_FOR_HOUDINI_%CLASS_NAME_UPPER%_H
 
+#include "vfh_gu_base.h"
+
 #include <GU/GU_PackedFactory.h>
 """
 	if HDK > 16.0:
@@ -219,15 +221,16 @@ def main(fileRoot, jsonFilePath):
 namespace VRayForHoudini {
 
 class %CLASS_NAME%
+	: public VRayBaseRef
 {
 public:
 	%CLASS_NAME%()
 	{}
 	%CLASS_NAME%(const %CLASS_NAME% &other)
-		: m_options(other.m_options)
+		: VRayBaseRef(other)
 	{}
 	%CLASS_NAME%(%CLASS_NAME% &&other) noexcept
-		: m_options(std::move(other.m_options))
+		: VRayBaseRef(std::move(other))
 	{}
 %METHODS%
 	%REG_METHODS%
@@ -239,10 +242,6 @@ private:
 	struct IntrinsicNames {
 	%INTR_NAMES%
 	};
-
-protected:
-	/// Current options set.
-	UT_Options m_options;
 };
 
 } // namespace VRayForHoudini

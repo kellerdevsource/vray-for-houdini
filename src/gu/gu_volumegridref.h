@@ -56,8 +56,7 @@ static const int MAX_RESOLUTION = 255;
 
 /// Implementation for a volume grid packed primitive
 class VRayVolumeGridRef 
-	: public GU_PackedImpl
-	, public VRayVolumeGridRefOptions
+	: public VRayVolumeGridRefOptions
 {
 	// These *must* match phx's values
 	enum AnimationMode {
@@ -166,7 +165,7 @@ private:
 	VolumeCacheKey genKey() const;
 
 	/// updateFrom() will update from UT_Options only
-	bool updateFrom(const UT_Options &options);
+	int updateFrom(const UT_Options &options) VRAY_OVERRIDE;
 	void clearDetail() { setDetail(GU_DetailHandle()); }
 
 	/// Builds the cache path according to current settings
@@ -197,6 +196,9 @@ private:
 	void buildMapping();
 
 private:
+	// TODO: Check if we could use VRayBaseRef for this primitive.
+	void detailRebuild() VRAY_OVERRIDE {}
+
 	mutable VolumeCache    m_dataCache; ///< Data cache used to cache last 10 volumes loaded, mutable(needs to be updated from const functions not changing other (immutable)members)
 	mutable VolumeCacheData m_currentData;
 

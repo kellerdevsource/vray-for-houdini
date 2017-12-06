@@ -12,6 +12,8 @@
 
 using namespace VRayForHoudini;
 
+static GA_PrimitiveTypeId theTypeId(-1);
+
 static class GeomPlaneFactory
 	: public GU_PackedFactory
 {
@@ -28,8 +30,6 @@ public:
 
 	VUTILS_DISABLE_COPY(GeomPlaneFactory)
 } theFactory;
-
-GA_PrimitiveTypeId GeomPlaneRef::theTypeId(-1);
 
 void GeomPlaneRef::install(GA_PrimitiveFactory *gafactory)
 {
@@ -49,10 +49,25 @@ void GeomPlaneRef::install(GA_PrimitiveFactory *gafactory)
 	theTypeId = theFactory.typeDef().getId();
 }
 
+GeomPlaneRef::GeomPlaneRef()
+	: GeomPlaneRefOptions()
+{}
+
+GeomPlaneRef::GeomPlaneRef(const GeomPlaneRef &src)
+	: GeomPlaneRefOptions(src)
+{}
+
+GeomPlaneRef::~GeomPlaneRef()
+{}
 
 GU_PackedFactory *GeomPlaneRef::getFactory() const
 {
 	return &theFactory;
+}
+
+GA_PrimitiveTypeId GeomPlaneRef::typeId()
+{
+	return theTypeId;
 }
 
 GU_PackedImpl *GeomPlaneRef::copy() const
@@ -60,131 +75,39 @@ GU_PackedImpl *GeomPlaneRef::copy() const
 	return new GeomPlaneRef(*this);
 }
 
-bool GeomPlaneRef::isValid() const
-{
-	return m_detail.isValid();
-}
-
-void GeomPlaneRef::clearData()
-{
-	// This method is called when primitives are "stashed" during the cooking
-	// process.  However, primitives are typically immediately "unstashed" or
-	// they are deleted if the primitives aren't recreated after the fact.
-	// We can just leave our data.
-}
-
-bool GeomPlaneRef::save(UT_Options &options, const GA_SaveMap &map) const
-{
-	options.merge(m_options);
-	return true;
-}
-
-bool GeomPlaneRef::getBounds(UT_BoundingBox &box) const
-{
-	return getBounds(box);
-}
-
-bool GeomPlaneRef::getRenderingBounds(UT_BoundingBox &box) const
-{
-	return getBounds(box);
-}
-
-void GeomPlaneRef::getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const
-{
-	// No velocity attribute on geometry
-	min = max = 0;
-}
-
-void GeomPlaneRef::getWidthRange(fpreal &wmin, fpreal &wmax) const
-{
-	// Width is only important for curves/points.
-	wmin = wmax = 0;
-}
-
-bool GeomPlaneRef::unpack(GU_Detail &destgdp) const
+bool GeomPlaneRef::unpack(GU_Detail&) const
 {
 	return false;
 }
 
-GU_ConstDetailHandle GeomPlaneRef::getPackedDetail(GU_PackedContext *context) const
+void GeomPlaneRef::detailRebuild()
 {
-	if (!m_dirty) {
-		return getDetail();
-	}
-
-	GU_Detail* gdmp = new GU_Detail();
-	GU_PrimPoly *poly = GU_PrimPoly::build(gdmp, 4, GU_POLY_CLOSED, 0);
-
 	const float size = getPlaneSize();
 
-	GA_Offset pOff = gdmp->appendPoint();
-	gdmp->setPos3(pOff, UT_Vector3(-size, 0.0f, -size));
-	poly->setVertexPoint(0, pOff);
+	GU_Detail *meshDetail = new GU_Detail();
 
-	pOff = gdmp->appendPoint();
-	gdmp->setPos3(pOff, UT_Vector3(-size, 0.0f, size));
-	poly->setVertexPoint(1, pOff);
+	GU_PrimPoly *poly = GU_PrimPoly::build(meshDetail, 4, GU_POLY_CLOSED, 0);
 
-	pOff = gdmp->appendPoint();
-	gdmp->setPos3(pOff, UT_Vector3(size, 0.0f, size));
-	poly->setVertexPoint(2, pOff);
+	GA_Offset pointOffs = meshDetail->appendPoint();
+	meshDetail->setPos3(pointOffs, UT_Vector3(-size, 0.0f, -size));
+	poly->setVertexPoint(0, pointOffs);
 
-	pOff = gdmp->appendPoint();
-	gdmp->setPos3(pOff, UT_Vector3(size, 0.0f, -size));
-	poly->setVertexPoint(3, pOff);
+	pointOffs = meshDetail->appendPoint();
+	meshDetail->setPos3(pointOffs, UT_Vector3(-size, 0.0f, size));
+	poly->setVertexPoint(1, pointOffs);
+
+	pointOffs = meshDetail->appendPoint();
+	meshDetail->setPos3(pointOffs, UT_Vector3(size, 0.0f, size));
+	poly->setVertexPoint(2, pointOffs);
+
+	pointOffs = meshDetail->appendPoint();
+	meshDetail->setPos3(pointOffs, UT_Vector3(size, 0.0f, -size));
+	poly->setVertexPoint(3, pointOffs);
 
 	poly->reverse();
 
-	// handle
-	GU_DetailHandle gdmh;
-	gdmh.allocateAndSet(gdmp);
+	GU_DetailHandle meshDetailHandle;
+	meshDetailHandle.allocateAndSet(meshDetail);
 
-	// pack the geometry in the scene detail
-	GU_DetailHandle gdh;
-	GU_Detail *gdp = new GU_Detail();
-	GU_PackedGeometry::packGeometry(*gdp, gdmh);
-	gdh.allocateAndSet(gdp);
-
-	GeomPlaneRef* self = SYSconst_cast(this);
-
-	if (GU_ConstDetailHandle(gdh) != getDetail()) {
-		self->setDetail(gdh);
-	}
-	self->m_dirty = false;
-
-	return getDetail();
-}
-
-int64 GeomPlaneRef::getMemoryUsage(bool inclusive) const
-{
-	int64 mem = inclusive ? sizeof(*this) : 0;
-	// Don't count the (shared) GU_Detail, since that will greatly
-	// over-estimate the overall memory usage.
-	mem += m_detail.getMemoryUsage(false);
-	return mem;
-}
-
-void GeomPlaneRef::countMemory(UT_MemoryCounter &counter, bool inclusive) const
-{
-	if (counter.mustCountUnshared()) {
-		size_t mem = (inclusive) ? sizeof(*this) : 0;
-		mem += m_detail.getMemoryUsage(false);
-		UT_MEMORY_DEBUG_LOG(theFactory->name(), int64(mem));
-		counter.countUnshared(mem);
-	}
-}
-
-bool GeomPlaneRef::updateFrom(const UT_Options &options)
-{
-	if (m_options == options) {
-		return false;
-	}
-
-	m_options.merge(options);
-	m_dirty = true;
-
-	// Notify base primitive that topology has changed
-	topologyDirty();
-
-	return true;
+	m_detail = meshDetailHandle;
 }

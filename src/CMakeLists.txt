@@ -38,6 +38,7 @@ set(EXPORTER_SOURCES
 	export/export/vfh_export_hdk_shaders.cpp
 	export/export/vfh_export_op.cpp
 	export/export/vfh_material_override.cpp
+	gu/vfh_gu_base.cpp
 	gu/gu_volumegridref.cpp
 	gu/gu_vrayproxyref.cpp
 	gu/gu_vraysceneref.cpp
@@ -87,6 +88,7 @@ set(EXPORTER_HEADERS
 	export/vfh_plugin_attrs.h
 	export/vfh_plugin_exporter.h
 	export/vfh_vray.h
+	gu/vfh_gu_base.h
 	gu/gu_volumegridref.h
 	gu/gu_vrayproxyref.h
 	gu/gu_vraysceneref.h

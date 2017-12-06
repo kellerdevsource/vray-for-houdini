@@ -253,8 +253,7 @@ void VRayForHoudini::VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &ke
 }
 
 VRayVolumeGridRef::VRayVolumeGridRef()
-	: GU_PackedImpl()
-	, VRayVolumeGridRefOptions()
+	: VRayVolumeGridRefOptions()
 	, m_dirty(false)
 	, m_channelDirty(false)
 	, m_doFrameReplace(false)
@@ -264,8 +263,7 @@ VRayVolumeGridRef::VRayVolumeGridRef()
 }
 
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
-	: GU_PackedImpl(src)
-	, VRayVolumeGridRefOptions(src)
+	: VRayVolumeGridRefOptions(src)
 	, m_dirty(false)
 	, m_channelDirty(false)
 	, m_doFrameReplace(src.m_doFrameReplace)
@@ -274,8 +272,7 @@ VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
 }
 
 VRayVolumeGridRef::VRayVolumeGridRef(VRayVolumeGridRef &&src) noexcept
-	: GU_PackedImpl(std::move(src))
-	, VRayVolumeGridRefOptions(std::move(src))
+	: VRayVolumeGridRefOptions(std::move(src))
 	, m_dataCache(std::move(src.m_dataCache))
 	, m_bBox(std::move(src.m_bBox))
 	, m_dirty(std::move(src.m_dirty))
@@ -684,7 +681,7 @@ int VRayVolumeGridRef::splitPath(const UT_String &path, std::string &prefix, std
 	return frame.length();
 }
 
-bool VRayVolumeGridRef::updateFrom(const UT_Options &options)
+int VRayVolumeGridRef::updateFrom(const UT_Options &options)
 {
 	const float frameBefore = getCurrentCacheFrame();
 	const unsigned int hashBefore = m_options.hash();
