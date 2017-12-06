@@ -498,6 +498,7 @@ if(HDK_FOUND)
 				tbbmalloc
 				pthread
 				"-framework Cocoa"
+				${SDK_PATH}/hdk/hdf5/lib/libhdf5_cpp$<$<CONFIG:Debug>:_debug>.a
 			)
 		else()
 			list(APPEND HDK_DEFINITIONS
