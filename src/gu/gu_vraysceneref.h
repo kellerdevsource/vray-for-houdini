@@ -52,12 +52,6 @@ private:
 	/// Returns mesh sample time based on animation overrides settings.
 	/// @param t Current time.
 	double getFrame(fpreal t) const;
-
-	/// Preview mesh bbox.
-	UT_BoundingBox m_bbox;
-
-	/// Geometry detail.
-	GU_ConstDetailHandle m_detail;
 };
 
 } // namespace VRayForHoudini

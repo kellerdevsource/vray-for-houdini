@@ -33,7 +33,6 @@ public:
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
 
 private:
-	/// Build packed detail.
 	void detailRebuild() VRAY_OVERRIDE;
 };
 
