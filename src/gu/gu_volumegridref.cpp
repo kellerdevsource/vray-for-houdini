@@ -130,41 +130,11 @@ GA_PrimitiveTypeId VRayVolumeGridRef::theTypeId(-1);
 const int MAX_CHAN_MAP_LEN = 2048;
 
 /// Implemetation for the factory creating VRayVolumeGridRef for HDK
-static class VRayVolumeGridFactory
-	: public GU_PackedFactory
+static VRayBaseRefFactory<VRayVolumeGridRef> theFactory("VRayVolumeGridRef");
+
+void VRayVolumeGridRef::install(GA_PrimitiveFactory *primfactory)
 {
-public:
-	VRayVolumeGridFactory()
-		: GU_PackedFactory("VRayVolumeGridRef", "VRayVolumeGridRef")
-	{
-		VRayVolumeGridRef::registerIntrinsics<VRayVolumeGridRef>(*this);
-	}
-
-	GU_PackedImpl *create() const VRAY_OVERRIDE {
-		return new VRayVolumeGridRef();
-	}
-
-private:
-	VUTILS_DISABLE_COPY(VRayVolumeGridFactory);
-} theFactory;
-
-void VRayVolumeGridRef::install(GA_PrimitiveFactory *gafactory)
-{
-	if (theFactory.isRegistered()) {
-		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
-			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
-		return;
-	}
-
-	GU_PrimPacked::registerPacked(gafactory, &theFactory);
-	if (NOT(theFactory.isRegistered())) {
-		Log::getLog().error("Unable to register packed primitive %s from %s",
-			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
-		return;
-	}
-
-	SYSconst_cast(theFactory.typeDef()).setHasLocalTransform(true);
-	theTypeId = theFactory.typeDef().getId();
+	theTypeId = theFactory.install(*primfactory, theFactory);
 }
 
 void VRayVolumeGridRef::fetchData(const VolumeCacheKey &key, VolumeCacheData &data)
