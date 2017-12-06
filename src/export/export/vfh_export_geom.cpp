@@ -841,7 +841,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 #endif
 
 		int numStylerHashes = 0;
-		for (const STY_Results &result : results) {
+		for (const STY_OverrideValues &result : results) {
 			for (const auto &res : result) {
 				numStylerHashes++;
 			}
@@ -850,9 +850,9 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		if (numStylerHashes) {
 			VUtils::IntRefList stylerHashes(numStylerHashes);
 			numStylerHashes = 0;
-			for (const STY_Results &result : results) {
+			for (const STY_OverrideValues &result : results) {
 				for (const auto &res : result) {
-					const STY_ResultMap &resMap = res.second;
+					const STY_OverrideValueMap &resMap = res.second;
 					stylerHashes[numStylerHashes++] = resMap.hash();
 				}
 			}
