@@ -226,7 +226,7 @@ void VOP::VRayVOPContext::register_operator_vrayenvcontext(OP_OperatorTable *tab
 
 void VOP::VRayVOPContext::register_operator_vrayrccontext(OP_OperatorTable *table)
 {
-	OP_Operator *op = new VOP_Operator("vray_render_channels", "V-Ray Render Channels",
+	OP_Operator *op = new VOP_Operator("vray_render_channels", "V-Ray Render Elements",
 									  VOP::VRayVOPContext::creator,
 									  templates,
 									  VOP_TABLE_NAME,
