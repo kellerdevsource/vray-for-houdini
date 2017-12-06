@@ -16,6 +16,8 @@
 
 #include <GU/GU_DetailHandle.h>
 #include <GU/GU_PackedImpl.h>
+#include <GU/GU_PackedFactory.h>
+#include <GU/GU_PrimPacked.h>
 #include <UT/UT_Options.h>
 #include <UT/UT_BoundingBox.h>
 
@@ -72,6 +74,41 @@ protected:
 
 	/// Geometry detail.
 	GU_ConstDetailHandle m_detail;
+};
+
+template <typename T>
+class VRayBaseRefFactory
+	: public GU_PackedFactory
+{
+public:
+	/// Registers the packed primitive factory.
+	/// @param primFactory Global primitive factory.
+	/// @param instance Factory instance.
+	/// @returns Primitive type ID.
+	static GA_PrimitiveTypeId install(GA_PrimitiveFactory &primFactory,
+									  VRayBaseRefFactory &instance)
+	{
+		vassert(!instance.isRegistered() && "Multiple attempts to register packed primitive!");
+
+		instance.registerIntrinsics();
+
+		GU_PrimPacked::registerPacked(&primFactory, &instance);
+		vassert(instance.isRegistered() && "Unable to register packed primitive!");
+
+		return instance.typeDef().getId();
+	}
+
+	explicit VRayBaseRefFactory(const char *primTypeName)
+		: GU_PackedFactory(primTypeName, primTypeName)
+	{}
+
+	GU_PackedImpl *create() const VRAY_OVERRIDE {
+		return new T;
+	}
+
+	void registerIntrinsics() {
+		T::template registerIntrinsics<T>(*this);
+	}
 };
 
 } // namespace VRayForHoudini

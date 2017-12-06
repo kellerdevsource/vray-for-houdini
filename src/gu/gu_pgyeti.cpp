@@ -29,41 +29,11 @@
 using namespace VRayForHoudini;
 
 static GA_PrimitiveTypeId theTypeId(-1);
+static VRayBaseRefFactory<VRayPgYetiRef> theFactory("VRayPgYetiRef");
 
-static class VRayPgYetiFactory
-	: public GU_PackedFactory
+void VRayPgYetiRef::install(GA_PrimitiveFactory *primFactory)
 {
-public:
-	VRayPgYetiFactory()
-		: GU_PackedFactory("VRayPgYetiRef", "VRayPgYetiRef")
-	{
-		VRayPgYetiRef::registerIntrinsics<VRayPgYetiRef>(*this);
-	}
-
-	GU_PackedImpl* create() const VRAY_OVERRIDE {
-		return new VRayPgYetiRef();
-	}
-
-	VUTILS_DISABLE_COPY(VRayPgYetiFactory)
-} theFactory;
-
-
-void VRayPgYetiRef::install(GA_PrimitiveFactory *gafactory)
-{
-	if (theFactory.isRegistered()) {
-		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
-			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
-		return;
-	}
-
-	GU_PrimPacked::registerPacked(gafactory, &theFactory);
-	if (NOT(theFactory.isRegistered())) {
-		Log::getLog().error("Unable to register packed primitive %s from %s",
-			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
-		return;
-	}
-
-	theTypeId = theFactory.typeDef().getId();
+	theTypeId = theFactory.install(*primFactory, theFactory);
 }
 
 VRayPgYetiRef::VRayPgYetiRef()

@@ -8,55 +8,24 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <GU/GU_PackedFactory.h>
-#include <GU/GU_PrimPacked.h>
-#include <GU/GU_PrimPoly.h>
-#include <GU/GU_PackedGeometry.h>
-#include <UT/UT_MemoryCounter.h>
-#include <FS/UT_DSO.h>
-
 #include "vfh_defines.h"
 #include "vfh_log.h"
 
 #include "gu_geomplaneref.h"
 
+#include <GU/GU_PackedFactory.h>
+#include <GU/GU_PrimPacked.h>
+#include <GU/GU_PrimPoly.h>
+#include <GU/GU_PackedGeometry.h>
+
 using namespace VRayForHoudini;
 
 static GA_PrimitiveTypeId theTypeId(-1);
+static VRayBaseRefFactory<GeomPlaneRef> theFactory("GeomPlaneRef");
 
-static class GeomPlaneFactory
-	: public GU_PackedFactory
+void GeomPlaneRef::install(GA_PrimitiveFactory *primFactory)
 {
-public:
-	GeomPlaneFactory()
-		: GU_PackedFactory("GeomPlaneRef", "GeomPlaneRef")
-	{
-		GeomPlaneRef::registerIntrinsics<GeomPlaneRef>(*this);
-	}
-
-	GU_PackedImpl* create() const VRAY_OVERRIDE {
-		return new GeomPlaneRef();
-	}
-
-	VUTILS_DISABLE_COPY(GeomPlaneFactory)
-} theFactory;
-
-void GeomPlaneRef::install(GA_PrimitiveFactory *gafactory)
-{
-	if (theFactory.isRegistered()) {
-		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
-			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
-		return;
-	}
-
-	GU_PrimPacked::registerPacked(gafactory, &theFactory);
-	if (NOT(theFactory.isRegistered())) {
-		Log::getLog().error("Unable to register packed primitive %s from %s",
-			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
-		return;
-	}
-
-	theTypeId = theFactory.typeDef().getId();
+	theTypeId = theFactory.install(*primFactory, theFactory);
 }
 
 GeomPlaneRef::GeomPlaneRef()

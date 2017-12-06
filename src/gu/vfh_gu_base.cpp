@@ -9,6 +9,7 @@
 //
 
 #include "vfh_gu_base.h"
+#include "vfh_log.h"
 
 #include <UT/UT_MemoryCounter.h>
 

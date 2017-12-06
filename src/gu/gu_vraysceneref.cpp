@@ -32,6 +32,9 @@ enum FlipAxisMode {
 	flipZY     ///< Force the scene to flip the Z and Y axis
 };
 
+/// *.vrscene preview data manager.
+static VrsceneDescManager vrsceneMan(NULL);
+
 /// Converts "flip_axis" saved as a string parameter to its corresponding
 /// FlipAxisMode enum value.
 /// @flipAxisModeS The value of the flip_axis parameter
@@ -47,46 +50,12 @@ static FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
 	return mode;
 }
 
-static VrsceneDescManager vrsceneMan(NULL);
 static GA_PrimitiveTypeId theTypeId(-1);
+static VRayBaseRefFactory<VRaySceneRef> theFactory("VRaySceneRef");
 
-static class VRaySceneFactory
-	: public GU_PackedFactory
+void VRaySceneRef::install(GA_PrimitiveFactory *primFactory)
 {
-public:
-	VRaySceneFactory()
-		: GU_PackedFactory("VRaySceneRef", "VRaySceneRef")
-	{}
-
-	GU_PackedImpl* create() const VRAY_OVERRIDE {
-		return new VRaySceneRef();
-	}
-
-	void registerIntrinsics() {
-		VRaySceneRef::registerIntrinsics<VRaySceneRef>(*this);
-	}
-
-	VUTILS_DISABLE_COPY(VRaySceneFactory)
-} theFactory;
-
-void VRaySceneRef::install(GA_PrimitiveFactory *gafactory)
-{
-	if (theFactory.isRegistered()) {
-		Log::getLog().debug("Multiple attempts to install packed primitive %s from %s",
-			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
-		return;
-	}
-
-	theFactory.registerIntrinsics();
-
-	GU_PrimPacked::registerPacked(gafactory, &theFactory);
-	if (NOT(theFactory.isRegistered())) {
-		Log::getLog().error("Unable to register packed primitive %s from %s",
-			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
-		return;
-	}
-
-	theTypeId = theFactory.typeDef().getId();
+	theTypeId = theFactory.install(*primFactory, theFactory);
 }
 
 VRaySceneRef::VRaySceneRef()
