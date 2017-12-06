@@ -29,7 +29,6 @@ VRayBaseRef::VRayBaseRef(VRayBaseRef &&other) noexcept
 	, m_detail(other.m_detail)
 {}
 
-
 bool VRayBaseRef::isValid() const
 {
 	return m_detail.isValid();
@@ -100,7 +99,6 @@ void VRayBaseRef::countMemory(UT_MemoryCounter &counter, bool inclusive) const
 		counter.countUnshared(mem);
 	}
 }
-
 
 void VRayBaseRef::detailClear()
 {
