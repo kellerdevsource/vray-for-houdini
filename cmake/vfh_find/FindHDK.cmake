@@ -471,6 +471,41 @@ if(HDK_FOUND)
 		)
 
 		if(APPLE)
+			if("${HDK_MAJOR_VERSION}.${HDK_MINOR_VERSION}" VERSION_GREATER 16.0)
+				set(HDK_LIBS
+					${HDK_LIB_PATH}/libHoudiniAPPS3.dylib
+					${HDK_LIB_PATH}/libHoudiniAPPS2.dylib
+					${HDK_LIB_PATH}/libHoudiniUI.dylib
+					${HDK_LIB_PATH}/libHoudiniUT.dylib
+					${HDK_LIB_PATH}/libhboost_system.dylib
+					${HDK_LIB_PATH}/libHoudiniPRM.dylib
+					${HDK_LIB_PATH}/libHoudiniHARD.dylib
+					${HDK_LIB_PATH}/libHoudiniHAPIL.dylib
+					${HDK_LIB_PATH}/libHoudiniOP2.dylib
+					${HDK_LIB_PATH}/libHoudiniOP1.dylib
+					${HDK_LIB_PATH}/libHoudiniSIM.dylib
+					${HDK_LIB_PATH}/libHoudiniGEO.dylib
+					${HDK_LIB_PATH}/libHoudiniOPZ.dylib
+					${HDK_LIB_PATH}/libHoudiniOP3.dylib
+					${HDK_LIB_PATH}/libHoudiniAPPS1.dylib
+					${HDK_LIB_PATH}/libHoudiniDEVICE.dylib
+					HoudiniAPPS2
+					HoudiniUI
+					HoudiniUT
+					HoudiniPRM
+					HoudiniHARD
+					HoudiniHAPIL
+					HoudiniOP2
+					HoudiniOP1
+					HoudiniSIM
+					HoudiniGEO
+					HoudiniOPZ
+					HoudiniOP3
+					HoudiniAPPS1
+					HoudiniDEVICE
+				)
+			endif()
+
 			list(APPEND HDK_DEFINITIONS
 				-DNEED_SPECIALIZATION_STORAGE
 				-DMBSD
@@ -498,6 +533,8 @@ if(HDK_FOUND)
 				tbbmalloc
 				pthread
 				openvdb_sesi
+				$<$<CONFIG:Release>:Half>
+				$<$<CONFIG:Debug>:Half_d>
 				${SDK_PATH}/hdk/hdf5/lib/libhdf5$<$<CONFIG:Debug>:_debug>.a
 				${SDK_PATH}/hdk/hdf5/lib/libhdf5_cpp$<$<CONFIG:Debug>:_debug>.a
 				"-framework Cocoa"
