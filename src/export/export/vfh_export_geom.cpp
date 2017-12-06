@@ -930,8 +930,9 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		}
 
 		if (isNodeMatte(objNode)) {
-			PluginDesc mtlWrapperDesc(VRayExporter::getPluginName(&objNode, "MtlWrapper"),
-				"MtlWrapper");
+			// NOTE [MacOS]: Do not remove namespace here.
+			Attrs::PluginDesc mtlWrapperDesc(VRayExporter::getPluginName(&objNode, "MtlWrapper"),
+											 "MtlWrapper");
 
 			mtlWrapperDesc.addAttribute(PluginAttr("base_material", material));
 			mtlWrapperDesc.addAttribute(PluginAttr("matte_surface", 1));
@@ -944,8 +945,9 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		}
 
 		if (isNodePhantom(objNode)) {
-			PluginDesc mtlStatsDesc(VRayExporter::getPluginName(&objNode, "MtlRenderStats"),
-				"MtlRenderStats");
+			// NOTE [MacOS]: Do not remove namespace here.
+			Attrs::PluginDesc mtlStatsDesc(VRayExporter::getPluginName(&objNode, "MtlRenderStats"),
+										   "MtlRenderStats");
 			mtlStatsDesc.addAttribute(PluginAttr("base_mtl", material));
 			mtlStatsDesc.addAttribute(PluginAttr("camera_visibility", 0));
 
@@ -2055,8 +2057,9 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 {
 	using namespace Attrs;
 
-	PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
-						vrayPluginTypeNode.buffer());
+	// NOTE [MacOS]: Do not remove namespace here.
+	Attrs::PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
+							   vrayPluginTypeNode.buffer());
 
 	const VRay::Plugin geometry = exportGeometry(objNode);
 	// May be NULL if geometry was not re-exported during RT sessions.
