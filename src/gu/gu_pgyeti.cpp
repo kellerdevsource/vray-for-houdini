@@ -94,7 +94,7 @@ GU_PackedImpl *VRayPgYetiRef::copy() const
 
 bool VRayPgYetiRef::unpack(GU_Detail&) const
 {
-	return false;
+	return true;
 }
 
 static int yetiIsFurGroup(const H5::Group &group)

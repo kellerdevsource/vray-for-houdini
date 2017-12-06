@@ -87,7 +87,7 @@ GU_PackedImpl *GeomPlaneRef::copy() const
 
 bool GeomPlaneRef::unpack(GU_Detail&) const
 {
-	return false;
+	return true;
 }
 
 void GeomPlaneRef::detailRebuild()
