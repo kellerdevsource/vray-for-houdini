@@ -26,7 +26,7 @@
 using namespace VRayForHoudini;
 using namespace VUtils::Vrscene::Preview;
 
-enum FlipAxisMode {
+enum class FlipAxisMode {
 	none = 0,  ///< No flipping
 	automatic, ///< Gets the flipping from the vrscene description
 	flipZY     ///< Force the scene to flip the Z and Y axis
@@ -182,8 +182,8 @@ void VRaySceneRef::detailRebuild()
 	else {
 		// Update flip axis intrinsic.
 		const FlipAxisMode flipAxis = parseFlipAxisMode(getFlipAxis());
-		const bool shouldFlip = flipAxis == flipZY ||
-			                    flipAxis == automatic && vrsceneDesc->getUpAxis() == vrsceneUpAxisZ;
+		const bool shouldFlip = flipAxis == FlipAxisMode::flipZY ||
+			                    flipAxis == FlipAxisMode::automatic && vrsceneDesc->getUpAxis() == vrsceneUpAxisZ;
 		setShouldFlip(shouldFlip);
 
 		if (!getAddNodes()) {
