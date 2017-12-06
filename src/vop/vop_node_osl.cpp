@@ -770,5 +770,6 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 
 
 /// Instantiate both versions of the class so all methods can be generated
-template class OSLNodeBase<true>;
-template class OSLNodeBase<false>;
+/// NOTE [MacOS]: Use full namespace.
+template class VRayForHoudini::VOP::OSLNodeBase<true>;
+template class VRayForHoudini::VOP::OSLNodeBase<false>;
