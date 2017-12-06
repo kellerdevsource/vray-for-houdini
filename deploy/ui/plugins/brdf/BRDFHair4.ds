@@ -6,7 +6,7 @@
 	parmtag { spare_category "BRDFHair4" }
 	parmtag { vray_plugin "BRDFHair4" }
 
-	groupsimple {
+	group {
 		name "VfhBRDFHair4FolderMain"
 		label "Main"
 
@@ -86,7 +86,7 @@
 		)
 	}
 
-	groupsimple {
+	group {
 		name "VfhBRDFHair4FolderRandom"
 		label "Random"
 
