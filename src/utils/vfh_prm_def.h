@@ -11,11 +11,8 @@
 #ifndef VRAY_FOR_HOUDINI_PRM_DEF_H
 #define VRAY_FOR_HOUDINI_PRM_DEF_H
 
+#include "vfh_vray.h"
 #include "vfh_prm_defaults.h"
-
-#include <hash_map.h>
-#include <charstring.h>
-#include <table.h>
 
 #include <PRM/PRM_Name.h>
 #include <PRM/PRM_Shared.h>
