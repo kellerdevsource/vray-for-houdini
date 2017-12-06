@@ -14,36 +14,6 @@ if(APPLE)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9)
 endif()
 
-macro(set_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
-	# Remove precompiled from from source list
-	list(REMOVE_ITEM ${SourcesVar} ${PrecompiledSource})
-
-	if(MSVC_VERSION GREATER 1700)
-		get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
-
-		set(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${PrecompiledBasename}.pch")
-		set(Sources ${${SourcesVar}})
-
-		set_source_files_properties(${PrecompiledSource}
-			PROPERTIES
-				COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\" /Zm2000"
-				OBJECT_OUTPUTS "${PrecompiledBinary}"
-		)
-
-		set_source_files_properties(${Sources}
-			PROPERTIES
-				COMPILE_FLAGS "/Yu\"${PrecompiledHeader}\" /FI\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\""
-				OBJECT_DEPENDS "${PrecompiledBinary}"
-		)
-
-		# Move PCH source file to the beginning
-		list(INSERT ${SourcesVar} 0 ${PrecompiledSource})
-
-		message(STATUS "Using PCH header: ${PrecompiledHeader}")
-		message(STATUS "Using PCH source: ${PrecompiledSource}")
-	endif()
-endmacro()
-
 macro(vfh_osx_flags _project_name)
 	if(APPLE)
 		# This sets search paths for modules like libvray.dylib
