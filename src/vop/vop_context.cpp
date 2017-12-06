@@ -126,7 +126,7 @@ void VOP::VRayMaterialBuilder::register_shop_operator(OP_OperatorTable *table)
 										  VOP_TABLE_NAME,
 										  0, 0,
 										  VOP_CodeGenerator::theLocalVariables,
-										  OP_FLAG_GENERATOR | OP_FLAG_NETWORK ,
+										  OP_FLAG_GENERATOR | OP_FLAG_NETWORK | OP_FLAG_MANAGER,
 										  SHOP_AUTOADD_NONE);
 
 	// Set icon
@@ -215,7 +215,7 @@ void VOP::VRayVOPContext::register_operator_vrayenvcontext(OP_OperatorTable *tab
 									  0, 0,
 									  "*",
 									  VOP_CodeGenerator::theLocalVariables,
-									  OP_FLAG_NETWORK | OP_FLAG_GENERATOR,
+									  OP_FLAG_NETWORK | OP_FLAG_GENERATOR | OP_FLAG_MANAGER,
 									  0 );
 
 	// Set icon
@@ -233,7 +233,7 @@ void VOP::VRayVOPContext::register_operator_vrayrccontext(OP_OperatorTable *tabl
 									  0, 0,
 									  "*",
 									  VOP_CodeGenerator::theLocalVariables,
-									  OP_FLAG_NETWORK | OP_FLAG_GENERATOR,
+									  OP_FLAG_NETWORK | OP_FLAG_GENERATOR | OP_FLAG_MANAGER,
 									  0 );
 
 	// Set icon
