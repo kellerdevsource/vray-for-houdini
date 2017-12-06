@@ -56,12 +56,14 @@ static class VRaySceneFactory
 public:
 	VRaySceneFactory()
 		: GU_PackedFactory("VRaySceneRef", "VRaySceneRef")
-	{
-		VRaySceneRef::registerIntrinsics<VRaySceneRef>(*this);
-	}
+	{}
 
 	GU_PackedImpl* create() const VRAY_OVERRIDE {
 		return new VRaySceneRef();
+	}
+
+	void registerIntrinsics() {
+		VRaySceneRef::registerIntrinsics<VRaySceneRef>(*this);
 	}
 
 	VUTILS_DISABLE_COPY(VRaySceneFactory)
@@ -74,6 +76,8 @@ void VRaySceneRef::install(GA_PrimitiveFactory *gafactory)
 			static_cast<const char *>(theFactory.name()), UT_DSO::getRunningFile());
 		return;
 	}
+
+	theFactory.registerIntrinsics();
 
 	GU_PrimPacked::registerPacked(gafactory, &theFactory);
 	if (NOT(theFactory.isRegistered())) {
