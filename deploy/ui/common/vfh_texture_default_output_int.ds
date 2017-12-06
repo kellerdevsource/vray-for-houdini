@@ -3,7 +3,7 @@ parm {
     label "Output"
     type int
     parmtag { "cook_dependent" "0" }
-    parmtag { "vray_label" "output" }
+    parmtag { "vray_label" "value" }
     parmtag { "vray_pluginattr" "" }
     parmtag { "vray_type" "OutputTextureInt" }
     export none

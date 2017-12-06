@@ -3,7 +3,7 @@ parm {
     label "output"
     type color4
     parmtag { "cook_dependent" "0" }
-    parmtag { "vray_label" "output" }
+    parmtag { "vray_label" "color" }
     parmtag { "vray_pluginattr" "" }
     parmtag { "vray_type" "OutputTexture" }
     export none
