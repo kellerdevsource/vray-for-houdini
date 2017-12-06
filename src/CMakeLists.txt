@@ -29,9 +29,6 @@ include_directories(export/utils)
 include_directories(export/export)
 include_directories(utils)
 
-# Qt has JSON modules only in > 5.x version and we need to support 4.x also.
-include_directories(${CMAKE_SOURCE_DIR}/thirdparty/rapidjson/include)
-
 set(EXPORTER_SOURCES
 	export/export/vfh_export_geom.cpp
 	export/export/vfh_export_hair.cpp
@@ -67,7 +64,6 @@ set(EXPORTER_SOURCES
 	utils/vfh_prm_def.cpp
 	utils/vfh_prm_defaults.cpp
 	utils/vfh_prm_globals.cpp
-	utils/vfh_prm_json.cpp
 	utils/vfh_prm_templates.cpp
 	utils/vfh_sys_utils.cpp
 	lib/vfh_vray_instances.cpp
@@ -106,7 +102,6 @@ set(EXPORTER_HEADERS
 	utils/vfh_prm_def.h
 	utils/vfh_prm_defaults.h
 	utils/vfh_prm_globals.h
-	utils/vfh_prm_json.h
 	utils/vfh_prm_templates.h
 	utils/vfh_sys_utils.h
 	lib/vfh_vray_instances.h
