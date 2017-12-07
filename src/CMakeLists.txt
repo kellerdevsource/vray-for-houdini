@@ -255,6 +255,8 @@ function(vfh_generate_gu_options _libTarget _dsoTarget)
 				${FILE_OUT_DIR}/${FILE_OUT_NAME}
 				${jsonFile}
 		)
+
+		source_group("gu\\options\\json\\cpp" FILES ${FILE_OUT_DIR}/${FILE_OUT_NAME})
 	endforeach()
 
 	target_include_directories(${_libTarget} PRIVATE ${FILE_OUT_DIR})
