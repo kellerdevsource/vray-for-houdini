@@ -2313,9 +2313,10 @@ void VRayExporter::exportFrame(fpreal time)
 
 	applyTake();
 
-	setTime(time);
-
+	// Must go before setTime() for correct SettingsOutput parameters.
 	exportSettings();
+
+	setTime(time);
 
 	m_context.hasMotionBlur = m_isMotionBlur || m_isVelocityOn;
 
