@@ -127,13 +127,16 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 	Attrs::PluginDesc selectedUVPluginDesc(VRayExporter::getPluginName(*this, selectedUVWGenName.c_str()), selectedUVWGenName.c_str());
 
 	for (int i = 0; i < selectedUVWGen.size(); i++) {
-		const int idx = getInputFromName(selectedUVWGen[i].label);
+		const std::string inputName(selectedUVWGen[i].label);
+
+		const int idx = getInputFromName(inputName.c_str());
+
 		OP_Node *connectedInput = getInput(idx);
 		if (connectedInput) {
 			const VRay::Plugin connectedPlugin = exporter.exportVop(connectedInput, parentContext);
 			if (connectedPlugin) {
-				const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, selectedUVWGen.at(i).label);
-				selectedUVPluginDesc.addAttribute(Attrs::PluginAttr(selectedUVWGen.at(i).label, connectedPlugin, fromSocketInfo->attrName.ptr()));
+				const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, inputName);
+				selectedUVPluginDesc.addAttribute(Attrs::PluginAttr(inputName, connectedPlugin, fromSocketInfo->attrName.ptr()));
 			}
 		}
 	}
