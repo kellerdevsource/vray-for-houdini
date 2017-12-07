@@ -41,7 +41,7 @@ public:
 	bool getRenderingBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
 	void getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const VRAY_OVERRIDE;
 	void getWidthRange(fpreal &wmin, fpreal &wmax) const VRAY_OVERRIDE;
-#if HDK_16_5
+#ifdef HDK_16_5
 	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
 	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
 #else

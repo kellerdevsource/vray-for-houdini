@@ -229,7 +229,7 @@ void VRayForHoudini::appendOverrideValues(const STY_Styler &styler, PrimMaterial
 	static const STY_OverrideValuesFilter styOverrideValuesFilter(nullptr);
 
 	STY_OverrideValues styOverrideValues;
-#if HDK_16_5
+#ifdef HDK_16_5
 	styler.getResults(styOverrideValues, styOverrideValuesFilter);
 #else
 	styler.getOverrides(styOverrideValues, styOverrideValuesFilter);
@@ -261,7 +261,7 @@ void VRayForHoudini::appendMaterialOverrides(PrimMaterial &primMaterial,
 		primMaterial.matNode = getOpNodeFromPath(matPath, t);
 	}
 
-	if (primMaterial.matNode && !materialOnly) { 
+	if (primMaterial.matNode && !materialOnly) {
 		//
 		// { "diffuser" : 1.0, "diffuseg" : 1.0, "diffuseb" : 1.0 }
 		//
@@ -375,7 +375,7 @@ void VRayForHoudini::getOverridesForPrimitive(const STY_Styler &geoStyler, const
 
 STY_Styler VRayForHoudini::getStylerForPrimitive(const STY_Styler &geoStyler, const GEO_Primitive &prim)
 {
-#if HDK_16_0_633 || HDK_16_5
+#if defined(HDK_16_0_633) || defined(HDK_16_5)
 	const GSTY_SubjectPrim primSubject(&prim, nullptr);
 #else
 	const GSTY_SubjectPrim primSubject(&prim);

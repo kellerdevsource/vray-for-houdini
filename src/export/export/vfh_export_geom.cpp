@@ -834,7 +834,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 		const STY_OverrideValuesFilter filter(NULL);
 		UT_Array<STY_OverrideValues> results;
-#if HDK_16_5
+#ifdef HDK_16_5
 		gdpStylers.getResults(results, filter);
 #else
 		gdpStylers.getOverrides(results, filter);
@@ -1365,7 +1365,7 @@ VRay::Plugin ObjectExporter::exportPgYetiRef(OBJ_Node &objNode, const GU_PrimPac
 	pluginDesc.add(Attrs::PluginAttr("verbosity", 0));
 	pluginDesc.add(Attrs::PluginAttr("threads", 0));
 
-	return pluginExporter.exportPlugin(pluginDesc); 
+	return pluginExporter.exportPlugin(pluginDesc);
 }
 
 VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_PrimPacked &prim)
@@ -1389,13 +1389,13 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	pluginDesc.add(Attrs::PluginAttr("transform", fullTm));
 
 	if (options.getOptionI("use_overrides")) {
-		const UT_StringHolder &overrideSnippet = options.getOptionS("override_snippet"); 
-		const UT_StringHolder &overrideFilePath = options.getOptionS("override_filepath"); 
+		const UT_StringHolder &overrideSnippet = options.getOptionS("override_snippet");
+		const UT_StringHolder &overrideFilePath = options.getOptionS("override_filepath");
 
 		const int hasOverrideSnippet = overrideSnippet.isstring();
 		const int hasOverrideFile = overrideFilePath.isstring();
 
-		const int hasOverrideData = hasOverrideSnippet || hasOverrideFile; 
+		const int hasOverrideData = hasOverrideSnippet || hasOverrideFile;
 
 		if (hasOverrideData) {
 			// Export plugin mappings.

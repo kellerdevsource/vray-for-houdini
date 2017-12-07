@@ -675,7 +675,7 @@ int VRayVolumeGridRef::updateFrom(const UT_Options &options)
 
 	if (m_doFrameReplace) {
 		// if we aren't replacing frame we don't care if frame changes
-		// this means user hardcoded a path for a specific frame 
+		// this means user hardcoded a path for a specific frame
 		pathChange = pathChange
 			|| (options.hasOption("current_frame") && options.getOptionI("current_frame") != this->getCurrentFrame());
 	}
@@ -704,7 +704,7 @@ int VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	}
 
 	if (m_dirty) {
-#if HDK_16_5
+#ifdef HDK_16_5
 		getPrim()->transformDirty();
 #else
 		transformDirty();
@@ -712,7 +712,7 @@ int VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	}
 
 	if (diffHash) {
-#if HDK_16_5
+#ifdef HDK_16_5
 		getPrim()->attributeDirty();
 #else
 		attributeDirty();

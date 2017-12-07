@@ -441,7 +441,7 @@ void VRayProxyRef::setScale(SET_ARG_PRIM fpreal64 scale)
 {
 	m_options.getOptions().setOptionF(VRayProxyParms::theScaleToken, scale);
 	if (m_dirty) {
-#if HDK_16_5
+#ifdef HDK_16_5
 		getPrim()->transformDirty();
 #else
 		transformDirty();
@@ -454,7 +454,7 @@ void VRayProxyRef::setFlipAxis(SET_ARG_PRIM exint flip)
 {
 	m_options.getOptions().setOptionI(VRayProxyParms::theFlipAxisToken, flip);
 	if (m_dirty) {
-#if HDK_16_5
+#ifdef HDK_16_5
 		getPrim()->transformDirty();
 #else
 		transformDirty();

@@ -70,7 +70,7 @@ void SOP::PhxShaderCache::updateVRayVolumeGridRefPrim(VRayVolumeGridRef *gridRef
 
 	options.setOptionF("current_frame", context.getFloatFrame());
 
-#if HDK_16_5
+#ifdef HDK_16_5
 	gridRefPtr->update(pack, options);
 #else
 	gridRefPtr->update(options);
@@ -93,7 +93,7 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 	flags().setTimeDep(true);
 
 	const float t = context.getTime();
-	
+
 	const GA_PrimitiveTypeId vrayVolumeGridRefTypeId = GU_PrimPacked::lookupTypeId("VRayVolumeGridRef");
 
 	// find existing VRayVolumeGridRef primitive
@@ -106,9 +106,9 @@ OP_ERROR SOP::PhxShaderCache::cookMySop(OP_Context &context)
 			gridRefPtr = new VRayVolumeGridRef(std::move(*oldGridRefPtr));
 		}
 	}
-	
+
 	gdp->stashAll();
-	
+
 	// Create a packed primitive
 	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "VRayVolumeGridRef");
 	if (pack) {

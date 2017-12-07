@@ -55,7 +55,7 @@ namespace VRayForHoudini {
 static const int MAX_RESOLUTION = 255;
 
 /// Implementation for a volume grid packed primitive
-class VRayVolumeGridRef 
+class VRayVolumeGridRef
 	: public VRayVolumeGridRefOptions
 {
 	// These *must* match phx's values
@@ -92,9 +92,9 @@ public:
 private:
 	/// Fetch data from key
 	static void fetchData(const VolumeCacheKey &key, VolumeCacheData &data);
-	/// Fetch data (or only info) from key downsampled to voxelsCount 
+	/// Fetch data (or only info) from key downsampled to voxelsCount
 	static void fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheData &data, const i64 voxelCount, const bool infoOnly);
-	
+
 private:
 	static GA_PrimitiveTypeId theTypeId; ///< The type id for the primitive
 
@@ -111,7 +111,7 @@ public:
 	virtual bool              isValid() const VRAY_OVERRIDE { return getDetail().isValid(); }
 	virtual void              clearData() VRAY_OVERRIDE;
 
-#if HDK_16_5
+#ifdef HDK_16_5
 	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
 	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
 #else
