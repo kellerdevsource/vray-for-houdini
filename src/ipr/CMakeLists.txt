@@ -10,6 +10,10 @@
 
 project(vray_for_houdini_ipr)
 
+if (APPLE)
+    set(CMAKE_EXE_LINKER_FLAGS "")
+endif()
+
 add_executable(${PROJECT_NAME} main.cpp)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME vfh_ipr)
