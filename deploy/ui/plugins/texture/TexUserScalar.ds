@@ -1,7 +1,7 @@
 {
     name    TexUserScalar
-    label   "User Scalar"
-    parmtag { spare_category "User Scalar" }
+    label   "User Float"
+    parmtag { spare_category "User Float" }
     parmtag { vray_plugin "TexUserScalar" }
 
     parm {

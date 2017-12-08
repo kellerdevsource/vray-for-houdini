@@ -1,7 +1,7 @@
 {
     name    TexUserInteger
-    label   "User Scalar"
-    parmtag { spare_category "User Scalar" }
+    label   "User Integer"
+    parmtag { spare_category "User Integer" }
     parmtag { vray_plugin "TexUserInteger" }
 
     parm {
