@@ -35,5 +35,5 @@
         default { "1" }
     }
 
-#include "vfh_texture_default_output_float.ds"
+#include "vfh_texture_default_output_int.ds"
 }

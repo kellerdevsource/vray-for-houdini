@@ -382,6 +382,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexUVWGenToTexture);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexUserColor);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexUserScalar);
+	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexUserInteger);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexVectorOp);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexVectorProduct);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexVectorToColor);
