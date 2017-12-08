@@ -221,14 +221,12 @@ void ImdisplayThread::writeTileBuckets(const TileImage &image)
 			const int maxXRes = (currentIRes + tileSize - 1) < width  ? (currentIRes + tileSize - 1) : width  - 1;
 			const int maxYRes = (currentMRes + tileSize - 1) < height ? (currentMRes + tileSize - 1) : height - 1;
 
-			std::unique_ptr<VRay::VRayImage> cropImage =
-				std::unique_ptr<VRay::VRayImage>(image.image->crop(currentIRes,
-												 currentMRes,
-												 maxXRes - currentIRes + 1,
-												 maxYRes - currentMRes + 1));
+			QScopedPointer<VRay::VRayImage> cropImage(image.image->crop(currentIRes,
+			                                                            currentMRes,
+			                                                            maxXRes - currentIRes + 1,
+			                                                            maxYRes - currentMRes + 1));
 
-			const std::unique_ptr<TileImage> imageBucket =
-				std::make_unique<TileImage>(cropImage.release(), image.name);
+			const QScopedPointer<TileImage> imageBucket(new TileImage(cropImage.data(), image.name));
 			imageBucket->x0 = currentIRes;
 			imageBucket->x1 = maxXRes;
 			imageBucket->y0 = currentMRes;
