@@ -50,6 +50,8 @@ link_with_boost(${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME _vfh_ipr)
 if (WIN32)
 	set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pyd")
+elseif(APPLE)
+	target_link_libraries(${PROJECT_NAME} python2.7)
 endif()
 
 cgr_install_runtime(${PROJECT_NAME} ${VFH_PYTHON_DIRPATH})
