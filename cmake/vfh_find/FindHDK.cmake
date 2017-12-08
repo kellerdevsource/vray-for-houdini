@@ -213,9 +213,11 @@ if(HDK_FOUND)
 			${HDK_QT_ROOT}/include/QtWidgets
 		)
 
-		list(APPEND HDK_LIBRARIES
-			${HDK_QT_ROOT}/lib
-		)
+		if(NOT APPLE)
+			list(APPEND HDK_LIBRARIES
+				${HDK_QT_ROOT}/lib
+			)
+		endif()
 	else()
 		list(APPEND HDK_INCLUDES
 			${HDK_INCLUDE_PATH}/QtCore
