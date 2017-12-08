@@ -8,7 +8,7 @@
         name    "user_attribute"
         label   "Attribute"
         type    string
-        default { "Alpha" }
+        default { "ID" }
         help    "User attribute name of type float or color"
         parmtag { "vray_pluginattr" "user_attribute" }
         parmtag { "vray_type" "string" }
