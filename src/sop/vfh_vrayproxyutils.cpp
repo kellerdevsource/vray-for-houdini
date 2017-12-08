@@ -464,6 +464,9 @@ bool VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std:
 
 	GU_Detail *gdp = new GU_Detail();
 
+	GU_DetailHandle gdpHandle;
+	gdpHandle.allocateAndSet(gdp);
+
 	for (int i = 0; i < geometry.size(); ++i) {
 		const Geometry &geom = geometry[i];
 
@@ -471,8 +474,12 @@ bool VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std:
 	}
 
 	const DetailKey key = gdp->getUniqueId();
+
+	GU_Detail *gdpPacked = new GU_Detail();
+	GU_PackedGeometry::packGeometry(*gdpPacked, gdpHandle);
+
 	GU_DetailHandle &gdh = (*m_detailCache)[key];
-	gdh.allocateAndSet(gdp);
+	gdh.allocateAndSet(gdpPacked);
 
 	CachedFrame &frameData = (*m_frameCache)[frameIdx];
 	frameData.setDetailKey(lod, key);

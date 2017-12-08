@@ -294,15 +294,10 @@ void VRayProxyRef::getWidthRange(fpreal &min, fpreal &max) const
 }
 
 
-bool VRayProxyRef::unpack(GU_Detail &destgdp) const
+bool VRayProxyRef::unpack(GU_Detail&) const
 {
-	// This may allocate geometry for the primitive
-	GU_DetailHandleAutoReadLock gdl(getPackedDetail());
-	if (NOT(gdl.isValid())) {
-		return false;
-	}
-
-	return unpackToDetail(destgdp, gdl.getGdp());
+	// There is need to unpack VRayProxy.
+	return true;
 }
 
 
