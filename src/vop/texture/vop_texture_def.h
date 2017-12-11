@@ -17,6 +17,7 @@
 #include "vop_TexRemap.h"
 #include "vop_TexGradRamp.h"
 #include "vop_TexLayeredMax.h"
+#include "vfh_TexMulti.h"
 
 namespace VRayForHoudini {
 namespace VOP {

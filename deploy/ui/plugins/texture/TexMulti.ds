@@ -1,0 +1,67 @@
+#include "vfh_macros.ds"
+
+{
+    name TexMulti
+    label "Multi ID"
+    parmtag { spare_category "TexMulti" }
+    parmtag { vray_plugin "TexMulti" }
+
+    parm {
+        name "tex_count"
+        label "Textures Count"
+        type int
+        default { 1 }
+        range { 1 32 }
+    }
+
+    parm {
+        name "mode"
+        label "Mode"
+        help "The mode for the texture."
+        type string
+        menu {
+            "0"  "Face Material ID"
+            "1"  "Object ID"
+            "2"  "Random by Node Handle"
+            "3"  "Random by Render ID"
+            "4"  "Random by Node Name"
+            "6"  "Random by Instance ID"
+            "30" "From Texture"
+        }
+        default { "0" }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "mode" }
+        parmtag { "vray_type" "enum" }
+    }
+
+    parm {
+        name    "default_texture"
+        label   "Default Texture"
+        help    "The default texture color."
+        type    color4
+        size    4
+        default { "0.5" "0.5" "0.5" "1" }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexMulti" }
+        parmtag { "vray_pluginattr" "default_texture" }
+        parmtag { "vray_type" "Texture" }
+    }
+
+    VFH_PLUGIN_PARM_INT("TexMulti", "interpolate", "Interpolate", "Interpolate data from ID generator", 0)
+    VFH_PLUGIN_PARM_TOGGLE("TexMulti", "loop_textures", "Loop Textures", "", 0)
+    VFH_PLUGIN_PARM_INT("TexMulti", "seed", "Seed", "", 0)
+
+    parm {
+        name "id_gen_tex"
+        label "ID Generator"
+        help "ID generator texture. Supports integer textures."
+        type float
+        default { "0" }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexMulti" }
+        parmtag { "vray_pluginattr" "id_gen_tex" }
+        parmtag { "vray_type" "TextureFloat" }
+        invisible
+    }
+}

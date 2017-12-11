@@ -139,6 +139,7 @@ set(SOURCES
 	vop/texture/vop_TexLayeredMax.cpp
 	vop/texture/vop_TexRemap.cpp
 	vop/texture/vop_texture_output.cpp
+	vop/texture/vfh_TexMulti.cpp
 	vop/vop_context.cpp
 	vop/vop_node_base.cpp
 )
@@ -183,6 +184,7 @@ set(HEADERS
 	vop/texture/vop_TexRemap.h
 	vop/texture/vop_texture_def.h
 	vop/texture/vop_texture_output.h
+	vop/texture/vfh_TexMulti.h
 	vop/uvwgen/vop_uvwgen_def.h
 	vop/vop_context.h
 	vop/vop_node_base.h

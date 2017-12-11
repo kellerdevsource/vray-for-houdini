@@ -350,6 +350,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMaskMax);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMeshVertexColorChannel);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMix);
+	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMulti);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexNoise);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexNormalMapFlip);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexOCIO);
