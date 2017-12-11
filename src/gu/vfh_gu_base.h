@@ -73,7 +73,7 @@ protected:
 	UT_BoundingBox m_bbox;
 
 	/// Geometry detail.
-	GU_ConstDetailHandle m_detail;
+	GU_DetailHandle m_detail;
 };
 
 template <typename T>

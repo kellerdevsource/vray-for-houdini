@@ -118,6 +118,7 @@ void VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 	GU_Detail *meshDetail = new GU_Detail();
 
 	int meshVertexOffset = 0;
+	m_bbox.initBounds();
 
 	FOR_IT (VrsceneObjects, obIt, vrsceneDesc->m_objects) {
 		VrsceneObjectBase *ob = obIt.data();
@@ -162,10 +163,7 @@ void VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 		}
 	}
 
-	GU_DetailHandle meshDetailHandle;
-	meshDetailHandle.allocateAndSet(meshDetail);
-
-	m_detail = meshDetailHandle;
+	m_detail.allocateAndSet(meshDetail);
 }
 
 void VRaySceneRef::detailRebuild()

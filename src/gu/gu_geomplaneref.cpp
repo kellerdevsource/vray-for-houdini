@@ -59,34 +59,32 @@ bool GeomPlaneRef::unpack(GU_Detail&) const
 	return true;
 }
 
+static void addPlainPoint(GU_Detail &gdp, UT_BoundingBox &bbox,
+						  GU_PrimPoly &poly, GA_Size vertexOffs,
+						   const UT_Vector3 &point)
+{
+	const GA_Offset pointOffs = gdp.appendPoint();
+	gdp.setPos3(pointOffs, point);
+	poly.setVertexPoint(vertexOffs, pointOffs);
+
+	bbox.enlargeBounds(point);
+}
+
 void GeomPlaneRef::detailRebuild()
 {
 	const float size = getPlaneSize();
 
 	GU_Detail *meshDetail = new GU_Detail();
+	m_bbox.initBounds();
 
 	GU_PrimPoly *poly = GU_PrimPoly::build(meshDetail, 4, GU_POLY_CLOSED, 0);
 
-	GA_Offset pointOffs = meshDetail->appendPoint();
-	meshDetail->setPos3(pointOffs, UT_Vector3(-size, 0.0f, -size));
-	poly->setVertexPoint(0, pointOffs);
-
-	pointOffs = meshDetail->appendPoint();
-	meshDetail->setPos3(pointOffs, UT_Vector3(-size, 0.0f, size));
-	poly->setVertexPoint(1, pointOffs);
-
-	pointOffs = meshDetail->appendPoint();
-	meshDetail->setPos3(pointOffs, UT_Vector3(size, 0.0f, size));
-	poly->setVertexPoint(2, pointOffs);
-
-	pointOffs = meshDetail->appendPoint();
-	meshDetail->setPos3(pointOffs, UT_Vector3(size, 0.0f, -size));
-	poly->setVertexPoint(3, pointOffs);
+	addPlainPoint(*meshDetail, m_bbox, *poly, 0,  UT_Vector3(-size, 0.0f, -size));
+	addPlainPoint(*meshDetail, m_bbox, *poly, 1,  UT_Vector3(-size, 0.0f,  size));
+	addPlainPoint(*meshDetail, m_bbox, *poly, 2,  UT_Vector3( size, 0.0f,  size));
+	addPlainPoint(*meshDetail, m_bbox, *poly, 3,  UT_Vector3( size, 0.0f, -size));
 
 	poly->reverse();
 
-	GU_DetailHandle meshDetailHandle;
-	meshDetailHandle.allocateAndSet(meshDetail);
-
-	m_detail = meshDetailHandle;
+	m_detail.allocateAndSet(meshDetail);
 }

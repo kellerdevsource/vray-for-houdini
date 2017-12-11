@@ -165,6 +165,7 @@ static void buildHairDetailFromGroup(const H5::Group &furGroup, GU_Detail &gdp, 
 void VRayPgYetiRef::detailRebuild()
 {
 	GU_Detail *gdp = new GU_Detail();
+	m_bbox.initBounds();
 
 	const UT_String filePath(getFile());
 	if (filePath.isstring()) {
@@ -195,8 +196,5 @@ void VRayPgYetiRef::detailRebuild()
 		}
 	}
 
-	GU_DetailHandle gdpHndl;
-	gdpHndl.allocateAndSet(gdp);
-
-	m_detail = gdpHndl;
+	m_detail.allocateAndSet(gdp);
 }

@@ -104,7 +104,7 @@ void VRayBaseRef::countMemory(UT_MemoryCounter &counter, bool inclusive) const
 void VRayBaseRef::detailClear()
 {
 	m_bbox.initBounds();
-	m_detail = GU_ConstDetailHandle();
+	m_detail.deleteGdp();
 }
 
 int VRayBaseRef::updateFrom(const UT_Options &options)
