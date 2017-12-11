@@ -4,7 +4,7 @@ parm {
     type int
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_label" "uvwgen" }
-    parmtag { "vray_pluginattr" "uvwgen" }
+    parmtag { "vray_pluginattr" "" }
     parmtag { "vray_type" "OutputPlugin" }
     invisible
 }
