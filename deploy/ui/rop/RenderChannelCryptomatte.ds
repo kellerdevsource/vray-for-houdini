@@ -30,9 +30,11 @@
             "0" "Node Name"
             "1" "Material Name"
             "2" "Node Name Hierarchy"
+            "3" "Node User Attribute"
+            // "4" "Node Asset / Reference"
+            // "5" "Node Layer"
         }
         default { "0" }
-        parmtag { "vray_enumkeys" "0,1,2" }
         parmtag { "vray_pluginattr" "id_type" }
         parmtag { "vray_type" "enum" }
     }
