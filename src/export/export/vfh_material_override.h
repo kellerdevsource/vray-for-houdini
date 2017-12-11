@@ -22,7 +22,7 @@
 #include <OBJ/OBJ_Node.h>
 #include <STY/STY_Styler.h>
 
-#if HDK_16_5
+#ifdef HDK_16_5
 #include <STY/STY_Results.h>
 #include <STY/STY_ResultsFilter.h>
 #else
@@ -33,7 +33,7 @@
 #include <STY/STY_StylerGroup.h>
 #include <GSTY/GSTY_SubjectPrimGroup.h>
 
-#if HDK_16_5
+#ifdef HDK_16_5
 typedef STY_OverrideScript STY_OverrideScriptEntry;
 typedef STY_Override STY_OverrideEntry;
 typedef STY_OverrideCategory STY_OverridesEntry;

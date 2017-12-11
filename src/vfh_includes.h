@@ -14,10 +14,15 @@
 #include <UT/UT_Version.h>
 #include <UT/UT_Interrupt.h>
 
-#define HDK_16_0_633 UT_MAJOR_VERSION_INT >= 16 && UT_MINOR_VERSION_INT >= 0 && UT_BUILD_VERSION_INT >= 633
-#define HDK_16_5 UT_MAJOR_VERSION_INT >= 16 && UT_MINOR_VERSION_INT >= 5
+#if UT_MAJOR_VERSION_INT >= 16 && UT_MINOR_VERSION_INT >= 0 && UT_BUILD_VERSION_INT >= 633
+#define HDK_16_0_633
+#endif
 
-#if HDK_16_5
+#if UT_MAJOR_VERSION_INT >= 16 && UT_MINOR_VERSION_INT >= 5
+#define HDK_16_5
+#endif
+
+#ifdef HDK_16_5
 #define GET_SET_ARG_SEP ,
 #define GET_SET_ARG_PRIM_FWD prim
 

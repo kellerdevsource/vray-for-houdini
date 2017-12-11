@@ -1,15 +1,15 @@
 {
-    name    TexUserScalar
-    label   "User Float"
-    parmtag { spare_category "User Float" }
-    parmtag { vray_plugin "TexUserScalar" }
+    name    TexUserInteger
+    label   "User Integer"
+    parmtag { spare_category "User Integer" }
+    parmtag { vray_plugin "TexUserInteger" }
 
     parm {
         name    "user_attribute"
         label   "Attribute"
         type    string
-        default { "ID" }
-        help    "User attribute name of type float or color"
+        default { "Alpha" }
+        help    "User attribute name of type int or color"
         parmtag { "vray_pluginattr" "user_attribute" }
         parmtag { "vray_type" "string" }
     }
@@ -17,11 +17,11 @@
     parm {
         name    "default_value"
         label   "Default Value"
-        type    float
+        type    int
         default { "0" }
         help    "Default value if the attribute is not found"
         parmtag { "vray_pluginattr" "default_value" }
-        parmtag { "vray_type" "TextureFloat" }
+        parmtag { "vray_type" "TextureInt" }
     }
 
     parm {
@@ -35,5 +35,5 @@
         default { "1" }
     }
 
-#include "vfh_texture_default_output_float.ds"
+#include "vfh_texture_default_output_int.ds"
 }

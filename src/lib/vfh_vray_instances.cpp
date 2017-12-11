@@ -72,8 +72,11 @@ static QColor getSelectionColor(const QString &styleSheet)
 /// Must be called before VRay::VRayInit().
 static void initVFBTheme()
 {
-#if HDK_16_5
-	qputenv("VRAY_VFB_UI_SCALE", QString("%1").arg(HOU::getUiScaling()).toLocal8Bit());
+#ifdef HDK_16_5
+	const float uiScale = HOU::getUiScaling();
+	if (uiScale > 1.0f) {
+		qputenv("VRAY_VFB_UI_SCALE", QString("%1").arg(uiScale).toLocal8Bit());
+	}
 #endif
 
 	QWidget *mainWindow = HOU::getMainQtWindow();
@@ -149,7 +152,7 @@ int VRayForHoudini::newVRayInit()
 	Log::getLog().debug("newVRayInit()");
 
 	getCreateSharedMemory();
-	
+
 	vassert(vrayInstances.isAttached());
 
 	int addDummyRenderer = false;

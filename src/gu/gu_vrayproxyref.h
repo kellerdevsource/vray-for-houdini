@@ -63,7 +63,7 @@ public:
 	/// @param map[in] - load options (for shared primititve data)
 	///                  not used
 	/// @retval true on success
-#if HDK_16_5
+#ifdef HDK_16_5
 	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
 #else
 	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
@@ -71,7 +71,7 @@ public:
 
 	/// Update proxy primitive from options passed as UT_Options
 	/// @param options[in] - options for the proxy primitive
-#if HDK_16_5
+#ifdef HDK_16_5
 	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
 #else
 	void update(const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }

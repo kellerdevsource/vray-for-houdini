@@ -20,18 +20,21 @@ namespace VOP {
 
 #define MTL_DEF(PluginID) NODE_BASE_DEF(MATERIAL, PluginID)
 
+// TODO:
+//   [ ] MtlMDL
+//   [ ] MtlGLSL
+
 MTL_DEF(Mtl2Sided)
-MTL_DEF(MtlDiffuse)
 MTL_DEF(MtlLayeredBRDF)
 MTL_DEF(MtlMaterialID)
 MTL_DEF(MtlOverride)
 MTL_DEF(MtlRenderStats)
 MTL_DEF(MtlRoundEdges)
 MTL_DEF(MtlSingleBRDF)
-MTL_DEF(MtlStreakFade)
 MTL_DEF(MtlVRmat)
 MTL_DEF(MtlWrapper)
 
+// XXX: Move into a separate file.
 MTL_DEF(GeomDisplacedMesh)
 MTL_DEF(GeomStaticSmoothedMesh)
 

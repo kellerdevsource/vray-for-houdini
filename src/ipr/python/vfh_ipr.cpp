@@ -136,6 +136,8 @@ static void freeExporter()
 }
 
 struct VRayExporterIprUnload {
+	// NOTE: Need default cstr for Apple.
+	VRayExporterIprUnload() {}
 	~VRayExporterIprUnload() {
 		deleteVRayInit();
 		Log::Logger::stopLogging();

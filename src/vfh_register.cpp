@@ -253,9 +253,8 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelMultiMatte);
 	VFH_VOP_ADD_OPERATOR(table, "RENDERCHANNEL", RenderChannelCryptomatte);
 
+#if BRDF_COMPONENTS
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFBlinn);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFBump);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFCarPaint);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFCookTorrance);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFDiffuse);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFFlakes);
@@ -264,22 +263,28 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFGlassGlossy);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair2);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair3);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair4);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFLayered);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFLight);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFMirror);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFPhong);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSSS);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSSS2);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSSS2Complex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSampled);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFWard);
+#endif
+#if BRDF_EXPERIMENTAL
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFAlHair);
+#endif
+
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFBump);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFCarPaint);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair3);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFHair4);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFLayered);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFLight);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSSS2Complex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFScanned);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSkinComplex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFVRayMtl);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFWard);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFAlSurface);
-	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFAlHair);
 
 #ifdef CGR_HAS_AUR
 	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "MATERIAL", PhxShaderSim, PhxShaderSim::GetPrmTemplate(), OP_FLAG_UNORDERED);
@@ -293,7 +298,6 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlRenderStats);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlRoundEdges);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlSingleBRDF);
-	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlStreakFade);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlVRmat);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlWrapper);
 
@@ -378,6 +382,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexUVWGenToTexture);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexUserColor);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexUserScalar);
+	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexUserInteger);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexVectorOp);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexVectorProduct);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexVectorToColor);

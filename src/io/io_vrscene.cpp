@@ -83,7 +83,7 @@ GA_Detail::IOStatus Vrscene::fileLoad(GEO_Detail *geo, UT_IStream &stream, bool)
 
 	GU_PackedImpl *primImpl = pack->implementation();
 	if (primImpl) {
-#if HDK_16_5
+#ifdef HDK_16_5
 		primImpl->update(pack, options);
 #else
 		primImpl->update(options);

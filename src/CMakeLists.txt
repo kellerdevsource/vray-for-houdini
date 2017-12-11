@@ -254,7 +254,6 @@ function(vfh_generate_gu_options _libTarget _dsoTarget)
 		target_sources(${_libTarget}
 			PRIVATE
 				${FILE_OUT_DIR}/${FILE_OUT_NAME}
-				${FILE_OUT_DIR}/${FILE_H_OUT_NAME}
 				${jsonFile}
 		)
 

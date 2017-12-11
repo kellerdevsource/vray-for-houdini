@@ -28,7 +28,7 @@ OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 	const fpreal t = context.getTime();
 
 	gdp->stashAll();
-	
+
 	GU_PrimPacked *pack = GU_PrimPacked::build(*gdp, "GeomPlaneRef");
 	if (NOT(pack)) {
 		addWarning(SOP_MESSAGE, "Can't create packed primitive GeomPlaneRef");
@@ -48,7 +48,7 @@ OP_ERROR SOP::GeomPlane::cookMySop(OP_Context &context)
 
 		GU_PackedImpl *primImpl = pack->implementation();
 		if (primImpl) {
-#if HDK_16_5
+#ifdef HDK_16_5
 			primImpl->update(pack, options);
 #else
 			primImpl->update(options);

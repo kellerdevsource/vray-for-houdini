@@ -38,7 +38,7 @@ QWidget* VRayForHoudini::HOU::getMainQtWindow()
 
 float VRayForHoudini::HOU::getUiScaling()
 {
-#if HDK_16_5
+#ifdef HDK_16_5
 	return HOM().ui().globalScaleFactor();
 #else
 	return 1.0f;

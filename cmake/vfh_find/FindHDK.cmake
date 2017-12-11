@@ -148,8 +148,13 @@ if(HDK_FOUND)
 
 	if(HDK_MAJOR_VERSION VERSION_GREATER 15.0)
 		# NOTE: openvdb_sesi is version 3.3.0, but HDK is using 4.0.0 API.
+		if("${HDK_MAJOR_VERSION}.${HDK_MINOR_VERSION}" VERSION_LESS 16.5)
+			list(APPEND HDK_DEFINITIONS
+				-DOPENVDB_3_ABI_COMPATIBLE
+			)
+		endif()
+
 		list(APPEND HDK_DEFINITIONS
-			-DOPENVDB_3_ABI_COMPATIBLE
 			-DCXX11_ENABLED=1
 			-DQT_NO_KEYWORDS=1
 			-DQT_DLL
@@ -208,9 +213,11 @@ if(HDK_FOUND)
 			${HDK_QT_ROOT}/include/QtWidgets
 		)
 
-		list(APPEND HDK_LIBRARIES
-			${HDK_QT_ROOT}/lib
-		)
+		if(NOT APPLE)
+			list(APPEND HDK_LIBRARIES
+				${HDK_QT_ROOT}/lib
+			)
+		endif()
 	else()
 		list(APPEND HDK_INCLUDES
 			${HDK_INCLUDE_PATH}/QtCore
