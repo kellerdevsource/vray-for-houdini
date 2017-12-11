@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+
+<tool name="vop_VRayNodeMtlOSL" label="V-Ray OSL Material" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlOSL</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlOSL', nodename="vrayMtlOSL")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtl2Sided" label="Two Sided" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtl2Sided</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtl2Sided', nodename="twosided")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlBump" label="Bump" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlBump</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlBump', nodename="bump")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlDoubleSided" label="Double Sided" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlDoubleSided</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlDoubleSided', nodename="doublesided")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlGLSL" label="GLSL" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlGLSL</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlGLSL', nodename="glsl")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlMaterialID" label="Material ID" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlMaterialID</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlMaterialID', nodename="materialid")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlMulti" label="Multi ID" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlMulti</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlMulti', nodename="multiid")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlObjBBox" label="Object Bounding" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlObjBBox</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlObjBBox', nodename="objectbounding")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlOverride" label="Override" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlOverride</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlOverride', nodename="override")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlRenderStats" label="Render Stats" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlRenderStats</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlRenderStats', nodename="renderstats")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlRoundEdges" label="Round Edges" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlRoundEdges</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlRoundEdges', nodename="roundedges")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlSingleBRDF" label="Single" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlSingleBRDF</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlSingleBRDF', nodename="single")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlStreakFade" label="Streak Fade" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlStreakFade</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlStreakFade', nodename="streakfade")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlVRmat" label="VRmat" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlVRmat</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlVRmat', nodename="vrmat")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeMtlWrapper" label="Wrapper" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlWrapper</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlWrapper', nodename="wrapper")
+
+]]>
+    </script>
+</tool>
+
+</shelfDocument>

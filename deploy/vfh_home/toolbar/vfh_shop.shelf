@@ -11,7 +11,7 @@
 <![CDATA[
 
 import shoptoolutils
-shoptoolutils.genericTool(kwargs, 'vray_material', nodename="vraymtl")
+shoptoolutils.genericTool(kwargs, 'vray_material', nodename="vrayMaterialBuilder")
 
 ]]>
     </script>

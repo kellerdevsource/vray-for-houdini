@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+
+<tool name="vop_vray_material_output" label="Material Output" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/vray_material_output</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'vray_material_output', nodename="vrayMaterialOutput")
+]]>
+    </script>
+</tool>
+
+</shelfDocument>

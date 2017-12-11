@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+
+<tool name="vop_VRayNodeBRDFAlSurface" label="V-Ray alSurface" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFAlSurface</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFAlSurface', nodename="alSurface")
+
+]]>
+    </script>
+</tool>
+
+<tool name="vop_VRayNodeBRDFAlHair" label="V-Ray alHair" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFAlHair</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFAlHair', nodename="alHair")
+
+]]>
+    </script>
+</tool>
+
+<tool name="vop_VRayNodeBRDFBlinn" label="Blinn" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFBlinn</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material/BRDF</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFBlinn', nodename="blinn")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFBump" label="Bump" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFBump</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFBump', nodename="bump")
+
+]]>
+    </script>
+</tool>
+
+<tool name="vop_VRayNodeBRDFCarPaint" label="Car Paint" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFCarPaint</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFCarPaint', nodename="carpaint")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFDiffuse" label="Diffuse" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFDiffuse</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material/BRDF</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFDiffuse', nodename="diffuse")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFFlakes" label="Flakes" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFFlakes</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material/BRDF</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFFlakes', nodename="flakes")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFGGX" label="GGX" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFGGX</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material/BRDF</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFGGX', nodename="ggx")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFGlass" label="Glass" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFGlass</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material/BRDF</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFGlass', nodename="glass")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFGlassGlossy" label="Glass Glossy" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFGlassGlossy</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material/BRDF</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFGlassGlossy', nodename="glassglossy")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFHair3" label="Hair 3" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFHair3</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHair3', nodename="hair3")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFHair4" label="Hair" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFHair4</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFHair4', nodename="vrayHair")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFLayered" label="Blend" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFLayered</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFLayered', nodename="layered")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFLight" label="Light" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFLight</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFLight', nodename="light")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFMirror" label="Mirror" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFMirror</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material/BRDF</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFMirror', nodename="mirror")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFPhong" label="Phong" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFPhong</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material/BRDF</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFPhong', nodename="phong")
+
+]]>
+    </script>
+</tool>
+
+<tool name="vop_VRayNodeBRDFSSS2Complex" label="SSS" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFSSS2Complex</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSSS2Complex', nodename="vraySSS")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFScanned" label="VRscans" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFScanned</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFScanned', nodename="scanned")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFSkinComplex" label="Skin" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFSkinComplex</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFSkinComplex', nodename="skin")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFVRayMtl" label="V-Ray Material" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFVRayMtl</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFVRayMtl', nodename="vraymtl")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeBRDFWard" label="Ward" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFWard</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material/BRDF</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFWard', nodename="ward")
+
+]]>
+    </script>
+</tool>
+
+</shelfDocument>

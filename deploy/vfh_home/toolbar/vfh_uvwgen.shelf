@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shelfDocument>
+
+<tool name="vop_VRayNodeUVWGenChannel" label="Channel" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeUVWGenChannel</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Mapping</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenChannel', nodename="channel")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeUVWGenEnvironment" label="Environment" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeUVWGenEnvironment</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Mapping</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenEnvironment', nodename="environment")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeUVWGenExplicit" label="Explicit" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeUVWGenExplicit</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Mapping</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenExplicit', nodename="explicit")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeUVWGenMayaPlace2dTexture" label="Channel (Named)" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeUVWGenMayaPlace2dTexture</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Mapping</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenMayaPlace2dTexture', nodename="channel_named")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeUVWGenObject" label="Object" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeUVWGenObject</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Mapping</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenObject', nodename="object")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeUVWGenObjectBBox" label="Bounding Box" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeUVWGenObjectBBox</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Mapping</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenObjectBBox', nodename="boundingbox")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeUVWGenPlanarWorld" label="World" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeUVWGenPlanarWorld</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Mapping</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenPlanarWorld', nodename="world")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeUVWGenProjection" label="Projection" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeUVWGenProjection</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Mapping</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenProjection', nodename="projection")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeUVWGenSwitch" label="Switch" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeUVWGenSwitch</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Mapping</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeUVWGenSwitch', nodename="switch")
+
+]]>
+    </script>
+</tool>
+
+</shelfDocument>
