@@ -1797,9 +1797,9 @@
     }
 	parm {
     name "PhxShaderSim"
-    label "PhxShaderSim"
+    label "output"
     parmtag { "cook_dependent" "0" }
-    parmtag { "vray_label" "PhxShaderSim" }
+    parmtag { "vray_label" "output" }
     parmtag { "vray_pluginattr" "" }
     parmtag { "vray_type" "OutputPlugin" }
     invisible
