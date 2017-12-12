@@ -118,6 +118,7 @@ set(SOURCES
 	io/io_vrscene.cpp
 	obj/obj_node_base.cpp
 	rop/rop_vrayproxyrop.cpp
+	sop/sop_node_base.cpp
 	sop/sop_GeomPlane.cpp
 	sop/sop_PhoenixCache.cpp
 	sop/sop_vrayproxy.cpp

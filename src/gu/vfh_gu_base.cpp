@@ -37,6 +37,10 @@ bool VRayBaseRef::isValid() const
 
 void VRayBaseRef::clearData()
 {
+	// This method is called when primitives are "stashed" during the cooking
+	// process.  However, primitives are typically immediately "unstashed" or
+	// they are deleted if the primitives aren't recreated after the fact.
+	// We can just leave our data.
 }
 
 bool VRayBaseRef::save(UT_Options &options, const GA_SaveMap&) const

@@ -1,305 +1,415 @@
 {
-    name	PhxShaderCache
-    label	"Phoenix Cache"
-    parmtag	{ spare_category "Phoenix Cache" }
-    parmtag	{ vray_plugin "PhxShaderCache" }
-    parm {
-	name	"cache_path"
-	label	"Input Cache File"
-	type	file
-	default	{ "" }
-	help	"simulator output cache path"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "filechooser_mode" "read" }
-	parmtag	{ "filechooser_pattern" "*.vdb,*.f3d,*.aur" }
-	parmtag	{ "vray_file_names" "OpenVDB,Field3D,Phoenix FD" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "cache_path" }
-	parmtag	{ "vray_type" "string" }
+    name    selectedparms
+
+    group {
+        name    "folder2"
+        label   "Main"
+
+        parm {
+            name    "cache_path"
+            label   "Input Cache File"
+            type    file
+            default { "" }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+        }
+        parm {
+            name    "cache_load"
+            label   "Do load cache"
+            type    integer
+            invisible
+            default { "1" }
+            range   { 0 1 }
+            export  none
+        }
+        parm {
+            name    "res_mode"
+            label   "Resolution Mode"
+            type    ordinal
+            default { "1" }
+            menu    {
+                "0" "Full Resolution"
+                "1" "Preview Resolution"
+            }
+        }
+        parm {
+            name    "preview_res"
+            label   "Preview Resolution"
+            type    integer
+            default { "255" }
+            disablewhen "{ res_mode != 1 }"
+            range   { 1 255 }
+        }
+        parm {
+            name    "icr"
+            label   "Cache Range"
+            type    string
+            invisible
+            default { "" }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+        }
+        parm {
+            name    "isz"
+            label   "Container Dimensions"
+            type    string
+            invisible
+            default { "" }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+        }
+        parm {
+            name    "parm18"
+            label   "Cache Output"
+            type    string
+            invisible
+            size    16
+            default { "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" "" }
+            range   { 0 1 }
+            export  none
+            parmtag { "editor" "1" }
+            parmtag { "script_callback_language" "python" }
+            parmtag { "vray_custom_handling" " " }
+        }
+        parm {
+            name    "anim_mode"
+            label   "Animation Control"
+            type    ordinal
+            default { "0" }
+            menu    {
+            "0" "Manual"
+            "1" "Frame Index"
+            "2" "Loop"
+            }
+            range   { 0 1 }
+            export  none
+        }
+        parm {
+            name    "t2f"
+            label   "Frame Index"
+            type    float
+            default { "1" }
+            disablewhen "{ anim_mode != 1 }"
+            range   { 0! 1e+006! }
+            export  none
+        }
+        parm {
+            name    "loop_overlap"
+            label   "Loop Overlap"
+            type    integer
+            default { "0" }
+            disablewhen "{ anim_mode != 2 }"
+            range   { 0! 1e+006! }
+            export  none
+        }
+        parm {
+            name    "read_offset"
+            label   "Cache Start"
+            type    integer
+            default { "1" }
+            disablewhen "{ anim_mode == 1 }"
+            range   { 0! 1e+006! }
+            export  none
+        }
+        parm {
+            name    "play_at"
+            label   "Play Start"
+            type    integer
+            default { "1" }
+            disablewhen "{ anim_mode == 1 }"
+            range   { 0! 1e+006! }
+            export  none
+        }
+        parm {
+            name    "max_length"
+            label   "Play Length"
+            type    integer
+            default { "0" }
+            disablewhen "{ anim_mode == 1 }"
+            range   { 0! 1e+006! }
+            export  none
+        }
+        parm {
+            name    "play_speed"
+            label   "Play Speed"
+            type    float
+            default { "1" }
+            disablewhen "{ anim_mode == 1 }"
+            range   { -10! 10! }
+            export  none
+        }
+        parm {
+            name    "blend_method"
+            label   "Frame Blending"
+            type    ordinal
+            default { "0" }
+            menu    {
+            "0" "Interpolation"
+            "1" "Velocity"
+            }
+            range   { 0 1 }
+            export  none
+        }
+        parm {
+            name    "load_nearest"
+            label   "Load Nearest Possible"
+            type    toggle
+            default { "0" }
+            range   { 0 1 }
+            export  none
+        }
+        parm {
+            name    "flip_yz"
+            label   "Flip Up axis"
+            type    toggle
+            default { "0" }
+            range   { 0 1 }
+            export  none
+        }
     }
-    parm {
-	name	"grid_size_x"
-	label	"Grid Size X"
-	type	float
-	default	{ "1" }
-	help	"Number of cells in x dimension if no cache file is specified; internally truncated to the nearest integer"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "grid_size_x" }
-	parmtag	{ "vray_type" "float" }
+
+    group {
+        name    "folder3"
+        label   "Channel Mapping"
+
+        parm {
+            name    "channel_smoke"
+            label   "Smoke"
+            type    ordinal
+            default { "0" }
+            menu    {
+                [ "menuItems = ['0', 'None']" ]
+                [ "geom = kwargs['node'].geometry()" ]
+                [ "if not geom:" ]
+                [ "    return menuItems" ]
+                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
+                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
+                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
+                [ "    if type(channels) is tuple:" ]
+                [ "        # duplicate all channels so we have (key, val) pairs" ]
+                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+                [ "    else:" ]
+                [ "        menuItems.extend([channels, channels])" ]
+                [ "return menuItems" ]
+                language    python
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+        }
+        parm {
+            name    "channel_temp"
+            label   "Temperature"
+            type    ordinal
+            default { "0" }
+            menu    {
+                [ "menuItems = ['0', 'None']" ]
+                [ "geom = kwargs['node'].geometry()" ]
+                [ "if not geom:" ]
+                [ "    return menuItems" ]
+                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
+                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
+                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
+                [ "    if type(channels) is tuple:" ]
+                [ "        # duplicate all channels so we have (key, val) pairs" ]
+                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+                [ "    else:" ]
+                [ "        menuItems.extend([channels, channels])" ]
+                [ "return menuItems" ]
+                language    python
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+        }
+        parm {
+            name    "channel_fuel"
+            label   "Fuel"
+            type    ordinal
+            default { "0" }
+            menu    {
+                [ "menuItems = ['0', 'None']" ]
+                [ "geom = kwargs['node'].geometry()" ]
+                [ "if not geom:" ]
+                [ "    return menuItems" ]
+                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
+                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
+                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
+                [ "    if type(channels) is tuple:" ]
+                [ "        # duplicate all channels so we have (key, val) pairs" ]
+                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+                [ "    else:" ]
+                [ "        menuItems.extend([channels, channels])" ]
+                [ "return menuItems" ]
+                language    python
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+        }
+        parm {
+            name    "channel_vel_x"
+            label   "Velocity.x"
+            type    ordinal
+            default { "0" }
+            menu    {
+                [ "menuItems = ['0', 'None']" ]
+                [ "geom = kwargs['node'].geometry()" ]
+                [ "if not geom:" ]
+                [ "    return menuItems" ]
+                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
+                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
+                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
+                [ "    if type(channels) is tuple:" ]
+                [ "        # duplicate all channels so we have (key, val) pairs" ]
+                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+                [ "    else:" ]
+                [ "        menuItems.extend([channels, channels])" ]
+                [ "return menuItems" ]
+                language    python
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+        }
+        parm {
+            name    "channel_vel_y"
+            label   "Velocity.y"
+            type    ordinal
+            default { "0" }
+            menu    {
+                [ "menuItems = ['0', 'None']" ]
+                [ "geom = kwargs['node'].geometry()" ]
+                [ "if not geom:" ]
+                [ "    return menuItems" ]
+                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
+                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
+                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
+                [ "    if type(channels) is tuple:" ]
+                [ "        # duplicate all channels so we have (key, val) pairs" ]
+                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+                [ "    else:" ]
+                [ "        menuItems.extend([channels, channels])" ]
+                [ "return menuItems" ]
+                language    python
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+        }
+        parm {
+            name    "channel_vel_z"
+            label   "Velocity.z"
+            type    ordinal
+            default { "0" }
+            menu    {
+                [ "menuItems = ['0', 'None']" ]
+                [ "geom = kwargs['node'].geometry()" ]
+                [ "if not geom:" ]
+                [ "    return menuItems" ]
+                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
+                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
+                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
+                [ "    if type(channels) is tuple:" ]
+                [ "        # duplicate all channels so we have (key, val) pairs" ]
+                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+                [ "    else:" ]
+                [ "        menuItems.extend([channels, channels])" ]
+                [ "return menuItems" ]
+                language    python
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+        }
+        parm {
+            name    "channel_red"
+            label   "Red"
+            type    ordinal
+            default { "0" }
+            menu    {
+                [ "menuItems = ['0', 'None']" ]
+                [ "geom = kwargs['node'].geometry()" ]
+                [ "if not geom:" ]
+                [ "    return menuItems" ]
+                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
+                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
+                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
+                [ "    if type(channels) is tuple:" ]
+                [ "        # duplicate all channels so we have (key, val) pairs" ]
+                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+                [ "    else:" ]
+                [ "        menuItems.extend([channels, channels])" ]
+                [ "return menuItems" ]
+                language    python
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+        }
+        parm {
+            name    "channel_green"
+            label   "Green"
+            type    ordinal
+            default { "0" }
+            menu    {
+                [ "menuItems = ['0', 'None']" ]
+                [ "geom = kwargs['node'].geometry()" ]
+                [ "if not geom:" ]
+                [ "    return menuItems" ]
+                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
+                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
+                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
+                [ "    if type(channels) is tuple:" ]
+                [ "        # duplicate all channels so we have (key, val) pairs" ]
+                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+                [ "    else:" ]
+                [ "        menuItems.extend([channels, channels])" ]
+                [ "return menuItems" ]
+                language    python
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+        }
+        parm {
+            name    "channel_blue"
+            label   "Blue"
+            type    ordinal
+            default { "0" }
+            menu    {
+                [ "menuItems = ['0', 'None']" ]
+                [ "geom = kwargs['node'].geometry()" ]
+                [ "if not geom:" ]
+                [ "    return menuItems" ]
+                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
+                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
+                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
+                [ "    if type(channels) is tuple:" ]
+                [ "        # duplicate all channels so we have (key, val) pairs" ]
+                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
+                [ "    else:" ]
+                [ "        menuItems.extend([channels, channels])" ]
+                [ "return menuItems" ]
+                language    python
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+        }
     }
+
     parm {
-	name	"grid_size_y"
-	label	"Grid Size Y"
-	type	float
-	default	{ "1" }
-	help	"Number of cells in y dimension if no cache file is specified; internally truncated to the nearest integer"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "grid_size_y" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"grid_size_z"
-	label	"Grid Size Z"
-	type	float
-	default	{ "1" }
-	help	"Number of cells in z dimension if no cache file is specified; internally truncated to the nearest integer"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "grid_size_z" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"cell_size"
-	label	"Cell Size"
-	type	float
-	default	{ "1" }
-	help	"Size of a single grid cell"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "cell_size" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"velocities_from_uvw"
-	label	"Velocities From Uvw"
-	type	toggle
-	default	{ "0" }
-	help	"Create velocity channel from uvw movement"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "velocities_from_uvw" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"anim_mode"
-	label	"Animation Control"
-	type	ordinal
-	default	{ "0" }
-	help	"Animation mode"
-	menu	{
-	    "0"	"Standard"
-	    "1"	"Direct Frame Index"
-	    "2"	"Loop"
-	}
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "anim_mode" }
-	parmtag	{ "vray_type" "enum" }
-    }
-    parm {
-	name	"loop_overlap"
-	label	"Loop Overlap"
-	type	integer
-	default	{ "0" }
-	help	"Number of overlapped frame in the looped animation mode"
-	disablewhen	"{ anim_mode != Loop }"
-	range	{ 0 100 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "loop_overlap" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"blend_method"
-	label	"Frame Blending"
-	type	integer
-	default	{ "0" }
-	help	"Frame Blending"
-	menu	{
-	    "0"	"Interpolation"
-	    "1"	"Velocity"
-	}
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "blend_method" }
-	parmtag	{ "vray_type" "enum" }
-    }
-    parm {
-	name	"read_offset"
-	label	"Cache Start"
-	type	integer
-	default	{ "0" }
-	help	"Cache Start"
-	disablewhen	"{ anim_mode == \"Direct Frame Index\" }"
-	range	{ -10000 10000 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "read_offset" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"play_at"
-	label	"Play Start"
-	type	integer
-	default	{ "0" }
-	help	"Play Start"
-	disablewhen	"{ anim_mode == \"Direct Frame Index\" }"
-	range	{ -10000 10000 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "play_at" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"max_length"
-	label	"Play Length"
-	type	integer
-	default	{ "0" }
-	help	"Play Length"
-	disablewhen	"{ anim_mode == \"Direct Frame Index\" }"
-	range	{ -10000 10000 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "max_length" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"play_speed"
-	label	"Play Speed"
-	type	float
-	default	{ "1" }
-	help	"Play Speed"
-	disablewhen	"{ anim_mode == \"Direct Frame Index\" }"
-	range	{ -10 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "play_speed" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"t2f"
-	label	"Frame Index"
-	type	float
-	default	{ "0" }
-	help	"Direct time to frame transformation"
-	disablewhen	"{ anim_mode != \"Direct Frame Index\" }"
-	range	{ 0 1000 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "t2f" }
-	parmtag	{ "vray_type" "float" }
-    }
-    parm {
-	name	"TPF"
-	label	"Tpf"
-	type	integer
-	default	{ "1000" }
-	help	"ticks per frame"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "TPF" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"flip_yz"
-	label	"Flip Up Axis"
-	type	toggle
-	default	{ "0" }
-	help	"If true, the yz axis of the cache will be flipped"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "flip_yz" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"load_flags"
-	label	"Load Flags"
-	type	integer
-	default	{ "0" }
-	help	"used in RT to determine the frame loading flags"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "load_flags" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"smooth_mask"
-	label	"Smooth Mask"
-	type	integer
-	default	{ "0" }
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "smooth_mask" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"free_mem_detect"
-	label	"Free Mem Detect"
-	type	integer
-	default	{ "0" }
-	help	"internally used"
-	range	{ 0 10 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "free_mem_detect" }
-	parmtag	{ "vray_type" "int" }
-    }
-    parm {
-	name	"cache_load"
-	label	"Cache Load"
-	type	toggle
-	default	{ "1" }
-	help	"Whether to actually load the cache or use it just to figure out the grid and cell size"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "cache_load" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"load_nearest"
-	label	"Load Nearest If Missing"
-	type	toggle
-	default	{ "0" }
-	help	"If there is no cache file with the desired frame number, the nearest cache is found and loaded"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "load_nearest" }
-	parmtag	{ "vray_type" "boolean" }
-    }
-    parm {
-	name	"usrchmap"
-	label	"Usrchmap"
-	type	string
-	default	{ "" }
-	help	"3rd party caches channels mappings"
-	range	{ 0 1 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "PhxShaderCache" }
-	parmtag	{ "vray_pluginattr" "usrchmap" }
-	parmtag	{ "vray_type" "string" }
+        name "cache"
+        label "cache"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_label" "cache" }
+        parmtag { "vray_pluginattr" "" }
+        parmtag { "vray_type" "Plugin" }
+        invisible
     }
 }

@@ -11,7 +11,6 @@
 #include "vfh_defines.h"
 #include "vfh_class_utils.h"
 #include "vfh_log.h"
-#include "vfh_error.h"
 #include "vfh_vray_instances.h"
 #include "vfh_rop.h"
 
@@ -179,7 +178,7 @@ void newSopOperator(OP_OperatorTable *table)
 		}
 	}
 
-	VFH_ADD_SOP_GENERATOR_CUSTOM(table, PhxShaderCache, PhxShaderCache::GetPrmTemplate());
+	VFH_ADD_SOP_GENERATOR(table, PhxShaderCache);
 #endif
 
 #ifdef CGR_HAS_VRAYSCENE

@@ -18,32 +18,23 @@
 namespace VRayForHoudini {
 namespace SOP {
 
-class PhxShaderCache:
-		public SOP::NodeBase
+class PhxShaderCache
+	: public NodePackedBase
 {
 public:
-	static PRM_Template      *GetPrmTemplate();
-
-public:
-	PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry): NodeBase(parent, name, entry) {}
-	virtual                  ~PhxShaderCache() {}
-
-	virtual OP_ERROR          cookMySop(OP_Context &context) VRAY_OVERRIDE;
-	virtual PluginResult      asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
+	PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry);
+	virtual ~PhxShaderCache() {}
 
 protected:
-	virtual void              setPluginType() VRAY_OVERRIDE;
+	// From VRayNode.
+	void setPluginType() VRAY_OVERRIDE;
+
+	// From NodePackedBase.
+	void setTimeDependent() VRAY_OVERRIDE;
+	void updatePrimitive(const OP_Context &context) VRAY_OVERRIDE;
 
 private:
-	/// Updates gridRefPtr with the options taken from this primitive
-	/// @param gridRefPtr Pointer to existing VRayVolumeGridRef instance. If there is no existing instance is nullptr
-	/// @param pack Pointer to the packed primitive of type VRayVolumegridRef
-	/// @param context
-	/// @param time
-	void                      updateVRayVolumeGridRefPrim(VRayVolumeGridRef *gridRefPtr, GU_PrimPacked *pack, OP_Context &context, const float t);
-
-private:
-	UT_StringArray            m_serializedChannels;
+	UT_StringArray m_serializedChannels;
 };
 
 } // namespace SOP

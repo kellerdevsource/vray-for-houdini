@@ -10,10 +10,13 @@
 
 #ifdef CGR_HAS_VRAYSCENE
 
-#include "vfh_log.h"
 #include "sop_vrayscene.h"
 
 using namespace VRayForHoudini;
+
+SOP::VRayScene::VRayScene(OP_Network *parent, const char *name, OP_Operator *entry)
+	: NodePackedBase("VRaySceneRef", parent, name, entry)
+{}
 
 void SOP::VRayScene::setPluginType()
 {
@@ -23,6 +26,9 @@ void SOP::VRayScene::setPluginType()
 
 void SOP::VRayScene::setTimeDependent()
 {
+#if 0
+	// TODO: Implement animation caching and enable this.
+
 	enum class VRaySceneAnimType {
 		loop = 0,
 		once,
@@ -30,12 +36,13 @@ void SOP::VRayScene::setTimeDependent()
 		still,
 	};
 
-	// TODO: Implement animation caching and enable this.
-#if 0
 	previewMeshAnimated =
 		static_cast<VRaySceneAnimType>(evalInt("anim_type", 0, 0.0)) != VRaySceneAnimType::still;
 
+
 	flags().setTimeDep(previewMeshAnimated);
+#else
+	NodePackedBase::setTimeDependent();
 #endif
 }
 
@@ -67,42 +74,9 @@ void SOP::VRayScene::updatePrimitive(const OP_Context &context)
 	}
 
 	primOptions.setOptionS("plugin_mapping", pluginMappings);
-	primOptions.setOptionF("current_frame", previewMeshAnimated ? context.getFloatFrame() : 0.0f);
+	primOptions.setOptionF("current_frame", isTimeDependent ? context.getFloatFrame() : 0.0f);
 
-	if (m_primOptions != primOptions) {
-		m_primOptions = primOptions;
-
-		GU_PackedImpl *primImpl = m_primPacked->implementation();
-		if (primImpl) {
-#ifdef HDK_16_5
-			primImpl->update(m_primPacked, m_primOptions);
-#else
-			primImpl->update(m_primOptions);
-#endif
-		}
-	}
-}
-
-OP_ERROR SOP::VRayScene::cookMySop(OP_Context &context)
-{
-	Log::getLog().debug("SOP::VRayScene::cookMySop()");
-
-	if (!m_primPacked) {
-		m_primPacked = GU_PrimPacked::build(*gdp, "VRaySceneRef");
-
-		// Set the location of the packed primitive point.
-		const UT_Vector3 pivot(0.0, 0.0, 0.0);
-		m_primPacked->setPivot(pivot);
-
-		gdp->setPos3(m_primPacked->getPointOffset(0), pivot);
-	}
-
-	vassert(m_primPacked);
-
-	setTimeDependent();
-	updatePrimitive(context);
-
-	return error();
+	updatePrimitiveFromOptions(primOptions);
 }
 
 #endif // CGR_HAS_VRAYSCENE

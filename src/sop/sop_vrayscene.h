@@ -14,42 +14,22 @@
 
 #include "sop_node_base.h"
 
-#include <OP/OP_Options.h>
-
 namespace VRayForHoudini {
 namespace SOP {
 
 class VRayScene
-	: public NodeBase
+	: public NodePackedBase
 {
 public:
-	VRayScene(OP_Network *parent, const char *name, OP_Operator *entry)
-		: NodeBase(parent, name, entry)
-	{}
-
-	// From SOP_Node.
-	OP_ERROR cookMySop(OP_Context &context) VRAY_OVERRIDE;
+	VRayScene(OP_Network *parent, const char *name, OP_Operator *entry);
 
 protected:
 	// From VRayNode.
 	void setPluginType() VRAY_OVERRIDE;
 
-private:
-	/// Set node time dependent flag based on UI settings.
-	void setTimeDependent();
-
-	/// Setup / update primitive data based.
-	/// @param context Cooking context.
-	void updatePrimitive(const OP_Context &context);
-
-	/// Packed primitive with the preview data.
-	GU_PrimPacked *m_primPacked{nullptr};
-
-	/// Current options set.
-	OP_Options m_primOptions;
-
-	/// Show preview mesh animation.
-	int previewMeshAnimated{0};
+	// From NodePackedBase.
+	void setTimeDependent() VRAY_OVERRIDE;
+	void updatePrimitive(const OP_Context &context) VRAY_OVERRIDE;
 };
 
 } // namespace SOP

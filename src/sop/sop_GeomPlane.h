@@ -12,24 +12,16 @@
 #define VRAY_FOR_HOUDINI_SOP_NODE_GEOMPLANE_H
 
 #include "sop_node_base.h"
-#include "vfh_prm_templates.h"
-
 
 namespace VRayForHoudini {
 namespace SOP {
 
-/// SOP node that creates V-Ray infinite plane geometry
+/// SOP node that creates V-Ray infinite plane geometry.
 class GeomPlane
-	: public SOP::NodeBase
+	: public NodePackedBase
 {
 public:
-	GeomPlane(OP_Network *parent, const char *name, OP_Operator *entry)
-		: NodeBase(parent, name, entry)
-	{}
-
-	/// Houdini callback to cook custom geometry for this node
-	/// @param context[in] - cook time
-	OP_ERROR cookMySop(OP_Context &context) VRAY_OVERRIDE;
+	GeomPlane(OP_Network *parent, const char *name, OP_Operator *entry);
 
 protected:
 	/// Set custom plugin id and type for this node

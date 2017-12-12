@@ -237,7 +237,7 @@ public:
 	/// Returns current options.
 	const UT_Options& getOptions() const { return m_options; }
 
-private:
+protected:
 	/// Intrinsic names storage.
 	struct IntrinsicNames {
 	%INTR_NAMES%

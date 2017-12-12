@@ -664,7 +664,7 @@ PRM_Template* PhxShaderSim::GetPrmTemplate()
 {
 	if (!AttrItems) {
 		static Parm::PRMList paramList;
-		paramList.addFromFile(Parm::expandUiPath("CustomPhxShaderSim.ds").c_str());
+		paramList.addFromFile(Parm::expandUiPath("PhxShaderSim.ds").c_str());
 		AttrItems = paramList.getPRMTemplate();
 
 		// set callbacks for ramp params

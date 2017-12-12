@@ -19,6 +19,8 @@
         { "type" : "INT",   "name" : "loop_overlap", "value" : 0 },
         { "type" : "INT",   "name" : "max_length", "value" : 0 },
         { "type" : "INT",   "name" : "play_at", "value" : 1 },
-        { "type" : "INT",   "name" : "read_offset", "value" : 1 }
+        { "type" : "INT",   "name" : "read_offset", "value" : 1 },
+        { "type" : "INT",   "name" : "res_mode", "value" : 1 },
+        { "type" : "INT",   "name" : "preview_res", "value" : 0 }
     ]
 }
