@@ -32,9 +32,6 @@ protected:
 	// From NodePackedBase.
 	void setTimeDependent() VRAY_OVERRIDE;
 	void updatePrimitive(const OP_Context &context) VRAY_OVERRIDE;
-
-private:
-	UT_StringArray m_serializedChannels;
 };
 
 } // namespace SOP

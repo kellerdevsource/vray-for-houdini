@@ -577,7 +577,7 @@ int VRayVolumeGridRef::updateFrom(const UT_Options &options)
 
 	if (m_doFrameReplace) {
 		// If we aren't replacing frame we don't care if frame changes
-		// this means user hardcoded a path for a specific frame
+		// this means user hardcoded a path for a specific frame.
 		pathChange |=
 			newOptions.hasOption(IntrinsicNames::current_frame) &&
 			newOptions.getOptionI(IntrinsicNames::current_frame) != getCurrentFrame();
