@@ -86,6 +86,7 @@ GU_PackedImpl *VRaySceneRef::copy() const
 
 bool VRaySceneRef::unpack(GU_Detail&) const
 {
+	// This will show error and indicate that we don't support unpacking.
 	return false;
 }
 
