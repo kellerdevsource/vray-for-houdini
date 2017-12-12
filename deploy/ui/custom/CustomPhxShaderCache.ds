@@ -27,7 +27,7 @@
             name    "res_mode"
             label   "Resolution Mode"
             type    ordinal
-            default { "0" }
+            default { "1" }
             menu    {
                 "0" "Full Resolution"
                 "1" "Preview Resolution"
