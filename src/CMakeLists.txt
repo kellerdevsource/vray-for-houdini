@@ -236,8 +236,7 @@ function(vfh_generate_gu_options _libTarget _dsoTarget)
 
 	foreach(jsonFile ${JSON_INPUT})
 		get_filename_component(CLASS_NAME ${jsonFile} NAME_WE)
-		set(FILE_OUT_NAME "vfh_${CLASS_NAME}Options.cpp")
-		set(FILE_H_OUT_NAME "vfh_${CLASS_NAME}Options.h")
+		set(FILE_OUT_NAME "vfh_${CLASS_NAME}Base.cpp")
 
 		add_custom_command(
 			OUTPUT
@@ -263,7 +262,6 @@ function(vfh_generate_gu_options _libTarget _dsoTarget)
 		source_group("gu\\options\\json\\cpp"
 			FILES
 				${FILE_OUT_DIR}/${FILE_OUT_NAME}
-				${FILE_OUT_DIR}/${FILE_H_OUT_NAME}
 		)
 	endforeach()
 

@@ -59,11 +59,10 @@ void VRaySceneRef::install(GA_PrimitiveFactory *primFactory)
 }
 
 VRaySceneRef::VRaySceneRef()
-	: VRaySceneRefOptions()
 {}
 
 VRaySceneRef::VRaySceneRef(const VRaySceneRef &src)
-	: VRaySceneRefOptions(src)
+	: VRaySceneRefBase(src)
 {}
 
 VRaySceneRef::~VRaySceneRef()

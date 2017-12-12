@@ -8,8 +8,6 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <SYS/SYS_Types.h>
-
 #include "vfh_defines.h"
 #include "vfh_log.h"
 #include "gu_pgyeti.h"
@@ -19,8 +17,6 @@
 #include <GU/GU_PrimPoly.h>
 #include <GU/GU_PackedContext.h>
 #include <GU/GU_PackedGeometry.h>
-
-#include <FS/UT_DSO.h>
 
 #define hdf5_cpp_EXPORTS
 #undef VERSION
@@ -37,11 +33,10 @@ void VRayPgYetiRef::install(GA_PrimitiveFactory *primFactory)
 }
 
 VRayPgYetiRef::VRayPgYetiRef()
-	: VRayPgYetiRefOptions()
 {}
 
 VRayPgYetiRef::VRayPgYetiRef(const VRayPgYetiRef &src)
-	: VRayPgYetiRefOptions(src)
+	: VRayPgYetiRefBase(src)
 {}
 
 VRayPgYetiRef::~VRayPgYetiRef()
@@ -165,7 +160,6 @@ static void buildHairDetailFromGroup(const H5::Group &furGroup, GU_Detail &gdp, 
 void VRayPgYetiRef::detailRebuild()
 {
 	GU_Detail *gdp = new GU_Detail();
-	m_bbox.initBounds();
 
 	const UT_String filePath(getFile());
 	if (filePath.isstring()) {

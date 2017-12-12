@@ -29,7 +29,6 @@ class VRayBaseRef
 public:
 	VRayBaseRef();
 	VRayBaseRef(const VRayBaseRef &other);
-	VRayBaseRef(VRayBaseRef &&other) noexcept;
 
 	virtual ~VRayBaseRef() {}
 

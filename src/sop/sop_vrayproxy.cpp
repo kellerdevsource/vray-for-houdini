@@ -8,13 +8,33 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vfh_prm_templates.h"
 #include "sop_vrayproxy.h"
-#include "gu_vrayproxyref.h"
 
-#include <GU/GU_PrimPacked.h>
+#include "vfh_vrayproxyutils.h"
+#include "vfh_prm_templates.h"
 
 using namespace VRayForHoudini;
+
+/// Callback to clear cache for this node ("Reload Geometry" button in the GUI).
+/// @param data Pointer to the node it was called on.
+/// @param index The index of the menu entry.
+/// @param t Current evaluation time.
+/// @param tplate Pointer to the PRM_Template of the parameter it was triggered for.
+/// @return It should return 1 if you want the dialog to refresh
+/// (ie if you changed any values) and 0 otherwise.
+static int cbClearCache(void *data, int index, fpreal t, const PRM_Template *tplate)
+{
+	OP_Node *node = reinterpret_cast<OP_Node*>(data);
+
+	UT_String filepath;
+	node->evalString(filepath, "file", 0, t);
+
+	if (filepath.isstring()) {
+		ClearVRayProxyCache(filepath);
+	}
+
+	return 0;
+}
 
 PRM_Template* SOP::VRayProxy::getPrmTemplate()
 {
@@ -29,22 +49,8 @@ PRM_Template* SOP::VRayProxy::getPrmTemplate()
 	return prmTemplate;
 }
 
-int SOP::VRayProxy::cbClearCache(void *data, int /*index*/, fpreal t, const PRM_Template* /*tplate*/)
-{
-	OP_Node *node = reinterpret_cast<OP_Node*>(data);
-
-	UT_String filepath;
-	node->evalString(filepath, "file", 0, t);
-
-	if (filepath.isstring()) {
-		ClearVRayProxyCache(filepath);
-	}
-
-	return 0;
-}
-
 SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry)
-	: NodeBase(parent, name, entry)
+	: NodePackedBase("VRayProxyRef", parent, name, entry)
 {
 	// This indicates that this SOP manually manages its data IDs,
 	// so that Houdini can identify what attributes may have changed,
@@ -56,6 +62,8 @@ SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *ent
 	// If some data IDs don't get bumped properly, the viewport
 	// may not update, or SOPs that check data IDs
 	// may not cook correctly, so be *very* careful!
+
+	// NOTE: Is this still required?
 	mySopFlags.setManagesDataIDs(true);
 }
 
@@ -69,10 +77,7 @@ void SOP::VRayProxy::setTimeDependent()
 {
 	const VUtils::MeshFileAnimType::Enum animType =
 		static_cast<VUtils::MeshFileAnimType::Enum>(evalInt("anim_type", 0, 0.0));
-
-	previewMeshAnimated = animType != VUtils::MeshFileAnimType::Still;
-
-	flags().setTimeDep(previewMeshAnimated);
+	flags().setTimeDep(animType != VUtils::MeshFileAnimType::Still);
 }
 
 void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
@@ -90,48 +95,18 @@ void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 
 	UT_String viewportlod;
 	evalString(viewportlod, "viewportlod", 0, 0.0);
-	m_primPacked->setViewportLOD(GEOviewportLOD(viewportlod));
 	primOptions.setOptionS("viewportlod", viewportlod);
 
+	// XXX: Is this needed?
+	m_primPacked->setViewportLOD(GEOviewportLOD(viewportlod));
+
+	// XXX: What was this doing?
 	UT_String objectPath;
 	evalString(objectPath, "object_path", 0, 0.0);
 	primOptions.setOptionS("object_path", objectPath);
 
 	primOptions.setOptionI("lod", evalInt("loadtype", 0, 0.0));
-	primOptions.setOptionF("current_frame", previewMeshAnimated ? context.getFloatFrame() : 0.0f);
-
-	if (m_primOptions != primOptions) {
-		m_primOptions = primOptions;
-
-		GU_PackedImpl *primImpl = m_primPacked->implementation();
-		if (primImpl) {
-#ifdef HDK_16_5
-			primImpl->update(m_primPacked, m_primOptions);
-#else
-			primImpl->update(m_primOptions);
-#endif
-		}
-	}
-}
-
-OP_ERROR SOP::VRayProxy::cookMySop(OP_Context &context)
-{
-	Log::getLog().debug("SOP::VRayProxy::cookMySop()");
-
-	if (!m_primPacked) {
-		m_primPacked = GU_PrimPacked::build(*gdp, "VRayProxyRef");
-
-		// Set the location of the packed primitive point.
-		const UT_Vector3 pivot(0.0, 0.0, 0.0);
-		m_primPacked->setPivot(pivot);
-
-		gdp->setPos3(m_primPacked->getPointOffset(0), pivot);
-	}
-
-	vassert(m_primPacked);
-
-	setTimeDependent();
-	updatePrimitive(context);
-
-	return error();
+	primOptions.setOptionF("current_frame", flags().getTimeDep() ? context.getFloatFrame() : 0.0f);
+	
+	updatePrimitiveFromOptions(primOptions);
 }

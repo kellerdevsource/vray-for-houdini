@@ -34,9 +34,6 @@ public:
 protected:
 	/// Set node time dependent flag based on UI settings.
 	virtual void setTimeDependent();
-
-	/// Is animated.
-	int isTimeDependent = 0;
 };
 
 /// Base class for custom SOP nodes that generate packed primitives.

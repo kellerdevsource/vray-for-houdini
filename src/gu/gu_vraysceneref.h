@@ -12,7 +12,7 @@
 #define VRAY_FOR_HOUDINI_VRAYSCENEREF_H
 
 #include "vfh_includes.h"
-#include "vfh_VRaySceneRefOptions.h"
+#include "vfh_VRaySceneRefBase.h"
 
 namespace VUtils {
 namespace Vrscene {
@@ -26,7 +26,7 @@ namespace VRayForHoudini {
 
 /// VRayScene preview mesh implemented as a packed primitive.
 class VRaySceneRef
-	: public VRaySceneRefOptions
+	: public VRaySceneRefBase
 {
 public:
 	static GA_PrimitiveTypeId typeId();

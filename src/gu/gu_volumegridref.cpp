@@ -242,8 +242,7 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 }
 
 VRayVolumeGridRef::VRayVolumeGridRef()
-	: VRayVolumeGridRefOptions()
-	, m_channelDirty(false)
+	: m_channelDirty(false)
 	, m_doFrameReplace(false)
 {
 	memset(getChannelDataRanges().data(), 0, DataRangeMapSize);
@@ -256,19 +255,12 @@ GA_PrimitiveTypeId VRayVolumeGridRef::typeId()
 }
 
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
-	: VRayVolumeGridRefOptions(src)
+	: VRayVolumeGridRefBase(src)
 	, m_channelDirty(false)
 	, m_doFrameReplace(src.m_doFrameReplace)
 {
 	initDataCache();
 }
-
-VRayVolumeGridRef::VRayVolumeGridRef(VRayVolumeGridRef &&src) noexcept
-	: VRayVolumeGridRefOptions(std::move(src))
-	, m_dataCache(std::move(src.m_dataCache))
-	, m_channelDirty(std::move(src.m_channelDirty))
-	, m_doFrameReplace(std::move(src.m_doFrameReplace))
-{}
 
 VRayVolumeGridRef::~VRayVolumeGridRef()
 {}
@@ -389,7 +381,11 @@ void VRayVolumeGridRef::buildMapping()
 			const ChannelInfo &chan = chInfo[c];
 
 			UT_String value(UT_String::ALWAYS_DEEP);
-			const int64 res = m_options.hasOption(chan.propName) ? m_options.getOptionI(chan.propName) - 1 : -1;
+
+			const int64 res = getOptions().hasOption(chan.propName)
+				? getOptions().getOptionI(chan.propName) - 1
+				: -1;
+
 			if (res >= 0 && res < channels.size()) {
 				value = channels(res);
 				if (value != "" && value != "0") {
@@ -570,9 +566,9 @@ int VRayVolumeGridRef::updateFrom(const UT_Options &options)
 			prefix != getCachePathPrefix() ||
 			suffix != getCachePathSuffix();
 
-		m_options.setOptionS(IntrinsicNames::cache_path_prefix, prefix.c_str());
-		m_options.setOptionS(IntrinsicNames::cache_path_suffix, suffix.c_str());
-		m_options.setOptionI(IntrinsicNames::frame_number_width, frameWidth);
+		newOptions.setOptionS(IntrinsicNames::cache_path_prefix, prefix.c_str());
+		newOptions.setOptionS(IntrinsicNames::cache_path_suffix, suffix.c_str());
+		newOptions.setOptionI(IntrinsicNames::frame_number_width, frameWidth);
 	}
 
 	if (m_doFrameReplace) {
