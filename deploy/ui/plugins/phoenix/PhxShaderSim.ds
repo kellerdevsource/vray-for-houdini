@@ -725,4 +725,14 @@
 	    parmtag	{ "vray_ramp_type" "curve" }
 	}
     }
+
+	parm {
+		name "PhxShaderSim"
+		label "output"
+		parmtag { "cook_dependent" "0" }
+		parmtag { "vray_label" "output" }
+		parmtag { "vray_pluginattr" "" }
+		parmtag { "vray_type" "OutputPlugin" }
+		invisible
+	}
 }
