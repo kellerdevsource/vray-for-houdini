@@ -526,6 +526,7 @@ void VRayProxyCache::updateDetailCacheForKeys(const HashKeys &voxelKeys)
 	for (const auto &voxelKey : voxelKeys) {
 		if (m_voxelToDetail->count(voxelKey)) {
 			CachedDetail& detailData = m_voxelToDetail->at(voxelKey);
+			// TODO: Implement me!
 			// --detailData.m_refCnt;
 
 			if (   detailData.m_refCnt <= 0
