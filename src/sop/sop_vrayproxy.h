@@ -13,8 +13,6 @@
 
 #include "sop_node_base.h"
 
-#include <OP/OP_Options.h>
-
 namespace VRayForHoudini {
 namespace SOP {
 
@@ -28,14 +26,11 @@ public:
 	virtual ~VRayProxy() {}
 
 protected:
-	/// Set custom plugin id and type for this node
+	// From VRayNode.
 	void setPluginType() VRAY_OVERRIDE;
 
-	/// Set node time dependent flag based on UI settings.
+	// From NodePackedBase.
 	void setTimeDependent() VRAY_OVERRIDE;
-
-	/// Setup / update primitive data based.
-	/// @param context Cooking context.
 	void updatePrimitive(const OP_Context &context) VRAY_OVERRIDE;
 };
 

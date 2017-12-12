@@ -97,10 +97,7 @@ void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 	evalString(viewportlod, "viewportlod", 0, 0.0);
 	primOptions.setOptionS("viewportlod", viewportlod);
 
-	// XXX: Is this needed?
-	m_primPacked->setViewportLOD(GEOviewportLOD(viewportlod));
-
-	// XXX: What was this doing?
+	// XXX: What was this doing? Check if setOptionFromTemplate() sets this.
 	UT_String objectPath;
 	evalString(objectPath, "object_path", 0, 0.0);
 	primOptions.setOptionS("object_path", objectPath);
@@ -109,4 +106,7 @@ void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 	primOptions.setOptionF("current_frame", flags().getTimeDep() ? context.getFloatFrame() : 0.0f);
 	
 	updatePrimitiveFromOptions(primOptions);
+
+	// XXX: Is this needed?
+	m_primPacked->setViewportLOD(GEOviewportLOD(viewportlod));
 }
