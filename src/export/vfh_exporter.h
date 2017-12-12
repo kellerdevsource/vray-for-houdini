@@ -101,6 +101,19 @@ struct OpInterestItem {
 
 typedef std::vector<OpInterestItem> CbItems;
 
+struct ConnectedPluginInfo {
+	explicit ConnectedPluginInfo(VRay::Plugin plugin = VRay::Plugin(), const std::string &output = "")
+		: plugin(plugin)
+		, output(output)
+	{}
+
+	/// Connected plugin.
+	VRay::Plugin plugin;
+
+	/// Connected output. May be empty.
+	std::string output;
+};
+
 /// Vfh main exporter. This is the main class responsible for translating
 /// Houdini geometry and nodes to V-Ray plugins, initializing and starting
 /// the rendering process.
@@ -538,6 +551,10 @@ public:
 	/// @param prefix[in] - common prefix for the name of related parameters
 	/// @param remapInterp[in] - whether to remap ramp interpotaion type (used for ramp parameters)
 	void setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="", bool remapInterp=false);
+
+	/// Converts different socket types
+	/// @param[out] conPluginInfo - generated connection plugin info
+	void autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const Parm::SocketDesc &curSockInfo, const Parm::SocketDesc *fromSocketInfo, Attrs::PluginDesc &pluginDesc);
 
 	/// Helper function to fill in plugin description attributes from VOP node connected inputs
 	/// @param pluginDesc[out] - the plugin description
