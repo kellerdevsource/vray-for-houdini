@@ -460,89 +460,24 @@ bool VRayProxyCache::contains(const FrameKey &frameIdx, const LOD &lod)
 
 bool VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std::vector<Geometry> &geometry)
 {
-	UT_ASSERT( NOT(contains(frameIdx, lod)) );
+	vassert(!contains(frameIdx, lod));
 
-//	CachedFrame &frameData = (*m_frameCache)[frameIdx];
-//	frameData.m_bbox = m_proxy->getBBox();
-
-//	GU_Detail *gdp = new GU_Detail();
-//	DetailKey key = gdp->getUniqueId();
-//	UT_ASSERT( NOT(m_detailCache->contains(key)) );
-
-//	for (int i = 0; i < geometry.size(); ++i) {
-//		const Geometry &geom = geometry[i];
-//		createProxyGeometry(geom, *gdp);
-//	}
-
-//	GU_DetailHandle &gdh = (*m_detailCache)[key];
-//	UT_ASSERT( NOT(gdh.isValid()) );
-
-//	gdh.allocateAndSet(gdp);
-//	frameData.setDetailKey(lod, key);
-
-
-	// insert new item in frameCache and cache bbox
-	CachedFrame &frameData = (*m_frameCache)[frameIdx];
-	frameData.m_bbox = m_proxy->getBBox();
-
-	HashKeys &voxelKeys = frameData.getVoxelKeys(lod);
-	voxelKeys.resize(geometry.size());
-
-	// create main detail for the frame
 	GU_Detail *gdp = new GU_Detail();
-	DetailKey key = gdp->getUniqueId();
-	UT_ASSERT( NOT(m_detailCache->contains(key)) );
 
-	// cache each geometry type as individual detail
-	GeometryHash hasher;
 	for (int i = 0; i < geometry.size(); ++i) {
 		const Geometry &geom = geometry[i];
-		HashKey geomHash = hasher(geom);
-		voxelKeys[i] = geomHash;
 
-		bool inCache = false;
-		DetailKey detailKey = -1;
-		if (m_voxelToDetail->count(geomHash)) {
-			CachedDetail &detailData = m_voxelToDetail->at(geomHash);
-			if (m_detailCache->contains(detailData.m_detailKey)) {
-				// geometry is already in geo cache so increase ref count
-				++detailData.m_refCnt;
-				detailKey = detailData.m_detailKey;
-				inCache = true;
-			}
-		}
-
-		if (NOT(inCache)) {
-			// geometry is NOT in geo cache so insert as new item and init ref count to 1
-			GU_Detail *voxelgdp = new GU_Detail();
-			detailKey = voxelgdp->getUniqueId();
-			UT_ASSERT( NOT(m_detailCache->contains(detailKey)) );
-
-			createProxyGeometry(geom, *voxelgdp);
-
-			GU_DetailHandle &voxelGdh = (*m_detailCache)[detailKey];
-			UT_ASSERT( NOT(voxelGdh.isValid()) );
-
-			voxelGdh.allocateAndSet(voxelgdp);
-
-			CachedDetail &detailData = (*m_voxelToDetail)[geomHash];
-			detailData.m_detailKey = detailKey;
-			detailData.m_refCnt = 1;
-		}
-
-		GU_DetailHandle &voxelGdh = (*m_detailCache)[detailKey];
-		UT_ASSERT( voxelGdh.isValid() );
-
-		// now pack the voxel geo in the main detail for this frame
-		GU_PackedGeometry::packGeometry(*gdp, voxelGdh);
+		createProxyGeometry(geom, *gdp);
 	}
 
-	// cache main detail for this frame
-	GU_DetailHandle &gdh = (*m_detailCache)[key];
-	UT_ASSERT( NOT(gdh.isValid()) );
+	const DetailKey key = gdp->getUniqueId();
 
+	GU_DetailHandle &gdh = (*m_detailCache)[key];
 	gdh.allocateAndSet(gdp);
+
+	CachedFrame &frameData = (*m_frameCache)[frameIdx];
 	frameData.setDetailKey(lod, key);
+	frameData.m_bbox = m_proxy->getBBox();
 
 	return true;
 }
@@ -591,7 +526,7 @@ void VRayProxyCache::updateDetailCacheForKeys(const HashKeys &voxelKeys)
 	for (const auto &voxelKey : voxelKeys) {
 		if (m_voxelToDetail->count(voxelKey)) {
 			CachedDetail& detailData = m_voxelToDetail->at(voxelKey);
-			--detailData.m_refCnt;
+			// --detailData.m_refCnt;
 
 			if (   detailData.m_refCnt <= 0
 				|| NOT(m_detailCache->contains(detailData.m_detailKey)) )
