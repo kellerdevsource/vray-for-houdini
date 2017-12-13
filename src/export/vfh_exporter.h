@@ -554,6 +554,9 @@ public:
 
 	/// Converts different socket types
 	/// @param[out] conPluginInfo - generated connection plugin info
+	/// @param[in] curSockInfo - the socket 
+	/// @param[in] fromSocketInfo - type of the connection
+	/// @param[in] pluginDesc - the plugin description
 	void autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const Parm::SocketDesc &curSockInfo, const Parm::SocketDesc *fromSocketInfo, Attrs::PluginDesc &pluginDesc);
 
 	/// Helper function to fill in plugin description attributes from VOP node connected inputs
