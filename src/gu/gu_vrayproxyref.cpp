@@ -91,14 +91,19 @@ VRayProxyRefKey VRayProxyRef::getKey() const
 	return key;
 }
 
-void VRayProxyRef::detailRebuild()
+int VRayProxyRef::detailRebuild()
 {
 	const VRayProxyRefKey &vrmeshKey = getKey();
 
-	m_detail = GetVRayProxyDetail(vrmeshKey);
+	const GU_DetailHandle &getail = GetVRayProxyDetail(vrmeshKey);
+
+	const int res = m_detail != getail;
+	m_detail = getail;
 
 	if (!m_detail.isValid()) {
 		// XXX: Remove after fixing the issue.
 		vassert(false);
 	}
+
+	return res;
 }

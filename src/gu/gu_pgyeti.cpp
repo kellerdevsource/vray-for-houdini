@@ -157,7 +157,7 @@ static void buildHairDetailFromGroup(const H5::Group &furGroup, GU_Detail &gdp, 
 	}
 }
 
-void VRayPgYetiRef::detailRebuild()
+int VRayPgYetiRef::detailRebuild()
 {
 	GU_Detail *gdp = new GU_Detail();
 
@@ -190,5 +190,8 @@ void VRayPgYetiRef::detailRebuild()
 		}
 	}
 
+	// TODO: Detail caching.
 	m_detail.allocateAndSet(gdp);
+
+	return true;
 }

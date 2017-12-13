@@ -42,12 +42,12 @@ public:
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
 
 private:
-	void detailRebuild() VRAY_OVERRIDE;
+	int detailRebuild() VRAY_OVERRIDE;
 
 	/// Re-builds *.vrscene preview detail.
 	/// @param vrsceneDesc *.vrscene file preview data.
 	/// @param flipAxis Flip axis Z-Y.
-	void detailRebuild(VUtils::Vrscene::Preview::VrsceneDesc *vrsceneDesc, int flipAxis);
+	int detailRebuild(VUtils::Vrscene::Preview::VrsceneDesc *vrsceneDesc, int flipAxis);
 
 	/// Returns mesh sample time based on animation overrides settings.
 	/// @param t Current time.

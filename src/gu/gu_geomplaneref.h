@@ -33,7 +33,7 @@ public:
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
 
 private:
-	void detailRebuild() VRAY_OVERRIDE;
+	int detailRebuild() VRAY_OVERRIDE;
 };
 
 } // namespace VRayForHoudini

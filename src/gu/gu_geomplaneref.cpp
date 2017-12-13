@@ -69,7 +69,7 @@ static void addPlainPoint(GU_Detail &gdp, UT_BoundingBox &bbox,
 	bbox.enlargeBounds(point);
 }
 
-void GeomPlaneRef::detailRebuild()
+int GeomPlaneRef::detailRebuild()
 {
 	const float size = getPlaneSize();
 
@@ -86,4 +86,6 @@ void GeomPlaneRef::detailRebuild()
 	poly->reverse();
 
 	m_detail.allocateAndSet(meshDetail);
+
+	return true;
 }

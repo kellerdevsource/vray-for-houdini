@@ -313,7 +313,7 @@ bool VRayVolumeGridRef::unpack(GU_Detail&) const
 	return false;
 }
 
-void VRayVolumeGridRef::detailRebuild()
+int VRayVolumeGridRef::detailRebuild()
 {
 	using namespace std;
 	using namespace chrono;
@@ -322,17 +322,21 @@ void VRayVolumeGridRef::detailRebuild()
 
 	const VolumeCacheKey &key = genKey();
 	if (!key.isValid()) {
-		return;
+		return true;
 	}
 
 	VolumeCacheData &data = getCache(key);
 	if (!data.aurPtr) {
-		return;
+		return true;
 	}
+
+	const int res = m_detail != data.detailHandle;
 
 	m_detail = data.detailHandle;
 
 	memcpy(getChannelDataRanges().data(), data.dataRange.data(), DataRangeMapSize);
+
+	return res;
 }
 
 UT_StringArray VRayVolumeGridRef::getCacheChannels() const {

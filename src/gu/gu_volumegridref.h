@@ -139,7 +139,7 @@ protected:
 	int updateFrom(const UT_Options &options) VRAY_OVERRIDE;
 #endif
 
-	void detailRebuild() VRAY_OVERRIDE;
+	int detailRebuild() VRAY_OVERRIDE;
 
 private:
 	/// Sets fetch and evict callback.

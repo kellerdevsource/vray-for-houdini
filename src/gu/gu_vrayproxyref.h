@@ -40,7 +40,7 @@ private:
 	/// Returns a key for cache look-up.
 	VRayProxyRefKey getKey() const;
 
-	void detailRebuild() VRAY_OVERRIDE;
+	int detailRebuild() VRAY_OVERRIDE;
 };
 
 } // namespace VRayForHoudini

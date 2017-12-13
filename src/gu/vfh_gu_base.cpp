@@ -113,9 +113,10 @@ int VRayBaseRef::updateFrom(const UT_Options &options)
 	m_options = options;
 
 	detailClear();
-	detailRebuild();
 
-	topologyDirty();
+	if (detailRebuild()) {
+		topologyDirty();
+	}
 
 	return true;
 }

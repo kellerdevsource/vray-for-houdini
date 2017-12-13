@@ -110,7 +110,7 @@ double VRaySceneRef::getFrame(fpreal t) const
 	return t;
 }
 
-void VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
+int VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 {
 	const fpreal t = getFrame(getCurrentFrame());
 
@@ -163,11 +163,16 @@ void VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 		}
 	}
 
+	// TODO: Detail caching.
 	m_detail.allocateAndSet(meshDetail);
+
+	return true;
 }
 
-void VRaySceneRef::detailRebuild()
+int VRaySceneRef::detailRebuild()
 {
+	int res;
+
 	VrsceneSettings vrsceneSettings;
 	vrsceneSettings.usePreview = true;
 	vrsceneSettings.previewFacesCount = 100000;
@@ -176,6 +181,7 @@ void VRaySceneRef::detailRebuild()
 	VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(getFilepath(), &vrsceneSettings);
 	if (!vrsceneDesc) {
 		detailClear();
+		res = true;
 	}
 	else {
 		// Update flip axis intrinsic.
@@ -186,9 +192,12 @@ void VRaySceneRef::detailRebuild()
 
 		if (!getAddNodes()) {
 			detailClear();
+			res = true;
 		}
 		else {
-			detailRebuild(vrsceneDesc, shouldFlip);
+			res = detailRebuild(vrsceneDesc, shouldFlip);
 		}
 	}
+
+	return res;
 }

@@ -53,7 +53,8 @@ public:
 
 private:
 	/// Rebuilds detail geometry.
-	virtual void detailRebuild()=0;
+	/// @returns True if geometry changed.
+	virtual int detailRebuild()=0;
 
 protected:
 	/// Clear detail.
