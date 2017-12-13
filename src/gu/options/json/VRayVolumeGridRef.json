@@ -2,9 +2,7 @@
     "class_name" : "VRayVolumeGridRef",
     "intrinsics" : [
         { "type" : "CHAR",  "name" : "cache_path", "value" : "" },
-        { "type" : "CHAR",  "name" : "cache_path_prefix", "value" : "" },
-        { "type" : "CHAR",  "name" : "cache_path_suffix", "value" : "" },
-        { "type" : "CHAR",  "name" : "current_cache_path", "value" :"" },
+        { "type" : "CHAR",  "name" : "cache_path_raw", "value" : "" },
         { "type" : "CHAR",  "name" : "phx_channel_map", "value" : "", "size" : 0 },
         { "type" : "CHAR",  "name" : "usrchmap", "value" : "" },
         { "type" : "FLOAT", "name" : "current_frame", "value" : 0 },

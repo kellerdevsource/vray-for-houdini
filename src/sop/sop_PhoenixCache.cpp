@@ -32,7 +32,6 @@ void PhxShaderCache::setTimeDependent()
 	evalStringRaw(raw, "cache_path", 0, 0.0f);
 
 	// Check if file contains frame pattern "$F".
-	// If it does, then we need to replace it with Phoenix compatible pattern (####).
 	flags().setTimeDep(raw.findString("$F", false, false));
 }
 
@@ -50,7 +49,10 @@ void PhxShaderCache::updatePrimitive(const OP_Context &context)
 
 	const int isTimeDependent = flags().getTimeDep();
 
-	primOptions.setOptionB("literal_cache_path", !isTimeDependent);
+	UT_String rawLoadPath;
+	evalStringRaw(rawLoadPath, "cache_path", 0, t);
+	primOptions.setOptionS("cache_path_raw", rawLoadPath);
+
 	primOptions.setOptionF("current_frame", isTimeDependent ? context.getFloatFrame() : 0.0);
 
 	updatePrimitiveFromOptions(primOptions);
