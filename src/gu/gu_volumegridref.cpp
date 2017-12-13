@@ -546,7 +546,11 @@ int VRayVolumeGridRef::splitPath(const UT_String &path, std::string &prefix, std
 	return frame.length();
 }
 
+#ifdef HDK_16_5
+int VRayVolumeGridRef::updateFrom(GU_PrimPacked *prim, const UT_Options &options)
+#else
 int VRayVolumeGridRef::updateFrom(const UT_Options &options)
+#endif
 {
 	UT_Options newOptions(options);
 
@@ -584,13 +588,17 @@ int VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	newOptions.setOptionS(IntrinsicNames::current_cache_path, getConvertedPath(false).c_str());
 	newOptions.setOptionS(IntrinsicNames::cache_path, getConvertedPath(true).c_str());
 
+#ifdef HDK_16_5
+	const int updateRes = VRayBaseRef::updateFrom(prim, newOptions);
+#else
 	const int updateRes = VRayBaseRef::updateFrom(newOptions);
+#endif
 	if (updateRes || m_channelDirty) {
 		buildMapping();
 
 #ifdef HDK_16_5
-		getPrim()->transformDirty();
-		getPrim()->attributeDirty();
+		prim->transformDirty();
+		prim->attributeDirty();
 #else
 		transformDirty();
 		attributeDirty();

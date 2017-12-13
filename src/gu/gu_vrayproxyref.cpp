@@ -9,6 +9,7 @@
 //
 
 #include "vfh_vray.h"
+#include "vfh_log.h"
 #include "gu_vrayproxyref.h"
 
 using namespace VRayForHoudini;

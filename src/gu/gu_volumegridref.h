@@ -133,7 +133,11 @@ public:
 
 protected:
 	// From VRayBaseRef.
+#ifdef HDK_16_5
+	int updateFrom(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE;
+#else
 	int updateFrom(const UT_Options &options) VRAY_OVERRIDE;
+#endif
 
 	void detailRebuild() VRAY_OVERRIDE;
 

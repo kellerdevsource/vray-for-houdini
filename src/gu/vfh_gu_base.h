@@ -29,7 +29,6 @@ class VRayBaseRef
 public:
 	VRayBaseRef();
 	VRayBaseRef(const VRayBaseRef &other);
-
 	virtual ~VRayBaseRef() {}
 
 	// From GU_PackedImpl.
@@ -41,8 +40,8 @@ public:
 	void getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const VRAY_OVERRIDE;
 	void getWidthRange(fpreal &wmin, fpreal &wmax) const VRAY_OVERRIDE;
 #ifdef HDK_16_5
-	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
-	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
+	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(prim, options); }
+	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(prim, options); }
 #else
 	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
 	void update(const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
@@ -63,7 +62,11 @@ protected:
 	/// Updates detail from options if needed.
 	/// @param options New options set.
 	/// @returns True if detail was changed, false - otherwise.
+#ifdef HDK_16_5
+	virtual int updateFrom(GU_PrimPacked *prim, const UT_Options &options);
+#else
 	virtual int updateFrom(const UT_Options &options);
+#endif
 
 	/// Current options set.
 	UT_Options m_options;

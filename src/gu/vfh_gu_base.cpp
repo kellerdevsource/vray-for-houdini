@@ -21,7 +21,8 @@ VRayBaseRef::VRayBaseRef()
 }
 
 VRayBaseRef::VRayBaseRef(const VRayBaseRef &other)
-	: m_detail(other.m_detail)
+	: m_options(other.m_options)
+	, m_detail(other.m_detail)
 {}
 
 bool VRayBaseRef::isValid() const
@@ -64,7 +65,8 @@ void VRayBaseRef::getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const
 void VRayBaseRef::getWidthRange(fpreal &wmin, fpreal &wmax) const
 {
 	// Width is only important for curves/points.
-	wmin = wmax = 0;
+	wmin = 0;
+	wmax = 0;
 }
 
 bool VRayBaseRef::unpack(GU_Detail &destgdp) const
@@ -99,12 +101,15 @@ void VRayBaseRef::detailClear()
 	m_detail.deleteGdp();
 }
 
+#ifdef HDK_16_5
+int VRayBaseRef::updateFrom(GU_PrimPacked *prim, const UT_Options &options)
+#else
 int VRayBaseRef::updateFrom(const UT_Options &options)
+#endif
 {
 	if (m_options == options)
 		return false;
 
-	// Store new options
 	m_options = options;
 
 	detailClear();
