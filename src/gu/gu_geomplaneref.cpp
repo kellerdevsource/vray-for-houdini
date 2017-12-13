@@ -29,11 +29,10 @@ void GeomPlaneRef::install(GA_PrimitiveFactory *primFactory)
 }
 
 GeomPlaneRef::GeomPlaneRef()
-	: GeomPlaneRefOptions()
 {}
 
 GeomPlaneRef::GeomPlaneRef(const GeomPlaneRef &src)
-	: GeomPlaneRefOptions(src)
+	: GeomPlaneRefBase(src)
 {}
 
 GeomPlaneRef::~GeomPlaneRef()

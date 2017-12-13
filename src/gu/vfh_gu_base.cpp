@@ -25,11 +25,6 @@ VRayBaseRef::VRayBaseRef(const VRayBaseRef &other)
 	, m_detail(other.m_detail)
 {}
 
-VRayBaseRef::VRayBaseRef(VRayBaseRef &&other) noexcept
-	: m_options(std::move(other.m_options))
-	, m_detail(other.m_detail)
-{}
-
 bool VRayBaseRef::isValid() const
 {
 	return m_detail.isValid();
@@ -70,7 +65,8 @@ void VRayBaseRef::getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const
 void VRayBaseRef::getWidthRange(fpreal &wmin, fpreal &wmax) const
 {
 	// Width is only important for curves/points.
-	wmin = wmax = 0;
+	wmin = 0;
+	wmax = 0;
 }
 
 bool VRayBaseRef::unpack(GU_Detail &destgdp) const
@@ -78,7 +74,6 @@ bool VRayBaseRef::unpack(GU_Detail &destgdp) const
 	GU_DetailHandleAutoReadLock gdl(getPackedDetail());
 	if (!gdl.isValid())
 		return false;
-
 	return unpackToDetail(destgdp, gdl.getGdp());
 }
 
@@ -87,20 +82,15 @@ GU_ConstDetailHandle VRayBaseRef::getPackedDetail(GU_PackedContext*) const
 	return m_detail;
 }
 
-int64 VRayBaseRef::getMemoryUsage(bool inclusive) const
+int64 VRayBaseRef::getMemoryUsage(bool) const
 {
-	int64 mem = inclusive ? sizeof(VRayBaseRef) : 0;
-	mem += m_detail.getMemoryUsage(false);
-
-	return mem;
+	return m_detail.getMemoryUsage(false);
 }
 
-void VRayBaseRef::countMemory(UT_MemoryCounter &counter, bool inclusive) const
+void VRayBaseRef::countMemory(UT_MemoryCounter &counter, bool) const
 {
 	if (counter.mustCountUnshared()) {
-		int64 mem = inclusive ? sizeof(VRayBaseRef) : 0;
-		mem += m_detail.getMemoryUsage(false);
-		UT_MEMORY_DEBUG_LOG(theFactory->name(), mem);
+		const int64 mem = m_detail.getMemoryUsage(false);
 		counter.countUnshared(mem);
 	}
 }
@@ -111,12 +101,15 @@ void VRayBaseRef::detailClear()
 	m_detail.deleteGdp();
 }
 
+#ifdef HDK_16_5
+int VRayBaseRef::updateFrom(GU_PrimPacked *prim, const UT_Options &options)
+#else
 int VRayBaseRef::updateFrom(const UT_Options &options)
+#endif
 {
 	if (m_options == options)
 		return false;
 
-	// Store new options
 	m_options = options;
 
 	detailClear();

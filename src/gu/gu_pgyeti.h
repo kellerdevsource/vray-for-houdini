@@ -12,13 +12,13 @@
 #define VRAY_FOR_HOUDINI_GU_PGYETI_H
 
 #include "vfh_includes.h"
-#include "vfh_VRayPgYetiRefOptions.h"
+#include "vfh_VRayPgYetiRefBase.h"
 
 namespace VRayForHoudini {
 
 /// Yeti hair preview implemented as a packed primitive.
 class VRayPgYetiRef
-	: public VRayPgYetiRefOptions
+	: public VRayPgYetiRefBase
 {
 public:
 	static GA_PrimitiveTypeId typeId();

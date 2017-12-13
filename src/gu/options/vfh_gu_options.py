@@ -180,7 +180,7 @@ def main(fileRoot, jsonFilePath):
 
 	className = os.path.splitext(os.path.basename(jsonFilePath))[0]
 
-	OPT_CLASS_NAME = "%sOptions" % className
+	OPT_CLASS_NAME = "%sBase" % className
 
 	intrAttrs = []
 
@@ -228,9 +228,6 @@ public:
 	{}
 	%CLASS_NAME%(const %CLASS_NAME% &other)
 		: VRayBaseRef(other)
-	{}
-	%CLASS_NAME%(%CLASS_NAME% &&other) noexcept
-		: VRayBaseRef(std::move(other))
 	{}
 %METHODS%
 	%REG_METHODS%

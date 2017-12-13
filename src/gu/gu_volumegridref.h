@@ -13,12 +13,10 @@
 
 #ifdef CGR_HAS_AUR
 
-#include "vfh_vray.h"
-
+#include "vfh_includes.h"
 #include "vfh_lru_cache.hpp"
 #include "vfh_hashes.h"
-#include "vfh_includes.h"
-#include "vfh_VRayVolumeGridRefOptions.h"
+#include "vfh_VRayVolumeGridRefBase.h"
 
 #include <aurinterface.h>
 
@@ -66,7 +64,7 @@ namespace VRayForHoudini {
 
 /// Implementation for a volume grid packed primitive
 class VRayVolumeGridRef
-	: public VRayVolumeGridRefOptions
+	: public VRayVolumeGridRefBase
 {
 	// These *must* match Phoenix values.
 	enum AnimationMode {
@@ -112,7 +110,6 @@ private:
 public:
 	VRayVolumeGridRef();
 	VRayVolumeGridRef(const VRayVolumeGridRef &src);
-	VRayVolumeGridRef(VRayVolumeGridRef &&src) noexcept;
 	virtual ~VRayVolumeGridRef();
 
 	// From GU_PackedImpl.
@@ -136,7 +133,11 @@ public:
 
 protected:
 	// From VRayBaseRef.
+#ifdef HDK_16_5
+	int updateFrom(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE;
+#else
 	int updateFrom(const UT_Options &options) VRAY_OVERRIDE;
+#endif
 
 	void detailRebuild() VRAY_OVERRIDE;
 

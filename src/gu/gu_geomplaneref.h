@@ -12,13 +12,13 @@
 #define VRAY_FOR_HOUDINI_GEOMPLANEREF_H
 
 #include "vfh_includes.h"
-#include "vfh_GeomPlaneRefOptions.h"
+#include "vfh_GeomPlaneRefBase.h"
 
 namespace VRayForHoudini {
 
 /// V-Ray Infinite Plane implemented as a packed primitive.
 class GeomPlaneRef
-	: public GeomPlaneRefOptions
+	: public GeomPlaneRefBase
 {
 public:
 	static GA_PrimitiveTypeId typeId();

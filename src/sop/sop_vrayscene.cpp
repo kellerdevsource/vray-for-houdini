@@ -13,18 +13,19 @@
 #include "sop_vrayscene.h"
 
 using namespace VRayForHoudini;
+using namespace SOP;
 
-SOP::VRayScene::VRayScene(OP_Network *parent, const char *name, OP_Operator *entry)
+VRayScene::VRayScene(OP_Network *parent, const char *name, OP_Operator *entry)
 	: NodePackedBase("VRaySceneRef", parent, name, entry)
 {}
 
-void SOP::VRayScene::setPluginType()
+void VRayScene::setPluginType()
 {
 	pluginType = VRayPluginType::GEOMETRY;
 	pluginID = "VRayScene";
 }
 
-void SOP::VRayScene::setTimeDependent()
+void VRayScene::setTimeDependent()
 {
 #if 0
 	// TODO: Implement animation caching and enable this.
@@ -46,7 +47,7 @@ void SOP::VRayScene::setTimeDependent()
 #endif
 }
 
-void SOP::VRayScene::updatePrimitive(const OP_Context &context)
+void VRayScene::updatePrimitive(const OP_Context &context)
 {
 	vassert(m_primPacked);
 
@@ -74,7 +75,7 @@ void SOP::VRayScene::updatePrimitive(const OP_Context &context)
 	}
 
 	primOptions.setOptionS("plugin_mapping", pluginMappings);
-	primOptions.setOptionF("current_frame", isTimeDependent ? context.getFloatFrame() : 0.0f);
+	primOptions.setOptionF("current_frame", flags().getTimeDep() ? context.getFloatFrame() : 0.0f);
 
 	updatePrimitiveFromOptions(primOptions);
 }
