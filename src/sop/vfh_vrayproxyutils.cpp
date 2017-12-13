@@ -37,12 +37,12 @@ VRayProxyCacheMan& VRayForHoudini::GetVRayProxyCacheManager()
 
 GU_DetailHandle VRayForHoudini::GetVRayProxyDetail(const VRayProxyRefKey &options)
 {
+	UT_AutoLock lock(theLock);
+
 	if (!options.filePath.isstring())
 		return GU_DetailHandle();
 
 	const std::string filepath(options.filePath.toStdString());
-
-	UT_AutoLock lock(theLock);
 
 	if (NOT(theCacheMan.contains(filepath))) {
 		// insert entry in cache
@@ -62,9 +62,9 @@ GU_DetailHandle VRayForHoudini::GetVRayProxyDetail(const VRayProxyRefKey &option
 
 bool VRayForHoudini::ClearVRayProxyCache(const UT_String &filepath)
 {
-	const std::string sfilepath = filepath.toStdString();
-
 	UT_AutoLock lock(theLock);
+
+	const std::string sfilepath = filepath.toStdString();
 
 	VRayProxyCacheMan &theCacheMan = GetVRayProxyCacheManager();
 	if (NOT(theCacheMan.contains(sfilepath))) {
@@ -74,19 +74,18 @@ bool VRayForHoudini::ClearVRayProxyCache(const UT_String &filepath)
 	VRayProxyCache &fileCache = theCacheMan[sfilepath];
 	fileCache.clearCache();
 	theCacheMan.erase(sfilepath);
+
 	return true;
 }
 
 bool VRayForHoudini::GetVRayProxyBounds(const VRayProxyRefKey &options, UT_BoundingBox &box)
 {
-	UT_StringHolder utfilepath = options.filePath;
-	if (NOT(utfilepath.isstring())) {
-		return false;
-	}
-
-	const std::string filepath(utfilepath);
-
 	UT_AutoLock lock(theLock);
+
+	if (!options.filePath.isstring())
+		return false;
+
+	const std::string filepath(options.filePath.toStdString());
 
 	if (NOT(theCacheMan.contains(filepath))) {
 		// if we don't have cache for this file just return false
@@ -94,6 +93,7 @@ bool VRayForHoudini::GetVRayProxyBounds(const VRayProxyRefKey &options, UT_Bound
 	}
 
 	VRayProxyCache &cache = theCacheMan[filepath];
+
 	// NOTE: this will only work correcly if we've queried the detail first
 	return cache.getBounds(options, box);
 }
