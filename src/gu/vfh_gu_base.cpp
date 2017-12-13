@@ -98,7 +98,7 @@ void VRayBaseRef::countMemory(UT_MemoryCounter &counter, bool) const
 void VRayBaseRef::detailClear()
 {
 	m_bbox.initBounds();
-	m_detail.deleteGdp();
+	m_detail.clear();
 }
 
 #ifdef HDK_16_5

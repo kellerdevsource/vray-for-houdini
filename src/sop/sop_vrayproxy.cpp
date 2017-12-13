@@ -30,7 +30,7 @@ static int cbClearCache(void *data, int index, fpreal t, const PRM_Template *tpl
 	node->evalString(filepath, "file", 0, t);
 
 	if (filepath.isstring()) {
-		ClearVRayProxyCache(filepath);
+		clearVRayProxyCache(filepath);
 	}
 
 	return 0;

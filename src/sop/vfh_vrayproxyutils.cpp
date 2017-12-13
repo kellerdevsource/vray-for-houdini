@@ -9,15 +9,13 @@
 //
 
 #include "vfh_vrayproxyutils.h"
+#include "vfh_vray.h"
+#include "vfh_log.h"
+#include "vfh_hashes.h"
 
 #include <GU/GU_Detail.h>
 #include <GU/GU_DetailHandle.h>
-#include <GU/GU_PackedGeometry.h>
 #include <GU/GU_PrimPoly.h>
-#include <HOM/HOM_Vector2.h>
-#include <HOM/HOM_BaseKeyframe.h>
-#include <HOM/HOM_playbar.h>
-#include <HOM/HOM_Module.h>
 
 using namespace VRayForHoudini;
 
@@ -27,605 +25,486 @@ enum DataError {
 	DE_INVALID_FILE
 };
 
-static UT_Lock           theLock;
-static VRayProxyCacheMan theCacheMan;
-
-VRayProxyCacheMan& VRayForHoudini::GetVRayProxyCacheManager()
+struct MeshVoxelRAII
 {
-	return theCacheMan;
-}
-
-GU_DetailHandle VRayForHoudini::GetVRayProxyDetail(const VRayProxyRefKey &options)
-{
-	UT_AutoLock lock(theLock);
-
-	if (!options.filePath.isstring())
-		return GU_DetailHandle();
-
-	const std::string filepath(options.filePath.toStdString());
-
-	if (NOT(theCacheMan.contains(filepath))) {
-		// insert entry in cache
-		VRayProxyCache &cache = theCacheMan[filepath];
-		// try init
-		VUtils::ErrorCode errCode = cache.init(filepath.c_str());
-		if (errCode.error()) {
-			// if we've failed to init delete the entry we've just created
-			theCacheMan.erase(filepath);
-			return GU_DetailHandle();
-		}
-	}
-
-	VRayProxyCache &cache = theCacheMan[filepath];
-	return cache.getDetail(options);
-}
-
-bool VRayForHoudini::ClearVRayProxyCache(const UT_String &filepath)
-{
-	UT_AutoLock lock(theLock);
-
-	const std::string sfilepath = filepath.toStdString();
-
-	VRayProxyCacheMan &theCacheMan = GetVRayProxyCacheManager();
-	if (NOT(theCacheMan.contains(sfilepath))) {
-		return false;
-	}
-
-	VRayProxyCache &fileCache = theCacheMan[sfilepath];
-	fileCache.clearCache();
-	theCacheMan.erase(sfilepath);
-
-	return true;
-}
-
-bool VRayForHoudini::GetVRayProxyBounds(const VRayProxyRefKey &options, UT_BoundingBox &box)
-{
-	UT_AutoLock lock(theLock);
-
-	if (!options.filePath.isstring())
-		return false;
-
-	const std::string filepath(options.filePath.toStdString());
-
-	if (NOT(theCacheMan.contains(filepath))) {
-		// if we don't have cache for this file just return false
-		return false;
-	}
-
-	VRayProxyCache &cache = theCacheMan[filepath];
-
-	// NOTE: this will only work correcly if we've queried the detail first
-	return cache.getBounds(options, box);
-}
-
-VRayProxyCache::GeometryHash::result_type VRayProxyCache::GeometryHash::operator()(const argument_type &val) const
-{
-	VoxelType voxelType = val.first;
-	VUtils::MeshVoxel *voxel = val.second;
-	Hash::MHash hashKey = 0;
-
-	if (voxel) {
-		VUtils::MeshChannel *channel = nullptr;
-
-		if ( voxelType & MVF_GEOMETRY_VOXEL ) {
-			channel = voxel->getChannel(VERT_GEOM_CHANNEL);
-		}
-		else if ( voxelType & MVF_HAIR_GEOMETRY_VOXEL ) {
-			channel = voxel->getChannel(HAIR_VERT_CHANNEL);
-		}
-
-		// TODO: add particles/instances
-
-		if (channel && channel->data) {
-			const int len = channel->elementSize * channel->numElements;
-			const uint32 seed = (len < sizeof(uint32))? 0 : *(reinterpret_cast<uint32 *>(channel->data));
-			Hash::MurmurHash3_x86_32(channel->data, len, seed, &hashKey);
-		}
-	}
-
-	return hashKey;
-}
-
-VRayProxyCache::VRayProxyCache()
-	: m_proxy(nullptr)
-	, m_frameCache(new FrameCache())
-	, m_detailCache(new DetailCache())
-	, m_voxelToDetail(new VoxelToDetailMap())
-{
-	m_frameCache->setEvictCallback(FrameCache::CbEvict(boost::bind(&VRayProxyCache::evictFrame, this, _1, _2)));
-}
-
-VRayProxyCache::~VRayProxyCache()
-{
-	reset();
-}
-
-VUtils::ErrorCode VRayProxyCache::init(const VUtils::CharString &filepath)
-{
-	VUtils::ErrorCode res;
-
-	// cleanup
-	reset();
-
-	// init file
-	VUtils::CharString path(filepath);
-	if (VUtils::bmpCheckAssetPath(path, NULL, NULL, false)) {
-		VUtils::MeshFile *proxy = VUtils::newDefaultMeshFile(filepath.ptr());
-		if (proxy) {
-			if (proxy->init(filepath.ptr())) {
-				m_proxy = proxy;
-				m_filepath = filepath;
-			} else {
-				VUtils::deleteDefaultMeshFile(proxy);
-				res.setError(__FUNCTION__, DE_INVALID_FILE, "File initialization error.");
-			}
-		} else {
-			res.setError(__FUNCTION__, DE_INVALID_FILE, "File instantiation error.");
-		}
-	} else {
-		res.setError(__FUNCTION__, DE_INVALID_FILE, "Invalid file path.");
-	}
-
-	if (res.error()) {
-		// error occured while initilizing the mesh file
-		return res;
-	}
-
-	UT_ASSERT( m_proxy );
-
-	// init cache capacity
-	HOM_Module &hou = HOM();
-	HOM_Vector2 *animRange = hou.playbar().playbackRange();
-	int nFrames = 1;
-	if (animRange) {
-		HOM_Vector2 &range = *animRange;
-		nFrames = range[1] - range[0];
-	}
-	nFrames = std::min(std::max(m_proxy->getNumFrames(), 1), nFrames);
-
-	m_frameCache->setCapacity(nFrames);
-	// TODO: need to set item cache capacity to a reasonable value
-	//       when switching bewtween preview or full geometry
-	//       item cache might be too big for preview geometry
-	//       or too small for full geometry to hold all voxels
-	m_detailCache->setCapacity(nFrames * (m_proxy->getNumVoxels() + 1));
-
-	return res;
-}
-
-
-void VRayProxyCache::reset()
-{
-	clearCache();
-	if (m_proxy) {
-		VUtils::deleteDefaultMeshFile(m_proxy);
-	}
-	m_proxy = nullptr;
-	m_filepath = "";
-}
-
-
-void VRayProxyCache::clearCache()
-{
-	if (m_frameCache) {
-		m_frameCache->clear();
-	}
-	if (m_detailCache) {
-		m_detailCache->clear();
-	}
-	if (m_voxelToDetail) {
-		m_voxelToDetail->clear();
-	}
-}
-
-
-int VRayProxyCache::isCached(const VRayProxyRefKey &options)
-{
-	if (NOT(m_proxy)) {
-		return false;
-	}
-
-	FrameKey frameIdx = getFrameIdx(options);
-	LOD lod = UTverify_cast< LOD >(options.lod);
-
-	return contains(frameIdx, lod);
-}
-
-
-bool VRayProxyCache::getBounds(const VRayProxyRefKey &options, UT_BoundingBox &box) const
-{
-	if (NOT(m_proxy)) {
-		return false;
-	}
-
-	FrameKey frameIdx = getFrameIdx(options);
-	if (NOT(m_frameCache->contains(frameIdx))) {
-		return false;
-	}
-
-	CachedFrame &frameData = (*m_frameCache)[frameIdx];
-	box.initBounds(frameData.m_bbox.pmin.x, frameData.m_bbox.pmin.y, frameData.m_bbox.pmin.z);
-	box.enlargeBounds(frameData.m_bbox.pmax.x, frameData.m_bbox.pmax.y, frameData.m_bbox.pmax.z);
-	return true;
-}
-
-
-GU_DetailHandle VRayProxyCache::getDetail(const VRayProxyRefKey &options)
-{
-	if (NOT(m_proxy)) {
-		return GU_DetailHandle();
-	}
-
-	FrameKey frameIdx = getFrameIdx(options);
-	LOD lod = UTverify_cast< LOD >(options.lod);
-
-	if (NOT(contains(frameIdx, lod))) {
-		// if not in cache load and cache corresponding geometry
-		cache(frameIdx, lod);
-	}
-
-	if (m_frameCache->contains(frameIdx)) {
-		CachedFrame &frameData = (*m_frameCache)[frameIdx];
-		if ( frameData.hasDetailKey(lod)) {
-			const DetailKey &key = frameData.getDetailKey(lod);
-			if (m_detailCache->contains(key)) {
-				GU_DetailHandle &gdh = (*m_detailCache)[ key ];
-				return GU_DetailHandle(gdh);
-			}
-		}
-	}
-
-	return GU_DetailHandle();
-}
-
-
-bool VRayProxyCache::cache(const FrameKey &frameIdx, const LOD &lod)
-{
-	bool res = false;
-
-	if (frameIdx <= m_proxy->getNumFrames() - 1) {
-		m_proxy->setCurrentFrame(frameIdx);
-	}
-
-	const int numVoxels = m_proxy->getNumVoxels();
-	std::vector< VUtils::MeshVoxel* > voxels;
-	std::vector< Geometry > geometry;
-	switch (lod) {
-		case LOD_BBOX:
-		{
-			// only load and show bbox of the geometry
-			CachedFrame &frameData = (*m_frameCache)[frameIdx];
-			frameData.m_bbox = m_proxy->getBBox();
-
-			GU_Detail *gdp = new GU_Detail();
-			createBBoxGeometry(frameData.m_bbox, *gdp);
-
-			DetailKey key = gdp->getUniqueId();
-			UT_ASSERT( NOT(m_detailCache->contains(key)) );
-
-			// cache the detail
-			GU_DetailHandle &gdh = (*m_detailCache)[key];
-			UT_ASSERT( NOT(gdh.isValid()) );
-
-			gdh.allocateAndSet(gdp);
-			frameData.setDetailKey(lod, key);
-
-			res = true;
-			break;
-		}
-		case LOD_PREVIEW:
-		{
-			// load geometry from the preview voxel
-			voxels.reserve(1);
-			geometry.reserve(2);
-			// last voxel in file is reserved for preview geometry
-			VUtils::MeshVoxel *voxel = getVoxel(frameIdx, numVoxels - 1);
-			if (voxel) {
-				voxels.push_back(voxel);
-				getPreviewGeometry(*voxel, geometry);
-			}
-			break;
-		}
-		case LOD_FULL:
-		{
-			// load geometry from all voxels except preview
-			voxels.reserve(numVoxels);
-			geometry.reserve(2 * numVoxels);
-			// last voxel in file is reserved for preview geometry, so skip it
-			for (int i = 0; i < numVoxels - 1; ++i) {
-				VUtils::MeshVoxel *voxel = getVoxel(frameIdx, i);
-				if (voxel) {
-					voxels.push_back(voxel);
-					getPreviewGeometry(*voxel, geometry);
-				}
-			}
-			break;
-		}
-		default:
-			break;
-	}
-
-	if (geometry.size()) {
-		// we have some geometry to instert in cache
-		res = insert(frameIdx, lod, geometry);
-	}
-
-	for (VUtils::MeshVoxel *voxel : voxels) {
-		// release allocated voxels
-		m_proxy->releaseVoxel(voxel);
-	}
-
-	return res;
-}
-
-bool VRayProxyCache::contains(const FrameKey &frameIdx, const LOD &lod)
-{
-	if (NOT(m_frameCache->contains(frameIdx))) {
-		return false;
-	}
-
-	CachedFrame &frameData = (*m_frameCache)[frameIdx];
-	if (NOT(frameData.hasDetailKey(lod))) {
-		return false;
-	}
-
-	// geometry for this frame is considered cached if all details created
-	// for it are in the geo cache i.e. details for each voxel if lod == LOD_FULL
-	// and/or details for mesh/hair/particles
-	int inCache = m_detailCache->contains(frameData.getDetailKey(lod));
-	if (NOT(inCache)) {
-		// detail is evicted from detail cache need to update the frame cache
-		if (frameData.hasVoxelKeys(lod)) {
-			updateDetailCacheForKeys(frameData.getVoxelKeys(lod));
-		}
-		frameData.eraseLOD(lod);
-	}
-
-	return inCache;
-}
-
-bool VRayProxyCache::insert(const FrameKey &frameIdx, const LOD &lod, const std::vector<Geometry> &geometry)
-{
-	vassert(!contains(frameIdx, lod));
-
-	GU_Detail *gdp = new GU_Detail();
-
-	for (int i = 0; i < geometry.size(); ++i) {
-		const Geometry &geom = geometry[i];
-
-		createProxyGeometry(geom, *gdp);
-	}
-
-	const DetailKey key = gdp->getUniqueId();
-
-	GU_DetailHandle &gdh = (*m_detailCache)[key];
-	gdh.allocateAndSet(gdp);
-
-	CachedFrame &frameData = (*m_frameCache)[frameIdx];
-	frameData.setDetailKey(lod, key);
-	frameData.m_bbox = m_proxy->getBBox();
-
-	return true;
-}
-
-bool VRayProxyCache::erase(const FrameKey &frameIdx)
-{
-	if (NOT(m_frameCache->contains(frameIdx))) {
-		return false;
-	}
-
-	CachedFrame &frameData = (*m_frameCache)[frameIdx];
-	evictFrame(frameIdx, frameData);
-
-	return m_frameCache->erase(frameIdx);
-}
-
-void VRayProxyCache::evictFrame(const FrameKey &frameIdx, CachedFrame &frameData)
-{
-	// we need to cleanup data for this frame
-	// first erase main details for each lod
-	for (const auto &keyPair : frameData.m_lodToDetail) {
-		const LOD &lod = keyPair.first;
-		const DetailKey &detailKey = keyPair.second;
-
-		if (m_detailCache->contains(detailKey)) {
-			m_detailCache->erase(detailKey);
-		}
-	}
-
-	// second update ref counts on voxel details created for this frame
-	for (const auto &keyPair : frameData.m_voxelkeys) {
-		const LOD &lod = keyPair.first;
-		const HashKeys &voxelKeys = keyPair.second;
-
-		updateDetailCacheForKeys(voxelKeys);
-	}
-}
-
-void VRayProxyCache::updateDetailCacheForKeys(const HashKeys &voxelKeys)
-{
-	// decrease ref counts on voxel details for the given keys
-	// and if necessary remove them from the geo cache
-	for (const auto &voxelKey : voxelKeys) {
-		if (m_voxelToDetail->count(voxelKey)) {
-			CachedDetail& detailData = m_voxelToDetail->at(voxelKey);
-			// TODO: Implement me!
-			// --detailData.m_refCnt;
-
-			if (detailData.m_refCnt <= 0 ||
-				NOT(m_detailCache->contains(detailData.m_detailKey)))
-			{
-				m_detailCache->erase(detailData.m_detailKey);
-				m_voxelToDetail->erase(voxelKey);
-			}
-		}
-	}
-}
-
-VRayProxyCache::FrameKey VRayProxyCache::getFrameIdx(const VRayProxyRefKey &options) const
-{
-	vassert(m_proxy);
-
-	const float f = options.f;
-	const int animType = options.animType;
-	const fpreal64 animOffset = options.animOffset;
-	const fpreal64 animSpeed = options.animSpeed;
-	const bool animOverride = options.animOverride;
-	const int animStart  = animOverride ? options.animStart : 0;
-	int animLength = animOverride ? options.animLength : 0;
-	if (animLength <= 0) {
-		animLength = VUtils::Max(m_proxy->getNumFrames(), 1);
-	}
-
-	return static_cast<FrameKey>(
-		VUtils::fast_round(calcFrameIndex(f,
-			static_cast<VUtils::MeshFileAnimType::Enum>(animType),
-			animStart,
-			animLength,
-			animOffset,
-			animSpeed)));
-}
-
-VUtils::MeshVoxel* VRayProxyCache::getVoxel(const FrameKey &frameKey, int voxelIdx) const
-{
-	UT_ASSERT( m_proxy );
-
-	VUtils::MeshVoxel *voxel = nullptr;
-	if (   voxelIdx < 0
-		|| voxelIdx >= m_proxy->getNumVoxels() )
+	MeshVoxelRAII(VUtils::MeshInterface *mi, int index)
+		: mi(mi)
 	{
-		return voxel;
-	}
+		vassert(mi && "MeshInterface is NULL");
 
-	voxel = m_proxy->getVoxel(voxelIdx);
-	return voxel;
-}
-
-void VRayProxyCache::getPreviewGeometry(VUtils::MeshVoxel &voxel, std::vector<Geometry> &geometry) const
-{
-	VUtils::MeshChannel *verts_ch = voxel.getChannel(VERT_GEOM_CHANNEL);
-	if (verts_ch && verts_ch->data) {
-		geometry.emplace_back(MVF_GEOMETRY_VOXEL, &voxel);
-	}
-
-	verts_ch = voxel.getChannel(HAIR_VERT_CHANNEL);
-	if (verts_ch && verts_ch->data) {
-		geometry.emplace_back(MVF_HAIR_GEOMETRY_VOXEL, &voxel);
-	}
-}
-
-bool VRayProxyCache::createProxyGeometry(const Geometry &geom, GU_Detail &gdp) const
-{
-	const VoxelType voxelType = geom.first;
-	VUtils::MeshVoxel *voxel = geom.second;
-	if (voxel) {
-		// TODO: particles/instances
-		if (voxelType & MVF_GEOMETRY_VOXEL) {
-			return createMeshProxyGeometry(*voxel, gdp);
-
+		if (index < 0 || index >= mi->getNumVoxels()) {
+			vassert(false && "Invalid voxel index");
 		}
-		if (voxelType & MVF_HAIR_GEOMETRY_VOXEL) {
-			return createHairProxyGeometry(*voxel, gdp);
-		}
+
+		mv = mi->getVoxel(index);
+
+		vassert(mv && "MeshVoxel is NULL");
 	}
 
-	return false;
-}
+	~MeshVoxelRAII() {
+		mi->releaseVoxel(mv);
+	}
 
-bool VRayProxyCache::createMeshProxyGeometry(VUtils::MeshVoxel &voxel, GU_Detail &gdp) const
+	bool isValid() const { return mv; }
+
+	VUtils::MeshVoxel &getVoxel() const { return *mv; }
+
+private:
+	VUtils::MeshInterface *mi = nullptr;
+	VUtils::MeshVoxel *mv = nullptr;
+};
+
+/// Appends mesh data to detail.
+/// @param gdp Detail.
+/// @param voxel Voxel of type MVF_GEOMETRY_VOXEL.
+static int addMeshVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel)
 {
-	VUtils::MeshChannel *verts_ch = voxel.getChannel(VERT_GEOM_CHANNEL);
-	VUtils::MeshChannel *faces_ch = voxel.getChannel(FACE_TOPO_CHANNEL);
-	if ( NOT(verts_ch) || NOT(faces_ch) ) {
+	const VUtils::MeshChannel *vertChan = voxel.getChannel(VERT_GEOM_CHANNEL);
+	const VUtils::MeshChannel *faceChan = voxel.getChannel(FACE_TOPO_CHANNEL);
+	if (!vertChan || !faceChan) {
 		gdp.addWarning(GU_WARNING_NO_METAOBJECTS, "Found invalid mesh voxel!");
 		return false;
 	}
 
-	VUtils::VertGeomData *verts = reinterpret_cast<VUtils::VertGeomData *>(verts_ch->data);
-	VUtils::FaceTopoData *faces = reinterpret_cast<VUtils::FaceTopoData *>(faces_ch->data);
-	if (NOT(verts) || NOT(faces)) {
+	const VUtils::VertGeomData *verts = reinterpret_cast<VUtils::VertGeomData*>(vertChan->data);
+	const VUtils::FaceTopoData *faces = reinterpret_cast<VUtils::FaceTopoData*>(faceChan->data);
+	if (!verts || !faces) {
 		gdp.addWarning(GU_WARNING_NO_METAOBJECTS, "Found invalid mesh voxel data!");
 		return false;
 	}
 
-	int numVerts = verts_ch->numElements;
-	int numFaces = faces_ch->numElements;
+	const int numVerts = vertChan->numElements;
+	const int numFaces = faceChan->numElements;
 
-	// Points
-	GA_Offset voffset = gdp.appendPointBlock(numVerts);
-	for (int v = 0; v < numVerts; ++v) {
-		VUtils::Vector &vert = verts[v];
-		GA_Offset pointOffs = voffset + v;
-
-		gdp.setPos3(pointOffs, UT_Vector3F(vert.x, vert.y, vert.z));
+	const GA_Offset pointOffset = gdp.appendPointBlock(numVerts);
+	for (int vertexIndex = 0; vertexIndex < numVerts; ++vertexIndex) {
+		const VUtils::Vector &vert = verts[vertexIndex];
+		gdp.setPos3(pointOffset + vertexIndex, UT_Vector3F(vert.x, vert.y, vert.z));
 	}
 
-	// Faces
-	// TODO: may be it will be better using polysoups
-	for (int f = 0; f < numFaces; ++f) {
-		const VUtils::FaceTopoData &face = faces[f];
+	for (int faceIndex = 0; faceIndex < numFaces; ++faceIndex) {
+		const VUtils::FaceTopoData &face = faces[faceIndex];
 
 		GU_PrimPoly *poly = GU_PrimPoly::build(&gdp, 3, GU_POLY_CLOSED, 0);
-		for (int c = 0; c < 3; ++c) {
-			poly->setVertexPoint(c, voffset + face.v[c]);
-		}
-
+		poly->setVertexPoint(0, pointOffset + face.v[0]);
+		poly->setVertexPoint(1, pointOffset + face.v[1]);
+		poly->setVertexPoint(2, pointOffset + face.v[2]);
 		poly->reverse();
 	}
 
 	return true;
 }
 
-bool VRayProxyCache::createHairProxyGeometry(VUtils::MeshVoxel &voxel, GU_Detail &gdp) const
+/// Appends hair data to detail.
+/// @param gdp Detail.
+/// @param voxel Voxel of type MVF_HAIR_GEOMETRY_VOXEL.
+static int addHairVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel)
 {
-	VUtils::MeshChannel *verts_ch = voxel.getChannel(HAIR_VERT_CHANNEL);
-	VUtils::MeshChannel *strands_ch = voxel.getChannel(HAIR_NUM_VERT_CHANNEL);
-	if ( NOT(verts_ch) || NOT(strands_ch) ) {
+	VUtils::MeshChannel *vertChan = voxel.getChannel(HAIR_VERT_CHANNEL);
+	VUtils::MeshChannel *strandChan = voxel.getChannel(HAIR_NUM_VERT_CHANNEL);
+	if (!vertChan || !strandChan) {
 		gdp.addWarning(GU_WARNING_NO_METAOBJECTS, "Found invalid hair voxel!");
 		return false;
 	}
 
-	VUtils::VertGeomData *verts = reinterpret_cast< VUtils::VertGeomData* >(verts_ch->data);
-	int *strands = reinterpret_cast< int* >(strands_ch->data);
-	if (NOT(verts) || NOT(strands)) {
+	const VUtils::VertGeomData *verts   = reinterpret_cast<VUtils::VertGeomData*>(vertChan->data);
+	const int                  *strands = reinterpret_cast<int*>(strandChan->data);
+	if (!verts || !strands) {
 		gdp.addWarning(GU_WARNING_NO_METAOBJECTS, "Found invalid hair voxel data!");
 		return false;
 	}
 
-	int numVerts = verts_ch->numElements;
-	int numStrands = strands_ch->numElements;
+	const int numVerts   = vertChan->numElements;
+	const int numStrands = strandChan->numElements;
 
-	// Points
-	GA_Offset voffset = gdp.appendPointBlock(numVerts);
+	GA_Offset pointOffset = gdp.appendPointBlock(numVerts);
 	for (int v = 0; v < numVerts; ++v) {
-		VUtils::Vector &vert = verts[v];
-		GA_Offset pointOffs = voffset + v;
-
-		gdp.setPos3(pointOffs, UT_Vector3F(vert.x, vert.y, vert.z));
+		const VUtils::Vector &vert = verts[v];
+		gdp.setPos3(pointOffset + v, UT_Vector3F(vert.x, vert.y, vert.z));
 	}
 
-	// Strands
-	for (int i = 0; i < numStrands; ++i) {
-		int &vertsPerStrand = strands[i];
+	for (int strandIndex = 0; strandIndex < numStrands; ++strandIndex) {
+		const int vertsPerStrand = strands[strandIndex];
 
 		GU_PrimPoly *poly = GU_PrimPoly::build(&gdp, vertsPerStrand, GU_POLY_OPEN, 0);
-		for (int j = 0; j < vertsPerStrand; ++j) {
-			poly->setVertexPoint(j, voffset + j);
+		for (int strandVertexIndex = 0; strandVertexIndex < vertsPerStrand; ++strandVertexIndex) {
+			poly->setVertexPoint(strandVertexIndex, pointOffset + strandVertexIndex);
 		}
 
-		voffset += vertsPerStrand;
+		pointOffset += vertsPerStrand;
 	}
 
 	return true;
 }
 
-bool VRayProxyCache::createBBoxGeometry(const VUtils::Box &bbox, GU_Detail &gdp) const
+/// Appends voxel data to detail.
+/// @param gdp Detail.
+/// @param voxel Voxel.
+static int addVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel, uint32 voxelFlags)
 {
-	const VUtils::Vector &bboxMin = bbox.c(0);
-	const VUtils::Vector &bboxMax = bbox.c(1);
-	gdp.cube(bboxMin[0], bboxMax[0],
-			bboxMin[1], bboxMax[1],
-			bboxMin[2], bboxMax[2]);
+	if (voxelFlags & MVF_GEOMETRY_VOXEL ||
+		voxelFlags & MVF_PREVIEW_VOXEL)
+	{
+		return addMeshVoxelData(gdp, voxel);
+	}
+	if (voxelFlags & MVF_HAIR_GEOMETRY_VOXEL) {
+		return addHairVoxelData(gdp, voxel);
+	}
+	return false;
+}
+
+static int addVoxelData(GU_Detail &gdp, VUtils::MeshInterface &mi, int voxelIndex)
+{
+	MeshVoxelRAII voxelRaii(&mi, voxelIndex);
+	if (!voxelRaii.isValid())
+		return false;
+
+	const uint32 voxelFlags = mi.getVoxelFlags(voxelIndex);
+
+	return addVoxelData(gdp, voxelRaii.getVoxel(), voxelFlags);
+}
+
+static VUtils::Box getBoundingBox(VUtils::MeshInterface &mi)
+{
+	VUtils::Box bbox = mi.getBBox();
+
+	if (bbox.isEmpty() || bbox.isInfinite()) {
+		bbox.init();
+		bbox += VUtils::Vector( 1.0f,  1.0f,  1.0f);
+		bbox += VUtils::Vector(-1.0f, -1.0f, -1.0f);
+	}
+
+	return bbox;
+}
+
+static Hash::MHash getBoundingBoxHash(VUtils::MeshInterface &mi)
+{
+	const VUtils::Box &bbox = getBoundingBox(mi);
+
+	Hash::MHash bboxHash = 0;
+	Hash::MurmurHash3_x86_32(&bbox, sizeof(VUtils::Box), 42, &bboxHash);
+
+	return bboxHash;
+}
+
+static Hash::MHash getVoxelHash(VUtils::MeshVoxel &voxel, uint32 voxelFlags)
+{
+	Hash::MHash hashKey = 0;
+
+	VUtils::MeshChannel *channel = nullptr;
+
+	if (voxelFlags & MVF_GEOMETRY_VOXEL ||
+		voxelFlags & MVF_PREVIEW_VOXEL)
+	{
+		channel = voxel.getChannel(VERT_GEOM_CHANNEL);
+	}
+	else if (voxelFlags & MVF_HAIR_GEOMETRY_VOXEL) {
+		channel = voxel.getChannel(HAIR_VERT_CHANNEL);
+	}
+
+	if (channel && channel->data) {
+		const int dataSize = channel->elementSize * channel->numElements;
+		const uint32 seed = reinterpret_cast<uintptr_t>(channel->data);
+
+		Hash::MurmurHash3_x86_32(channel->data, dataSize, seed, &hashKey);
+	}
+
+	return hashKey;
+}
+
+static Hash::MHash getVoxelHash(VUtils::MeshInterface &mi, int voxelIndex)
+{
+	MeshVoxelRAII voxelRaii(&mi, voxelIndex);
+	if (!voxelRaii.isValid())
+		return false;
+
+	const uint32 voxelFlags = mi.getVoxelFlags(voxelIndex);
+
+	return getVoxelHash(voxelRaii.getVoxel(), voxelFlags);
+}
+
+/// Creates a box in detail.
+/// @param gdp Detail.
+/// @param mi MeshInterface to get bounding box from.
+static int addBoundingBoxData(GU_Detail &gdp, VUtils::MeshInterface &mi)
+{
+	const VUtils::Box &bbox = getBoundingBox(mi);
+
+	const VUtils::Vector &boxMin = bbox.pmin;
+	const VUtils::Vector &boxMax = bbox.pmax;
+
+	gdp.cube(boxMin[0], boxMax[0],
+			 boxMin[1], boxMax[1],
+			 boxMin[2], boxMax[2],
+			 0, 0, 0, 0,
+			 true);
 
 	return true;
+}
+
+class VRayProxyCache
+{
+public:
+	/// Geometry hash type.
+	typedef Hash::MHash DetailKey;
+
+	/// Detail cache entry.
+	struct DetailEntry {
+		DetailEntry() {
+			bbox.initBounds();
+		}
+
+		/// Geometry bounding box.
+		UT_BoundingBox bbox;
+
+		/// Geometry preview type.
+		LOD lod = LOD_PREVIEW;
+
+		/// Geometry detail.
+		GU_DetailHandle detail;
+	};
+
+	/// Maps geometry hash (currently vertex array hash) to GU_DetailHandle.
+	typedef VUtils::HashMap<DetailKey, DetailEntry> DetailCache;
+
+	/// Maps frame key to geometry hash.
+	typedef VUtils::HashMap<int, DetailKey> FrameCache;
+
+	VRayProxyCache() {}
+
+	~VRayProxyCache() {
+		freeMem();
+	}
+
+	/// Return the detail handle for a proxy packed primitive (based on frame, LOD)
+	/// Caches the detail if not present in cache
+	/// @param options[in] - proxy primitive options
+	/// @return detail handle  if successful or emty one on error
+	GU_DetailHandle getDetail(const VRayProxyRefKey &options);
+
+	int open(const char *filepath);
+
+private:
+	/// Clears the caches and resets current .vrmesh file.
+	void freeMem();
+
+	/// Returns function to get the actual frame in the .vrmesh file based on
+	/// proxy primitive options.
+	int getFrame(const VRayProxyRefKey &options) const;
+	
+	GU_DetailHandle VRayProxyCache::addDetail(const VRayProxyRefKey &options);
+
+	/// MeshFile instance. 
+	VUtils::MeshFile *meshFile = nullptr;
+
+	/// Frame key to geometry hash cache.
+	FrameCache frameCache;
+
+	/// Geometry hash to detail cache.
+	DetailCache detailCache;
+};
+
+typedef VUtils::StringHashMap<VRayProxyCache> VRayProxyCacheMan;
+
+static UT_Lock theLock;
+static VRayProxyCacheMan theCacheMan;
+
+GU_DetailHandle VRayForHoudini::getVRayProxyDetail(const VRayProxyRefKey &options)
+{
+	UT_AutoLock lock(theLock);
+
+	if (options.filePath.empty())
+		return GU_DetailHandle();
+
+	const char *filePath = options.filePath.ptr();
+
+	VRayProxyCacheMan::iterator it = theCacheMan.find(filePath);
+	if (it != theCacheMan.end()) {
+		return it.data().getDetail(options);
+	}
+
+	VRayProxyCache &cache = theCacheMan[filePath];
+	if (!cache.open(filePath)) {
+		theCacheMan.erase(filePath);
+		return GU_DetailHandle();
+	}
+
+	return cache.getDetail(options);
+}
+
+bool VRayForHoudini::clearVRayProxyCache(const char *filepath)
+{
+	UT_AutoLock lock(theLock);
+	return theCacheMan.erase(filepath);
+}
+
+bool VRayForHoudini::getVRayProxyBoundingBox(const VRayProxyRefKey &options, UT_BoundingBox &box)
+{
+	UT_AutoLock lock(theLock);
+
+	if (options.filePath.empty())
+		return false;
+
+	// TODO
+	return true;
+}
+
+int VRayProxyCache::open(const char *filepath)
+{
+	freeMem();
+
+	VUtils::CharString path(filepath);
+	if (!bmpCheckAssetPath(path, NULL, NULL, false)) {
+		Log::getLog().error("VRayProxy: Can't find file \"%s\"", filepath);
+		return false;
+	}
+
+	meshFile = VUtils::newDefaultMeshFile(path.ptr());
+	if (!(meshFile && meshFile->init(path.ptr()))) {
+		Log::getLog().error("VRayProxy: Can't open file \"%s\"", filepath);
+		freeMem();
+		return false;
+	}
+
+	return true;
+}
+
+void VRayProxyCache::freeMem()
+{
+	if (meshFile) {
+		deleteDefaultMeshFile(meshFile);
+		meshFile = nullptr;
+	}
+
+	frameCache.clear();
+	detailCache.clear();
+}
+
+int VRayProxyCache::getFrame(const VRayProxyRefKey &options) const
+{
+	const int animStart  = options.animOverride ? options.animStart : 0;
+
+	int animLength = options.animOverride ? options.animLength : 0;
+	if (animLength <= 0) {
+		animLength = VUtils::Max(meshFile->getNumFrames(), 1);
+	}
+
+	return VUtils::fast_ceil(calcFrameIndex(options.f,
+	                                        static_cast<VUtils::MeshFileAnimType::Enum>(options.animType),
+	                                        animStart,
+	                                        animLength,
+	                                        options.animOffset,
+	                                        options.animSpeed));
+}
+
+GU_DetailHandle VRayProxyCache::addDetail(const VRayProxyRefKey &options)
+{
+	vassert(meshFile);
+
+	GU_DetailHandle gdpHandle;
+
+	const int frameIndex = getFrame(options);
+	meshFile->setCurrentFrame(frameIndex);
+
+	Hash::MHash detailHash;
+
+	if (options.lod == LOD_BBOX) {
+		detailHash = getBoundingBoxHash(*meshFile);
+	}
+	else {
+		const int numHashVoxels = options.lod == LOD_PREVIEW ? 1 : meshFile->getNumVoxels();
+		VUtils::Table<Hash::MHash> voxelsHash(numHashVoxels, 0);
+
+		for (int voxelIndex = 0; voxelIndex < meshFile->getNumVoxels(); ++voxelIndex) {
+			const uint32 voxelFlags = meshFile->getVoxelFlags(voxelIndex);
+			if (options.lod == LOD_PREVIEW) {
+				if (voxelFlags & MVF_PREVIEW_VOXEL) {
+					voxelsHash[0] = getVoxelHash(*meshFile, voxelIndex);
+					break;
+				}
+			}
+			else if (options.lod == LOD_FULL) {
+				voxelsHash[voxelIndex] = getVoxelHash(*meshFile, voxelIndex);
+			}
+		}
+
+		Hash::MurmurHash3_x86_32(voxelsHash.elements, voxelsHash.count() * sizeof(Hash::MHash), 42, &detailHash);
+	}
+
+	const DetailCache::iterator detailIt = detailCache.find(detailHash);
+	if (detailIt != detailCache.end()) {
+		gdpHandle = detailIt.data().detail;
+	}
+	else {
+		const FrameCache::iterator frameIt = frameCache.find(frameIndex);
+		if (frameIt != frameCache.end()) {
+			frameCache.erase(frameIt);
+		}
+
+		GU_Detail *gdp = new GU_Detail;
+
+		if (options.lod == LOD_BBOX) {
+			addBoundingBoxData(*gdp, *meshFile);
+		}
+		else {
+			for (int voxelIndex = 0; voxelIndex < meshFile->getNumVoxels(); ++voxelIndex) {
+				const uint32 voxelFlags = meshFile->getVoxelFlags(voxelIndex);
+				if (options.lod == LOD_PREVIEW) {
+					if (voxelFlags & MVF_PREVIEW_VOXEL) {
+						addVoxelData(*gdp, *meshFile, voxelIndex); 
+						break;
+					}
+				}
+				else if (options.lod == LOD_FULL) {
+					addVoxelData(*gdp, *meshFile, voxelIndex);
+				}
+			}
+		}
+
+		DetailEntry &entry = detailCache[detailHash];
+		entry.lod = options.lod;
+		entry.detail.allocateAndSet(gdp);
+
+		gdpHandle = entry.detail;
+	}
+
+	frameCache.insert(frameIndex, detailHash);
+
+	return gdpHandle;
+}
+
+
+GU_DetailHandle VRayProxyCache::getDetail(const VRayProxyRefKey &options)
+{
+	GU_DetailHandle gdpHandle;
+
+	if (!meshFile)
+		return gdpHandle;
+
+	const int frameIndex = getFrame(options);
+
+	const FrameCache::iterator frameIt = frameCache.find(frameIndex);
+	if (frameIt == frameCache.end()) {
+		gdpHandle = addDetail(options);
+	}
+	else {
+		const DetailKey detailKey = frameIt.data();
+
+		const DetailCache::iterator detailIt = detailCache.find(detailKey);
+		if (detailIt == detailCache.end()) {
+			gdpHandle = addDetail(options);
+		}
+		else {
+			const DetailEntry detailEntry = detailIt.data();
+			if (detailEntry.lod == options.lod) {
+				gdpHandle = detailEntry.detail;
+			}
+			else {
+				detailCache.erase(detailIt);
+				gdpHandle = addDetail(options);
+			}			
+		}
+	}
+
+	return gdpHandle;
 }

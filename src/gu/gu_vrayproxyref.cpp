@@ -67,7 +67,7 @@ bool VRayProxyRef::getLocalTransform(UT_Matrix4D &m) const
 bool VRayProxyRef::getBounds(UT_BoundingBox &box) const
 {
 	const VRayProxyRefKey &vrmeshKey = getKey();
-	return GetVRayProxyBounds(vrmeshKey, box);
+	return getVRayProxyBoundingBox(vrmeshKey, box);
 }
 
 bool VRayProxyRef::unpack(GU_Detail&) const
@@ -79,7 +79,7 @@ bool VRayProxyRef::unpack(GU_Detail&) const
 VRayProxyRefKey VRayProxyRef::getKey() const
 {
 	VRayProxyRefKey key;
-	key.filePath = UT_String(getFile(), true);
+	key.filePath = getFile();
 	key.lod = static_cast<LOD>(getLod());
 	key.f = getCurrentFrame();
 	key.animType = getAnimType();
@@ -95,15 +95,10 @@ int VRayProxyRef::detailRebuild()
 {
 	const VRayProxyRefKey &vrmeshKey = getKey();
 
-	const GU_DetailHandle &getail = GetVRayProxyDetail(vrmeshKey);
+	const GU_DetailHandle &getail = getVRayProxyDetail(vrmeshKey);
 
 	const int res = m_detail != getail;
 	m_detail = getail;
-
-	if (!m_detail.isValid()) {
-		// XXX: Remove after fixing the issue.
-		vassert(false);
-	}
 
 	return res;
 }

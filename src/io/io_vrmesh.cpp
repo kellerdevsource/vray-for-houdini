@@ -13,6 +13,7 @@
 #include "vfh_log.h"
 #include "vfh_includes.h"
 #include "vfh_vrayproxyutils.h"
+#include "vfh_defines.h"
 
 #include <uni.h>
 
