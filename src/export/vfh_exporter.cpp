@@ -461,52 +461,54 @@ void VRayExporter::autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const P
 {
 	const VUtils::CharString &attrName = curSockInfo.attrName.ptr();
 
-	if (fromSocketInfo) {
-		// Check if we need to auto-convert color / float.
-		std::string floatColorConverterType;
+	if (!fromSocketInfo) {
+		return;
+	}
 
-		// Check if some specific output was connected.
-		conPluginInfo.output = fromSocketInfo->attrName.ptr();
+	// Check if we need to auto-convert color / float.
+	std::string floatColorConverterType;
 
-		// If connected plugin type is BRDF, but we expect a Material, wrap it into "MtlSingleBRDF".
-		if (fromSocketInfo->socketType == VOP_TYPE_BSDF &&
-			curSockInfo.socketType == VOP_SURFACE_SHADER)
-		{
-			const std::string &convName = str(fmtPluginTypeConverterName2
-				% pluginDesc.pluginName
-				% attrName.ptr());
+	// Check if some specific output was connected.
+	conPluginInfo.output = fromSocketInfo->attrName.ptr();
 
-			Attrs::PluginDesc brdfToMtl(convName, "MtlSingleBRDF");
-			brdfToMtl.addAttribute(Attrs::PluginAttr("brdf", conPluginInfo.plugin));
+	// If connected plugin type is BRDF, but we expect a Material, wrap it into "MtlSingleBRDF".
+	if (fromSocketInfo->socketType == VOP_TYPE_BSDF &&
+		curSockInfo.socketType == VOP_SURFACE_SHADER)
+	{
+		const std::string &convName = str(fmtPluginTypeConverterName2
+			% pluginDesc.pluginName
+			% attrName.ptr());
 
-			conPluginInfo.plugin = exportPlugin(brdfToMtl);
-			conPluginInfo.output.clear();
-		}
-		else if (fromSocketInfo->socketType == VOP_TYPE_COLOR &&
-			curSockInfo.socketType == VOP_TYPE_FLOAT)
-		{
-			floatColorConverterType = "TexColorToFloat";
-		}
-		else if (fromSocketInfo->socketType == VOP_TYPE_FLOAT &&
-			curSockInfo.socketType == VOP_TYPE_COLOR)
-		{
-			floatColorConverterType = "TexFloatToColor";
-		}
+		Attrs::PluginDesc brdfToMtl(convName, "MtlSingleBRDF");
+		brdfToMtl.addAttribute(Attrs::PluginAttr("brdf", conPluginInfo.plugin));
 
-		if (!floatColorConverterType.empty()) {
-			const std::string &convName = str(fmtPluginTypeConverterName
-				% pluginDesc.pluginName
-				% floatColorConverterType
-				% attrName.ptr());
+		conPluginInfo.plugin = exportPlugin(brdfToMtl);
+		conPluginInfo.output.clear();
+	}
+	else if (fromSocketInfo->socketType == VOP_TYPE_COLOR &&
+		curSockInfo.socketType == VOP_TYPE_FLOAT)
+	{
+		floatColorConverterType = "TexColorToFloat";
+	}
+	else if (fromSocketInfo->socketType == VOP_TYPE_FLOAT &&
+		curSockInfo.socketType == VOP_TYPE_COLOR)
+	{
+		floatColorConverterType = "TexFloatToColor";
+	}
 
-			Attrs::PluginDesc convDesc(convName, floatColorConverterType);
-			setPluginValueFromConnectedPluginInfo(convDesc, "input", conPluginInfo);
+	if (!floatColorConverterType.empty()) {
+		const std::string &convName = str(fmtPluginTypeConverterName
+			% pluginDesc.pluginName
+			% floatColorConverterType
+			% attrName.ptr());
 
-			conPluginInfo.plugin = exportPlugin(convDesc);
+		Attrs::PluginDesc convDesc(convName, floatColorConverterType);
+		setPluginValueFromConnectedPluginInfo(convDesc, "input", conPluginInfo);
 
-			// We've stored the original connected output in the "input" of the converter.
-			conPluginInfo.output.clear();
-		}
+		conPluginInfo.plugin = exportPlugin(convDesc);
+
+		// We've stored the original connected output in the "input" of the converter.
+		conPluginInfo.output.clear();
 	}
 }
 
@@ -585,8 +587,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.ptr());
 
 			// autoconvert color/float
-			ConnectedPluginInfo conPluginInfo;
-			autoconvertSocket(conPluginInfo, curSockInfo, fromSocketInfo, pluginDesc);
+			ConnectedPluginInfo conPluginInfo = autoconvertSocket(curSockInfo, fromSocketInfo, pluginDesc);
 
 			// Set "scene_name" for Cryptomatte.
 			if (vutils_strcmp(conPlugin.getType(), "MtlSingleBRDF") == 0) {
