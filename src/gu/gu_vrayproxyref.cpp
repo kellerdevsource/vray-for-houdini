@@ -52,10 +52,10 @@ bool VRayProxyRef::getLocalTransform(UT_Matrix4D &m) const
 
 	if (getFlipAxis()) {
 		UT_Matrix4D flipTm(0.0);
-		flipTm(0,0) =  1.0;
-		flipTm(1,2) = -1.0;
-		flipTm(2,1) =  1.0;
-		flipTm(3,3) =  1.0;
+		flipTm(0,0) *=  1.0;
+		flipTm(1,2) *= -1.0;
+		flipTm(2,1) *=  1.0;
+		flipTm(3,3) *=  1.0;
 
 		m = flipTm * m;
 	}
@@ -71,7 +71,7 @@ bool VRayProxyRef::getBounds(UT_BoundingBox &box) const
 
 bool VRayProxyRef::unpack(GU_Detail&) const
 {
-	// There is need to unpack VRayProxy.
+	// There is no need to unpack VRayProxy.
 	return true;
 }
 
