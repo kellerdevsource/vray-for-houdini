@@ -37,8 +37,6 @@ void NodePackedBase::updatePrimitiveFromOptions(const OP_Options &options)
 
 void NodePackedBase::updatePrimitive(const OP_Context &context)
 {
-	vassert(m_primPacked);
-
 	// Set the options on the primitive
 	OP_Options primOptions;
 	for (int i = 0; i < getParmList()->getEntries(); ++i) {
@@ -55,6 +53,7 @@ OP_ERROR NodePackedBase::cookMySop(OP_Context &context)
 
 	if (!m_primPacked) {
 		m_primPacked = GU_PrimPacked::build(*gdp, m_primType);
+		vassert(m_primPacked);
 
 		// Set the location of the packed primitive point.
 		const UT_Vector3 pivot(0.0, 0.0, 0.0);
@@ -62,8 +61,6 @@ OP_ERROR NodePackedBase::cookMySop(OP_Context &context)
 
 		gdp->setPos3(m_primPacked->getPointOffset(0), pivot);
 	}
-
-	vassert(m_primPacked);
 
 	setTimeDependent();
 

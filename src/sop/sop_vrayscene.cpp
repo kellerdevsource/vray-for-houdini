@@ -49,8 +49,6 @@ void VRayScene::setTimeDependent()
 
 void VRayScene::updatePrimitive(const OP_Context &context)
 {
-	vassert(m_primPacked);
-
 	// Set the options on the primitive
 	OP_Options primOptions;
 	for (int i = 0; i < getParmList()->getEntries(); ++i) {

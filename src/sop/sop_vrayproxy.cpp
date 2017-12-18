@@ -82,8 +82,6 @@ void SOP::VRayProxy::setTimeDependent()
 
 void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 {
-	vassert(m_primPacked);
-
 	const fpreal t = context.getTime();
 
 	// Set the options on the primitive
