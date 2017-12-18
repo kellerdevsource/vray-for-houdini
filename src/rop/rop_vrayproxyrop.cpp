@@ -335,7 +335,7 @@ PRM_Template *VRayProxyROP::getMyPrmTemplate()
 	myPrmList.addPrm(Parm::PRMFactory(PRM_SEPARATOR, "_sep2"));
 
 	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD_E, "xformtype", "Transform")
-									.setChoiceListItems(PRM_CHOICELIST_SINGLE, xformTypeItems, CountOf(xformTypeItems))
+									.setChoiceListItems(PRM_CHOICELIST_SINGLE, xformTypeItems, COUNT_OF(xformTypeItems))
 									.setDefault(PRMzeroDefaults)
 					 );
 	myPrmList.addPrm(Parm::PRMFactory(PRM_TOGGLE_E, "exp_velocity", "Export Velocity")
@@ -343,14 +343,14 @@ PRM_Template *VRayProxyROP::getMyPrmTemplate()
 					 );
 	myPrmList.addPrm(Parm::PRMFactory(PRM_STARTEND, "velocity", "Velocity Range")
 									.setVectorSize(2)
-									.setDefaults(velrangeDefaults, CountOf(velrangeDefaults))
+									.setDefaults(velrangeDefaults, COUNT_OF(velrangeDefaults))
 									.addConditional("{ exp_velocity == 0 }", PRM_CONDTYPE_DISABLE)
 					 );
 
 	myPrmList.addPrm(Parm::PRMFactory(PRM_SEPARATOR, "_sep3"));
 
 	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD_E, "simplificationtype", "Simplification Type")
-									.setChoiceListItems(PRM_CHOICELIST_SINGLE, simplificationTypeItems, CountOf(simplificationTypeItems))
+									.setChoiceListItems(PRM_CHOICELIST_SINGLE, simplificationTypeItems, COUNT_OF(simplificationTypeItems))
 									.setDefault(PRMthreeDefaults)
 					 );
 	myPrmList.addPrm(Parm::PRMFactory(PRM_INT_E, "max_previewfaces", "Max Preview Faces")
