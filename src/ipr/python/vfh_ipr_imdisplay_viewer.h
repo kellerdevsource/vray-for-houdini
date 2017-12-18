@@ -259,7 +259,7 @@ private:
 	/// Tile image writing device.
 	TIL_TileMPlay *device = nullptr;
 
-	VfhDisableCopy(ImdisplayThread)
+	VUTILS_DISABLE_COPY(ImdisplayThread)
 };
 
 #endif // VRAY_FOR_HOUDINI_IPR_IMDISPLAY_VIEWER_H

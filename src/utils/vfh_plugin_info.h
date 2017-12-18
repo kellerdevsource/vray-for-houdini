@@ -38,7 +38,7 @@ struct VRayPluginInfo {
 	/// Output sockets.
 	VRayNodeSockets outputs;
 
-	VfhDisableCopy(VRayPluginInfo)
+	VUTILS_DISABLE_COPY(VRayPluginInfo)
 };
 
 /// Get plugin info for a given plugin ID.

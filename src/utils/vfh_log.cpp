@@ -87,8 +87,8 @@ static const int isConsoleAttached = true;
 
 static void logMessage(const VfhLogMessage &data)
 {
-	vutils_timeToStr(strTime, CountOf(strTime), data.time);
-	vutils_dateToStr(strDate, CountOf(strDate), data.time);
+	vutils_timeToStr(strTime, COUNT_OF(strTime), data.time);
+	vutils_dateToStr(strDate, COUNT_OF(strDate), data.time);
 
 	const char *msgEnd = data.message.endsWith('\r') && isConsoleAttached ? "\r" : "\n";
 	const QString msgSimplified = data.message.simplified();
@@ -215,7 +215,7 @@ void Logger::valog(LogLevel level, const tchar *format, va_list args) const
 #endif
 
 	tchar msgBuf[2048];
-	vsnprintf(msgBuf, CountOf(msgBuf), format, args);
+	vsnprintf(msgBuf, COUNT_OF(msgBuf), format, args);
 
 	VfhLogMessage msg;
 	time(&msg.time);

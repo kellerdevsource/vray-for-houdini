@@ -112,7 +112,7 @@ private:
 	static VRayExporter *exporter;
 	static std::recursive_mutex exporterMtx;
 
-	VfhDisableCopy(WithExporter)
+	VUTILS_DISABLE_COPY(WithExporter)
 };
 
 VRayExporter* WithExporter::exporter = nullptr;
