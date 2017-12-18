@@ -885,6 +885,17 @@ static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
 	userAttributes.append(sceneName[1].ptr());
 }
 
+/// Add object's unique ID for IPR drag-drop.
+/// @param userAttributes User attributes buffer.
+/// @param opNode Scene node.
+static void appendObjUniqueID(QString &userAttributes, const OP_Node &opNode)
+{
+	if (!userAttributes.endsWith(';'))
+		userAttributes.append(';');
+	userAttributes.append("Op_Id=");
+	userAttributes.append(QString::number(opNode.getUniqueId()));
+}
+
 VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 {
 	using namespace Attrs;
@@ -920,6 +931,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		QString userAttributes;
 		overrideItemsToUserAttributes(primItem.primMaterial.overrides, userAttributes);
 		appendSceneName(userAttributes, objNode);
+		appendObjUniqueID(userAttributes, objNode);
 
 		VRay::Plugin material = objMaterial;
 		if (primItem.material) {
