@@ -35,6 +35,33 @@
 using namespace AurRamps;
 using namespace std;
 
+static const map<string, map<string, string>> RAMP_ATTRIBUTE_NAMES = {
+	{"elum_curve",{
+		{"values", "elum_values"},
+		{"positions", "elum_positions"},
+		{"interpolations", "elum_interpolations"},
+	}},
+
+	{"transp_curve",{
+		{"values", "transp_values"},
+		{"positions", "transp_positions"},
+		{"interpolations", "transp_interpolations"},
+	}},
+
+	{"dcolor_ramp",{
+		{"colors", "dcolor_colors"},
+		{"positions", "dcolor_positions"},
+		{"interpolations", "dcolor_interpolations"},
+	}},
+
+	{"ecolor_ramp",{
+		{"colors", "ecolor_colors"},
+		{"positions", "ecolor_positions"},
+		{"interpolations", "ecolor_interpolations"},
+	}}
+};
+
+
 namespace VRayForHoudini {
 namespace VOP {
 
@@ -988,13 +1015,12 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 
 			const std::string &rampToken = ramp.first;
 
-			const bool hasRampToken = pluginInfo->hasAttribute(rampToken.c_str());
+			const bool hasRampToken = RAMP_ATTRIBUTE_NAMES.find(rampToken) != RAMP_ATTRIBUTE_NAMES.end();
 			if (!hasRampToken) {
 				Log::getLog().error("Node \"%s\": Plugin \"%s\" missing description for \"%s\"",
-									this->getName().buffer(), pluginDesc.pluginID.c_str(), rampToken.c_str());
-			}
-			else {
-				const Parm::AttrDesc &attrDesc = pluginInfo->getAttribute(rampToken.c_str());
+					this->getName().buffer(), pluginDesc.pluginID.c_str(), rampToken.c_str());
+			} else {
+				const auto & attrNames = RAMP_ATTRIBUTE_NAMES.at(rampToken);
 
 				const auto &data = ramp.second->data(m_rampTypes[rampToken]);
 				const auto pointCount = data.m_xS.size();
@@ -1005,20 +1031,19 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 						colorList[c] = VRay::Color(data.m_yS[c * 3 + 0], data.m_yS[c * 3 + 1], data.m_yS[c * 3 + 2]);
 					}
 
-					pluginDesc.add(Attrs::PluginAttr(attrDesc.value.colorRampInfo.positions, data.m_xS));
-					pluginDesc.add(Attrs::PluginAttr(attrDesc.value.colorRampInfo.colors, colorList));
+					pluginDesc.add(Attrs::PluginAttr(attrNames.at("positions"), data.m_xS));
+					pluginDesc.add(Attrs::PluginAttr(attrNames.at("colors"), colorList));
 					// color interpolations are not supported - export linear
-					pluginDesc.add(Attrs::PluginAttr(attrDesc.value.colorRampInfo.interpolations, VRay::IntList(pointCount, static_cast<int>(Texture::VRAY_InterpolationType::Linear))));
-				}
-				else if (data.m_type == AurRamps::RampType_Curve) {
-					pluginDesc.add(Attrs::PluginAttr(attrDesc.value.curveRampInfo.values, data.m_yS));
-					pluginDesc.add(Attrs::PluginAttr(attrDesc.value.curveRampInfo.positions, data.m_xS));
+					pluginDesc.add(Attrs::PluginAttr(attrNames.at("interpolations"), VRay::IntList(pointCount, static_cast<int>(Texture::VRAY_InterpolationType::Linear))));
+				} else if (data.m_type == AurRamps::RampType_Curve) {
+					pluginDesc.add(Attrs::PluginAttr(attrNames.at("values"), data.m_yS));
+					pluginDesc.add(Attrs::PluginAttr(attrNames.at("positions"), data.m_xS));
 
 					VRay::IntList interpolations(pointCount);
 					// exporter expects ints instead of enums
 					memcpy(interpolations.data(), data.m_interps.data(), pointCount * sizeof(int));
 
-					pluginDesc.add(Attrs::PluginAttr(attrDesc.value.curveRampInfo.interpolations, interpolations));
+					pluginDesc.add(Attrs::PluginAttr(attrNames.at("interpolations"), interpolations));
 				}
 			}
 		}
