@@ -95,7 +95,12 @@ public:
 	};
 
 	struct VolumeCacheData {
+		VolumeCacheData() {
+			tm.identity();
+		}
+
 		CachePtr aurPtr;
+		UT_Matrix4F tm;
 		GU_DetailHandle detailHandle;
 		DataRangeMap dataRange;
 	};
@@ -122,21 +127,10 @@ public:
 	// From GU_PackedImpl.
 	GU_PackedFactory *getFactory() const VRAY_OVERRIDE;
 	GU_PackedImpl *copy() const VRAY_OVERRIDE { return new VRayVolumeGridRef(*this); }
+	bool getLocalTransform(UT_Matrix4D &m) const VRAY_OVERRIDE;
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
 
-	/// Load or get from cache VolumeCacheData with given key
-	/// REQUIRES: key to be valid
-	VolumeCacheData &getCache(const VolumeCacheKey &key) const;
-
-	/// Get the world TM
-	UT_Matrix4F toWorldTm(CachePtr cache) const;
-
-	/// Get all channels present in the current cache
-	UT_StringArray getCacheChannels() const;
-	VolumeCache &getCachedData() const;
-
 	const DataRangeMap &getChannelDataRanges() const { return m_currentData.dataRange; }
-	DataRangeMap &getChannelDataRanges() { return m_currentData.dataRange; }
 
 protected:
 	// From VRayBaseRef.
@@ -151,6 +145,9 @@ protected:
 private:
 	/// Sets fetch and evict callback.
 	void initDataCache() const;
+
+	/// Get all channels present in the current cache
+	UT_StringArray getCacheChannels() const;
 
 	/// Generates VolumeCacheKey from current data
 	VolumeCacheKey genKey() const;

@@ -198,53 +198,51 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 		return;
 	}
 
-	GU_Detail *gdp = new GU_Detail();
-
 	int gridDimensions[3];
 	data.aurPtr->GetDim(gridDimensions);
+	data.tm = getCacheTm(data.aurPtr, key.flipYZ);
 
-	// what if there are two instances having the same cache but one has the flag set and the other does not?
-	const UT_Matrix4F tm = getCacheTm(data.aurPtr, key.flipYZ);
-
-	// load each channel from the cache file
+	// Load data ranges per channel.
 	for (int c = 0; c < CHANNEL_COUNT; ++c) {
 		const ChannelInfo &chan = chInfo[c];
-		if (!data.aurPtr->ChannelPresent(chan.type)) {
-			continue;
+		if (data.aurPtr->ChannelPresent(chan.type)) {
+			const float *grid = data.aurPtr->ExpandChannel(chan.type);
+			const i64 cacheVoxelsCount = gridDimensions[0] * gridDimensions[1] * gridDimensions[2];
+
+			const std::pair<const float *, const float *> dataRange = std::minmax_element(grid, grid + cacheVoxelsCount);
+			data.dataRange[chan.type].min = *dataRange.first;
+			data.dataRange[chan.type].max = *dataRange.second;
 		}
+	}
 
-		// Get data range of channel.
-		const float *grid = data.aurPtr->ExpandChannel(chan.type);
-		const i64 cacheVoxelsCount = gridDimensions[0] * gridDimensions[1] * gridDimensions[2];
+	GU_Detail *gdp = new GU_Detail();
 
-		const std::pair<const float *, const float *> dataRange = std::minmax_element(grid, grid + cacheVoxelsCount);
-		data.dataRange[chan.type].min = *dataRange.first;
-		data.dataRange[chan.type].max = *dataRange.second;
+	// Generate smoke primitive.
+	for (int c = 0; c < CHANNEL_COUNT; ++c) {
+		const ChannelInfo &chan = chInfo[c];
+		if (data.aurPtr->ChannelPresent(chan.type) &&
+			chan.type == GridChannels::ChSm)
+		{
+			GU_PrimVolume *volumeGdp = static_cast<GU_PrimVolume*>(GU_PrimVolume::build(gdp));
+			volumeGdp->setVisualization(GEO_VOLUMEVIS_SMOKE, volumeGdp->getVisIso(), volumeGdp->getVisDensity());
 
-		// Do not save invisible channels.
-		const GEO_VolumeVis visType = chan.type == GridChannels::ChSm
-			? GEO_VOLUMEVIS_SMOKE
-			: GEO_VOLUMEVIS_INVISIBLE;
-		if (visType == GEO_VOLUMEVIS_INVISIBLE) {
-			continue;
+			UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
+			voxelHandle->size(gridDimensions[0], gridDimensions[1], gridDimensions[2]);
+
+			const time_point tStartExtract = time_clock::now();
+
+			const float *grid = data.aurPtr->ExpandChannel(chan.type);
+			voxelHandle->extractFromFlattened(grid, gridDimensions[0], gridDimensions[1] * gridDimensions[0]);
+
+			const time_point tEndExtract = time_clock::now();
+			const int extractTime = std::chrono::duration_cast<milliseconds>(tEndExtract - tStartExtract).count();
+
+			Log::getLog().debug("Extracting channel \"%s\" took %dms", chan.displayName, extractTime);
+
+			volumeGdp->setTransform4(data.tm);
+
+			break;
 		}
-
-		GU_PrimVolume *volumeGdp = static_cast<GU_PrimVolume *>(GU_PrimVolume::build(gdp));
-		volumeGdp->setVisualization(visType, volumeGdp->getVisIso(), volumeGdp->getVisDensity());
-
-		UT_VoxelArrayWriteHandleF voxelHandle = volumeGdp->getVoxelWriteHandle();
-		voxelHandle->size(gridDimensions[0], gridDimensions[1], gridDimensions[2]);
-
-		const time_point tStartExtract = time_clock::now();
-
-		voxelHandle->extractFromFlattened(grid, gridDimensions[0], gridDimensions[1] * gridDimensions[0]);
-
-		const time_point tEndExtract = time_clock::now();
-		const int extractTime = std::chrono::duration_cast<milliseconds>(tEndExtract - tStartExtract).count();
-
-		Log::getLog().debug("Extracting channel \"%s\" took %dms", chan.displayName, extractTime);
-
-		volumeGdp->setTransform4(tm);
 	}
 
 	data.detailHandle.allocateAndSet(gdp);
@@ -253,12 +251,13 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 VRayVolumeGridRef::VRayVolumeGridRef()
 	: m_channelDirty(false)
 {
-	memset(getChannelDataRanges().data(), 0, DataRangeMapSize);
+	memset(m_currentData.dataRange.data(), 0, DataRangeMapSize);
 	initDataCache();
 }
 
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
 	: VRayVolumeGridRefBase(src)
+	, m_currentData(src.m_currentData)
 	, m_channelDirty(false)
 {
 	initDataCache();
@@ -293,23 +292,15 @@ GU_PackedFactory* VRayVolumeGridRef::getFactory() const
 	return &theFactory;
 }
 
-VRayVolumeGridRef::VolumeCacheData &VRayVolumeGridRef::getCache(const VolumeCacheKey &key) const
+bool VRayVolumeGridRef::getLocalTransform(UT_Matrix4D &m) const
 {
-	if (getResolution() == MAX_RESOLUTION &&
-		getFullCacheVoxelCount() != -1)
-	{
-		m_currentData = m_dataCache[key];
-	}
-	else {
-		fetchDataMaxVox(key, m_currentData, getCurrentCacheVoxelCount(), false);
-	}
-
-	return m_currentData;
-}
-
-UT_Matrix4F VRayVolumeGridRef::toWorldTm(CachePtr cache) const
-{
-	return getCacheTm(cache, getFlipYz());
+#if 1
+	// We'll use GEO_PrimVolume::setTransform().
+	m.identity();
+#else
+	m = m_currentData.tm;
+#endif;
+	return true;
 }
 
 bool VRayVolumeGridRef::unpack(GU_Detail&) const
@@ -323,23 +314,13 @@ int VRayVolumeGridRef::detailRebuild()
 	using namespace std;
 	using namespace chrono;
 
-	memset(getChannelDataRanges().data(), 0, DataRangeMapSize);
-
 	const VolumeCacheKey &key = genKey();
-	if (!key.isValid()) {
-		return true;
+	if (key.isValid()) {
+		fetchDataMaxVox(key, m_currentData, getCurrentCacheVoxelCount(), false);
 	}
 
-	VolumeCacheData &data = getCache(key);
-	if (!data.aurPtr) {
-		return true;
-	}
-
-	const int res = m_detail != data.detailHandle;
-
-	m_detail = data.detailHandle;
-
-	memcpy(getChannelDataRanges().data(), data.dataRange.data(), DataRangeMapSize);
+	const int res = m_detail != m_currentData.detailHandle;
+	m_detail = m_currentData.detailHandle;
 
 	return res;
 }
@@ -366,21 +347,16 @@ UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
 	return channels;
 }
 
-VRayVolumeGridRef::VolumeCache &VRayVolumeGridRef::getCachedData() const
-{
-	return m_dataCache;
-}
-
 void VRayVolumeGridRef::buildMapping()
 {
 	const QString loadPath = getCurrentPath();
 	if (loadPath.isEmpty())
 		return;
 
-	UT_String chanMap;
-	// aur cache has no need for mappings
+	UT_String chanMap = "";
+
+	// Aur caches don't need any mappings.
 	if (loadPath.endsWith(".aur")) {
-		chanMap = "";
 		setPhxChannelMap(UT_StringArray());
 	}
 	else {
