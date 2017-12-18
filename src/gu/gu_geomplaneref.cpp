@@ -55,7 +55,8 @@ GU_PackedImpl *GeomPlaneRef::copy() const
 
 bool GeomPlaneRef::unpack(GU_Detail&) const
 {
-	return true;
+	// This will show error and indicate that we don't support unpacking.
+	return false;
 }
 
 static void addPlainPoint(GU_Detail &gdp, UT_BoundingBox &bbox,

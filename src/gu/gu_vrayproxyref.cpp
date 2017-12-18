@@ -72,8 +72,8 @@ bool VRayProxyRef::getBounds(UT_BoundingBox &box) const
 
 bool VRayProxyRef::unpack(GU_Detail&) const
 {
-	// There is no need to unpack VRayProxy.
-	return true;
+	// This will show error and indicate that we don't support unpacking.
+	return false;
 }
 
 VRayProxyRefKey VRayProxyRef::getKey() const

@@ -59,7 +59,8 @@ GU_PackedImpl *VRayPgYetiRef::copy() const
 
 bool VRayPgYetiRef::unpack(GU_Detail&) const
 {
-	return true;
+	// This will show error and indicate that we don't support unpacking.
+	return false;
 }
 
 static int yetiIsFurGroup(const H5::Group &group)
