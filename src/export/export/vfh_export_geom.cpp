@@ -875,14 +875,12 @@ static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
 {
 	const VRay::VUtils::CharStringRefList &sceneName = getSceneName(opNode);
 
-	if (!userAttributes.endsWith(';')) {
-		userAttributes.append(';');
-	}
 	userAttributes.append(vrayUserAttrSceneName);
 	userAttributes.append('=');
 	userAttributes.append(sceneName[0].ptr());
 	userAttributes.append(',');
 	userAttributes.append(sceneName[1].ptr());
+	userAttributes.append(';');
 }
 
 /// Add object's unique ID for IPR drag-drop.
@@ -890,10 +888,9 @@ static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
 /// @param opNode Scene node.
 static void appendObjUniqueID(QString &userAttributes, const OP_Node &opNode)
 {
-	if (!userAttributes.endsWith(';'))
-		userAttributes.append(';');
 	userAttributes.append("Op_Id=");
 	userAttributes.append(QString::number(opNode.getUniqueId()));
+	userAttributes.append(';');
 }
 
 VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
