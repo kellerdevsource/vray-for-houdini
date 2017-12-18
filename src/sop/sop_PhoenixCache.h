@@ -13,7 +13,6 @@
 #ifdef  CGR_HAS_AUR
 
 #include "sop_node_base.h"
-#include "gu_volumegridref.h"
 
 namespace VRayForHoudini {
 namespace SOP {
