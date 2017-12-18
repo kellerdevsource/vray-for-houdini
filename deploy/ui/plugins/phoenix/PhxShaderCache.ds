@@ -12,8 +12,8 @@
             name    "cache_path"
             label   "Input Cache File"
             help    "Simulator cache path"
-            default { "" }
             type    file
+            default { "" }
             parmtag { "cook_dependent" "1" }
             parmtag { "filechooser_mode" "read" }
             parmtag { "filechooser_pattern" "*.vdb,*.f3d,*.aur" }
