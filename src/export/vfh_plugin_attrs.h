@@ -300,14 +300,6 @@ struct PluginDesc {
 	const PluginAttr* get(const std::string &paramName) const;
 	PluginAttr* get(const std::string &paramName);
 
-	/// Compare for difference our attributes with those of the other plugin
-	/// description.
-	bool isDifferent(const PluginDesc &otherDesc) const;
-
-	/// Compare for equality our attributes with those of the other plugin
-	/// description.
-	bool isEqual(const PluginDesc &otherDesc) const;
-
 	/// Plugin instance name.
 	std::string pluginName;
 

@@ -15,20 +15,6 @@
 using namespace VRayForHoudini;
 using namespace Attrs;
 
-#define ReturnTrueIfNotEq(member) if (p.member != other->member) { return true; }
-#define ReturnTrueIfFloatNotEq(member) if (!IsFloatEq(p.member, other->member)) { return true; }
-
-template <typename VectorType>
-FORCEINLINE bool vectorNotEqual(const VectorType &a, const VectorType &b) {
-	if (!IsFloatEq(a[0], b[0]))
-		return true;
-	if (!IsFloatEq(a[1], b[1]))
-		return true;
-	if (!IsFloatEq(a[2], b[2]))
-		return true;
-	return false;
-}
-
 Attrs::PluginDesc::PluginDesc()
 {}
 
@@ -119,67 +105,4 @@ void Attrs::PluginDesc::add(const PluginAttr &attr)
 void Attrs::PluginDesc::remove(const char *name)
 {
 	pluginAttrs.erase(name);
-}
-
-bool Attrs::PluginDesc::isDifferent(const Attrs::PluginDesc &otherDesc) const
-{
-	FOR_CONST_IT (PluginAttrs, pIt, pluginAttrs) {
-		const PluginAttr &p = pIt.data();
-		const PluginAttr *other = otherDesc.get(pIt.key());
-		if (other) {
-			if (p.paramType != other->paramType) {
-				return true;
-			}
-			switch (p.paramType) {
-				case PluginAttr::AttrTypeUnknown:
-				case PluginAttr::AttrTypeIgnore:
-					break;
-				case PluginAttr::AttrTypeInt: {
-					ReturnTrueIfNotEq(paramValue.valInt);
-					break;
-				}
-				case PluginAttr::AttrTypeFloat: {
-					ReturnTrueIfFloatNotEq(paramValue.valFloat);
-					break;
-				}
-				case PluginAttr::AttrTypeColor:
-				case PluginAttr::AttrTypeVector:
-				case PluginAttr::AttrTypeAColor: {
-					if (vectorNotEqual(p.paramValue.valVector, other->paramValue.valVector))
-						return true;
-					break;
-				}
-				case PluginAttr::AttrTypeTransform: {
-					if (vectorNotEqual(p.paramValue.valTransform.matrix.v0, other->paramValue.valTransform.matrix.v0))
-						return true;
-					if (vectorNotEqual(p.paramValue.valTransform.matrix.v1, other->paramValue.valTransform.matrix.v1))
-						return true;
-					if (vectorNotEqual(p.paramValue.valTransform.matrix.v2, other->paramValue.valTransform.matrix.v2))
-						return true;
-					if (vectorNotEqual(p.paramValue.valTransform.offset, other->paramValue.valTransform.offset))
-						return true;
-					break;
-				}
-				case PluginAttr::AttrTypeString: {
-					if (p.paramValue.valString != other->paramValue.valString)
-						return true;
-					break;
-				}
-				case PluginAttr::AttrTypePlugin: {
-					if (vutils_strcmp(p.paramValue.valPlugin.getName(), other->paramValue.valPlugin.getName()) != 0)
-						return true;
-					break;
-				}
-				default:
-					break;
-			}
-		}
-	}
-
-	return false;
-}
-
-bool Attrs::PluginDesc::isEqual(const PluginDesc &otherDesc) const
-{
-	return !isDifferent(otherDesc);
 }
