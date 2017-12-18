@@ -11,6 +11,8 @@
 #ifdef CGR_HAS_AUR
 
 #include "sop_PhoenixCache.h"
+
+#include "vfh_attr_utils.h"
 #include "vfh_prm_templates.h"
 
 using namespace VRayForHoudini;
@@ -28,17 +30,15 @@ void PhxShaderCache::setPluginType()
 
 void PhxShaderCache::setTimeDependent()
 {
+	// Check if file contains frame pattern "$F".
 	UT_String raw;
 	evalStringRaw(raw, "cache_path", 0, 0.0f);
 
-	// Check if file contains frame pattern "$F".
 	flags().setTimeDep(raw.findString("$F", false, false));
 }
 
 void PhxShaderCache::updatePrimitive(const OP_Context &context)
 {
-	vassert(m_primPacked);
-
 	const fpreal t = context.getTime();
 
 	OP_Options primOptions;
@@ -49,9 +49,19 @@ void PhxShaderCache::updatePrimitive(const OP_Context &context)
 
 	const int isTimeDependent = flags().getTimeDep();
 
-	UT_String rawLoadPath;
-	evalStringRaw(rawLoadPath, "cache_path", 0, t);
-	primOptions.setOptionS("cache_path_raw", rawLoadPath);
+	if (isTimeDependent) {
+		// Replace frame number with Phoenix compatible frame pattern.
+		UT_String rawLoadPath;
+		evalStringRaw(rawLoadPath, "cache_path", 0, t);
+		rawLoadPath.changeWord("$F", "####");
+
+		// Expand all the other variables.
+		CH_Manager *chanMan = OPgetDirector()->getChannelManager();
+		UT_String loadPath;
+		chanMan->expandString(rawLoadPath.buffer(), loadPath, t);
+
+		primOptions.setOptionS("cache_path", loadPath);
+	}
 
 	primOptions.setOptionF("current_frame", isTimeDependent ? context.getFloatFrame() : 0.0);
 

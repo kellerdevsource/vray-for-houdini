@@ -19,6 +19,7 @@
 #include "vfh_VRayVolumeGridRefBase.h"
 
 #include <aurinterface.h>
+#include <QString>
 
 namespace VRayForHoudini {
 
@@ -26,14 +27,14 @@ struct VolumeCacheKey {
 	VolumeCacheKey()
 		: flipYZ(false)
 	{}
-	VolumeCacheKey(const std::string &path, const std::string &map, bool flipYZ)
+	VolumeCacheKey(const QString &path, const QString &map, bool flipYZ)
 		: path(path)
 		, map(map)
 		, flipYZ(flipYZ)
 	{}
 
-	std::string path;
-	std::string map;
+	QString path;
+	QString map;
 	bool flipYZ;
 
 	bool isValid() const;
@@ -51,9 +52,15 @@ namespace std {
 template <> struct hash<VRayForHoudini::VolumeCacheKey> {
 	size_t operator()(const VRayForHoudini::VolumeCacheKey &volumeKey) const {
 		VRayForHoudini::Hash::MHash hash = 42;
-		VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.path.c_str(), volumeKey.path.length(), hash, &hash);
-		VRayForHoudini::Hash::MurmurHash3_x86_32(volumeKey.map.c_str(), volumeKey.map.length(), hash, &hash);
+
+		QByteArray path = volumeKey.path.toLocal8Bit();
+		VRayForHoudini::Hash::MurmurHash3_x86_32(path.constData(), path.length(), hash, &hash);
+
+		QByteArray map = volumeKey.map.toLocal8Bit();
+		VRayForHoudini::Hash::MurmurHash3_x86_32(map.constData(), map.length(), hash, &hash);
+
 		VRayForHoudini::Hash::MurmurHash3_x86_32(&volumeKey.flipYZ, sizeof(volumeKey.flipYZ), hash, &hash);
+
 		return hash;
 	}
 };
@@ -148,20 +155,11 @@ private:
 	/// Generates VolumeCacheKey from current data
 	VolumeCacheKey genKey() const;
 
-	/// Builds the cache path according to current settings
-	/// @param toPhx - if true frame will be replaced with '#'s otherwise with current cache frame
-	/// @return - replaced cache path
-	std::string getConvertedPath(bool toPhx) const;
-
-	/// Split the path if there is a frame number in it
-	/// @path - the cache path
-	/// @prefix[out] - everything up to the frame, equal to @path if there is no frame
-	/// @suffix[out] - everything after the frame, empty if @path has no frame
-	/// @return - the number of digits in the frame (0 if no frame)
-	int splitPath(const UT_String &path, std::string &prefix, std::string &suffix) const;
-
 	/// Get current cache frame based on current frame + cache play settings
-	int getCurrentCacheFrame() const;
+	int getFrame() const;
+
+	/// Returns fully resolved cache load path.
+	QString getCurrentPath() const;
 
 	/// Gets resolution of cache (from UI)
 	int getResolution() const;
@@ -183,9 +181,6 @@ private:
 
 	/// True if channel mapping have changed since we last built them.
 	bool m_channelDirty;
-
-	/// If true we will replace frame number with ### for PHX otherwise user hardcoded frame number and we should not change it.
-	bool m_doFrameReplace;
 };
 
 } // namespace VRayForHoudini

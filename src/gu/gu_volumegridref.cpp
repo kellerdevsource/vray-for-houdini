@@ -10,6 +10,7 @@
 #ifdef CGR_HAS_AUR
 
 #include "vfh_log.h"
+#include "vfh_attr_utils.h"
 #include "gu_volumegridref.h"
 
 #include <GU/GU_PrimVolume.h>
@@ -77,7 +78,7 @@ const ChannelInfo &fromPropName(const char *name) {
 }
 #endif
 
-static UT_Matrix4F getCacheTm(VRayForHoudini::VRayVolumeGridRef::CachePtr cache, bool flipYZ)
+UT_Matrix4F getCacheTm(VRayForHoudini::VRayVolumeGridRef::CachePtr cache, bool flipYZ)
 {
 	if (!cache) {
 		return UT_Matrix4F(1.f);
@@ -123,24 +124,28 @@ static UT_Matrix4F getCacheTm(VRayForHoudini::VRayVolumeGridRef::CachePtr cache,
 
 using namespace VRayForHoudini;
 
-bool VolumeCacheKey::isValid() const
-{
-	return !path.empty();
-}
-
 static const int MAX_CHAN_MAP_LEN = 2048;
 static const int MAX_RESOLUTION = 255;
+static const QString framePattern("####");
 
 static GA_PrimitiveTypeId theTypeId(-1);
 static VRayBaseRefFactory<VRayVolumeGridRef> theFactory("VRayVolumeGridRef");
 
-static std::string getDefaultMapping(const char *cachePath) {
+static bool pathContainFramePattern(const QString &path)
+{
+	return path.contains(framePattern);
+}
+
+static UT_String getDefaultMapping(const char *cachePath)
+{
+	UT_String defMapping("");
+
 	char buff[MAX_CHAN_MAP_LEN];
 	if (1 == aurGenerateDefaultChannelMappings(buff, MAX_CHAN_MAP_LEN, cachePath)) {
-		return std::string(buff);
+		defMapping = UT_String(buff, true);
 	}
 
-	return "";
+	return defMapping;
 }
 
 struct IAurPointerDeleter {
@@ -148,6 +153,11 @@ struct IAurPointerDeleter {
 		deleteIAur(pointer);
 	}
 };
+
+bool VolumeCacheKey::isValid() const
+{
+	return !path.isEmpty();
+}
 
 void VRayVolumeGridRef::install(GA_PrimitiveFactory *primfactory)
 {
@@ -169,11 +179,11 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 
 	const time_point tStart = time_clock::now();
 	IAur *aurPtr;
-	if (key.map.empty()) {
-		aurPtr = newIAurMaxVox(key.path.c_str(), voxelCount, infoOnly);
+	if (key.map.isEmpty()) {
+		aurPtr = newIAurMaxVox(key.path.toLocal8Bit().constData(), voxelCount, infoOnly);
 	}
 	else {
-		aurPtr = newIAurWithChannelsMappingMaxVox(key.path.c_str(), key.map.c_str(), voxelCount, infoOnly);
+		aurPtr = newIAurWithChannelsMappingMaxVox(key.path.toLocal8Bit().constData(), key.map.toLocal8Bit().constData(), voxelCount, infoOnly);
 	}
 	data.aurPtr = VRayVolumeGridRef::CachePtr(aurPtr, [](IAur *ptr) { deleteIAur(ptr); });
 	const time_point tEndCache = time_clock::now();
@@ -184,7 +194,7 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 		Log::getLog().debug("Loading cache took %dms", static_cast<int>(std::chrono::duration_cast<milliseconds>(tEndCache - tStart).count()));
 	}
 	else {
-		Log::getLog().error("Failed to load cache \"%s\"", key.path.c_str());
+		Log::getLog().error("Failed to load cache \"%s\"", key.path.toLocal8Bit().constData());
 		return;
 	}
 
@@ -193,7 +203,6 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 	int gridDimensions[3];
 	data.aurPtr->GetDim(gridDimensions);
 
-	// TODO: maybe the flip YZ flag should be part of the key?
 	// what if there are two instances having the same cache but one has the flag set and the other does not?
 	const UT_Matrix4F tm = getCacheTm(data.aurPtr, key.flipYZ);
 
@@ -243,27 +252,25 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 
 VRayVolumeGridRef::VRayVolumeGridRef()
 	: m_channelDirty(false)
-	, m_doFrameReplace(false)
 {
 	memset(getChannelDataRanges().data(), 0, DataRangeMapSize);
 	initDataCache();
 }
 
-GA_PrimitiveTypeId VRayVolumeGridRef::typeId()
-{
-	return theTypeId;
-}
-
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
 	: VRayVolumeGridRefBase(src)
 	, m_channelDirty(false)
-	, m_doFrameReplace(src.m_doFrameReplace)
 {
 	initDataCache();
 }
 
 VRayVolumeGridRef::~VRayVolumeGridRef()
 {}
+
+GA_PrimitiveTypeId VRayVolumeGridRef::typeId()
+{
+	return theTypeId;
+}
 
 void VRayVolumeGridRef::initDataCache() const
 {
@@ -272,16 +279,13 @@ void VRayVolumeGridRef::initDataCache() const
 	// We don't need the evict callback, because the data is in RAII objects and will be freed when evicted from cache,
 	// so just print info.
 	m_dataCache.setEvictCallback([](const VolumeCacheKey &key, VolumeCacheData&) {
-		Log::getLog().debug("Removing \"%s\" from cache", key.path.c_str());
+		Log::getLog().debug("Removing \"%s\" from cache", key.path.toLocal8Bit().constData());
 	});
 }
 
 VolumeCacheKey VRayVolumeGridRef::genKey() const
 {
-	const char *path = getCurrentCachePath();
-	const char *map = getUsrchmap();
-
-	return VolumeCacheKey(path, map ? map : "", getFlipYz());
+	return VolumeCacheKey(getCurrentPath(), getUsrchmap(), getFlipYz());
 }
 
 GU_PackedFactory* VRayVolumeGridRef::getFactory() const
@@ -310,6 +314,7 @@ UT_Matrix4F VRayVolumeGridRef::toWorldTm(CachePtr cache) const
 
 bool VRayVolumeGridRef::unpack(GU_Detail&) const
 {
+	// This will show error and indicate that we don't support unpacking.
 	return false;
 }
 
@@ -346,9 +351,13 @@ UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
 		return channels;
 	}
 
-	int chanIndex = 0, isChannelVector3D;
+	const QString loadPath = getCurrentPath();
+
+	int chanIndex = 0;
+	int isChannelVector3D = 0;
 	char chanName[MAX_CHAN_MAP_LEN];
-	while (1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, getCurrentCachePath(), chanIndex++)) {
+
+	while (1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, loadPath.toLocal8Bit().constData(), chanIndex++)) {
 		channels.append(chanName);
 	}
 
@@ -364,14 +373,13 @@ VRayVolumeGridRef::VolumeCache &VRayVolumeGridRef::getCachedData() const
 
 void VRayVolumeGridRef::buildMapping()
 {
-	const char * path = getCurrentCachePath();
-	if (!path) {
+	const QString loadPath = getCurrentPath();
+	if (loadPath.isEmpty())
 		return;
-	}
 
 	UT_String chanMap;
 	// aur cache has no need for mappings
-	if (UT_String(path).endsWith(".aur")) {
+	if (loadPath.endsWith(".aur")) {
 		chanMap = "";
 		setPhxChannelMap(UT_StringArray());
 	}
@@ -411,16 +419,14 @@ void VRayVolumeGridRef::buildMapping()
 
 		// user made no mappings - get default
 		if (chanMap.equal("")) {
-			chanMap = getDefaultMapping(path);
+			chanMap = getDefaultMapping(loadPath.toLocal8Bit().constData());
 		}
 	}
 
-	if (getUsrchmap()) {
-		setUsrchmap(chanMap);
-	}
+	setUsrchmap(chanMap.buffer());
 }
 
-int VRayVolumeGridRef::getCurrentCacheFrame() const
+int VRayVolumeGridRef::getFrame() const
 {
 	float frame = getCurrentFrame();
 	const float animLen = getMaxLength();
@@ -471,6 +477,16 @@ int VRayVolumeGridRef::getCurrentCacheFrame() const
 	return frame;
 }
 
+QString VRayVolumeGridRef::getCurrentPath() const
+{
+	QString loadPath = getCachePath();
+	if (pathContainFramePattern(loadPath)) {
+		loadPath = loadPath.replace(framePattern,
+									QString::number(VUtils::fast_ceil(getCurrentFrame())));
+	}
+	return loadPath;
+}
+
 int VRayVolumeGridRef::getResolution() const
 {
 	const int resMode = getResMode();
@@ -485,10 +501,9 @@ i64 VRayVolumeGridRef::getFullCacheVoxelCount() const
 	if (!key.isValid())
 		return -1;
 
-	QScopedPointer<IAur, IAurPointerDeleter> aurPtr(newIAurMaxVox(key.path.c_str(), -1, true));
-	if (!aurPtr) {
+	QScopedPointer<IAur, IAurPointerDeleter> aurPtr(newIAurMaxVox(key.path.toLocal8Bit().constData(), -1, true));
+	if (!aurPtr)
 		return -1;
-	}
 
 	int gridDimensions[3];
 	aurPtr->GetDim(gridDimensions);
@@ -503,53 +518,6 @@ i64 VRayVolumeGridRef::getCurrentCacheVoxelCount() const
 		: static_cast<double>(getResolution()) / MAX_RESOLUTION * getFullCacheVoxelCount();
 }
 
-std::string VRayVolumeGridRef::getConvertedPath(bool toPhx) const
-{
-	const char * prefix = getCachePathPrefix();
-	const char * suffix = getCachePathSuffix();
-
-	if (!m_doFrameReplace) {
-		return prefix;
-	}
-
-	const int width = getFrameNumberWidth();
-	if (!prefix || !suffix || width < 1) {
-		return "";
-	}
-
-	if (toPhx) {
-		return prefix + std::string(width, '#') + suffix;
-	}
-
-	char frameStr[64];
-	sprintf(frameStr, "%0*d", width, getCurrentCacheFrame());
-	return std::string(prefix) + frameStr + suffix;
-}
-
-int VRayVolumeGridRef::splitPath(const UT_String &path, std::string &prefix, std::string &suffix) const
-{
-	UT_String hPrefix;
-	UT_String frame;
-	UT_String hSuffix;
-
-	const int result = path.parseNumberedFilename(hPrefix, frame, hSuffix);
-	if (result) {
-		if (m_doFrameReplace) {
-			prefix = hPrefix.toStdString();
-			suffix = hSuffix.toStdString();
-		}
-		else {
-			prefix = path.toStdString();
-			suffix = "";
-		}
-	}
-	else {
-		prefix = suffix = "";
-	}
-
-	return frame.length();
-}
-
 #ifdef HDK_16_5
 int VRayVolumeGridRef::updateFrom(GU_PrimPacked *prim, const UT_Options &options)
 #else
@@ -558,39 +526,9 @@ int VRayVolumeGridRef::updateFrom(const UT_Options &options)
 {
 	UT_Options newOptions(options);
 
-	m_doFrameReplace =
-		newOptions.hasOption("literal_cache_path") &&
-		!newOptions.getOptionB("literal_cache_path");
-
-	bool pathChange = false;
-	if (newOptions.hasOption(IntrinsicNames::cache_path)) {
-		std::string prefix;
-		std::string suffix;
-
-		const int frameWidth = splitPath(newOptions.getOptionS(IntrinsicNames::cache_path).c_str(), prefix, suffix);
-
-		pathChange =
-			frameWidth != getFrameNumberWidth() ||
-			prefix != getCachePathPrefix() ||
-			suffix != getCachePathSuffix();
-
-		newOptions.setOptionS(IntrinsicNames::cache_path_prefix, prefix.c_str());
-		newOptions.setOptionS(IntrinsicNames::cache_path_suffix, suffix.c_str());
-		newOptions.setOptionI(IntrinsicNames::frame_number_width, frameWidth);
-	}
-
-	if (m_doFrameReplace) {
-		// If we aren't replacing frame we don't care if frame changes
-		// this means user hardcoded a path for a specific frame.
-		pathChange |=
-			newOptions.hasOption(IntrinsicNames::current_frame) &&
-			newOptions.getOptionI(IntrinsicNames::current_frame) != getCurrentFrame();
-	}
-
-	m_channelDirty |= pathChange;
-
-	newOptions.setOptionS(IntrinsicNames::current_cache_path, getConvertedPath(false).c_str());
-	newOptions.setOptionS(IntrinsicNames::cache_path, getConvertedPath(true).c_str());
+	m_channelDirty =
+		vutils_strcmp(getCachePath(), options.getOptionS(IntrinsicNames::cache_path)) != 0 ||
+		pathContainFramePattern(getCachePath()) && !IsFloatEq(getCurrentFrame(), newOptions.getOptionF(IntrinsicNames::current_frame));
 
 #ifdef HDK_16_5
 	const int updateRes = VRayBaseRef::updateFrom(prim, newOptions);
