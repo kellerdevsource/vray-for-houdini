@@ -76,7 +76,7 @@ protected:
 	/// descriptions outdated).
 	const Parm::VRayPluginInfo *pluginInfo;
 
-	VfhDisableCopy(VRayNode)
+	VUTILS_DISABLE_COPY(VRayNode)
 };
 
 } // namespace OP
