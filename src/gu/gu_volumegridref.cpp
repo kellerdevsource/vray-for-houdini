@@ -56,28 +56,6 @@ const ChannelInfo chInfo[] = {
 /// Number of valid channels.
 const int CHANNEL_COUNT = (sizeof(chInfo) / sizeof(chInfo[0])) - 1;
 
-#if 0
-/// Get ChannelInfo from it's type
-const ChannelInfo &fromType(int type) {
-	for (int c = 0; c < CHANNEL_COUNT; ++c) {
-		if (static_cast<int>(chInfo[c]) == type) {
-			return chInfo[c];
-		}
-	}
-	return chInfo[CHANNEL_COUNT];
-}
-
-/// Get ChannelInfo from it's name
-const ChannelInfo &fromPropName(const char *name) {
-	for (int c = 0; c < CHANNEL_COUNT; ++c) {
-		if (!strcmp(name, chInfo[c].propName)) {
-			return chInfo[c];
-		}
-	}
-	return chInfo[CHANNEL_COUNT - 1];
-}
-#endif
-
 UT_Matrix4F getCacheTm(VRayForHoudini::VRayVolumeGridRef::CachePtr cache, bool flipYZ)
 {
 	if (!cache) {
