@@ -56,7 +56,7 @@ void VRayScene::updatePrimitive(const OP_Context &context)
 		primOptions.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), context.getTime());
 	}
 
-	UT_String pluginMappings;
+	UT_String pluginMappings = "";
 
 	const int numMappings = evalInt("plugin_mapping", 0, 0.0);
 	for (int i = 1; i <= numMappings; ++i) {
