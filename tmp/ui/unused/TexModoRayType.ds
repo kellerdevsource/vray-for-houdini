@@ -1,6 +1,0 @@
-{
-    name	TexModoRayType
-label	"Modo Ray Type"
-parmtag	{ spare_category "Modo Ray Type" }
-parmtag	{ vray_plugin "TexModoRayType" }
-}

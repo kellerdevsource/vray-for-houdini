@@ -1,6 +1,0 @@
-{
-    name	TexMayaHairTransparency
-label	"Maya Hair Transparency"
-parmtag	{ spare_category "Maya Hair Transparency" }
-parmtag	{ vray_plugin "TexMayaHairTransparency" }
-}

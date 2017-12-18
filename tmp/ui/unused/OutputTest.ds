@@ -1,6 +1,0 @@
-{
-    name	OutputTest
-label	"Output Test"
-parmtag	{ spare_category "Output Test" }
-parmtag	{ vray_plugin "OutputTest" }
-}

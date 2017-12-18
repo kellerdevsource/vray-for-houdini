@@ -1,6 +1,0 @@
-{
-    name	GeomImagePlane
-label	"Geom Image Plane"
-parmtag	{ spare_category "Geom Image Plane" }
-parmtag	{ vray_plugin "GeomImagePlane" }
-}

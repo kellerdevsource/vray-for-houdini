@@ -1,6 +1,0 @@
-{
-	name	UVWGenSwitch
-	label	"Switch"
-	parmtag	{ spare_category "Switch" }
-	parmtag	{ vray_plugin "UVWGenSwitch" }
-}

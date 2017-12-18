@@ -1,6 +1,0 @@
-{
-    name	TexVRayFurSampler
-label	"V Ray Fur Sampler"
-parmtag	{ spare_category "V Ray Fur Sampler" }
-parmtag	{ vray_plugin "TexVRayFurSampler" }
-}

@@ -1,6 +1,0 @@
-{
-    name	TexMayaFluidCombined
-label	"Maya Fluid Combined"
-parmtag	{ spare_category "Maya Fluid Combined" }
-parmtag	{ vray_plugin "TexMayaFluidCombined" }
-}

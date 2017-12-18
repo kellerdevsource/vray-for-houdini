@@ -1,6 +1,0 @@
-{
-    name	TexMayaHairColor
-label	"Maya Hair Color"
-parmtag	{ spare_category "Maya Hair Color" }
-parmtag	{ vray_plugin "TexMayaHairColor" }
-}

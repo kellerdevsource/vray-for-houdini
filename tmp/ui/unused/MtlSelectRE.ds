@@ -1,6 +1,0 @@
-{
-    name	MtlSelectRE
-label	"Mtl Select RE"
-parmtag	{ spare_category "Mtl Select RE" }
-parmtag	{ vray_plugin "MtlSelectRE" }
-}

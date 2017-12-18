@@ -1,6 +1,0 @@
-{
-    name	TexFloatPerVertexHairSampler
-label	"Float Per Vertex Hair Sampler"
-parmtag	{ spare_category "Float Per Vertex Hair Sampler" }
-parmtag	{ vray_plugin "TexFloatPerVertexHairSampler" }
-}

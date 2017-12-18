@@ -1,6 +1,0 @@
-{
-    name	TexScalarHairRootSampler
-label	"Scalar Hair Root Sampler"
-parmtag	{ spare_category "Scalar Hair Root Sampler" }
-parmtag	{ vray_plugin "TexScalarHairRootSampler" }
-}

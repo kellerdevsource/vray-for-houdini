@@ -1,6 +1,0 @@
-{
-    name	TexSwitchTransform
-label	"Switch Transform"
-parmtag	{ spare_category "Switch Transform" }
-parmtag	{ vray_plugin "TexSwitchTransform" }
-}

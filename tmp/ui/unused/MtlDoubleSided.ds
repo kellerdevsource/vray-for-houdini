@@ -1,6 +1,0 @@
-{
-    name	MtlDoubleSided
-label	"Double Sided"
-parmtag	{ spare_category "Double Sided" }
-parmtag	{ vray_plugin "MtlDoubleSided" }
-}

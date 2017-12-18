@@ -1,6 +1,0 @@
-{
-    name	TexMayaHairIncandescence
-label	"Maya Hair Incandescence"
-parmtag	{ spare_category "Maya Hair Incandescence" }
-parmtag	{ vray_plugin "TexMayaHairIncandescence" }
-}

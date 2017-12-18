@@ -1,6 +1,0 @@
-{
-    name	TexSwitchMatrix
-label	"Switch Matrix"
-parmtag	{ spare_category "Switch Matrix" }
-parmtag	{ vray_plugin "TexSwitchMatrix" }
-}

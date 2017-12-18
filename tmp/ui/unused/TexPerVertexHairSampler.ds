@@ -1,6 +1,0 @@
-{
-    name	TexPerVertexHairSampler
-label	"Per Vertex Hair Sampler"
-parmtag	{ spare_category "Per Vertex Hair Sampler" }
-parmtag	{ vray_plugin "TexPerVertexHairSampler" }
-}
