@@ -99,7 +99,16 @@ void VRayPluginRenderer::freeMem()
 
 	Log::getLog().debug("VRayPluginRenderer::freeMem()");
 
-	m_vray->stop();
+	if (m_enableVFB) {
+		m_vray->vfb.show(false, false);
+		m_vray->vfb.setParentWindow(nullptr);
+	}
+
+	// The rest of the callbacks will be cleared in reset().
+	m_vray->setOnVFBClosed(nullptr);
+	m_vray->setOnRenderLast(nullptr);
+
+	reset();
 
 	deleteVRayRenderer(m_vray);
 }
