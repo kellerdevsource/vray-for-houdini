@@ -96,7 +96,6 @@ void VOP::MtlMulti::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 	}
 }
 
-
 void VOP::MtlMulti::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos)
 {
 	const int numBaseInputs = VOP::NodeBase::orderedInputs();
@@ -105,11 +104,49 @@ void VOP::MtlMulti::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeIn
 		VOP::NodeBase::getAllowedInputTypeInfosSubclass(idx, type_infos);
 	}
 	else {
-		VOP_TypeInfo type_info(VOP_SURFACE_SHADER);
-		type_infos.append(type_info);
+		VOP_TypeInfo vopTypeInfo;
+		getInputTypeInfoSubclass(vopTypeInfo, idx);
+		if (vopTypeInfo == VOP_TypeInfo(VOP_SURFACE_SHADER)) {
+			type_infos.append(VOP_TypeInfo(VOP_TYPE_BSDF));
+		}
 	}
 }
 
+void VOP::MtlMulti::getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &voptypes)
+{
+	const int numBaseInputs = VOP::NodeBase::orderedInputs();
+
+	if (idx < numBaseInputs) {
+		VOP::NodeBase::getAllowedInputTypesSubclass(idx, voptypes);
+	}
+	else {
+		VOP_TypeInfo vopTypeInfo;
+		getInputTypeInfoSubclass(vopTypeInfo, idx);
+		if (vopTypeInfo == VOP_TypeInfo(VOP_SURFACE_SHADER)) {
+			voptypes.append(VOP_TYPE_BSDF);
+		}
+	}
+}
+
+bool VOP::MtlMulti::willAutoconvertInputType(int input_idx)
+{
+	const int numBaseInputs = VOP::NodeBase::orderedInputs();
+
+	if (input_idx < numBaseInputs) {
+		return VOP::NodeBase::willAutoconvertInputType(input_idx);
+	}
+	else if (input_idx < this->orderedInputs()) {
+		VOP_VopTypeInfoArray typesInfo;
+		getAllowedInputTypeInfosSubclass(input_idx, typesInfo);
+		if (typesInfo.find(VOP_TypeInfo(VOP_SURFACE_SHADER))) {
+			return true;
+		}
+
+		return false;
+	}
+
+	return false;
+}
 
 int VOP::MtlMulti::customInputsCount() const
 {
@@ -157,6 +194,7 @@ OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &plugin
 		}
 		else {
 			VRay::Plugin mtl_plugin = exporter.exportVop(mtl_node, parentContext);
+
 			if (NOT(mtl_plugin)) {
 				Log::getLog().error("Node \"%s\": Failed to export material node connected to \"%s\", ignoring...",
 							getName().buffer(), mtlSockName.c_str());
