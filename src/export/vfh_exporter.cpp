@@ -1837,6 +1837,21 @@ void VRayExporter::exportScene()
 		}
 	}
 
+	if (sessionType == VfhSessionType::ipr) {
+		Attrs::PluginDesc texOpId("userAttrOpId", "TexUserColor");
+		texOpId.add(Attrs::PluginAttr("user_attribute", "Op_Id"));
+		texOpId.add(Attrs::PluginAttr("attribute_priority", 1));
+
+		Attrs::PluginDesc rcOpId("rcUserAttrOpId", "RenderChannelExtraTex");
+		rcOpId.add(Attrs::PluginAttr("name", "OpID"));
+		rcOpId.add(Attrs::PluginAttr("consider_for_aa", false));
+		rcOpId.add(Attrs::PluginAttr("filtering", false));
+		rcOpId.add(Attrs::PluginAttr("affect_matte_objects", false));
+		rcOpId.add(Attrs::PluginAttr("enableDeepOutput", false));
+		rcOpId.add(Attrs::PluginAttr("texmap", exportPlugin(texOpId)));
+		exportPlugin(rcOpId);
+	}
+
 	// Add simulations from OBJ
 	if (!m_phxSimulations.empty()) {
 		Attrs::PluginDesc phxSims("VRayNodePhxShaderSimVol", "PhxShaderSimVol");
