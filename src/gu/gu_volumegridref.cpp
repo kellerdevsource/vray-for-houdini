@@ -478,16 +478,14 @@ int VRayVolumeGridRef::updateFrom(GU_PrimPacked *prim, const UT_Options &options
 int VRayVolumeGridRef::updateFrom(const UT_Options &options)
 #endif
 {
-	UT_Options newOptions(options);
-
 	m_channelDirty =
 		vutils_strcmp(getCachePath(), options.getOptionS(IntrinsicNames::cache_path)) != 0 ||
-		pathContainFramePattern(getCachePath()) && !IsFloatEq(getCurrentFrame(), newOptions.getOptionF(IntrinsicNames::current_frame));
+		pathContainFramePattern(getCachePath()) && !IsFloatEq(getCurrentFrame(), options.getOptionF(IntrinsicNames::current_frame));
 
 #ifdef HDK_16_5
-	const int updateRes = VRayBaseRef::updateFrom(prim, newOptions);
+	const int updateRes = VRayBaseRef::updateFrom(prim, options);
 #else
-	const int updateRes = VRayBaseRef::updateFrom(newOptions);
+	const int updateRes = VRayBaseRef::updateFrom(options);
 #endif
 	if (updateRes || m_channelDirty) {
 		buildMapping();

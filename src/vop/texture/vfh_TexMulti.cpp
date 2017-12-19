@@ -31,7 +31,11 @@ const char* VOP::TexMulti::inputLabel(unsigned idx) const
 		}
 
 		UT_StringHolder &label = socketLabels[socketIndex];
+#ifdef HDK_16_5
 		if (label.isEmpty()) {
+#else
+		if (label == "") {
+#endif
 			label.sprintf("Texture %i", socketIndex);
 		}
 
