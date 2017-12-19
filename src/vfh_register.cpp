@@ -13,6 +13,9 @@
 #include "vfh_log.h"
 #include "vfh_vray_instances.h"
 #include "vfh_rop.h"
+#ifndef VASSERT_ENABLED
+#include "vfh_error.h"
+#endif
 
 #include "rop/rop_vrayproxyrop.h"
 #include "obj/obj_node_def.h"
