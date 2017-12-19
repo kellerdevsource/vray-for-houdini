@@ -259,7 +259,7 @@ protected:
 
 // NOTE: This file is auto-generated! Do not edit!
 
-#include <%HEADER_NAME%>
+#include "%HEADER_NAME%"
 
 using namespace VRayForHoudini;
 
