@@ -1,4 +1,5 @@
 // Taken from events.ds
+
 #define VFH_RENDERSCRIPT(TOKEN, LABEL) \
     parm { \
         name t##TOKEN \
@@ -6,15 +7,15 @@
         type toggle \
         default { 1 } \
         nolabel \
-         \
+        joinnext \
         parmtag { spare_category "Scripts" } \
     } \
     parm { \
         name TOKEN \
         label LABEL \
         type file \
-         \
         default { "" } \
+        joinnext \
         disablewhen { { t##TOKEN == 0 } } \
         parmtag { filechooser_mode  "read" } \
         parmtag { spare_category "Scripts" } \
