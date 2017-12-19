@@ -32,7 +32,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "render" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -45,7 +45,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "jitter" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -65,7 +65,7 @@
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "renderMode" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -83,7 +83,7 @@
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "pmprimary" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -96,7 +96,7 @@
 	    export	none
 	    parmtag	{ "autoscope" "0000000000000000" }
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "rendstep" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -108,7 +108,7 @@
 	    range	{ 1! 10000! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "rendshadstep" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -120,7 +120,7 @@
 	    range	{ 0! 100000! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "softb" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -132,7 +132,7 @@
 	    range	{ 0! 1000! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "velocity_mult" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -145,7 +145,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "vtex" }
 	    parmtag { "vray_type" "Texture" }
 	}
@@ -162,7 +162,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "sampler" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -178,7 +178,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "coord_method" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -197,7 +197,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "sarg" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -210,7 +210,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "stex" }
 	    parmtag { "vray_type" "Texture" }
 	}
@@ -222,7 +222,7 @@
 	    range	{ -100000! 100000! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "surflevel" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -234,7 +234,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "solidbelow" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -251,7 +251,7 @@
 	    export	none
 	    parmtag	{ "vray_custom_handling" " " }
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "dynamic_geometry" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -263,7 +263,7 @@
 	    range	{ 0! 1000! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "smoothmesh" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -276,7 +276,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "normalized_positions" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -289,7 +289,7 @@
 	    range	{ -1000! 1000! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "hhfactor" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -301,7 +301,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "displacement" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -319,7 +319,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "displ2d" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -332,7 +332,7 @@
 	    range	{ 0! 1000! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "displmul" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -346,7 +346,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "displ2" }
 	    parmtag { "vray_type" "Texture" }
 	}
@@ -374,7 +374,7 @@
 	    export	none
 	    parmtag	{ "vray_ramp_depend" "elum_curve" }
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "earg" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -388,7 +388,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "etex" }
 	    parmtag { "vray_type" "Texture" }
 	}
@@ -400,7 +400,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "mod_e" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -417,7 +417,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "fire_opacity_mode" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -429,7 +429,7 @@
 	    range	{ 0! 10 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "emult" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -442,7 +442,7 @@
 	    range	{ 0! 10 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "etmult" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -454,7 +454,7 @@
 	    range	{ 0! 1! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "blackbody" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -504,7 +504,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "al_enable" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -517,7 +517,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "lights" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -529,7 +529,7 @@
 	    range	{ 0! 1000! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "lightsmult" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -541,7 +541,7 @@
 	    range	{ 0! 1000! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "lightsmultself" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -558,7 +558,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "selfshadow" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -570,7 +570,7 @@
 	    range	{ 0! 100! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "gridreduct" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -587,7 +587,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "al_sampling" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -600,7 +600,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "al_placing" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -617,7 +617,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "al_decay" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -629,7 +629,7 @@
 	    range	{ 0 512! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "al_subdivs" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -658,7 +658,7 @@
 	    export	none
 	    parmtag	{ "vray_ramp_depend" "dcolor_ramp" }
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "darg" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -672,7 +672,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "dtex" }
 	    parmtag { "vray_type" "Texture" }
 	}
@@ -684,7 +684,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "mod_d" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -698,7 +698,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "simple_color" }
 	    parmtag { "vray_type" "color" }
 	}
@@ -710,7 +710,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "lightcache" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -723,7 +723,7 @@
 	    range	{ 0! 0.999! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "lightcachesr" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -741,7 +741,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "noscatter" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -754,7 +754,7 @@
 	    range	{ 0! 65535! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "bounces" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -767,7 +767,7 @@
 	    range	{ 0! 4! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "difmul" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -780,7 +780,7 @@
 	    range	{ 0! 10! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "transfown" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -793,7 +793,7 @@
 	    range	{ 0! 10! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "transfext" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -805,7 +805,7 @@
 	    range	{ 0! 100! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "shad_strength" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -851,7 +851,7 @@
 	    export	none
 	    parmtag	{ "vray_ramp_depend" "transp_curve" }
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "targ" }
 	    parmtag { "vray_type" "enum" }
 	}
@@ -865,7 +865,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "ttex" }
 	    parmtag { "vray_type" "Texture" }
 	}
@@ -877,7 +877,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "mod_t" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -890,7 +890,7 @@
 	    range	{ 0! 1! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "smoketransp" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -903,7 +903,7 @@
 	    range	{ 0! 1! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "stoptransp" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -916,7 +916,7 @@
 	    range	{ 0! 1! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "skiptransp" }
 	    parmtag { "vray_type" "float" }
 	}
@@ -929,7 +929,7 @@
 	    range	{ 0! 1! }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "transpmode" }
 	    parmtag { "vray_type" "int" }
 	}
@@ -941,7 +941,7 @@
 	    range	{ 0 1 }
 	    export	none
 	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "MtlOverride" }
+	    parmtag { "vray_plugin" "PhxShaderSim" }
 	    parmtag { "vray_pluginattr" "alphaunitscale" }
 	    parmtag { "vray_type" "int" }
 	}
