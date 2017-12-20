@@ -343,6 +343,16 @@ if(INSTALL_RELEASE)
 			PATTERN ${EXCLUDE_LIBVRAY} EXCLUDE
 	)
 
+	if (WIN32)
+		set(TOOL_EXE_SUFFIX ".exe")
+	else()
+		set(TOOL_EXE_SUFFIX ".bin")
+	endif()
+
+	install(FILES       ${APPSDK_ROOT}/tools/ply2vrmesh${TOOL_EXE_SUFFIX}
+			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/tools)
+
+
 	# Default libvray.dll is Qt5
 	if(HOUDINI_QT_VERSION VERSION_EQUAL 4)
 		set(VRAYDSO_QT4 ${APPSDK_ROOT}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}vray_qt4${CMAKE_SHARED_LIBRARY_SUFFIX})

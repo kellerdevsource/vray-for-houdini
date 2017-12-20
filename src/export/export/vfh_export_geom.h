@@ -276,7 +276,7 @@ public:
 
 	/// Export object geometry.
 	/// @returns Geometry plugin.
-	VRay::Plugin exportGeometry(OBJ_Node &objNode);
+	VRay::Plugin exportGeometry(OBJ_Node &objNode, SOP_Node *specificSop = nullptr);
 
 	/// Export object geometry into a set of plugins.
 	/// @param objNode OBJ node.
@@ -331,6 +331,10 @@ public:
 	/// @param key Node full path.
 	void removeGenerated(const char *key);
 
+	/// Export geometric object.
+	/// @returns Node plugin.
+	VRay::Plugin exportNode(OBJ_Node &objNode, SOP_Node *specificSop = nullptr);
+
 private:
 	/// Push context frame when exporting nested object.
 	void pushContext(const PrimContext &value) { primContextStack.push(value); }
@@ -342,10 +346,6 @@ private:
 	/// Export light object.
 	/// @returns Light plugin.
 	VRay::Plugin exportLight(OBJ_Light &objLight);
-
-	/// Export geometric object.
-	/// @returns Node plugin.
-	VRay::Plugin exportNode(OBJ_Node &objNode);
 
 	/// Plugin exporter.
 	VRayExporter &pluginExporter;

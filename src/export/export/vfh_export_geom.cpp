@@ -396,11 +396,15 @@ int ObjectExporter::isNodeVisible(OBJ_Node &objNode) const
 	if (pluginExporter.getRopPtr()) {
 		return isNodeVisible(*pluginExporter.getRopPtr(), objNode, ctx.getTime());
 	}
-	return false;
+	// If there is no ROP - there is no option to hide the obj
+	return true;
 }
 
 int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
 {
+	if (!pluginExporter.getRopPtr()) {
+		return false;
+	}
 	OP_Bundle *bundle = getMatteGeometryBundle(*pluginExporter.getRopPtr(), ctx.getTime());
 	if (!bundle) {
 		return false;
@@ -410,6 +414,9 @@ int ObjectExporter::isNodeMatte(OBJ_Node &objNode) const
 
 int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 {
+	if (!pluginExporter.getRopPtr()) {
+		return false;
+	}
 	OP_Bundle *bundle = getPhantomGeometryBundle(*pluginExporter.getRopPtr(), ctx.getTime());
 	if (!bundle) {
 		return false;
@@ -1944,12 +1951,12 @@ void ObjectExporter::exportGeometry(OBJ_Node &objNode, PrimitiveItems &items)
 	items.swap(instancerItems);
 }
 
-VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode)
+VRay::Plugin ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node *specificSop)
 {
-	SOP_Node *renderSOP = objNode.getRenderSopPtr();
-	if (!renderSOP)
+	SOP_Node *renderSOP = specificSop ? specificSop : objNode.getRenderSopPtr();
+	if (!renderSOP) {
 		return VRay::Plugin();
-
+	}
 	exportGeometry(objNode, instancerItems);
 
 	return exportDetailInstancer(objNode);
@@ -1959,7 +1966,9 @@ int ObjectExporter::isLightEnabled(OBJ_Node &objLight) const
 {
 	int enabled = 0;
 	objLight.evalParameterOrProperty("enabled", 0, ctx.getTime(), enabled);
-
+	if (!pluginExporter.getRopPtr()) {
+		return enabled;
+	}
 	OP_Bundle *bundle = getForcedLightsBundle(*pluginExporter.getRopPtr(), ctx.getTime());
 	return bundle && (bundle->contains(&objLight, false) || (enabled > 0));
 }
@@ -2062,7 +2071,7 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 	return pluginExporter.exportPlugin(pluginDesc);
 }
 
-VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
+VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop)
 {
 	using namespace Attrs;
 
@@ -2070,7 +2079,7 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode)
 	Attrs::PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
 							   vrayPluginTypeNode.buffer());
 
-	const VRay::Plugin geometry = exportGeometry(objNode);
+	const VRay::Plugin geometry = exportGeometry(objNode, specificSop);
 	// May be NULL if geometry was not re-exported during RT sessions.
 	if (geometry) {
 		nodeDesc.add(PluginAttr("geometry", geometry));

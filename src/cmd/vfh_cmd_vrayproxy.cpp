@@ -209,7 +209,13 @@ void CMD::vrayproxy(CMD_Args &args)
 		return;
 	}
 
-	VUtils::ErrorCode err = VRayProxyExporter::doExport(options, sopList);
+	VRayProxyExporter exporter(options, sopList, nullptr);
+
+	VUtils::ErrorCode err = exporter.init();
+	if (!err.error()) {
+		err = exporter.doExport(options, sopList);
+	}
+
 	if (err.error()) {
 		args.err() << err.getErrorString().ptr() << "\n";
 	}
