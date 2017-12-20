@@ -136,9 +136,52 @@ void VOP::BRDFLayered::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTyp
 		VOP::NodeBase::getAllowedInputTypeInfosSubclass(idx, type_infos);
 	}
 	else {
-		VOP_TypeInfo type_info(VOP_TYPE_BSDF);
-		type_infos.append(type_info);
+		VOP_TypeInfo vopTypeInfo;
+		getInputTypeInfoSubclass(vopTypeInfo, idx);
+		if (vopTypeInfo == VOP_TypeInfo(VOP_TYPE_BSDF)) {
+			type_infos.append(VOP_TypeInfo(VOP_SURFACE_SHADER));
+		}
+		if (vopTypeInfo == VOP_TypeInfo(VOP_TYPE_FLOAT)) {
+			type_infos.append(VOP_TypeInfo(VOP_TYPE_COLOR));
+		}
 	}
+}
+
+void VOP::BRDFLayered::getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &voptypes)
+{
+	if (idx < VOP::NodeBase::orderedInputs()) {
+		VOP::NodeBase::getAllowedInputTypesSubclass(idx, voptypes);
+	}
+	else {
+		VOP_TypeInfo vopTypeInfo;
+		getInputTypeInfoSubclass(vopTypeInfo, idx);
+		if (vopTypeInfo == VOP_TypeInfo(VOP_TYPE_BSDF)) {
+			voptypes.append(VOP_SURFACE_SHADER);
+		}
+		if (vopTypeInfo == VOP_TypeInfo(VOP_TYPE_FLOAT)) {
+			voptypes.append(VOP_TYPE_COLOR);
+		}
+	}
+}
+
+
+bool VOP::BRDFLayered::willAutoconvertInputType(int idx)
+{
+	if (idx < VOP::NodeBase::orderedInputs()) {
+		return VOP::NodeBase::willAutoconvertInputType(idx);
+	}
+
+	VOP_TypeInfo vopTypeInfo;
+	getInputTypeInfoSubclass(vopTypeInfo, idx);
+
+	if (vopTypeInfo == VOP_TypeInfo(VOP_TYPE_BSDF)) {
+		return true;
+	}
+	if (vopTypeInfo == VOP_TypeInfo(VOP_TYPE_FLOAT)) {
+		return true;
+	}
+
+	return false;
 }
 
 

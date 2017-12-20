@@ -48,10 +48,11 @@ protected:
 	virtual void          getOutputNameSubclass(UT_String &out, int idx) const VRAY_OVERRIDE;
 	virtual void          getOutputTypeInfoSubclass(VOP_TypeInfo &type_info,  int idx) VRAY_OVERRIDE;
 	virtual void          getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos) VRAY_OVERRIDE;
+	virtual void          getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &voptypes) VRAY_OVERRIDE;
+	virtual bool          willAutoconvertInputType(int idx) VRAY_OVERRIDE;
 
 private:
 	int                   customInputsCount() const;
-
 };
 
 } // namespace VOP
