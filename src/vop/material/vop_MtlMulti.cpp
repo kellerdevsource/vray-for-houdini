@@ -135,14 +135,11 @@ bool VOP::MtlMulti::willAutoconvertInputType(int input_idx)
 	if (input_idx < numBaseInputs) {
 		return VOP::NodeBase::willAutoconvertInputType(input_idx);
 	}
-	else if (input_idx < this->orderedInputs()) {
-		VOP_VopTypeInfoArray typesInfo;
-		getAllowedInputTypeInfosSubclass(input_idx, typesInfo);
-		if (typesInfo.find(VOP_TypeInfo(VOP_SURFACE_SHADER))) {
-			return true;
-		}
 
-		return false;
+	VOP_VopTypeInfoArray typesInfo;
+	getAllowedInputTypeInfosSubclass(input_idx, typesInfo);
+	if (typesInfo.find(VOP_TypeInfo(VOP_SURFACE_SHADER))) {
+		return true;
 	}
 
 	return false;
