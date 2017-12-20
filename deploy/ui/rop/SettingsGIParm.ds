@@ -54,23 +54,21 @@ groupsimple {
 	parm {
 	  name	"SettingsGI_primary_engine"
 	  label	"Engine"
-	  type	ordinal
-	  default	{ "1" }
+	  type	string
+	  default	{ "2" }
 	  help	"Primary diffuse bounces engines"
 	  disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	  menu	{
-		  0	"Irradiance Map"
-		  1	"Brute Force"
-		  2	"Light Cache"
-		  //3	"Spherical Harmonics"
+		  "0"	"Irradiance Map"
+		  "2"	"Brute Force"
+		  "3"	"Light Cache"
+		  //"4"	"Spherical Harmonics"
 	  }
-	  range	{ 0 1 }
-	  export	none
 	  parmtag	{ "cook_dependent" "1" }
 	  parmtag	{ "vray_enumkeys" "0,2,3,4" }
 	  parmtag	{ "vray_plugin" "SettingsGI" }
 	  parmtag	{ "vray_pluginattr" "primary_engine" }
-	  parmtag	{ "vray_type" "int" }
+	  parmtag	{ "vray_type" "enum" }
 	}
 	parm {
 	  name	"SettingsGI_primary_multiplier"
@@ -101,9 +99,9 @@ groupsimple {
 	  help	"Secondary diffuse bounces engines"
 	  disablewhen	"{ SettingsGI_on != 1 } { SettingsGI_on == 0 }"
 	  menu	{
-		  0	"None"
-		  1	"Brute Force"
-		  2	"Light Cache"
+		  "0"	"None"
+		  "2"	"Brute Force"
+		  "3"	"Light Cache"
 	  }
 	  range	{ 0 1 }
 	  export	none
