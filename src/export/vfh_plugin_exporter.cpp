@@ -99,14 +99,12 @@ void VRayPluginRenderer::freeMem()
 
 	Log::getLog().debug("VRayPluginRenderer::freeMem()");
 
+	unbindCallbacks(true);
+
 	if (m_enableVFB) {
 		m_vray->vfb.show(false, false);
 		m_vray->vfb.setParentWindow(nullptr);
 	}
-
-	// The rest of the callbacks will be cleared in reset().
-	m_vray->setOnVFBClosed(nullptr);
-	m_vray->setOnRenderLast(nullptr);
 
 	reset();
 
@@ -552,14 +550,26 @@ void VRayPluginRenderer::reset()
 	Log::getLog().error("VRayPluginRenderer::reset()");
 #endif
 
-	// Remove callbacked except OnVFBClosed and OnRenderLast.
+	unbindCallbacks(false);
+
+	m_vray->stop();
+	m_vray->reset();
+}
+
+void VRayPluginRenderer::unbindCallbacks(int unbindUiButtons) const
+{
+	if (!m_vray)
+		return;
+
+	if (unbindUiButtons) {
+		m_vray->setOnVFBClosed(nullptr);
+		m_vray->setOnRenderLast(nullptr);
+	}
+
 	m_vray->setOnImageReady(nullptr);
 	m_vray->setOnProgress(nullptr);
 	m_vray->setOnDumpMessage(nullptr);
 	m_vray->setOnRendererClose(nullptr);
-
-	m_vray->stop();
-	m_vray->reset();
 }
 
 void VFBSettings::fillVfbSettings(void *stateBuf, int stateBufSize, VFBSettings &settings)

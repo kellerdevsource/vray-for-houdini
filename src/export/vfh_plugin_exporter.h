@@ -258,6 +258,11 @@ public:
 	/// Reset scene data.
 	void reset();
 
+	/// Unbind renderer callbacks.
+	/// @param unbindUiButtons If false - removes callbacks except OnVFBClosed and OnRenderLast,
+	/// removes all otherwise.
+	void unbindCallbacks(int unbindUiButtons = false) const;
+
 	/// Checks if VFB is enabled for this instance.
 	bool isVfbEnabled() const { return m_enableVFB; }
 
