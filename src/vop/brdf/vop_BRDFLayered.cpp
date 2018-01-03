@@ -220,6 +220,28 @@ void VOP::BRDFLayered::getCode(UT_String &codestr, const VOP_CodeGenContext &)
 }
 
 
+/// Type converter name template: "TexColorToFloat@<CurrentPluginName>|<ParameterName>"
+static boost::format fmtPluginTypeConverterName("%s@%s|%s");
+
+
+/// Sets attribute plugin value to a specific output based on ConnectedPluginInfo.
+/// @param pluginDesc Plugin description to add parameter on.
+/// @param attrName Attribute name.
+/// @param conPluginInfo Connected plugin info.
+static void setPluginValueFromConnectedPluginInfo(Attrs::PluginDesc &pluginDesc, const char *attrName, const ConnectedPluginInfo &conPluginInfo)
+{
+	if (!conPluginInfo.plugin)
+		return;
+
+	if (!conPluginInfo.output.empty()) {
+		pluginDesc.addAttribute(Attrs::PluginAttr(attrName, conPluginInfo.plugin, conPluginInfo.output));
+	}
+	else {
+		pluginDesc.addAttribute(Attrs::PluginAttr(attrName, conPluginInfo.plugin));
+	}
+}
+
+
 OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	const fpreal &t = exporter.getContext().getTime();
@@ -251,6 +273,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 				VRay::Plugin weight_plugin = VRay::Plugin();
 
 				OP_Node *weight_node = VRayExporter::getConnectedNode(this, weightSockName);
+
 				if (weight_node) {
 					weight_plugin = exporter.exportVop(weight_node, parentContext);
 				}
@@ -262,6 +285,17 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 
 					weight_plugin = exporter.exportPlugin(weight_tex);
 				}
+
+				// socket input type
+				Parm::SocketDesc curSockInfo;
+				curSockInfo.socketType = VOP_TYPE_FLOAT;
+				curSockInfo.attrName = weightSockName.c_str();
+				// output type of connected plugin
+				const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, weightSockName);
+
+				// wrap the socket in appropriate plugin
+				ConnectedPluginInfo conPlugInfo(weight_plugin);
+				exporter.autoconvertSocket(conPlugInfo, curSockInfo, fromSocketInfo, pluginDesc);
 
 				if (NOT(weight_plugin)) {
 					Log::getLog().error("Node \"%s\": Failed to export BRDF weight node connected to \"%s\", ignoring...",

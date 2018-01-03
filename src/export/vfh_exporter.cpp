@@ -587,7 +587,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.ptr());
 
 			// autoconvert color/float
-			ConnectedPluginInfo conPluginInfo;
+			ConnectedPluginInfo conPluginInfo(conPlugin);
 			autoconvertSocket(conPluginInfo, curSockInfo, fromSocketInfo, pluginDesc);
 
 			// Set "scene_name" for Cryptomatte.
