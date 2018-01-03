@@ -219,28 +219,30 @@ void VOP::BRDFLayered::getCode(UT_String &codestr, const VOP_CodeGenContext &)
 {
 }
 
-
-/// Type converter name template: "TexColorToFloat@<CurrentPluginName>|<ParameterName>"
-static boost::format fmtPluginTypeConverterName("%s@%s|%s");
-
-
-/// Sets attribute plugin value to a specific output based on ConnectedPluginInfo.
-/// @param pluginDesc Plugin description to add parameter on.
-/// @param attrName Attribute name.
-/// @param conPluginInfo Connected plugin info.
-static void setPluginValueFromConnectedPluginInfo(Attrs::PluginDesc &pluginDesc, const char *attrName, const ConnectedPluginInfo &conPluginInfo)
+/// Converts the input plugin to plugin of socket type if needed
+/// exporter - VRay exporter
+/// inputPlugin - the plugin connected to the socket
+/// pluginDesc - description of the current exported plugin
+/// node - current node
+/// socketType - socket type
+/// socketName - socket name
+static void convertInputPlugin(VRayExporter& exporter, VRay::Plugin& inputPlugin, Attrs::PluginDesc &pluginDesc, OP_Node* node, VOP_Type socketType, const char* socketName)
 {
-	if (!conPluginInfo.plugin)
-		return;
+	Parm::SocketDesc curSockInfo;
+	const Parm::SocketDesc *fromSocketInfo;
 
-	if (!conPluginInfo.output.empty()) {
-		pluginDesc.addAttribute(Attrs::PluginAttr(attrName, conPluginInfo.plugin, conPluginInfo.output));
-	}
-	else {
-		pluginDesc.addAttribute(Attrs::PluginAttr(attrName, conPluginInfo.plugin));
-	}
+	// socket input type
+	curSockInfo.socketType = socketType;
+	curSockInfo.attrName = socketName;
+	// output type of connected plugin
+	fromSocketInfo = exporter.getConnectedOutputType(node, socketName);
+
+	// wrap the socket in appropriate plugin
+	ConnectedPluginInfo inputPlugInfo(inputPlugin);
+	exporter.autoconvertSocket(inputPlugInfo, curSockInfo, fromSocketInfo, pluginDesc);
+
+	inputPlugin = inputPlugInfo.plugin;
 }
-
 
 OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
@@ -286,22 +288,19 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 					weight_plugin = exporter.exportPlugin(weight_tex);
 				}
 
-				// socket input type
-				Parm::SocketDesc curSockInfo;
-				curSockInfo.socketType = VOP_TYPE_FLOAT;
-				curSockInfo.attrName = weightSockName.c_str();
-				// output type of connected plugin
-				const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, weightSockName);
-
-				// wrap the socket in appropriate plugin
-				ConnectedPluginInfo conPlugInfo(weight_plugin);
-				exporter.autoconvertSocket(conPlugInfo, curSockInfo, fromSocketInfo, pluginDesc);
-
 				if (NOT(weight_plugin)) {
 					Log::getLog().error("Node \"%s\": Failed to export BRDF weight node connected to \"%s\", ignoring...",
 								getName().buffer(), brdfSockName.c_str());
 				}
 				else {
+					Parm::SocketDesc curSockInfo;
+					const Parm::SocketDesc *fromSocketInfo;
+
+					// convert weight plugin
+					convertInputPlugin(exporter, weight_plugin, pluginDesc, this, VOP_TYPE_FLOAT, weightSockName.c_str());
+					// convert brdf plugin
+					convertInputPlugin(exporter, brdf_plugin, pluginDesc, this, VOP_TYPE_BSDF, brdfSockName.c_str());
+
 					brdfs.push_back(VRay::Value(brdf_plugin));
 					weights.push_back(VRay::Value(weight_plugin));
 				}
