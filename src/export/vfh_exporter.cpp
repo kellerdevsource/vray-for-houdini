@@ -512,6 +512,24 @@ void VRayExporter::autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const P
 	}
 }
 
+void VRayExporter::convertInputPlugin(VRay::Plugin& inputPlugin, Attrs::PluginDesc &pluginDesc, OP_Node* node, VOP_Type socketType, const char* socketName)
+{
+	Parm::SocketDesc curSockInfo;
+	const Parm::SocketDesc *fromSocketInfo;
+
+	// socket input type
+	curSockInfo.socketType = socketType;
+	curSockInfo.attrName = socketName;
+	// output type of connected plugin
+	fromSocketInfo = getConnectedOutputType(node, socketName);
+
+	// wrap the socket in appropriate plugin
+	ConnectedPluginInfo inputPlugInfo(inputPlugin);
+	autoconvertSocket(inputPlugInfo, curSockInfo, fromSocketInfo, pluginDesc);
+
+	inputPlugin = inputPlugInfo.plugin;
+}
+
 void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext)
 {
 	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID.c_str());

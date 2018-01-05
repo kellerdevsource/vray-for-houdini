@@ -559,6 +559,14 @@ public:
 	/// @param[in] pluginDesc - the plugin description
 	void autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const Parm::SocketDesc &curSockInfo, const Parm::SocketDesc *fromSocketInfo, Attrs::PluginDesc &pluginDesc);
 
+	/// Converts the input plugin to plugin of socket type if needed
+	/// inputPlugin - the plugin connected to the socket
+	/// pluginDesc - description of the current exported plugin
+	/// node - current node
+	/// socketType - socket type
+	/// socketName - socket name
+	void convertInputPlugin(VRay::Plugin& inputPlugin, Attrs::PluginDesc &pluginDesc, OP_Node* node, VOP_Type socketType, const char* socketName);
+
 	/// Helper function to fill in plugin description attributes from VOP node connected inputs
 	/// @param pluginDesc[out] - the plugin description
 	/// @param vopNode[in] - the VOP node
