@@ -219,31 +219,6 @@ void VOP::BRDFLayered::getCode(UT_String &codestr, const VOP_CodeGenContext &)
 {
 }
 
-/// Converts the input plugin to plugin of socket type if needed
-/// exporter - VRay exporter
-/// inputPlugin - the plugin connected to the socket
-/// pluginDesc - description of the current exported plugin
-/// node - current node
-/// socketType - socket type
-/// socketName - socket name
-static void convertInputPlugin(VRayExporter& exporter, VRay::Plugin& inputPlugin, Attrs::PluginDesc &pluginDesc, OP_Node* node, VOP_Type socketType, const char* socketName)
-{
-	Parm::SocketDesc curSockInfo;
-	const Parm::SocketDesc *fromSocketInfo;
-
-	// socket input type
-	curSockInfo.socketType = socketType;
-	curSockInfo.attrName = socketName;
-	// output type of connected plugin
-	fromSocketInfo = exporter.getConnectedOutputType(node, socketName);
-
-	// wrap the socket in appropriate plugin
-	ConnectedPluginInfo inputPlugInfo(inputPlugin);
-	exporter.autoconvertSocket(inputPlugInfo, curSockInfo, fromSocketInfo, pluginDesc);
-
-	inputPlugin = inputPlugInfo.plugin;
-}
-
 OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	const fpreal &t = exporter.getContext().getTime();
@@ -297,9 +272,9 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 					const Parm::SocketDesc *fromSocketInfo;
 
 					// convert weight plugin
-					convertInputPlugin(exporter, weight_plugin, pluginDesc, this, VOP_TYPE_FLOAT, weightSockName.c_str());
+					exporter.convertInputPlugin(weight_plugin, pluginDesc, this, VOP_TYPE_FLOAT, weightSockName.c_str());
 					// convert brdf plugin
-					convertInputPlugin(exporter, brdf_plugin, pluginDesc, this, VOP_TYPE_BSDF, brdfSockName.c_str());
+					exporter.convertInputPlugin(brdf_plugin, pluginDesc, this, VOP_TYPE_BSDF, brdfSockName.c_str());
 
 					brdfs.push_back(VRay::Value(brdf_plugin));
 					weights.push_back(VRay::Value(weight_plugin));
