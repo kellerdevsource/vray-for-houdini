@@ -55,6 +55,7 @@ groupsimple {
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_custom_handling" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3,4" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
@@ -72,7 +73,7 @@ groupsimple {
         parmtag { "vray_plugin" "GeomDisplacedMesh" }
         parmtag { "vray_pluginattr" "vector_displacement" }
         parmtag { "vray_custom_handling" "1" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
         invisible
     }
 
@@ -135,17 +136,17 @@ groupsimple {
     }
 
     parm {
-        VFH_NAME("edge_length")
-        label "Edge Length"
-        type float
-        default { "4" }
-        help "If use_globals is false, this determines the approximate edge length for the sub-triangles"
-        range { 0 64 }
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "GeomDisplacedMesh" }
-        parmtag { "vray_pluginattr" "edge_length" }
-        parmtag { "vray_type" "float" }
-        VFH_HIDE_WHEN_PARAM_TRUE("use_globals")
+    VFH_NAME("edge_length")
+    label "Edge Length"
+    type float
+    default { "4" }
+    help "If use_globals is false, this determines the approximate edge length for the sub-triangles"
+    range { 0 64 }
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "GeomDisplacedMesh" }
+    parmtag { "vray_pluginattr" "edge_length" }
+    parmtag { "vray_type" "float" }
+    VFH_HIDE_WHEN_PARAM_TRUE("use_globals")
     }
 
     parm {
@@ -179,7 +180,6 @@ groupsimple {
         VFH_NAME("map_channel")
         label "Map Channel"
         type integer
-        invisible
         default { "0" }
         help "The mapping channel to use for vector and 2d displacement"
         range { 0 64 }
@@ -187,6 +187,7 @@ groupsimple {
         parmtag { "vray_plugin" "GeomDisplacedMesh" }
         parmtag { "vray_pluginattr" "map_channel" }
         parmtag { "vray_type" "int" }
+        invisible
     }
 
     parm {
@@ -265,7 +266,7 @@ groupsimple {
         type integer
         default { "8" }
         help "Increase for curved surfaces to avoid artifacts"
-        range { 0 64 }
+        range { 0 32 }
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "GeomDisplacedMesh" }
         parmtag { "vray_pluginattr" "precision" }

@@ -68,6 +68,7 @@ groupsimple {
         parmtag { "vray_plugin" "GeomStaticSmoothedMesh" }
         parmtag { "vray_pluginattr" "map_channel" }
         parmtag { "vray_type" "int" }
+        invisible
     }
 
     parm {
@@ -159,21 +160,21 @@ groupsimple {
     parm {
         VFH_NAME("preserve_map_borders")
         label   "Preserve Map Borders"
-        type    ordinal
+        type    string
         default { "0" }
         help    "The valid values"
         menu    {
-            "Not Set"   "Not Set"
-            "None"  "None"
-            "Internal"  "Internal"
-            "All"   "All"
+            "-1"   "Not Set"
+            "0"  "None"
+            "1"  "Internal"
+            "2"   "All"
         }
         range   { 0 1 }
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "-1,0,1,2" }
         parmtag { "vray_plugin" "GeomStaticSmoothedMesh" }
         parmtag { "vray_pluginattr" "preserve_map_borders" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
