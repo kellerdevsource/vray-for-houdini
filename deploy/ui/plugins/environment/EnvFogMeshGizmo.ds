@@ -1,19 +1,19 @@
 {
-    name	EnvFogMeshGizmo
-    label	"Fog Gizmo"
-    parmtag	{ spare_category "Fog Gizmo" }
-    parmtag	{ vray_plugin "EnvFogMeshGizmo" }
+    name    EnvFogMeshGizmo
+    label   "Fog Gizmo"
+    parmtag { spare_category "Fog Gizmo" }
+    parmtag { vray_plugin "EnvFogMeshGizmo" }
     parm {
-	name	"fade_out_radius"
-	label	"Fade Out Radius"
-	type	float
-	default	{ "0" }
-	help	"fade out effect for the edges"
-	range	{ 0 64 }
-	export	none
-	parmtag	{ "cook_dependent" "1" }
-	parmtag	{ "vray_plugin" "EnvFogMeshGizmo" }
-	parmtag	{ "vray_pluginattr" "fade_out_radius" }
-	parmtag	{ "vray_type" "float" }
+        name    "fade_out_radius"
+        label   "Fade Out Radius"
+        type    float
+        default { "0" }
+        help    "fade out effect for the edges"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "EnvFogMeshGizmo" }
+        parmtag { "vray_pluginattr" "fade_out_radius" }
+        parmtag { "vray_type" "float" }
     }
 }

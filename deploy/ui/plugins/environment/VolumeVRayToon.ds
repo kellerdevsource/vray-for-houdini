@@ -22,12 +22,12 @@
             parmtag { "vray_plugin" "VolumeVRayToon" }
             parmtag { "vray_pluginattr" "lineColor" }
             parmtag { "vray_type" "color" }
+            invisible
         }
         parm {
             name    "lineColor_tex"
-            label   "Line Color (map)"
+            label   "Line Color"
             type    color4
-            invisible
             size    4
             default { "1" "0" "0" "1" }
             help    "The color texture of the cartoon line."
@@ -41,7 +41,7 @@
         parm {
             name    "widthType"
             label   "Width Units"
-            type    ordinal
+            type    string
             default { "0" }
             help    "0:Pixels; 1:World"
             menu    {
@@ -67,12 +67,12 @@
             parmtag { "vray_plugin" "VolumeVRayToon" }
             parmtag { "vray_pluginattr" "lineWidth" }
             parmtag { "vray_type" "float" }
+            invisible
         }
         parm {
             name    "lineWidth_tex"
-            label   "Line Width (map)"
+            label   "Line Width"
             type    float
-            invisible
             default { "1" }
             help    "Cartoon line width texture."
             range   { 0 1 }
@@ -94,12 +94,12 @@
             parmtag { "vray_plugin" "VolumeVRayToon" }
             parmtag { "vray_pluginattr" "opacity" }
             parmtag { "vray_type" "float" }
+            invisible
         }
         parm {
             name    "opacity_tex"
-            label   "Opacity (map)"
+            label   "Opacity"
             type    float
-            invisible
             default { "1" }
             help    "Opacity texture of the cartoon line."
             range   { 0 1 }
@@ -129,7 +129,7 @@
         }
         parm {
             name    "hideInnerEdges"
-            label   "Hide Inner Edges"
+            label   "Hide Interior Edges"
             type    toggle
             default { "0" }
             help    "true : show outlines and not interior edges, false : show all edges"
@@ -168,7 +168,7 @@
         }
         parm {
             name    "doSecondaryRays"
-            label   "Do Reflection / Refraction"
+            label   "Show Toon Lines in Reflections"
             type    toggle
             default { "0" }
             help    "true : show toon lines in reflections"
@@ -195,7 +195,7 @@
         parm {
             name    "excludeType"
             label   "List Type"
-            type    ordinal
+            type    string
             default { "0" }
             help    "Exclude list behavior"
             menu    {
@@ -215,18 +215,12 @@
             invisible
             default { "0" }
             help    "This works like a bump map - a simple constant value won't do, you need to connect a texture."
-            range   { 0 64 }
+            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "VolumeVRayToon" }
             parmtag { "vray_pluginattr" "distortion_tex" }
             parmtag { "vray_type" "TextureFloat" }
         }
-
-
     }
-
-
-
-
 }
