@@ -98,7 +98,7 @@
         }
         parm {
             name  "self_illumination_gi"
-            label "Self - Illumination Affects Gi"
+            label "Self - Illumination Affects GI"
             type  toggle
             default { "1" }
             help  "true if the self-illumination should affect GI"
@@ -116,7 +116,7 @@
         parm {
             name  "brdf_type"
             label "BRDF Type"
-            type  ordinal
+            type  string
             help  "The BRDF type"
             menu  {
                 "0" "Phong"
@@ -137,13 +137,12 @@
             type  float
             default { "2" }
             help  "How much to increase/decrease the tail of the glossy highlight when using GGX reflection model"
-            disablewhen "{ brdf_type != 4 }"
-            hidewhen  "{ brdf_type != 4 }"
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "gtr_gamma" }
             parmtag { "vray_type" "TextureFloat" }
+            hidewhen "{ brdf_type != 4 }"
         }
         parm {
             name  "reflect"
@@ -191,13 +190,13 @@
             type  float
             default { "1" }
             help  "The glossiness of the hilights"
-            hidewhen "{ hilight_glossiness_lock != 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "hilight_glossiness" }
             parmtag { "vray_type" "TextureFloat" }
+            hidewhen "{ hilight_glossiness_lock != 0 }"
         }
         parm {
             name  "fresnel"
@@ -261,7 +260,7 @@
             type  integer
             default { "8" }
             help  "Subdivs for glossy reflectons"
-            range { 0 24 }
+            range { 0 32 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
@@ -300,7 +299,7 @@
             parm {
                 name  "anisotropy_derivation"
                 label "Uv Vectors Derivation"
-                type  ordinal
+                type  string
                 default { "0" }
                 help  "What method to use for deriving anisotropy axes"
                 menu  {
@@ -315,7 +314,7 @@
             parm {
                 name  "anisotropy_axis"
                 label "Axis"
-                type  ordinal
+                type  string
                 default { "2" }
                 help  "Which local object axis to use when anisotropy_derivation is 0"
                 disablewhen "{ anisotropy_derivation != 0 }"
@@ -394,13 +393,13 @@
                 type  float
                 default { "1e+18" }
                 help  "How much to dim reflection as length of rays increases"
-                disablewhen "{ reflect_dim_distance_on != 1 }"
                 range { 0 1e+18 }
                 export  none
                 parmtag { "cook_dependent" "1" }
                 parmtag { "vray_plugin" "BRDFVRayMtl" }
                 parmtag { "vray_pluginattr" "reflect_dim_distance" }
                 parmtag { "vray_type" "float" }
+                disablewhen "{ reflect_dim_distance_on != 1 }"
             }
             parm {
                 name  "reflect_dim_distance_falloff"
@@ -408,13 +407,13 @@
                 type  float
                 default { "0" }
                 help  "Fall off for the dim distance"
-                disablewhen "{ reflect_dim_distance_on != 1 }"
                 range { 0 1 }
                 export  none
                 parmtag { "cook_dependent" "1" }
                 parmtag { "vray_plugin" "BRDFVRayMtl" }
                 parmtag { "vray_pluginattr" "reflect_dim_distance_falloff" }
                 parmtag { "vray_type" "float" }
+                disablewhen "{ reflect_dim_distance_on != 1 }"
             }
             parm {
                 name  "hilight_soften"
@@ -432,7 +431,7 @@
             parm {
                 name  "reflect_affect_alpha"
                 label "Affect Channels"
-                type  ordinal
+                type  string
                 default { "0" }
                 help  "Determines how reflections affect the alpha channel"
                 menu  {
@@ -497,7 +496,7 @@
             type  integer
             default { "8" }
             help  "Subdivs for glossy refractions"
-            range { 0 16 }
+            range { 0 32 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
@@ -519,7 +518,7 @@
         }
         parm {
             name  "fog_color_tex"
-            label "Fog Color Texture"
+            label "Fog Color"
             help  "The absorption (fog) color texture"
             type  color
             default { "1" "1" "1" }
@@ -584,16 +583,15 @@
             name  "dispersion"
             label "Abberation"
             type  float
-            hidewhen "{ dispersion_on == 0 }"
             default { "50" }
             help  "abbe value"
-            disablewhen "{ dispersion_on != 1 }"
             range { 0 50 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "dispersion" }
             parmtag { "vray_type" "float" }
+            hidewhen "{ dispersion_on == 0 }"
          }
         parm {
             name  "refract_affect_shadows"
@@ -642,17 +640,16 @@
                 name  "refract_exit_color"
                 label "Exit Color"
                 type  color
-                hidewhen "{ refract_exit_color_on == 0 }"
                 size  3
                 default { "0" "0" "0" }
                 help  "The color to use when maximum depth is reached when refract_exit_color_on is true"
-                disablewhen "{ refract_exit_color_on != 1 }"
                 range { 0 1 }
                 export  none
                 parmtag { "cook_dependent" "1" }
                 parmtag { "vray_plugin" "BRDFVRayMtl" }
                 parmtag { "vray_pluginattr" "refract_exit_color" }
                 parmtag { "vray_type" "color" }
+                disablewhen "{ refract_exit_color_on != 1 }"
             }
             parm {
                 name  "refract_depth"
@@ -670,7 +667,7 @@
             parm {
                 name  "refract_affect_alpha"
                 label "Affect Channels"
-                type  ordinal
+                type  string
                 default { "0" }
                 help  "Determines how refractions affect the alpha channel"
                 menu  {
@@ -693,7 +690,7 @@
         parm {
             name  "translucency"
             label "Type"
-            type  ordinal
+            type  string
             default { "0" }
             help  "Translucency Type"
             menu  {
@@ -715,13 +712,13 @@
             size  4
             default { "1" "1" "1" "1" }
             help  "Filter color for the translucency effect"
-            disablewhen "{ translucency == 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "translucency_color" }
             parmtag { "vray_type" "Texture" }
+            disablewhen "{ translucency == 0 }"
         }
         parm {
             name  "translucency_scatter_dir"
@@ -729,13 +726,13 @@
             type  float
             default { "1" }
             help  "Scatter direction (0.0f is backward, 1.0f is forward)"
-            disablewhen "{ translucency == 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "translucency_scatter_dir" }
             parmtag { "vray_type" "float" }
+            disablewhen "{ translucency == 0 }"
         }
         parm {
             name  "translucency_light_mult"
@@ -743,13 +740,13 @@
             type  float
             default { "1" }
             help  "A multiplier for the calculated lighting for the translucency effect"
-            disablewhen "{ translucency == 0 }"
             range { 0 8 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "translucency_light_mult" }
             parmtag { "vray_type" "float" }
+            disablewhen "{ translucency == 0 }"
         }
         parm {
             name  "translucency_scatter_coeff"
@@ -757,13 +754,13 @@
             type  float
             default { "0" }
             help  "Scattering cone (0.0f - no scattering, 1.0f - full scattering"
-            disablewhen "{ translucency == 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "translucency_scatter_coeff" }
             parmtag { "vray_type" "float" }
+            disablewhen "{ translucency == 0 }"
         }
         parm {
             name  "translucency_thickness"
@@ -771,13 +768,13 @@
             type  float
             default { "1000" }
             help  "Maximum distance to trace inside the object"
-            disablewhen "{ translucency == 0 }"
             range { 0 1000 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "translucency_thickness" }
             parmtag { "vray_type" "float" }
+            disablewhen "{ translucency == 0 }"
         }
     }
 
@@ -798,19 +795,6 @@
             parmtag { "vray_type" "float" }
         }
         parm {
-            name  "option_reflect_on_back"
-            label "Reflect On Back Side"
-            type  toggle
-            default { "0" }
-            help  "true to compute reflections for back sides of objects"
-            range { 0 1 }
-            export  none
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "BRDFVRayMtl" }
-            parmtag { "vray_pluginattr" "option_reflect_on_back" }
-            parmtag { "vray_type" "boolean" }
-        }
-        parm {
             name  "option_double_sided"
             label "Double-sided"
             type  toggle
@@ -821,6 +805,19 @@
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "option_double_sided" }
+            parmtag { "vray_type" "boolean" }
+        }
+        parm {
+            name  "option_reflect_on_back"
+            label "Reflect On Back Side"
+            type  toggle
+            default { "0" }
+            help  "true to compute reflections for back sides of objects"
+            range { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "BRDFVRayMtl" }
+            parmtag { "vray_pluginattr" "option_reflect_on_back" }
             parmtag { "vray_type" "boolean" }
         }
         parm {
@@ -852,7 +849,7 @@
         parm {
             name  "option_energy_mode"
             label "Energy Preservation"
-            type  ordinal
+            type  string
             default { "0" }
             help  "Energy preservation mode for reflections and refractions"
             menu  {
@@ -869,7 +866,7 @@
         parm {
             name  "option_glossy_rays_as_gi"
             label "Glossy Rays As GI"
-            type  ordinal
+            type  string
             default { "1" }
             help  "Specifies when to treat GI rays as glossy rays"
             menu  {
@@ -890,7 +887,7 @@
             type  string
             menu  {
                 "0" "Use Glossiness"
-                "1" "Use oughness"
+                "1" "Use Roughness"
             }
             default { "0" }
             parmtag { "cook_dependent" "1" }
@@ -918,7 +915,6 @@
             size  4
             default { "1" "1" "1" "1" }
             help  "Environment override texture"
-            disablewhen "{ use_environment_override != 1 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -926,6 +922,7 @@
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "environment_override" }
             parmtag { "vray_type" "Texture" }
+            disablewhen "{ use_environment_override != 1 }"
         }
         parm {
             name  "environment_priority"
@@ -933,13 +930,13 @@
             type  integer
             default { "0" }
             help  "Environment override priority (used when several materials override it along a ray path)"
-            disablewhen "{ use_environment_override != 1 }"
             range { 0 2 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "environment_priority" }
             parmtag { "vray_type" "int" }
+            disablewhen "{ use_environment_override != 1 }"
         }
     }
 }

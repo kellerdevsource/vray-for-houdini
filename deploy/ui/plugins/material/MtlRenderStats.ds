@@ -19,7 +19,7 @@
     }
     parm {
         name    "use"
-        label   "Use"
+        label   "Enabled"
         type    toggle
         default { "1" }
         help    "Use Render Stats material"
@@ -32,7 +32,6 @@
         name    "visibility"
         label   "Primary Visibility"
         type    toggle
-        disablewhen "{ use == 0 }"
         default { "1" }
         help    "Overall visibility"
         range   { 0 1 }
@@ -41,12 +40,12 @@
         parmtag { "vray_plugin" "MtlRenderStats" }
         parmtag { "vray_pluginattr" "visibility" }
         parmtag { "vray_type" "float" }
+        disablewhen "{ use == 0 }"
     }
     parm {
         name    "camera_visibility"
         label   "Camera Visibility"
         type    toggle
-        disablewhen "{ use == 0 }"
         default { "1" }
         help    "Whether the object is visible from the camera (camera rays)"
         range   { 0 1 }
@@ -55,12 +54,12 @@
         parmtag { "vray_plugin" "MtlRenderStats" }
         parmtag { "vray_pluginattr" "camera_visibility" }
         parmtag { "vray_type" "boolean" }
+        disablewhen "{ use == 0 }"
     }
     parm {
         name    "reflections_visibility"
         label   "Reflections Visibility"
         type    toggle
-        disablewhen "{ use == 0 }"
         default { "1" }
         help    "Whether the object is visible in reflections"
         range   { 0 1 }
@@ -69,12 +68,12 @@
         parmtag { "vray_plugin" "MtlRenderStats" }
         parmtag { "vray_pluginattr" "reflections_visibility" }
         parmtag { "vray_type" "boolean" }
+        disablewhen "{ use == 0 }"
     }
     parm {
         name    "refractions_visibility"
         label   "Refractions Visibility"
         type    toggle
-        disablewhen "{ use == 0 }"
         default { "1" }
         help    "Whether the object is visible in refractions"
         range   { 0 1 }
@@ -83,12 +82,12 @@
         parmtag { "vray_plugin" "MtlRenderStats" }
         parmtag { "vray_pluginattr" "refractions_visibility" }
         parmtag { "vray_type" "boolean" }
+        disablewhen "{ use == 0 }"
     }
     parm {
         name    "gi_visibility"
         label   "GI Visibility"
         type    toggle
-        disablewhen "{ use == 0 }"
         default { "1" }
         help    "Whether the object is visible to GI (generating and receiving)"
         range   { 0 1 }
@@ -97,12 +96,12 @@
         parmtag { "vray_plugin" "MtlRenderStats" }
         parmtag { "vray_pluginattr" "gi_visibility" }
         parmtag { "vray_type" "boolean" }
+        disablewhen "{ use == 0 }"
     }
     parm {
         name    "shadows_visibility"
         label   "Shadows Visibility"
         type    toggle
-        disablewhen "{ use == 0 }"
         default { "1" }
         help    "Whether the object casts shadows (visible to lights for shadow rays)"
         range   { 0 1 }
@@ -111,12 +110,12 @@
         parmtag { "vray_plugin" "MtlRenderStats" }
         parmtag { "vray_pluginattr" "shadows_visibility" }
         parmtag { "vray_type" "boolean" }
+        disablewhen "{ use == 0 }"
     }
     parm {
         name    "shadows_receive"
         label   "Shadows Receive"
         type    toggle
-        disablewhen "{ use == 0 }"
         default { "1" }
         help    "Whether the object receives shadows"
         range   { 0 1 }
@@ -125,5 +124,6 @@
         parmtag { "vray_plugin" "MtlRenderStats" }
         parmtag { "vray_pluginattr" "shadows_receive" }
         parmtag { "vray_type" "boolean" }
+        disablewhen "{ use == 0 }"
     }
 }

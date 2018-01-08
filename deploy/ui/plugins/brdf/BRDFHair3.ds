@@ -66,7 +66,7 @@
         }
         parm {
             name    "opaque_for_gi"
-            label   "Opaque For Gi"
+            label   "Opaque For GI"
             type    toggle
             default { "0" }
             help    "true to always compute the material as opaque for GI rays"
@@ -79,7 +79,7 @@
         }
         parm {
             name    "simplify_for_gi"
-            label   "Simplify For Gi"
+            label   "Simplify For GI"
             type    toggle
             default { "1" }
             help    "true to use a simpler and less precise representation of the BRDF for GI rays"
@@ -92,7 +92,7 @@
         }
         parm {
             name    "use_cached_gi"
-            label   "Use Cached Gi"
+            label   "Use Cached GI"
             type    toggle
             default { "1" }
             help    "true to use the light cache/irradiance map; false to always use brute force GI for the hair"
@@ -204,13 +204,13 @@
             type    float
             default { "1" }
             help    "Multiplier for the secondary specular color"
-            disablewhen "{ secondary_lock_to_transmission != 0 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFHair3" }
             parmtag { "vray_pluginattr" "secondary_specular_amount" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ secondary_lock_to_transmission != 0 }"
         }
         parm {
             name    "secondary_specular"
@@ -219,13 +219,13 @@
             size    4
             default { "0.9" "0.8" "0.5" "1" }
             help    "Secondary specular color"
-            disablewhen "{ secondary_lock_to_transmission != 0 } { secondary_specular_amount == 0 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFHair3" }
             parmtag { "vray_pluginattr" "secondary_specular" }
             parmtag { "vray_type" "Texture" }
+            disablewhen "{ secondary_lock_to_transmission != 0 } { secondary_specular_amount == 0 }"
         }
         parm {
             name    "secondary_glossiness"
@@ -233,13 +233,13 @@
             type    float
             default { "0.5" }
             help    "Secondary glossiness"
-            disablewhen "{ secondary_lock_to_transmission != 0 } { secondary_specular_amount == 0 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFHair3" }
             parmtag { "vray_pluginattr" "secondary_glossiness" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ secondary_lock_to_transmission != 0 } { secondary_specular_amount == 0 }"
         }
     }
     group {

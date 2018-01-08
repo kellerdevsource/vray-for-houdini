@@ -199,7 +199,7 @@
         parm {
             name    "plain"
             label   "Plain Materials"
-            type    ordinal
+            type    string
             default { "0" }
             help    "This option modifies the rendering in order to improve the result for materials without large details"
             menu    {
@@ -229,13 +229,13 @@
             type    float
             default { "100" }
             help    "The size of one scene unit in cm"
-            range   { 0 1000 }
+            range   { 1 10000 }
             export  none
             parmtag { "cook_dependent" "1" }
         }
         parm {
             name    "multdirect"
-            label   "Direct Mult"
+            label   "Direct Light Multiplier"
             type    float
             default { "1" }
             help    "Multiplier for direct light"
@@ -245,7 +245,7 @@
         }
         parm {
             name    "multrefl"
-            label   "Reflection Mult"
+            label   "Reflected Light Multiplier"
             type    float
             default { "1" }
             help    "Multiplier for reflected light"
@@ -255,7 +255,7 @@
         }
         parm {
             name    "multgi"
-            label   "Gi Mult"
+            label   "GI Lighting Multiplier"
             type    float
             default { "1" }
             help    "Multiplier for GI light"
@@ -265,7 +265,7 @@
         }
         parm {
             name    "transparency_mult"
-            label   "Transparency Mult"
+            label   "Transparency Multiplier"
             type    float
             default { "1" }
             help    "Multiplies the transparency (only the transparency, the translucency remains!)"
@@ -276,7 +276,7 @@
         parm {
             name    "unf_refl"
             label   "Sampling Type"
-            type    ordinal
+            type    string
             default { "0" }
             help    "Uniform reflections distribution"
             menu    {
@@ -379,17 +379,6 @@
             parmtag { "cook_dependent" "1" }
         }
     }
-
-
-
-
-
-
-
-
-
-
     }
-
 
 }

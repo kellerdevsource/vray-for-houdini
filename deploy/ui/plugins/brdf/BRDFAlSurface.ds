@@ -27,7 +27,7 @@
         parm {
             name  "bump_type"
             label "Bump Type"
-            type  ordinal
+            type  string
             default { "0" }
             help  "The type of the map"
             menu  {
@@ -96,7 +96,6 @@
             size  4
             default { "0.5" "0.5" "0.5" "1" }
             help  "The diffuse surface color"
-            disablewhen "{ diffuse_strength <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -104,6 +103,7 @@
             parmtag { "vray_pluginattr" "diffuse" }
             parmtag { "vray_type" "Texture" }
             parmtag { "ogl_diff" "1" }
+            disablewhen "{ diffuse_strength <= 0 }"
         }
         parm {
             name  "diffuse_bump_map"
@@ -112,22 +112,21 @@
             size  4
             default { "0" "0" "0" "1" }
             help  "Additoinal diffuse bump map"
-            disablewhen "{ diffuse_strength <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "diffuse_bump_map" }
             parmtag { "vray_type" "Texture" }
+            disablewhen "{ diffuse_strength <= 0 }"
             invisible
         }
         parm {
             name  "diffuse_bump_type"
-            label "Bump Type"
-            type  ordinal
+            label "Diffuse Bump Type"
+            type  string
             default { "0" }
             help  "The type of the map"
-            disablewhen "{ diffuse_strength <= 0 }"
             menu  {
                 "0" "Bump Map"
                 "1" "Normal map in tangent space"
@@ -143,6 +142,7 @@
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "diffuse_bump_type" }
             parmtag { "vray_type" "enum" }
+            disablewhen "{ diffuse_strength <= 0 }"
         }
         parm {
             name  "diffuse_bump_amount"
@@ -150,13 +150,13 @@
             type  float
             default { "1" }
             help  "Diffuse bump amount"
-            disablewhen "{ diffuse_strength <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "diffuse_bump_amount" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ diffuse_strength <= 0 }"
         }
         parm {
             name  "sss_mix"
@@ -174,10 +174,9 @@
         parm {
             name  "sss_mode"
             label "SSS Mode"
-            type  ordinal
+            type  string
             default { "0" }
             help  "Sub-surface scattering mode (0 - diffusion; 1 - directional)"
-            disablewhen "{ sss_mix <= 0 }"
             menu  {
                 "0" "Diffusion"
                 "1" "Directional"
@@ -186,6 +185,7 @@
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "sss_mode" }
             parmtag { "vray_type" "enum" }
+            disablewhen "{ sss_mix <= 0 }"
         }
         parm {
             name  "sss_density_scale"
@@ -193,13 +193,13 @@
             type  float
             default { "1" }
             help  "Scale for the SSS effect; smaller values make light go deeper into the object"
-            disablewhen "{ sss_mix <= 0 }"
             range { 0.001 3 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "sss_density_scale" }
             parmtag { "vray_type" "float" }
+            disablewhen "{ sss_mix <= 0 }"
         }
     }
     group {
@@ -211,13 +211,13 @@
             type  float
             default { "1" }
             help  "Weight of the first SSS component"
-            disablewhen "{ sss_mix <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "sss1_weight" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ sss_mix <= 0 }"
         }
         parm {
             name  "sss1_color"
@@ -226,13 +226,13 @@
             size  4
             default { "0.439" "0.156" "0.078" "1" }
             help  "Color of the first SSS component"
-            disablewhen "{ sss_mix <= 0 } { sss1_weight <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "sss1_color" }
             parmtag { "vray_type" "Texture" }
+            disablewhen "{ sss_mix <= 0 } { sss1_weight <= 0 }"
         }
         parm {
             name  "sss1_radius"
@@ -240,13 +240,13 @@
             type  float
             default { "1.5" }
             help  "Radius for the first SSS component. Larger values cause light to go deeper into the surface"
-            disablewhen "{ sss_mix <= 0 } { sss1_weight <= 0 }"
             range { 0 5 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "sss1_radius" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ sss_mix <= 0 } { sss1_weight <= 0 }"
         }
     }
     group {
@@ -258,13 +258,13 @@
             type  float
             default { "0" }
             help  "Weight of the second SSS component"
-            disablewhen "{ sss_mix <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "sss2_weight" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ sss_mix <= 0 }"
         }
         parm {
             name  "sss2_color"
@@ -273,13 +273,13 @@
             size  4
             default { "0.439" "0.08" "0.018" "1" }
             help  "Color of the second SSS component"
-            disablewhen "{ sss_mix <= 0 } { sss2_weight <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "sss2_color" }
             parmtag { "vray_type" "Texture" }
+            disablewhen "{ sss_mix <= 0 } { sss2_weight <= 0 }"
         }
         parm {
             name  "sss2_radius"
@@ -287,13 +287,13 @@
             type  float
             default { "5" }
             help  "Radius for the second SSS component. Larger values cause light to go deeper into the surface"
-            disablewhen "{ sss_mix <= 0 } { sss2_weight <= 0 }"
             range { 0 5 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "sss2_radius" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ sss_mix <= 0 } { sss2_weight <= 0 }"
         }
     }
     group {
@@ -305,13 +305,13 @@
             type  float
             default { "0" }
             help  "Weight of the third SSS component"
-            disablewhen "{ sss_mix <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "sss3_weight" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ sss_mix <= 0 }"
         }
         parm {
             name  "sss3_color"
@@ -320,13 +320,13 @@
             size  4
             default { "0.523" "0.637" "0.667" "1" }
             help  "Color of the third SSS component"
-            disablewhen "{ sss_mix <= 0 } { sss3_weight <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "sss3_color" }
             parmtag { "vray_type" "Texture" }
+            disablewhen "{ sss_mix <= 0 } { sss3_weight <= 0 }"
         }
         parm {
             name  "sss3_radius"
@@ -334,13 +334,13 @@
             type  float
             default { "0.75" }
             help  "Radius for the third SSS component. Larger values cause light to go deeper into the surface"
-            disablewhen "{ sss_mix <= 0 } { sss3_weight <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "sss3_radius" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ sss_mix <= 0 } { sss3_weight <= 0 }"
         }
     }
     group {
@@ -366,13 +366,13 @@
             size  4
             default { "1" "1" "1" "1" }
             help  "The first specular color"
-            disablewhen "{ reflect1_strength <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect1" }
             parmtag { "vray_type" "Texture" }
+            disablewhen "{ reflect1_strength <= 0 }"
         }
         parm {
             name  "reflect1_roughness"
@@ -380,21 +380,20 @@
             type  float
             default { "0.5" }
             help  "The roughness of the first specular component"
-            disablewhen "{ reflect1_strength <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect1_roughness" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ reflect1_strength <= 0 }"
         }
         parm {
             name  "reflect1_distribution"
             label "BRDF"
-            type  ordinal
+            type  string
             default { "0" }
             help  "The BRDF distribution type for the first specular component (0 - Beckmann, 1 - GGX)"
-            disablewhen "{ reflect1_strength <= 0 }"
             menu  {
                 "0" "Beckmann"
                 "1" "GGX"
@@ -403,6 +402,7 @@
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect1_distribution" }
             parmtag { "vray_type" "enum" }
+            disablewhen "{ reflect1_strength <= 0 }"
         }
         parm {
             name  "reflect1_ior"
@@ -410,13 +410,13 @@
             type  float
             default { "1.4" }
             help  "The IOR for the first specular component"
-            disablewhen "{ reflect1_strength <= 0 }"
             range { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect1_ior" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ reflect1_strength <= 0 }"
         }
         parm {
             name  "reflect1_bump_map"
@@ -425,22 +425,21 @@
             size  4
             default { "0" "0" "0" "1" }
             help  "Additional bump map for the first specular component"
-            disablewhen "{ reflect1_strength <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect1_bump_map" }
             parmtag { "vray_type" "Texture" }
+            disablewhen "{ reflect1_strength <= 0 }"
             invisible
         }
         parm {
             name  "reflect1_bump_type"
             label "Bump Type"
-            type  ordinal
+            type  string
             default { "0" }
             help  "The type of the map"
-            disablewhen "{ reflect1_strength <= 0 }"
             menu  {
                 "0" "Bump Map"
                 "1" "Normal map in tangent space"
@@ -456,6 +455,7 @@
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect1_bump_type" }
             parmtag { "vray_type" "enum" }
+            disablewhen "{ reflect1_strength <= 0 }"
         }
         parm {
             name  "reflect1_bump_amount"
@@ -463,13 +463,13 @@
             type  float
             default { "1" }
             help  "Additional bump amount for the first speculer component"
-            disablewhen "{ reflect1_strength <= 0 }"
             range { 0 2 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect1_bump_amount" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ reflect1_strength <= 0 }"
         }
     }
     group {
@@ -495,13 +495,13 @@
             size  4
             default { "1" "1" "1" "1" }
             help  "The second specular color"
-            disablewhen "{ reflect2_strength <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect2" }
             parmtag { "vray_type" "Texture" }
+            disablewhen "{ reflect2_strength <= 0 }"
         }
         parm {
             name  "reflect2_roughness"
@@ -509,21 +509,20 @@
             type  float
             default { "0.5" }
             help  "The roughness of the second specular component"
-            disablewhen "{ reflect2_strength <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect2_roughness" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ reflect2_strength <= 0 }"
         }
         parm {
             name  "reflect2_distribution"
             label "BRDF"
-            type  ordinal
+            type  string
             default { "0" }
             help  "The BRDF distribution type for the second specular component"
-            disablewhen "{ reflect2_strength <= 0 }"
             menu  {
                 "0" "Beckmann"
                 "1" "GGX"
@@ -532,6 +531,7 @@
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect2_distribution" }
             parmtag { "vray_type" "enum" }
+            disablewhen "{ reflect2_strength <= 0 }"
         }
         parm {
             name  "reflect2_ior"
@@ -539,13 +539,13 @@
             type  float
             default { "1.623" }
             help  "The IOR for the second specular component"
-            disablewhen "{ reflect2_strength <= 0 }"
             range { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect2_ior" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ reflect2_strength <= 0 }"
         }
         parm {
             name  "reflect2_bump_map"
@@ -554,21 +554,20 @@
             size  4
             default { "0" "0" "0" "1" }
             help  "Additional bump map for the second specular component"
-            disablewhen "{ reflect2_strength <= 0 }"
             range { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect2_bump_map" }
             parmtag { "vray_type" "Texture" }
+            disablewhen "{ reflect2_strength <= 0 }"
             invisible
         }
         parm {
             name  "reflect2_bump_type"
             label "Bump Type"
-            type  ordinal
+            type  string
             help  "The type of the map"
-            disablewhen "{ reflect2_strength <= 0 }"
             menu  {
                 "0" "Bump Map"
                 "1" "Normal map in tangent space"
@@ -583,6 +582,7 @@
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect2_bump_type" }
             parmtag { "vray_type" "enum" }
+            disablewhen "{ reflect2_strength <= 0 }"
         }
         parm {
             name  "reflect2_bump_amount"
@@ -590,13 +590,13 @@
             type  float
             default { "1" }
             help  "Additional bump amount for the second speculer component"
-            disablewhen "{ reflect2_strength <= 0 }"
             range { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
             parmtag { "vray_pluginattr" "reflect2_bump_amount" }
             parmtag { "vray_type" "TextureFloat" }
+            disablewhen "{ reflect2_strength <= 0 }"
         }
     }
     group {
@@ -606,9 +606,9 @@
             name  "reflect_max_depth"
             label "Reflect Max Depth"
             type  integer
-            default { "5" }
+            default { "-1" }
             help  "Maximum depth for reflections; set to -1 to use the global depth"
-            range { -1 20 }
+            range { -1 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
@@ -621,7 +621,7 @@
             type  integer
             default { "8" }
             help  "Subdivs for sampling reflections when local subdivs are enabled"
-            range { 1 20 }
+            range { 1 32 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }
@@ -634,7 +634,7 @@
             type  integer
             default { "8" }
             help  "Subdivs for sampling SSS when local subdivs are enabled"
-            range { 1 20 }
+            range { 1 32 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFAlSurface" }

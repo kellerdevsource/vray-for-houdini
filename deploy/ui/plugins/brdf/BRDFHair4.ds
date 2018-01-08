@@ -1,159 +1,159 @@
 #include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 
 {
-	name BRDFHair4
-	label "Hair 4"
-	parmtag { spare_category "BRDFHair4" }
-	parmtag { vray_plugin "BRDFHair4" }
+    name BRDFHair4
+    label "Hair 4"
+    parmtag { spare_category "BRDFHair4" }
+    parmtag { vray_plugin "BRDFHair4" }
 
-	group {
-		name "VfhBRDFHair4FolderMain"
-		label "Main"
+    group {
+        name "VfhBRDFHair4FolderMain"
+        label "Main"
 
-		parm {
-			name "dye_color"
-			label "Dye Color"
-			help "Color tint to apply to the hair"
-			type color4
-			size 4
-			default { "1" "1" "1" "1" }
-			parmtag { "cook_dependent" "1" }
-			parmtag { "vray_pluginattr" "dye_color" }
-			parmtag { "vray_type" "Texture" }
-		}
+        parm {
+            name "dye_color"
+            label "Dye Color"
+            help "Color tint to apply to the hair"
+            type color4
+            size 4
+            default { "1" "1" "1" "1" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_pluginattr" "dye_color" }
+            parmtag { "vray_type" "Texture" }
+        }
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"melanin",
-			"Melanin",
-			"The melanin content of the hair fibre. 0 corresponds to white hair, 0.1-0.2 blonde, 0.3-0.4 red, 0.5-0.8 brown and 0.8-1.0 black hair.",
-			0.3
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "melanin",
+            "Melanin",
+            "The melanin content of the hair fibre. 0 corresponds to white hair, 0.1-0.2 blonde, 0.3-0.4 red, 0.5-0.8 brown and 0.8-1.0 black hair.",
+            0.3
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"pheomelanin",
-			"Pheomelanin",
-			"The redness (pheomelanin content) of the hair fibre as fraction of all melanin. 1.0 makes the hair redder.",
-			0
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "pheomelanin",
+            "Pheomelanin",
+            "The redness (pheomelanin content) of the hair fibre as fraction of all melanin. 1.0 makes the hair redder.",
+            0
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"glossiness",
-			"Glossiness",
-			"The glossiness along the hair strand. It primarily controls the width of the highlight, essentially how shiny the hair appears.",
-			0.5
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "glossiness",
+            "Glossiness",
+            "The glossiness along the hair strand. It primarily controls the width of the highlight, essentially how shiny the hair appears.",
+            0.5
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"primary_glossines_boost",
-			"Primary Glossines Boost",
-			"Additional scaling factor to boost the primary reflection glossiness. This can be useful for reproducing the effect of shiny coating on rough looking fur.",
-			0.4
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "primary_glossines_boost",
+            "Primary Glossines Boost",
+            "Additional scaling factor to boost the primary reflection glossiness. This can be useful for reproducing the effect of shiny coating on rough looking fur.",
+            0.4
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"softness",
-			"Softness",
-			"The glossiness across the hair strand. It controls the overall softness of the hair.",
-			0.8
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "softness",
+            "Softness",
+            "The glossiness across the hair strand. It controls the overall softness of the hair.",
+            0.8
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"highlight_shift",
-			"Highlight Shift",
-			"How much the highlights are shifted along the hair by the cuticles on the hair fibre. Values in the range 2-4 are typical for human hair.",
-			2
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "highlight_shift",
+            "Highlight Shift",
+            "How much the highlights are shifted along the hair by the cuticles on the hair fibre. Values in the range 2-4 are typical for human hair.",
+            2
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"ior",
-			"IOR",
-			"Hair index of refration. The animal cuticle scales often form a layered structure, resulting in increased primary reflection. This can be modeled with higher index of refraction. The typical value for human hair is 1.55.",
-			1.5
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "ior",
+            "IOR",
+            "Hair index of refration. The animal cuticle scales often form a layered structure, resulting in increased primary reflection. This can be modeled with higher index of refraction. The typical value for human hair is 1.55.",
+            1.5
+        )
 
-		VFH_PLUGIN_PARM_INT("BRDFHair4",
-			"trace_depth",
-			"Trace Depth",
-			"The number of indirect bounces used to compute the effect of the multiple scattering. It can significantly affect the hair appearance, especially for light colored hairs. The number of bounces necessary can vary from 5 for dark colored hairs, to 30 and more for light colored ones.",
-			10
-		)
+        VFH_PLUGIN_PARM_INT("BRDFHair4",
+            "trace_depth",
+            "Trace Depth",
+            "The number of indirect bounces used to compute the effect of the multiple scattering. It can significantly affect the hair appearance, especially for light colored hairs. The number of bounces necessary can vary from 5 for dark colored hairs, to 30 and more for light colored ones.",
+            10
+        )
 
-		VFH_PLUGIN_PARM_INT("BRDFHair4",
-			"subdivs",
-			"Subdivs",
-			"Subdivs.",
-			8
-		)
-	}
+        VFH_PLUGIN_PARM_INT("BRDFHair4",
+            "subdivs",
+            "Subdivs",
+            "Subdivs.",
+            8
+        )
+    }
 
-	group {
-		name "VfhBRDFHair4FolderRandom"
-		label "Random"
+    group {
+        name "VfhBRDFHair4FolderRandom"
+        label "Random"
 
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"random_melanin",
-			"Melanin",
-			"Adds a random offset to the melanin content of the hair.",
-			0
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "random_melanin",
+            "Melanin",
+            "Adds a random offset to the melanin content of the hair.",
+            0
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"random_hue",
-			"HUE",
-			"Adds a random offest to the hue of the Dye color.",
-			0
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "random_hue",
+            "HUE",
+            "Adds a random offest to the hue of the Dye color.",
+            0
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"random_saturation",
-			"Saturation",
-			"Adds a random offest to the saturation of the Dye color.",
-			0
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "random_saturation",
+            "Saturation",
+            "Adds a random offest to the saturation of the Dye color.",
+            0
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"random_value",
-			"Value",
-			"Adds a random offest to the value of the Dye color.",
-			0
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "random_value",
+            "Value",
+            "Adds a random offest to the value of the Dye color.",
+            0
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"random_tangent",
-			"Tangent",
-			"Adds a random offset to the hair tangent. Note that this value is scene scale dependent.",
-			0
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "random_tangent",
+            "Tangent",
+            "Adds a random offset to the hair tangent. Note that this value is scene scale dependent.",
+            0
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"random_roughness_length",
-			"Roughness Length",
-			"Adds a rendom offset to the Roughness length.",
-			0
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "random_roughness_length",
+            "Roughness Length",
+            "Adds a rendom offset to the Roughness length.",
+            0
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"random_roughness_width",
-			"Roughness Width",
-			"Adds a rendom offset to the Roughness width.",
-			0
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "random_roughness_width",
+            "Roughness Width",
+            "Adds a rendom offset to the Roughness width.",
+            0
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"random_ior",
-			"IOR",
-			"Adds a rendom offset to the Index of refration.",
-			0
-		)
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "random_ior",
+            "IOR",
+            "Adds a rendom offset to the Index of refration.",
+            0
+        )
 
-		VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
-			"random_highlight_shift",
-			"Highlight Shift",
-			"Adds a rendom offset to the Highlight shift.",
-			0
-		)
-	}
+        VFH_PLUGIN_PARM_FLOAT("BRDFHair4",
+            "random_highlight_shift",
+            "Highlight Shift",
+            "Adds a rendom offset to the Highlight shift.",
+            0
+        )
+    }
 
 #include "vfh_brdf_common.ds"
 }
