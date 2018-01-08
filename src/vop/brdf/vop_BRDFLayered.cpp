@@ -268,9 +268,6 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 								getName().buffer(), brdfSockName.c_str());
 				}
 				else {
-					Parm::SocketDesc curSockInfo;
-					const Parm::SocketDesc *fromSocketInfo;
-
 					// convert weight plugin
 					exporter.convertInputPlugin(weight_plugin, pluginDesc, this, VOP_TYPE_FLOAT, weightSockName.c_str());
 					// convert brdf plugin
