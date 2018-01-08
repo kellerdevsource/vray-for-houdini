@@ -6,7 +6,7 @@
     parm {
         name    "alias"
         label   "Type"
-        type    ordinal
+        type    string
         default { "1" }
         menu    {
             "100"    "Atmosphere"
@@ -129,7 +129,7 @@
         name    "vfb_color_corrections"
         label   "VFB Color Corrections"
         type    toggle
-        default { "1" }
+        default { "0" }
         help    "False to disable ALL VFB color corrections(sRGB, curves, white balance, etc...) when saving the channel data to a file or showing it on a display. True to apply VFB color corrections when saving the channel data to a file or showing it on a display. If true some color corrections might still be disabled, based on the type of file being saved"
         range   { 0 1 }
         export  none
