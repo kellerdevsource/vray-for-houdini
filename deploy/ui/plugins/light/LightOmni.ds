@@ -30,6 +30,7 @@
             help  "Enable to map intensity"
             range { 0 1 }
             export    none
+            invisible
         }
         parm {
             hidewhen   "{ map_intensity == 1 }"
@@ -69,6 +70,7 @@
             help  "Enable to map color"
             range { 0 1 }
             export    none
+            invisible
         }
         parm {
             hidewhen "{ map_color == 1 }"
@@ -116,15 +118,15 @@
         parm {
             name  "units"
             label "Units"
-            type  ordinal
+            type  string
             default   { "0" }
             help  "Units for the intensity (0 - default, 1 - lumens, 2 - lm/m/m/sr, 3 - watts, 4 - w/m/m/sr)"
             menu  {
-            "Default" "Default"
-            "Lumens"  "Lumens"
-            "Lm/m/m/sr"   "Lm/m/m/sr"
-            "Watts"   "Watts"
-            "W/m/m/sr"    "W/m/m/sr"
+                0 "Default"
+                1  "Lumens"
+                2   "Lm/m/m/sr"
+                3   "Watts"
+                4    "W/m/m/sr"
             }
             range { 0 1 }
             export    none
@@ -132,7 +134,7 @@
             parmtag   { "vray_enumkeys" "0,1,2,3,4" }
             parmtag   { "vray_plugin" "LightOmni" }
             parmtag   { "vray_pluginattr" "units" }
-            parmtag   { "vray_type" "int" }
+            parmtag   { "vray_type" "enum" }
         }
         parm {
             name    "use_global_light_level"
@@ -149,13 +151,13 @@
         }
     }
 
-    groupcollapsible {
+    groupsimple {
         name "folder_shadows"
         label "Shadows"
         disablewhen "{ enabled == 0 }"
         parm {
             name    "shadows"
-            label   "Shadows"
+            label   "Enabled"
             type    toggle
             default { "1" }
             help    "true if the light casts shadows and false otherwise"
@@ -175,6 +177,7 @@
             help    "Enable to map shadow color"
             range   { 0 1 }
             export  none
+            invisible
         }
         parm {
             disablewhen "{ shadows == 0 }"
@@ -218,6 +221,7 @@
             help    "Enable to map shadow color"
             range   { 0 1 }
             export  none
+            invisible
         }
         parm {
             disablewhen "{ shadows == 0 }"
@@ -227,7 +231,7 @@
             type    float
             default { "0" }
             help    "The size of the light; 0.0 is a point light, larger values produces soft (area) shadows"
-            range   { 0 64 }
+            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "LightOmni" }
@@ -391,8 +395,6 @@
             parmtag { "vray_type" "boolean" }
         }
     }
-
-
     groupcollapsible {
         name "folder_gi"
         label "GI"
@@ -462,6 +464,6 @@
             parmtag { "vray_pluginattr" "causticSubdivs" }
             parmtag { "vray_type" "int" }
         }
-
     }
+
 }

@@ -28,7 +28,7 @@
             type    float
             default { "0" }
             help    "Limuous power (in lm); if zero, the default lumious power from the IES profile is used"
-            range   { 0 100 }
+            range   { 0 10000 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "LightIES" }
@@ -38,7 +38,7 @@
         parm {
             name    "ies_light_shape"
             label   "IES Light Shape"
-            type    ordinal
+            type    string
             default { "0" }
             help    "IES light shape"
             menu    {
@@ -51,10 +51,9 @@
             parmtag { "vray_enumkeys" "-1,0" }
             parmtag { "vray_plugin" "LightIES" }
             parmtag { "vray_pluginattr" "ies_light_shape" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
         parm {
-            hidewhen "{ ies_light_shape == 1 }"
             name    "ies_file"
             label   "IES File"
             type    file
@@ -152,7 +151,7 @@
             hidewhen "{ map_color == 0 }"
             name    "color_tex"
             label   "Color"
-            type    oppath
+            type    file
             default { "" }
             help    "A color texture that if present will override the color parameter"
             range   { 0 1 }
@@ -219,13 +218,13 @@
         }
     }
 
-    groupcollapsible {
+    groupsimple {
         name "folder_shadows"
         label "Shadows"
         disablewhen "{ enabled == 0 }"
         parm {
             name    "shadows"
-            label   "Shadows"
+            label   "Enable"
             type    toggle
             default { "1" }
             help    "true if the light casts shadows and false otherwise"
@@ -281,7 +280,7 @@
             hidewhen "{ map_shadow_color == 0 }"
             name    "shadowColor_tex"
             label   "Color"
-            type    oppath
+            type    file
             default { "" }
             help    "A color texture that if present will override the shadowColor parameter"
             range   { 0 1 }
@@ -372,7 +371,7 @@
             type    float
             default { "1" }
             help    "Diffuse contribution for the light"
-            range   { 0 64 }
+            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "LightIES" }
@@ -386,7 +385,7 @@
             type    float
             default { "1" }
             help    "Specular contribution for the light"
-            range   { 0 64 }
+            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "LightIES" }

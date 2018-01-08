@@ -2,7 +2,7 @@ parm {
     name    "SettingsRegionsGenerator_lock_size"
     label   "Lock Region X and Y"
     type    toggle
-	invisible
+    invisible
     default { "1" }
     help    "Lock bucket size (X = Y)"
     range   { 0 1 }
@@ -40,74 +40,71 @@ parm {
 }
 
 groupcollapsible {
-	name "folder_sampler_buckets_advanced"
-	label "Render Region - Advanced"
+    name "folder_sampler_buckets_advanced"
+    label "Render Region - Advanced"
 
-	parm {
-		name    "SettingsRegionsGenerator_dynbuckets"
-		label   "Dynamic Splitting"
-		type    toggle
-		help 	"Dynamically reduces the size of the render buckets when a small part of the image remains to be rendered. This ensures that all rendering cores are utilized when rendering the last few buckets."
-		default { "1" }
-		range   { 0 1 }
-		export  none
-		parmtag { "cook_dependent" "1" }
-		parmtag { "vray_plugin" "SettingsRegionsGenerator" }
-		parmtag { "vray_pluginattr" "dynbuckets" }
-		parmtag { "vray_type" "boolean" }
-	}
+    parm {
+        name    "SettingsRegionsGenerator_dynbuckets"
+        label   "Dynamic Splitting"
+        type    toggle
+        help    "Dynamically reduces the size of the render buckets when a small part of the image remains to be rendered. This ensures that all rendering cores are utilized when rendering the last few buckets."
+        default { "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRegionsGenerator" }
+        parmtag { "vray_pluginattr" "dynbuckets" }
+        parmtag { "vray_type" "boolean" }
+    }
 
-	parm {
-		name    "SettingsRegionsGenerator_xymeans"
-		label   "Bucket Type"
-		help    "Size in pixels or number of regions"
-		type    string
-		menu    {
-			"0" "Bucket W/H"
-			"1" "Region Count"
-		}
-		default { "0" }
-		parmtag { "vray_plugin" "SettingsRegionsGenerator" }
-		parmtag { "vray_pluginattr" "xymeans" }
-		parmtag { "vray_type" "enum" }
-	}
+    parm {
+        name    "SettingsRegionsGenerator_xymeans"
+        label   "Bucket Type"
+        help    "Size in pixels or number of regions"
+        type    string
+        menu    {
+            "0" "Bucket W/H"
+            "1" "Region Count"
+        }
+        default { "0" }
+        parmtag { "vray_plugin" "SettingsRegionsGenerator" }
+        parmtag { "vray_pluginattr" "xymeans" }
+        parmtag { "vray_type" "enum" }
+    }
 
-	parm {
-		name    "SettingsRegionsGenerator_seqtype"
-		label   "Sequence Type"
-		help    "Determines the order in which the regions are rendered"
-		type    string
-		menu    {
-			"0" "Top-Bottom"
-			"1" "Left-Right"
-			"2" "Checker"
-			"3" "Spiral"
-			"4" "Triangulation"
-			"5" "Hilbert"
-		}
-		default { "4" }
-		parmtag { "cook_dependent" "1" }
-		parmtag { "vray_plugin" "SettingsRegionsGenerator" }
-		parmtag { "vray_pluginattr" "seqtype" }
-		parmtag { "vray_type" "enum" }
-	}
+    parm {
+        name    "SettingsRegionsGenerator_seqtype"
+        label   "Sequence Type"
+        help    "Determines the order in which the regions are rendered"
+        type    string
+        menu    {
+            "0" "Top-Bottom"
+            "1" "Left-Right"
+            "2" "Checker"
+            "3" "Spiral"
+            "4" "Triangulation"
+            "5" "Hilbert"
+        }
+        default { "4" }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRegionsGenerator" }
+        parmtag { "vray_pluginattr" "seqtype" }
+        parmtag { "vray_type" "enum" }
+    }
 
-	parm {
-		name    "SettingsRegionsGenerator_reverse"
-		label   "Reverse Sequence"
-		type    toggle
-		default { "0" }
-		help    "Reverses the region sequence order"
-		range   { 0 1 }
-		export  none
-		parmtag { "cook_dependent" "1" }
-		parmtag { "vray_plugin" "SettingsRegionsGenerator" }
-		parmtag { "vray_pluginattr" "reverse" }
-		parmtag { "vray_type" "boolean" }
-	}
-
-
-
+    parm {
+        name    "SettingsRegionsGenerator_reverse"
+        label   "Reverse Sequence"
+        type    toggle
+        default { "0" }
+        help    "Reverses the region sequence order"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRegionsGenerator" }
+        parmtag { "vray_pluginattr" "reverse" }
+        parmtag { "vray_type" "boolean" }
+    }
 
 }
 
