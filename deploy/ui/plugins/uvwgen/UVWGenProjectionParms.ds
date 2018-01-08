@@ -9,7 +9,7 @@
 parm {
     NAMEM("type")
     label   "Type"
-    type    ordinal
+    type    string
     default { "1" }
     help    "Mapping type"
     menu    {
@@ -31,7 +31,7 @@ parm {
 parm {
     NAMEM("fitfill")
     label   "Fit Fill"
-    type    ordinal
+    type    string
     default { "0" }
     help    "Fit fill"
     menu    {
@@ -48,7 +48,7 @@ parm {
 parm {
     NAMEM("fittype")
     label   "Fit Type"
-    type    ordinal
+    type    string
     default { "0" }
     help    "Fit type"
     menu    {

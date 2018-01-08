@@ -1,8 +1,8 @@
 {
-	name	UVWGenExplicit
-	label	"Explicit"
-	parmtag	{ spare_category "Explicit" }
-	parmtag	{ vray_plugin "UVWGenExplicit" }
+    name    UVWGenExplicit
+    label   "Explicit"
+    parmtag { spare_category "Explicit" }
+    parmtag { vray_plugin "UVWGenExplicit" }
 
 #include "UVWGenExplicitParms.ds"
 #include "vfh_uvwgen_common.ds"

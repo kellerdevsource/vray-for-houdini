@@ -33,7 +33,7 @@ parm {
 parm {
     NAMEM("wrap_u")
     label   "Wrap U"
-    type    ordinal
+    type    string
     default { "0" }
     help    "Wrap U"
     menu    {
@@ -50,7 +50,7 @@ parm {
 parm {
     NAMEM("wrap_v")
     label   "Wrap V"
-    type    ordinal
+    type    string
     default { "0" }
     help    "Wrap V"
     menu    {
@@ -67,7 +67,7 @@ parm {
 parm {
     NAMEM("wrap_w")
     label   "Wrap W"
-    type    ordinal
+    type    string
     default { "0" }
     help    "Wrap W"
     menu    {
