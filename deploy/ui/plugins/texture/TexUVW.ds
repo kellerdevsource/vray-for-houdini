@@ -6,7 +6,7 @@
     parm {
         name    "component"
         label   "Component"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Specifies which component to show"
         menu    {

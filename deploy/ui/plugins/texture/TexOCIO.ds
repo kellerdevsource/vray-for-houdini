@@ -20,7 +20,7 @@
     parm {
         name    "inout_type"
         label   "Inout Type"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Input / output type"
         menu    {
@@ -37,7 +37,7 @@
     parm {
         name    "config_src"
         label   "Config Source"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Config source: 0 - auto (env, stored env for slaves, file, internal), 1 - environment, 2 - file, 3 - internal"
         menu    {
@@ -84,7 +84,7 @@
     parm {
         name    "mode"
         label   "Mode"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Operation mode (0 - ColorSpace, 1 - CDL Transform, 2 - File Transform, 3 - LogConvert, 4 - Display, 5 - Look)"
         menu    {
@@ -239,7 +239,7 @@
         parm {
             name    "cdl_direction"
             label   "Direction"
-            type    ordinal
+            type    string
             default { "0" }
             help    "CDLTransform: direction (0 - forward, 1 - inverse)"
             menu    {
@@ -287,7 +287,7 @@
         parm {
             name    "filetr_direction"
             label   "Direction"
-            type    ordinal
+            type    string
             default { "0" }
             help    "FileTransform: direction (0 - forward, 1 - inverse)"
             menu    {
@@ -305,7 +305,7 @@
         parm {
             name    "filetr_interpolation"
             label   "Interpolation"
-            type    ordinal
+            type    string
             default { "0" }
             help    "FileTransform: interpolation (0 - nearest, 1 - linear, 2 - tetrahedral, 3 - best)"
             menu    {
@@ -330,7 +330,7 @@
         parm {
             name    "logconvert_operation"
             label   "Operation"
-            type    ordinal
+            type    string
             default { "0" }
             help    "LogConvert: operation (0 - log to lin, 1 - lin to log)"
             menu    {
@@ -434,7 +434,7 @@
         parm {
             name    "look_direction"
             label   "Direction"
-            type    ordinal
+            type    string
             default { "0" }
             help    "Look: direction (0 - forward, 1 - inverse)"
             menu    {

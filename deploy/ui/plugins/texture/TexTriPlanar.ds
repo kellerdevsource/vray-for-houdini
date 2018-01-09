@@ -6,7 +6,7 @@
     parm {
         name    "texture_mode"
         label   "Texture Mode"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Specifies whether to use the same texture on all axes, or separate textures for each axis"
         menu    {
@@ -176,7 +176,7 @@
     parm {
         name    "random_mode"
         label   "Random Mode"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Specifies what to use to randomize the offset/rotation"
         disablewhen "{ random_texture_offset != 1 random_texture_rotation != 1 random_axis != 1 random_frame_rotation != 1 }"
@@ -195,7 +195,7 @@
     parm {
         name    "ref_space"
         label   "Reference Space"
-        type    ordinal
+        type    string
         default { "0" }
         help    "The space that the projection takes place in, either local object space, or some other object in the scene. If the space is set to reference object(Node), but no object is specified, world space is used"
         menu    {

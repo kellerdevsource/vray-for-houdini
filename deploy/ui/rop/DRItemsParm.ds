@@ -41,7 +41,6 @@ groupsimple {
         name    "SettingsOptions_dr_assetsCacheLimitType"
         label   "Cache Limit Type"
         type    string
-        disablewhen "{ SettingsOptions_misc_transferAssets == 0 }"
         default { "0" }
         help    "Type of the assets cache limit"
         menu    {
@@ -56,6 +55,7 @@ groupsimple {
         parmtag { "vray_plugin" "SettingsOptions" }
         parmtag { "vray_pluginattr" "dr_assetsCacheLimitType" }
         parmtag { "vray_type" "enum" }
+        disablewhen "{ SettingsOptions_misc_transferAssets == 0 }"
     }
     parm {
         name    "SettingsOptions_dr_assetsCacheLimitValue"
