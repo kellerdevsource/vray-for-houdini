@@ -32,7 +32,7 @@
     parm {
         name    "width_type"
         label   "Width Type"
-        type    ordinal
+        type    string
         default { "1" }
         help    "Width Type"
         menu    {
@@ -126,7 +126,7 @@
     parm {
         name    "raytraced_mode"
         label   "Mode"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Which corners to smooth"
         hidewhen "{ raytraced != 1 }"

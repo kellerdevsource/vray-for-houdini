@@ -184,21 +184,21 @@
     parm {
         name    "float_types"
         label   "Float Types"
-        type    integer
+        type    string
         default { "1" }
         help    "Interpolation types for each key of the floats (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
-            "None"  "None"
-            "Linear"    "Linear"
-            "Smooth"    "Smooth"
-            "Spline"    "Spline"
+            "0"  "None"
+            "1"    "Linear"
+            "2"    "Smooth"
+            "3"    "Spline"
         }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
         parmtag { "vray_plugin" "TexRemap" }
         parmtag { "vray_pluginattr" "float_types" }
-        parmtag { "vray_type" "List<Integer>" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
@@ -218,21 +218,21 @@
     parm {
         name    "red_types"
         label   "Red Types"
-        type    integer
+        type    string
         default { "0" }
         help    "Interpolation types for each key of the red channel (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
-            "None"  "None"
-            "Linear"    "Linear"
-            "Smooth"    "Smooth"
-            "Spline"    "Spline"
+            "0"  "None"
+            "1"    "Linear"
+            "2"    "Smooth"
+            "3"    "Spline"
         }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
         parmtag { "vray_plugin" "TexRemap" }
         parmtag { "vray_pluginattr" "red_types" }
-        parmtag { "vray_type" "List<Integer>" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
@@ -252,21 +252,21 @@
     parm {
         name    "green_types"
         label   "Green Types"
-        type    integer
+        type    string
         default { "0" }
         help    "Interpolation types for each key of the green channel (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
-            "None"  "None"
-            "Linear"    "Linear"
-            "Smooth"    "Smooth"
-            "Spline"    "Spline"
+            "0"  "None"
+            "1"    "Linear"
+            "2"    "Smooth"
+            "3"    "Spline"
         }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
         parmtag { "vray_plugin" "TexRemap" }
         parmtag { "vray_pluginattr" "green_types" }
-        parmtag { "vray_type" "List<Integer>" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
@@ -286,21 +286,21 @@
     parm {
         name    "blue_types"
         label   "Blue Types"
-        type    integer
+        type    string
         default { "0" }
         help    "Interpolation types for each key of the blue channel (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
-            "None"  "None"
-            "Linear"    "Linear"
-            "Smooth"    "Smooth"
-            "Spline"    "Spline"
+            "0"  "None"
+            "1"    "Linear"
+            "2"    "Smooth"
+            "3"    "Spline"
         }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
         parmtag { "vray_plugin" "TexRemap" }
         parmtag { "vray_pluginattr" "blue_types" }
-        parmtag { "vray_type" "List<Integer>" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
@@ -320,21 +320,21 @@
     parm {
         name    "hue_types"
         label   "Hue Types"
-        type    integer
+        type    string
         default { "0" }
         help    "Interpolation types for each key of the hue channel (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
-            "None"  "None"
-            "Linear"    "Linear"
-            "Smooth"    "Smooth"
-            "Spline"    "Spline"
+            "0"  "None"
+            "1"    "Linear"
+            "2"    "Smooth"
+            "3"    "Spline"
         }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
         parmtag { "vray_plugin" "TexRemap" }
         parmtag { "vray_pluginattr" "hue_types" }
-        parmtag { "vray_type" "List<Integer>" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
@@ -354,21 +354,21 @@
     parm {
         name    "saturation_types"
         label   "Saturation Types"
-        type    integer
+        type    string
         default { "0" }
         help    "Interpolation types for each key of the saturation channel (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
-            "None"  "None"
-            "Linear"    "Linear"
-            "Smooth"    "Smooth"
-            "Spline"    "Spline"
+            "0"  "None"
+            "1"    "Linear"
+            "2"    "Smooth"
+            "3"    "Spline"
         }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
         parmtag { "vray_plugin" "TexRemap" }
         parmtag { "vray_pluginattr" "saturation_types" }
-        parmtag { "vray_type" "List<Integer>" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {
@@ -388,21 +388,21 @@
     parm {
         name    "value_types"
         label   "Value Types"
-        type    integer
+        type    string
         default { "0" }
         help    "Interpolation types for each key of the value channel (None - 0; Linear - 1; Smooth - 2; Spline - 3)"
         menu    {
-            "None"  "None"
-            "Linear"    "Linear"
-            "Smooth"    "Smooth"
-            "Spline"    "Spline"
+            "0"  "None"
+            "1"    "Linear"
+            "2"    "Smooth"
+            "3"    "Spline"
         }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3" }
         parmtag { "vray_plugin" "TexRemap" }
         parmtag { "vray_pluginattr" "value_types" }
-        parmtag { "vray_type" "List<Integer>" }
+        parmtag { "vray_type" "enum" }
     }
 
     parm {

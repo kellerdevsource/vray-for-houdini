@@ -43,11 +43,11 @@
     parm {
         name    "sky_model"
         label   "Sky Model"
-        type    ordinal
+        type    string
         default { "3" }
         help    "Selects the procedural model used to simulate the TexSky texture"
         menu    {
-            0   "Preetham et al."
+            0 "Preetham et al."
             1 "CIE Clear"
             2  "CIE Overcast"
             3  "Hosek et al."

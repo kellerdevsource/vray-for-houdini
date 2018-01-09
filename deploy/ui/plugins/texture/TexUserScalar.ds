@@ -8,7 +8,7 @@
         name    "user_attribute"
         label   "Attribute"
         type    string
-        default { "ID" }
+        default { "id" }
         help    "User attribute name of type float or color"
         parmtag { "vray_pluginattr" "user_attribute" }
         parmtag { "vray_type" "string" }
@@ -27,12 +27,13 @@
     parm {
         name "attribute_priority"
         label "Attribute Priority"
-        type ordinal
+        type string
         menu {
             "0" "Map Channel"
             "1" "User Attribute"
         }
         default { "1" }
+        parmtag { "vray_type" "enum" }
     }
 
 #include "vfh_texture_default_output_float.ds"

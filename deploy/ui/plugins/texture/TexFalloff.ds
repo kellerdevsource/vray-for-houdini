@@ -11,7 +11,7 @@
         parm {
             name    "type"
             label   "Type"
-            type    ordinal
+            type    string
             default { "0" }
             help    "Type"
             menu    {
@@ -62,7 +62,7 @@
         parm {
             name    "direction_type"
             label   "Direction Type"
-            type    ordinal
+            type    string
             default { "0" }
             help    "Direction type"
             hidewhen "{ type < 3 }"
