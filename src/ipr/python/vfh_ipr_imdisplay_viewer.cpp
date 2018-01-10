@@ -136,7 +136,8 @@ void TileImage::flipImage() const
 {
 	int w = 0;
 	int h = 0;
-	image->getSize(w, h);
+	if (!image->getSize(w, h))
+		return;
 
 	VRay::AColor *pixels = image->getPixelData();
 
@@ -191,6 +192,8 @@ void ImdisplayThread::processImageHeaderMessage(ImageHeaderMessage &msg) const
 
 void ImdisplayThread::processTileMessage(TileImageMessage &msg) 
 {
+	int planeIndex = 0;
+
 	for (const TileImage *image : msg.images) {
 		if (!isRunning)
 			return;
@@ -198,18 +201,20 @@ void ImdisplayThread::processTileMessage(TileImageMessage &msg)
 		image->flipImage();
 
 #if USE_BUCKETS
-		writeTileBuckets(*image);
+		writeTileBuckets(planeIndex, *image);
 #else
-		writeTile(*image);
+		writeTile(planeIndex, *image);
 #endif
+		planeIndex++;
 	}
 }
 
-void ImdisplayThread::writeTileBuckets(const TileImage &image)
+void ImdisplayThread::writeTileBuckets(int planeIndex, const TileImage &image)
 {
 	int width = 0;
 	int height = 0;
-	image.image->getSize(width, height);
+	if (!image.image->getSize(width, height))
+		return;
 
 	const int numY = height / tileSize + (height % tileSize ? 1 : 0);
 	const int numX = width  / tileSize + (width  % tileSize ? 1 : 0);
@@ -232,12 +237,12 @@ void ImdisplayThread::writeTileBuckets(const TileImage &image)
 			imageBucket.y0 = currentMRes;
 			imageBucket.y1 = maxYRes;
 
-			writeTile(imageBucket);
+			writeTile(planeIndex, imageBucket);
 		}
 	}
 }
 
-void ImdisplayThread::writeTile(const TileImage &image)
+void ImdisplayThread::writeTile(int planeIndex, const TileImage &image)
 {
 	if (!device->isOpen() || device->wasRemoteQuitRequested()) {
 		// We are using failed write as close event.
@@ -247,7 +252,7 @@ void ImdisplayThread::writeTile(const TileImage &image)
 	if (!isRunning)
 		return;
 
-	if (!device->writeTile(image.image->getPixelData(), image.x0, image.x1, image.y0, image.y1)) {
+	if (!device->writeDeepTile(planeIndex, image.image->getPixelData(), image.x0, image.x1, image.y0, image.y1)) {
 		// We are using failed write as close event.
 		isRunning = false;
 	}

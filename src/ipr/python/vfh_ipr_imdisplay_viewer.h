@@ -22,7 +22,7 @@
 #define USE_BUCKETS 1
 
 /// Write render channels in IRP.
-#define USE_RENDER_CHANNELS 0
+#define USE_RENDER_CHANNELS 1
 
 class TIL_TileMPlay;
 
@@ -153,7 +153,7 @@ struct TileQueueMessage {
 		messageTypeImageTiles,
 	};
 
-	virtual ~TileQueueMessage() {}
+	virtual ~TileQueueMessage() = default;
 
 	/// Returns message type.
 	virtual TileQueueMessageType type() const = 0;
@@ -237,12 +237,14 @@ private:
 	void processTileMessage(TileImageMessage &msg);
 
 	/// Writes image tile to the pipe splitted into buckets.
+	/// @param planeIndex Image plane index.
 	/// @param image Image data.
-	void writeTileBuckets(const TileImage &image);
+	void writeTileBuckets(int planeIndex, const TileImage &image);
 
 	/// Writes image tile to the pipe. Frees allocated image data.
+	/// @param planeIndex Image plane index.
 	/// @param image Image data.
-	void writeTile(const TileImage &image);
+	void writeTile(int planeIndex, const TileImage &image);
 
 	/// MPlay Port.
 	int port = 0;
