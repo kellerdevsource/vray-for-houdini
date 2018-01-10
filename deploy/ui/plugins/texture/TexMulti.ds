@@ -36,6 +36,19 @@
     }
 
     parm {
+        name "id_gen_tex"
+        label "ID Generator"
+        help "ID generator texture. Supports integer textures."
+        type float
+        default { "0" }
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "TexMulti" }
+        parmtag { "vray_pluginattr" "id_gen_tex" }
+        parmtag { "vray_type" "TextureFloat" }
+        invisible
+    }
+
+    parm {
         name    "default_texture"
         label   "Default Texture"
         help    "The default texture color."
@@ -52,16 +65,5 @@
     VFH_PLUGIN_PARM_TOGGLE("TexMulti", "loop_textures", "Loop Textures", "", 0)
     VFH_PLUGIN_PARM_INT("TexMulti", "seed", "Seed", "", 0)
 
-    parm {
-        name "id_gen_tex"
-        label "ID Generator"
-        help "ID generator texture. Supports integer textures."
-        type float
-        default { "0" }
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexMulti" }
-        parmtag { "vray_pluginattr" "id_gen_tex" }
-        parmtag { "vray_type" "TextureFloat" }
-        invisible
-    }
+#include "vfh_texture_default_output_color.ds"
 }
