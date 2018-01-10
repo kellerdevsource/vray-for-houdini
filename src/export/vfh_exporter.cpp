@@ -1843,7 +1843,7 @@ void VRayExporter::exportScene()
 		texOpId.add(Attrs::PluginAttr("attribute_priority", 1));
 
 		Attrs::PluginDesc rcOpId("rcUserAttrOpId", "RenderChannelExtraTex");
-		rcOpId.add(Attrs::PluginAttr("name", "OpID"));
+		rcOpId.add(Attrs::PluginAttr("name", "Op_Id"));
 		rcOpId.add(Attrs::PluginAttr("consider_for_aa", false));
 		rcOpId.add(Attrs::PluginAttr("filtering", false));
 		rcOpId.add(Attrs::PluginAttr("affect_matte_objects", false));
