@@ -47,9 +47,16 @@ void VRayScene::setTimeDependent()
 #endif
 }
 
+void VRayScene::setTimeDependent(bool state) {
+	flags().setTimeDep(state);
+}
+
 void VRayScene::updatePrimitive(const OP_Context &context)
 {
 	// Set the options on the primitive
+
+	const int timeDependent = evalInt("update_transform", 0, context.getTime());
+	setTimeDependent(timeDependent);
 	OP_Options primOptions;
 	for (int i = 0; i < getParmList()->getEntries(); ++i) {
 		const PRM_Parm &prm = getParm(i);

@@ -182,6 +182,10 @@ public:
 	/// Fill in output settings
 	/// @param pluginDesc[out] - output settings plugin description
 	ReturnValue fillSettingsOutput(Attrs::PluginDesc &pluginDesc);
+	
+	/// Fill in output settings without adding image path
+	/// @param pluginDesc[out] - Output settings plugin description
+	ReturnValue fillSettingsOutputWithoutPath(Attrs::PluginDesc &pluginDesc);
 
 	/// Export camera related settings - camera, dof, motion blur, etc.
 	/// This is called once for each frame we want to render

@@ -802,12 +802,7 @@ VRayExporter::~VRayExporter()
 	resetOpCallbacks();
 }
 
-
-ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
-{
-	if (sessionType != VfhSessionType::production)
-		return ReturnValue::Success;
-
+ReturnValue VRayExporter::fillSettingsOutputWithoutPath(Attrs::PluginDesc &pluginDesc) {
 	const fpreal t = getContext().getTime();
 	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 
@@ -820,13 +815,54 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 
 	UT_String resfraction;
 	m_rop->evalString(resfraction, "res_fraction", 0, t);
-	if (   m_rop->evalInt("override_camerares", 0, t)
-		&& NOT(resfraction.isFloat()) )
+	if (m_rop->evalInt("override_camerares", 0, t)
+		&& NOT(resfraction.isFloat()))
 	{
 		pixelAspect = m_rop->evalFloat("aspect_override", 0, t);
 	}
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
+
+	VRay::VUtils::ValueRefList frames(1);
+
+	if (exportFilePerFrame) {
+		frames[0].setDouble(getContext().getFloatFrame());
+	}
+	else {
+		const fpreal frameStart = CAST_ROPNODE(m_rop)->FSTART();
+		frames[0].setDouble(frameStart);
+
+		if (m_frames > 1) {
+			const fpreal frameEnd = CAST_ROPNODE(m_rop)->FEND();
+
+			if (CAST_ROPNODE(m_rop)->FINC() > 1) {
+				frames = VRay::VUtils::ValueRefList(m_frames);
+				for (int i = 0; i < m_frames; ++i) {
+					frames[i].setDouble(frameStart + i * CAST_ROPNODE(m_rop)->FINC());
+				}
+			}
+			else {
+				VRay::VUtils::ValueRefList frameRange(2);
+				frameRange[0].setDouble(frameStart);
+				frameRange[1].setDouble(frameEnd);
+				frames[0].setList(frameRange);
+			}
+		}
+	}
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
+
+	return ReturnValue::Success;
+}
+
+ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
+{
+	if (sessionType != VfhSessionType::production)
+		return ReturnValue::Success;
+
+	if (fillSettingsOutputWithoutPath(pluginDesc) == ReturnValue::Error) {
+		return ReturnValue::Error;
+	}
 
 	if (!m_rop->evalInt("SettingsOutput_img_save", 0, 0.0)) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", Attrs::PluginAttr::AttrTypeIgnore));
@@ -843,6 +879,7 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			imageFormatVRayImage,
 		};
 
+		const fpreal t = getContext().getTime();
 		const ImageFormat imgFormat =
 			static_cast<ImageFormat>(m_rop->evalInt("SettingsOutput_img_format", 0, t));
 
@@ -891,35 +928,6 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 	}
 
-	VRay::VUtils::ValueRefList frames(1);
-
-	if (exportFilePerFrame) {
-		frames[0].setDouble(getContext().getFloatFrame());
-	}
-	else {
-		const fpreal frameStart = CAST_ROPNODE(m_rop)->FSTART();
-		frames[0].setDouble(frameStart);
-
-		if (m_frames > 1) {
-			const fpreal frameEnd = CAST_ROPNODE(m_rop)->FEND();
-
-			if (CAST_ROPNODE(m_rop)->FINC() > 1) {
-				frames = VRay::VUtils::ValueRefList(m_frames);
-				for (int i = 0; i < m_frames; ++i) {
-					frames[i].setDouble(frameStart + i * CAST_ROPNODE(m_rop)->FINC());
-				}
-			}
-			else {
-				VRay::VUtils::ValueRefList frameRange(2);
-				frameRange[0].setDouble(frameStart);
-				frameRange[1].setDouble(frameEnd);
-				frames[0].setList(frameRange);
-			}
-		}
-	}
-
-	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
-
 	return ReturnValue::Success;
 }
 
@@ -949,15 +957,17 @@ ReturnValue VRayExporter::exportSettings()
 								sp.c_str());
 		}
 		else {
-			if (sessionType != VfhSessionType::production) {
-				if (sp == "SettingsOutput")
-					continue;
-			}
-
 			Attrs::PluginDesc pluginDesc(sp, sp);
 			if (sp == "SettingsOutput") {
-				if (fillSettingsOutput(pluginDesc) == ReturnValue::Error) {
-					return ReturnValue::Error;
+				if (sessionType != VfhSessionType::production) {
+					if (fillSettingsOutputWithoutPath(pluginDesc) == ReturnValue::Error) {
+						return ReturnValue::Error;
+					}
+				}
+				else {
+					if (fillSettingsOutput(pluginDesc) == ReturnValue::Error) {
+						return ReturnValue::Error;
+					}
 				}
 			}
 
