@@ -27,7 +27,7 @@
     parm {
         name "attribute_priority"
         label "Attribute Priority"
-        type ordinal
+        type string
         menu {
             "0" "Map Channel"
             "1" "User Attribute"

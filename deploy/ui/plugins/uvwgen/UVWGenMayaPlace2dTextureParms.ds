@@ -1,9 +1,9 @@
 #ifdef PREFIX
 #define NAMEM(n) \
-	name PREFIX##n##""
+    name PREFIX##n##""
 #else
 #define NAMEM(n) \
-	name n##""
+    name n##""
 #endif
 
 parm {
@@ -26,7 +26,7 @@ parm {
     type    integer
     default { "0" }
     help    "Optional channel index, if uv_set_name is not found"
-    range   { 0 64 }
+    range   { 0 5 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenMayaPlace2dTexture" }
@@ -144,7 +144,7 @@ parm {
 
 parm {
     NAMEM("rotate_uv")
-    label   "Rotate Uv"
+    label   "Rotate UV"
     type    angle
     default { "0" }
     range   { 0 10 }

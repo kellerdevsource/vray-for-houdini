@@ -23,7 +23,7 @@
     }
     parm {
         name    "id_type"
-        type    ordinal
+        type    string
         label   "ID Type"
         help    "Defines which criteria is used to represent individual cryptomatte object"
         menu    {
@@ -40,7 +40,7 @@
     }
     parm {
         name    "write_metadata"
-        type    ordinal
+        type    string
         label   "EXR Metadata"
         help    "Controls if metadata will be appended to the EXR extra attributes"
         menu    {

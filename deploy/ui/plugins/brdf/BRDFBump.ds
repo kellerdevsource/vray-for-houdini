@@ -9,17 +9,17 @@
     parm {
         name    "map_type"
         label   "Type"
-        type    ordinal
+        type    string
         default { "0" }
         help    "The type of the map"
         menu    {
-        0   "Bump"
-        1   "Normal (Tangent)"
-        2   "Normal (Object)"
-        3   "Normal (Camera)"
-        4   "Normal (World)"
-        5   "From Bump"
-        6   "Explicit Normal"
+            0   "Bump"
+            1   "Normal (Tangent)"
+            2   "Normal (Object)"
+            3   "Normal (Camera)"
+            4   "Normal (World)"
+            5   "From Bump"
+            6   "Explicit Normal"
         }
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "BRDFBump" }
@@ -84,7 +84,6 @@
         name    "bump_delta_scale"
         label   "Bump Delta Scale"
         type    float
-        hidewhen "{ map_type != 0 }"
         default { "1" }
         help    "Scale for sampling the bitmap when map_type is 0. Normally this is tied to the ray differentials, but can be changed if necessary"
         range   { 0 2 }
@@ -93,6 +92,7 @@
         parmtag { "vray_plugin" "BRDFBump" }
         parmtag { "vray_pluginattr" "bump_delta_scale" }
         parmtag { "vray_type" "float" }
+        hidewhen "{ map_type != 0 }"
     }
     parm {
         name    "bump_map_mult"

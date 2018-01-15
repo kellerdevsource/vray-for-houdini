@@ -9,7 +9,7 @@
         parm {
             name    "pattern_type"
             label   "Pattern Type"
-            type    ordinal
+            type    string
             default { "0" }
             help    "Tiles pattern"
             menu    {

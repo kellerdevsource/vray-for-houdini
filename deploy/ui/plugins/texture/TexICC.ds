@@ -32,7 +32,7 @@
     parm {
         name    "render_intent"
         label   "Render Intent"
-        type    ordinal
+        type    string
         default { "0" }
         menu    {
             0 "Perceptual"

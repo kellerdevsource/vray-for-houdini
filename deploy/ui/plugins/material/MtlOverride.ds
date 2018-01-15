@@ -19,7 +19,7 @@
     }
     parm {
         name    "use"
-        label   "Use"
+        label   "Enabled"
         type    toggle
         default { "1" }
         help    "Use Override material"

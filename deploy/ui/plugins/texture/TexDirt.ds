@@ -10,7 +10,7 @@
         parm {
             name    "mode"
             label   "Mode"
-            type    ordinal
+            type    string
             default { "0" }
             help    "The difference between Ambient and Reflection occlusion is basically in the direction in which rays are traced.\nWith ambient occlusion rays are traced in all directions uniformly while with reflection occlusion the direction depends on the viewing direction (just as when calculating reflections) and the spread of the rays depends on the Reflection glossiness and BRDF type used"
             menu    {

@@ -36,7 +36,7 @@
             parmtag { "vray_enumkeys" "0,1,2" }
             parmtag { "vray_plugin" "CameraPhysical" }
             parmtag { "vray_pluginattr" "type" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
 
         parm {
@@ -385,7 +385,7 @@
             parmtag { "vray_enumkeys" "0,1,2" }
             parmtag { "vray_plugin" "CameraPhysical" }
             parmtag { "vray_pluginattr" "distortion_type" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
             disablewhen "{ CameraPhysical_parm_distortion_enable == 0 }"
         }
 

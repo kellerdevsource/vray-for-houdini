@@ -104,7 +104,7 @@
             hidewhen "{ use_tex == 0 }"
             name  "tex"
             label "Texture"
-            type  oppath
+            type  file
             default { "" }
             help  "The light texture"
             range { 0 1 }
@@ -171,7 +171,7 @@
             hidewhen  "{ map_intensity == 0 }"
             name  "intensity_tex"
             label "Intensity"
-            type  oppath
+            type  file
             default { "" }
             help  "A float texture that if present will override the intensity parameter"
             range { 0 1 }
@@ -211,7 +211,7 @@
             hidewhen "{ map_color == 0 }"
             name  "color_tex"
             label "Color"
-            type  oppath
+            type  file
             default { "" }
             help  "A color texture that if present will override the color parameter"
             range { 0 1 }
@@ -263,7 +263,7 @@
         parm {
             name "units"
             label "Units"
-            type ordinal
+            type string
             help "Intensity units"
             menu {
             "0" "Default"
@@ -292,13 +292,13 @@
         }
     }
 
-    groupcollapsible {
+    groupsimple {
         name "folder_shadows"
         label "Shadows"
         disablewhen "{ enabled == 0 }"
         parm {
             name  "shadows"
-            label "Shadows"
+            label "Enabled"
             type  toggle
             default { "1" }
             help  "true if the light casts shadows and false otherwise"
@@ -340,7 +340,7 @@
             hidewhen "{ map_shadow_color == 0 }"
             name  "shadowColor_tex"
             label "Color"
-            type  oppath
+            type  file
             default { "" }
             help  "A color texture that if present will override the shadowColor parameter"
             range { 0 1 }

@@ -48,14 +48,14 @@
         parm {
             name    "preset"
             label   "Preset"
-            type    ordinal
+            type    string
             default { "1" }
             help    "Specifies one a few predefined presets for the radius and the strength"
             menu    {
-                "Mild"  "Mild"
-                "Default"   "Default"
-                "Strong"    "Strong"
-                "Custom"    "Custom"
+                "0"  "Mild"
+                "1"   "Default"
+                "2"    "Strong"
+                "3"    "Custom"
             }
             range   { 0 1 }
             export  none
@@ -63,18 +63,18 @@
             parmtag { "vray_enumkeys" "0,1,2,3" }
             parmtag { "vray_plugin" "RenderChannelDenoiser" }
             parmtag { "vray_pluginattr" "preset" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
         parm {
             name    "mode"
             label   "Mode"
-            type    ordinal
+            type    string
             default { "2" }
             help    "Specifies what to do with the result"
             menu    {
-                "None"  "None"
-                "Replace RGB"   "Replace RGB"
-                "Separate Channel"  "Separate Channel"
+                "0"  "None"
+                "1"   "Replace RGB"
+                "2"  "Separate Channel"
             }
             range   { 0 1 }
             export  none
@@ -82,17 +82,17 @@
             parmtag { "vray_enumkeys" "0,1,2" }
             parmtag { "vray_plugin" "RenderChannelDenoiser" }
             parmtag { "vray_pluginattr" "mode" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
         parm {
             name    "type"
             label   "Type"
-            type    ordinal
+            type    string
             default { "0" }
             help    "Denoise type"
             menu    {
-                "RGB Only"  "RGB Only"
-                "All Channels"  "All Channels"
+                "0"  "RGB Only"
+                "1"  "All Channels"
             }
             range   { 0 1 }
             export  none
@@ -100,7 +100,7 @@
             parmtag { "vray_enumkeys" "0,1" }
             parmtag { "vray_plugin" "RenderChannelDenoiser" }
             parmtag { "vray_pluginattr" "type" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
         parm {
             name    "radius"
@@ -108,13 +108,13 @@
             type    float
             default { "10" }
             help    "Specifies pixel radius for denoising"
-            hidewhen    "{ preset != Custom }"
             range   { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "RenderChannelDenoiser" }
             parmtag { "vray_pluginattr" "radius" }
             parmtag { "vray_type" "float" }
+            hidewhen    "{ preset != 3 }"
         }
         parm {
             name    "strength"
@@ -122,24 +122,24 @@
             type    float
             default { "1" }
             help    "Denoiser strength, a multiplier for the noise level render element from V-Ray"
-            hidewhen    "{ preset != Custom }"
             range   { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "RenderChannelDenoiser" }
             parmtag { "vray_pluginattr" "strength" }
             parmtag { "vray_type" "float" }
+            hidewhen    "{ preset != 3 }"
         }
         parm {
             name    "generate_render_elements"
             label   "Generate Render Elements"
-            type    ordinal
+            type    string
             default { "2" }
             help    "How to add the needed render elements (0 - Minimal: Only noiseLevel and defocusAmount; 1 - By Denoiser Type: Only those needed for the specific denoiser type (one-pass or render elements); 2 - Add all possible denoising elements so that denoising type can be switched)"
             menu    {
-                "Minimal"   "Minimal"
-                "By Denoiser Type"  "By Denoiser Type"
-                "All Possible"  "All Possible"
+                "0"   "Minimal"
+                "1"  "By Denoiser Type"
+                "2"  "All Possible"
             }
             range   { 0 1 }
             export  none
@@ -147,7 +147,7 @@
             parmtag { "vray_enumkeys" "0,1,2" }
             parmtag { "vray_plugin" "RenderChannelDenoiser" }
             parmtag { "vray_pluginattr" "generate_render_elements" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
         parm {
             name    "progressive_update"

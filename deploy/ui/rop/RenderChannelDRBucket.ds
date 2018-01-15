@@ -18,12 +18,12 @@
     parm {
         name    "text_alignment"
         label   "Text Alignment"
-        type    ordinal
+        type    string
         default { "1" }
         menu    {
-            "Left"  "Left"
-            "Center"    "Center"
-            "Right" "Right"
+            "0"  "Left"
+            "1"    "Center"
+            "2" "Right"
         }
         range   { 0 1 }
         export  none
@@ -31,7 +31,7 @@
         parmtag { "vray_enumkeys" "0,1,2" }
         parmtag { "vray_plugin" "RenderChannelDRBucket" }
         parmtag { "vray_pluginattr" "text_alignment" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
 
 #include "vfh_renderchannel_common.ds"

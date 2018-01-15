@@ -144,7 +144,7 @@
     parm {
         name    "compatibility_with"
         label   "Compatibility With"
-        type    ordinal
+        type    string
         default { "0" }
         help    "This is used to differentiate between textures exported from different applications"
         menu    {

@@ -11,17 +11,17 @@ VFH_UI_PARM_TOGGLE("SettingsOutput_img_save", "Save Image", "Save rendered image
 parm {
     name    "SettingsOutput_img_format"
     label   "File Format"
-    type    ordinal
+    type    string
     default { "5" }
     help    "Output image format"
     menu {
-        "PNG" "PNG"
-        "JPEG" "JPEG"
-        "TIFF" "TIFF"
-        "TGA" "TGA"
-        "SGI" "SGI"
-        "OpenEXR" "OpenEXR"
-        "VRayImage" "VRayImage"
+        0 "PNG"
+        1 "JPEG"
+        2 "TIFF"
+        3 "TGA"
+        4 "SGI"
+        5 "OpenEXR"
+        6 "VRayImage"
     }
     export  none
     parmtag { "cook_dependent" "1" }
@@ -187,7 +187,7 @@ groupcollapsible {
         name    "SettingsOutput_img_deepFile"
         label   "Write Deep Data"
         type    toggle
-		disablewhen "{ SettingsImageSampler_type == \"Progressive\" }"
+        disablewhen "{ SettingsImageSampler_type == \"Progressive\" }"
         default { "0" }
         help    "If true, V-Ray will will generate deep image file (valid for vrst and exr). Not supported for Progressive Sampler type yet."
         range   { 0 1 }
@@ -212,7 +212,7 @@ groupcollapsible {
     parm {
         name    "SettingsOutput_img_rawFileVFB"
         label   "Raw File VFB Mode"
-        type    integer
+        type    string
         default { "1" }
         help    "If writing to a tiled file format, specifies whether a memory VFB window should be displayed"
         menu {

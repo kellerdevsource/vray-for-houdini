@@ -1,978 +1,1038 @@
 {
-    name	selectedparms
+    name    selectedparms
 
     group {
-	name	"folder4"
-	label	"Rendering"
+        name    "folder4"
+        label   "Rendering"
 
-	parm {
-	    name	"setPresetParam"
-	    label	"Set this param to one of [FumeFX, HoudiniVolume, HoudiniLiquid, MayaFluids]"
-	    type	string
-	    invisible
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	}
+        parm {
+            name    "setPresetParam"
+            label   "Set this param to one of [FumeFX, HoudiniVolume, HoudiniLiquid, MayaFluids]"
+            type    string
+            default { "" }
+            range   { 0 1 }
+            export  none
+            invisible
+        }
+        parm {
+            name    "render"
+            label   "Enable Rendering"
+            type    toggle
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "render" }
+            parmtag { "vray_type" "int" }
+        }
+        parm {
+            name    "selectedSopPath"
+            label   "Data Range SOP"
+            type    oppath
+            default { "" }
+            parmtag { "opfilter" "!!SOP!!" }
+            parmtag { "oprelative" "." }
+        }
+        parm {
+            name    "jitter"
+            label   "Enable Jittering"
+            type    toggle
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "jitter" }
+            parmtag { "vray_type" "int" }
+            invisible
+        }
+        parm {
+            name    "renderMode"
+            label   "Mode"
+            type    string
+            default { "0" }
+            menu    {
+                "0" "Volumetric"
+                "1" "Volumetric Geometry"
+                "2" "Volumetric Heat Haze"
+                "3" "Isosurface"
+                "4" "Mesh"
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "renderMode" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name    "pmprimary"
+            label   "Probabilistic Rendering"
+            type    string
+            default { "1" }
+            menu    {
+                "0" "Disable"
+                "1" "RT Only"
+                "2" "Always"
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "pmprimary" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name    "rendstep"
+            label   "Step (%)"
+            type    integer
+            default { "80" }
+            range   { 1 500 }
+            export  none
+            parmtag { "autoscope" "0000000000000000" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "rendstep" }
+            parmtag { "vray_type" "int" }
+        }
+        parm {
+            name    "rendshadstep"
+            label   "Shadow Step (%)"
+            type    integer
+            default { "200" }
+            range   { 1 1000 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "rendshadstep" }
+            parmtag { "vray_type" "int" }
+        }
+        parm {
+            name    "softb"
+            label   "Fade Out"
+            type    float
+            default { "0" }
+            range   { 0 40 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "softb" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "hhfactor"
+            label   "Heat Size"
+            type    float
+            default { "1" }
+            range   { -1000 1000 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "hhfactor" }
+            parmtag { "vray_type" "float" }
+            hidewhen "{ renderMode != 2 }"
+        }
+        parm {
+            name    "velocity_mult"
+            label   "Motion Blur Multiplier"
+            type    float
+            default { "1" }
+            range   { 0 3 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "velocity_mult" }
+            parmtag { "vray_type" "float" }
+        }
+        parm {
+            name    "sampler"
+            label   "Sampler Type"
+            type    string
+            default { "1" }
+            menu    {
+                "0" "Trunk"
+                "1" "Linear"
+                "2" "Spherical"
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "sampler" }
+            parmtag { "vray_type" "enum" }
+        }
 
-	parm {
-	    name	"selectedSopPath"
-	    label	"Sop path to read data ranges from"
-	    type	oppath
-	    default	{ "" }
-	    parmtag	{ "opfilter" "!!SOP!!" }
-	    parmtag	{ "oprelative" "." }
-	}
+        parm {
+            name    "vtex"
+            label   "Velocity Texture"
+            type    uv
+            size    2
+            default { "0" "0" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "vtex" }
+            parmtag { "vray_type" "Texture" }
+            invisible
+        }
+        parm {
+            name    "coord_method"
+            label   "Coordinate Method"
+            type    string
+            default { "0" }
+            menu    {
+                "0" "Fixed"
+                "1" "Grid"
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "coord_method" }
+            parmtag { "vray_type" "enum" }
+        }
 
-	parm {
-	    name	"render"
-	    label	"Enable Rendering"
-	    type	toggle
-	    default	{ "1" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "render" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"jitter"
-	    label	"Enable Jittering"
-	    type	toggle
-	    invisible
-	    default	{ "1" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "jitter" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"renderMode"
-	    label	"Render Mode"
-	    type	string
-	    default	{ "0" }
-	    menu	{
-		"0"	"Volumetric"
-		"1"	"Volumetric Geometry"
-		"2"	"Volumetric Heat Haze"
-		"3"	"Isosurface"
-		"4"	"Mesh"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_custom_handling" " " }
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "renderMode" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"pmprimary"
-	    label	"Probabilistic Rendering"
-	    type	string
-	    default	{ "0" }
-	    menu	{
-		"0"	"Disable"
-		"1"	"RT Only"
-		"2"	"Always"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_custom_handling" " " }
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "pmprimary" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"rendstep"
-	    label	"Step (%)"
-	    type	integer
-	    default	{ "80" }
-	    range	{ 1! 10000! }
-	    export	none
-	    parmtag	{ "autoscope" "0000000000000000" }
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "rendstep" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"rendshadstep"
-	    label	"Shadow Step (%)"
-	    type	integer
-	    default	{ "200" }
-	    range	{ 1! 10000! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "rendshadstep" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"softb"
-	    label	"Fade Out"
-	    type	float
-	    default	{ "0" }
-	    range	{ 0! 100000! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "softb" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"velocity_mult"
-	    label	"Motion Blur Multiplier"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0! 1000! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "velocity_mult" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"vtex"
-	    label	"Velocity Texture"
-	    type	uv
-	    size	2
-	    default	{ "0" "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "vtex" }
-	    parmtag { "vray_type" "Texture" }
-	}
-	parm {
-	    name	"sampler"
-	    label	"Sampler Type"
-	    type	string
-	    default	{ "1" }
-	    menu	{
-		"0"	"Trunk"
-		"1"	"Linear"
-		"2"	"Spherical"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "sampler" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"coord_method"
-	    label	"Coordinate Method"
-	    type	string
-	    default	{ "0" }
-	    menu	{
-		"0"	"Fixed"
-		"1"	"Grid"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "coord_method" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"sarg"
-	    label	"Surface Channel"
-	    type	string
-	    default	{ "1" }
-	    menu	{
-		"0"	"Texture"
-		"1"	"Temperature"
-		"2"	"Smoke"
-		"3"	"Speed"
-		"10"	"Fuel"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "sarg" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"stex"
-	    label	"Surface Texture"
-	    type	uv
-	    size	2
-	    default	{ "0" "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "stex" }
-	    parmtag { "vray_type" "Texture" }
-	}
-	parm {
-	    name	"surflevel"
-	    label	"Surface Level"
-	    type	float
-	    default	{ "0.01" }
-	    range	{ -100000! 100000! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "surflevel" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"solidbelow"
-	    label	"Invert Volume"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "solidbelow" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"dynamic_geometry"
-	    label	"Mesh Type"
-	    type	string
-	    default	{ "0" }
-	    menu	{
-		"0"	"Static Mesh"
-		"1"	"Dynamic Mesh"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_custom_handling" " " }
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "dynamic_geometry" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"smoothmesh"
-	    label	"Mesh Smoothing"
-	    type	integer
-	    default	{ "5" }
-	    range	{ 0! 1000! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "smoothmesh" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"normalized_positions"
-	    label	"normalized_positions"
-	    type	toggle
-	    invisible
-	    default	{ "1" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "normalized_positions" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"hhfactor"
-	    label	"Heat Size"
-	    type	float
-	    default	{ "1" }
-	    disablewhen	"{ renderMode != 2 }"
-	    range	{ -1000! 1000! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "hhfactor" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"displacement"
-	    label	"Enable Displacement"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "displacement" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"displ2d"
-	    label	"Type"
-	    type	string
-	    default	{ "1" }
-	    disablewhen	"{ displacement == 0 }"
-	    menu	{
-		"0"	"Gradient Driven"
-		"1"	"Surface Driven"
-		"2"	"Vector"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "displ2d" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"displmul"
-	    label	"Displacement Amount"
-	    type	float
-	    default	{ "1" }
-	    disablewhen	"{ displacement == 0 }"
-	    range	{ 0! 1000! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "displmul" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"displ2"
-	    label	"Texture"
-	    type	uv
-	    size	2
-	    default	{ "0" "0" }
-	    disablewhen	"{ displacement == 0 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "displ2" }
-	    parmtag { "vray_type" "Texture" }
-	}
+        groupsimple {
+            name "folder_rendering_surface"
+            label "Surface"
+
+            parm {
+                name    "sarg"
+                label   "Surface Channel"
+                type    string
+                default { "1" }
+                menu    {
+                    "0" "Texture"
+                    "1" "Temperature"
+                    "2" "Smoke"
+                    "3" "Speed"
+                    "10"    "Fuel"
+                }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "sarg" }
+                parmtag { "vray_type" "enum" }
+            }
+            parm {
+                name    "surflevel"
+                label   "Surface Level"
+                type    float
+                default { "0.01" }
+                range   { -10 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "surflevel" }
+                parmtag { "vray_type" "float" }
+            }
+            parm {
+                name    "stex"
+                label   "Surface Texture"
+                type    uv
+                size    2
+                default { "0" "0" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "stex" }
+                parmtag { "vray_type" "Texture" }
+                invisible
+            }
+            parm {
+                name    "solidbelow"
+                label   "Invert Volume"
+                type    toggle
+                default { "0" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "solidbelow" }
+                parmtag { "vray_type" "int" }
+            }
+        }
+
+        groupsimple {
+            name "folder_rendering_mesh"
+            label "Mesh"
+            hidewhentab "{ renderMode != 4 }"
+
+            parm {
+                name    "dynamic_geometry"
+                label   "Mesh Type"
+                type    string
+                default { "0" }
+                menu    {
+                    "0" "Static Mesh"
+                    "1" "Dynamic Mesh"
+                }
+                range   { 0 1 }
+                export  none
+                parmtag { "vray_custom_handling" " " }
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "dynamic_geometry" }
+                parmtag { "vray_type" "enum" }
+            }
+            parm {
+                name    "smoothmesh"
+                label   "Mesh Smoothing"
+                type    integer
+                default { "5" }
+                range   { 0 20 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "smoothmesh" }
+                parmtag { "vray_type" "int" }
+            }
+        }
+
+        groupsimple {
+            name "folder_rendering_displacement"
+            label "Displacement"
+
+            parm {
+                name    "displacement"
+                label   "Enable"
+                type    toggle
+                default { "0" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "displacement" }
+                parmtag { "vray_type" "int" }
+            }
+            parm {
+                name    "displ2d"
+                label   "Type"
+                type    string
+                default { "1" }
+                menu    {
+                    "0" "Gradient Driven"
+                    "1" "Surface Driven"
+                    "2" "Vector"
+                }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "displ2d" }
+                parmtag { "vray_type" "enum" }
+                hidewhen "{ displacement == 0 }"
+            }
+            parm {
+                name    "displmul"
+                label   "Displacement Amount"
+                type    float
+                default { "1" }
+                range   { -5 5 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "displmul" }
+                parmtag { "vray_type" "float" }
+                hidewhen "{ displacement == 0 }"
+            }
+            parm {
+                name    "displ2"
+                label   "Texture"
+                type    uv
+                size    2
+                default { "0" "0" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "displ2" }
+                parmtag { "vray_type" "Texture" }
+                hidewhen "{ displacement == 0 }"
+                invisible
+            }
+        }
+
+        parm {
+            name    "normalized_positions"
+            label   "normalized_positions"
+            type    toggle
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "normalized_positions" }
+            parmtag { "vray_type" "int" }
+            invisible
+        }
+
     }
 
     group {
-	name	"folder5"
-	label	"Fire"
+        name    "folder5"
+        label   "Fire"
+        hidewhentab "{ renderMode == 3 } { renderMode == 4 }"
 
-	parm {
-	    name	"earg"
-	    label	"Base On"
-	    type	string
-	    default	{ "1" }
-	    menu	{
-		"0"	"Disabled"
-		"1"	"Temperature"
-		"2"	"Smoke"
-		"3"	"Speed"
-		"10"	"Fuel"
-		"5"	"Texture"
-		"6"	"RGB"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_ramp_depend" "elum_curve" }
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "earg" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"etex"
-	    label	"Texture"
-	    type	uv
-	    size	2
-	    default	{ "0" "0" }
-	    disablewhen	"{ mod_e == 0 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "etex" }
-	    parmtag { "vray_type" "Texture" }
-	}
-	parm {
-	    name	"mod_e"
-	    label	"Modulate by Texture"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "mod_e" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"fire_opacity_mode"
-	    label	"Fire Opacity Mode"
-	    type	string
-	    default	{ "0" }
-	    menu	{
-	    "0"	"Use Smoke Opacity"
-		"1"	"Fully Visible"
-		"2"	"Use Own Opacity"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "fire_opacity_mode" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"emult"
-	    label	"Fire Multiplier"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0! 10 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "emult" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"etmult"
-	    label	"Opacity Multiplier"
-	    type	float
-	    default	{ "1" }
-	    disablewhen	"{ fire_opacity_mode == 0 }"
-	    range	{ 0! 10 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "etmult" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"blackbody"
-	    label	"Physically Based"
-	    type	float
-	    default	{ "0" }
-	    range	{ 0! 1! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "blackbody" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"sepparm2"
-	    label	"Separator"
-	    type	separator
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	}
-	parm {
-	    name	"elum_curve"
-	    label	"Fire Luminance"
-	    type	button
-	    default	{ "1" }
-	    disablewhen	"{ earg != 1 earg != 2 earg != 3 earg != 10 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_custom_handling" " " }
-	    parmtag	{ "vray_ramp_type" "curve" }
-	    parmtag	{ "vray_ramp_merge" "ecolor_ramp" }
-	}
-	parm {
-	    name	"ecolor_ramp"
-	    label	"Fire Color"
-	    type	button
-	    invisible
-	    default	{ "1" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_custom_handling" " " }
-	    parmtag	{ "vray_ramp_type" "color" }
-	    parmtag	{ "vray_ramp_merge" "elum_curve" }
-	}
+        parm {
+            name    "earg"
+            label   "Based On"
+            type    string
+            joinnext
+            default { "1" }
+            menu    {
+                "0" "Disabled"
+                "1" "Temperature"
+                "2" "Smoke"
+                "3" "Speed"
+                "10"    "Fuel"
+                "5" "Texture"
+                "6" "RGB"
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_ramp_depend" "elum_curve" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "earg" }
+            parmtag { "vray_type" "enum" }
+        }
+        parm {
+            name    "mod_e"
+            label   "Modulate By Texture"
+            type    toggle
+            default { "0" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "mod_e" }
+            parmtag { "vray_type" "int" }
+            disablewhen "{ earg == 0 }"
+        }
+        parm {
+            name    "etex"
+            label   "Texture"
+            type    uv
+            size    2
+            default { "0" "0" }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "etex" }
+            parmtag { "vray_type" "Texture" }
+            invisible
+            disablewhen "{ mod_e == 0 } { earg == 0 }"
+        }
+        parm {
+            name    "emult"
+            label   "Multiplier"
+            type    float
+            default { "1" }
+            range   { 0! 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "emult" }
+            parmtag { "vray_type" "float" }
+            disablewhen "{ earg == 0 }"
+        }
+        parm {
+            name    "blackbody"
+            label   "Physically Based"
+            type    float
+            default { "0" }
+            range   { 0! 1! }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "blackbody" }
+            parmtag { "vray_type" "float" }
+            disablewhen "{ earg == 0 }"
+        }
+        parm {
+            name    "fire_opacity_mode"
+            label   "Opacity Mode"
+            type    string
+            default { "0" }
+            menu    {
+                "0" "Use Smoke Opacity"
+                "1" "Fully Visible"
+                "2" "Use Own Opacity"
+            }
+            range   { 0 1 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "fire_opacity_mode" }
+            parmtag { "vray_type" "enum" }
+            disablewhen "{ earg == 0 }"
+        }
+        parm {
+            name    "etmult"
+            label   "Opacity Multiplier"
+            type    float
+            default { "1" }
+            range   { 0! 10 }
+            export  none
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "PhxShaderSim" }
+            parmtag { "vray_pluginattr" "etmult" }
+            parmtag { "vray_type" "float" }
+            disablewhen "{ fire_opacity_mode == 0 } { earg == 0 }"
+        }
+        parm {
+            name    "sepparm2"
+            label   "Separator"
+            type    separator
+            default { "" }
+            range   { 0 1 }
+            export  none
+        }
+        parm {
+            name    "elum_curve"
+            label   "Fire Luminance"
+            type    button
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_ramp_type" "curve" }
+            parmtag { "vray_ramp_merge" "ecolor_ramp" }
+            disablewhen "{ earg != 1 earg != 2 earg != 3 earg != 10 }"
+        }
+        parm {
+            name    "ecolor_ramp"
+            label   "Fire Color"
+            type    button
+            default { "1" }
+            range   { 0 1 }
+            export  none
+            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_ramp_type" "color" }
+            parmtag { "vray_ramp_merge" "elum_curve" }
+            invisible
+        }
+
+        groupsimple {
+            name    "folder6"
+            label   "Lights"
+            disablewhentab "{ earg == 0 }"
+            parm {
+                name    "al_enable"
+                label   "Enable Lighting"
+                type    toggle
+                default { "1" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "al_enable" }
+                parmtag { "vray_type" "int" }
+            }
+            parm {
+                name    "lights"
+                label   "Lights count"
+                type    integer
+                default { "200" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "lights" }
+                parmtag { "vray_type" "int" }
+                hidewhen "{ al_enable == 0 }"
+                invisible
+            }
+            parm {
+                name    "lightsmult"
+                label   "Power on Scene"
+                type    float
+                default { "1" }
+                range   { 0 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "lightsmult" }
+                parmtag { "vray_type" "float" }
+                hidewhen "{ al_enable == 0 }"
+            }
+            parm {
+                name    "lightsmultself"
+                label   "Power on Self"
+                type    float
+                default { "1" }
+                range   { 0 10 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "lightsmultself" }
+                parmtag { "vray_type" "float" }
+                hidewhen "{ al_enable == 0 }"
+            }
+            parm {
+                name    "gridreduct"
+                label   "Light Grid Res. (%)"
+                type    float
+                default { "5" }
+                range   { 0! 100! }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "gridreduct" }
+                parmtag { "vray_type" "float" }
+                hidewhen "{ al_enable == 0 }"
+            }
+            parm {
+                name    "al_decay"
+                label   "Decay Type"
+                type    string
+                default { "2" }
+                menu    {
+                    "0" "None"
+                    "1" "Inverse"
+                    "2" "Inverse Square"
+                }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "al_decay" }
+                parmtag { "vray_type" "enum" }
+                hidewhen "{ al_enable == 0 }"
+            }
+            parm {
+                name    "selfshadow"
+                label   "Self-Shadowing"
+                type    string
+                default { "2" }
+                menu    {
+                    "0" "None"
+                    "1" "Ray-traced"
+                    "2" "Grid-based"
+                }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "selfshadow" }
+                parmtag { "vray_type" "enum" }
+                hidewhen "{ al_enable == 0 }"
+            }
+            parm {
+                name    "al_sampling"
+                label   "Lights Sampling"
+                type    string
+                default { "1" }
+                menu    {
+                    "0" "Simple"
+                    "1" "DMC"
+                }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "al_sampling" }
+                parmtag { "vray_type" "enum" }
+                hidewhen "{ al_enable == 0 }"
+                invisible
+            }
+            parm {
+                name    "al_placing"
+                label   "Lights Placing"
+                type    integer
+                default { "2" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "al_placing" }
+                parmtag { "vray_type" "int" }
+                hidewhen "{ al_enable == 0 }"
+                invisible
+            }
+            parm {
+                name    "al_subdivs"
+                label   "Subdivs"
+                type    integer
+                default { "8" }
+                range   { 0 64 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "al_subdivs" }
+                parmtag { "vray_type" "int" }
+                hidewhen "{ al_enable == 0 }"
+            }
+        }
     }
+
+
 
     group {
-	name	"folder6"
-	label	"Lights"
+        name    "folder7"
+        label   "Smoke"
+        hidewhentab "{ renderMode == 3 } { renderMode == 4 }"
 
-	parm {
-	    name	"al_enable"
-	    label	"Enable Lighting"
-	    type	toggle
-	    default	{ "1" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "al_enable" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"lights"
-	    label	"Lights count"
-	    type	integer
-	    invisible
-	    default	{ "200" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "lights" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"lightsmult"
-	    label	"Light Power on Scene"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0! 1000! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "lightsmult" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"lightsmultself"
-	    label	"Light Power on Self"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0! 1000! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "lightsmultself" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"selfshadow"
-	    label	"Self-Shadowing"
-	    type	string
-	    default	{ "2" }
-	    menu	{
-		"0"	"None"
-		"1"	"Ray-traced"
-		"2"	"Grid-based"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "selfshadow" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"gridreduct"
-	    label	"Light Grid Resolution (%)"
-	    type	float
-	    default	{ "5" }
-	    range	{ 0! 100! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "gridreduct" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"al_sampling"
-	    label	"Lights Sampling"
-	    type	string
-	    invisible
-	    default	{ "1" }
-	    menu	{
-		"0"	"Simple"
-		"1"	"DMC"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "al_sampling" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"al_placing"
-	    label	"Lights Placing"
-	    type	integer
-	    invisible
-	    default	{ "2" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "al_placing" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"al_decay"
-	    label	"Decay Type"
-	    type	string
-	    default	{ "2" }
-	    menu	{
-		"0"	"None"
-		"1"	"Inverse"
-		"2"	"Inverse Square"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "al_decay" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"al_subdivs"
-	    label	"Subdivs"
-	    type	integer
-	    default	{ "8" }
-	    range	{ 0 512! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "al_subdivs" }
-	    parmtag { "vray_type" "int" }
-	}
+        groupsimple {
+            name "folder_smoke_color"
+            label "Color"
+
+            parm {
+                name    "darg"
+                label   "Based On"
+                type    string
+                joinnext
+                default { "1" }
+                menu    {
+                    "0" "Disabled"
+                    "1" "Temperature"
+                    "2" "Smoke"
+                    "3" "Speed"
+                    "10"    "Fuel"
+                    "4" "Texture"
+                    "5" "Constant Color"
+                    "6" "RGB"
+                }
+                range   { 0 1 }
+                export  none
+                parmtag { "vray_ramp_depend" "dcolor_ramp" }
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "darg" }
+                parmtag { "vray_type" "enum" }
+            }
+            parm {
+                name    "mod_d"
+                label   "Modulate by Texture"
+                type    toggle
+                default { "0" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "mod_d" }
+                parmtag { "vray_type" "int" }
+                disablewhen "{ darg == 0 }"
+            }
+            parm {
+                name    "dtex"
+                label   "Texture"
+                type    uv
+                size    2
+                default { "0" "0" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "dtex" }
+                parmtag { "vray_type" "Texture" }
+                disablewhen "{ mod_d == 0 } { darg == 0 }"
+                invisible
+            }
+            parm {
+                name    "simple_color"
+                label   "Constant Color"
+                type    color
+                size    3
+                default { "0.2" "0.2" "0.2" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "simple_color" }
+                parmtag { "vray_type" "color" }
+                hidewhen "{ darg != 5 }"
+            }
+            parm {
+                name    "difmul"
+                label   "Master Multiplier"
+                type    float
+                default { "1" }
+                range   { 0! 4! }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "difmul" }
+                parmtag { "vray_type" "float" }
+                disablewhen "{ noscatter == 0 } { darg == 0 }"
+            }
+            parm {
+                name    "shad_strength"
+                label   "Shadow Strength"
+                type    float
+                default { "1" }
+                range   { 0 5 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "shad_strength" }
+                parmtag { "vray_type" "float" }
+                disablewhen "{ darg == 0 }"
+            }
+            parm {
+                name    "lightcache"
+                label   " "
+                type    toggle
+                joinnext
+                default { "1" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "lightcache" }
+                parmtag { "vray_type" "int" }
+                disablewhen "{ darg == 0 }"
+            }
+            parm {
+                name    "lightcachesr"
+                label   "Light Cache Speedup"
+                type    float
+                default { "0.9" }
+                range   { 0 0.999 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "lightcachesr" }
+                parmtag { "vray_type" "float" }
+                disablewhen "{ lightcache != 1 } { darg == 0 }"
+            }
+            parm {
+                name    "sepparm"
+                label   "Separator"
+                type    separator
+                default { "" }
+                range   { 0 1 }
+                export  none
+            }
+            parm {
+                name    "dcolor_ramp"
+                label   "Color Gradient"
+                type    button
+                default { "1" }
+                range   { 0 1 }
+                export  none
+                parmtag { "vray_custom_handling" " " }
+                parmtag { "vray_ramp_type" "color" }
+                disablewhen "{ darg != 1 darg != 2 darg != 3 darg != 10 }"
+            }
+            groupsimple {
+                name "folder_smoke_color_scattering"
+                label "Scattering"
+                disablewhentab "{ darg == 0 }"
+                parm {
+                    name    "noscatter"
+                    label   "Type"
+                    type    string
+                    default { "2" }
+                    menu    {
+                        "0" "Ray-traced (GI Only)"
+                        "1" "Disabled"
+                        "2" "Approximate"
+                        "3" "Approximate+Shadows"
+                    }
+                    range   { 0 1 }
+                    export  none
+                    parmtag { "cook_dependent" "1" }
+                    parmtag { "vray_plugin" "PhxShaderSim" }
+                    parmtag { "vray_pluginattr" "noscatter" }
+                    parmtag { "vray_type" "enum" }
+                }
+                parm {
+                    name    "bounces"
+                    label   "GI Scatter Depth"
+                    type    integer
+                    default { "10" }
+                    range   { 0 50 }
+                    export  none
+                    parmtag { "cook_dependent" "1" }
+                    parmtag { "vray_plugin" "PhxShaderSim" }
+                    parmtag { "vray_pluginattr" "bounces" }
+                    parmtag { "vray_type" "int" }
+                    hidewhen "{ noscatter != 0 }"
+                }
+                parm {
+                    name    "transfown"
+                    label   "Own Light Scatter Mult"
+                    type    float
+                    default { "1" }
+                    range   { 0 1 }
+                    export  none
+                    parmtag { "cook_dependent" "1" }
+                    parmtag { "vray_plugin" "PhxShaderSim" }
+                    parmtag { "vray_pluginattr" "transfown" }
+                    parmtag { "vray_type" "float" }
+                    hidewhen "{ noscatter == 0 } { noscatter == 1 }"
+                }
+                parm {
+                    name    "transfext"
+                    label   "External Scatter Mult"
+                    type    float
+                    default { "1" }
+                    range   { 0 1 }
+                    export  none
+                    parmtag { "cook_dependent" "1" }
+                    parmtag { "vray_plugin" "PhxShaderSim" }
+                    parmtag { "vray_pluginattr" "transfext" }
+                    parmtag { "vray_type" "float" }
+                    hidewhen "{ noscatter == 0 } { noscatter == 1 }"
+                }
+            }
+        }
+        groupsimple {
+            name "folder_smoke_opacity"
+            label "Opacity"
+            disablewhentab "{ darg == 0 }"
+
+            parm {
+                name    "targ"
+                label   "Based On"
+                type    string
+                joinnext
+                default { "0" }
+                menu    {
+                    "0" "Simple Smoke"
+                    "1" "Temperature"
+                    "2" "Smoke"
+                    "3" "Speed"
+                    "10"    "Fuel"
+                    "4" "Texture"
+                }
+                range   { 0 1 }
+                export  none
+                parmtag { "vray_ramp_depend" "transp_curve" }
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "targ" }
+                parmtag { "vray_type" "enum" }
+            }
+            parm {
+                name    "mod_t"
+                label   "Modulate by Texture"
+                type    toggle
+                default { "0" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "mod_t" }
+                parmtag { "vray_type" "int" }
+            }
+            parm {
+                name    "ttex"
+                label   "Texture"
+                type    uv
+                size    2
+                default { "0" "0" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "ttex" }
+                parmtag { "vray_type" "Texture" }
+                disablewhen "{ mod_t == 0 }"
+                invisible
+            }
+            parm {
+                name    "smoketransp"
+                label   "Simple Smoke Opacity"
+                type    float
+                default { "0.5" }
+                range   { 0! 1! }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "smoketransp" }
+                parmtag { "vray_type" "float" }
+                hidewhen "{ targ != 0 }"
+            }
+            parm {
+                name    "stoptransp"
+                label   "Simple Smoke Stop Transparancy"
+                type    float
+                default { "0.999" }
+                range   { 0! 1! }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "stoptransp" }
+                parmtag { "vray_type" "float" }
+                invisible
+            }
+            parm {
+                name    "skiptransp"
+                label   "Simple Smoke Start Transparency"
+                type    float
+                default { "0.001" }
+                range   { 0! 1! }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "skiptransp" }
+                parmtag { "vray_type" "float" }
+                invisible
+            }
+            parm {
+                name    "transpmode"
+                label   "transpmode"
+                type    integer
+                default { "1" }
+                range   { 0! 1! }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "transpmode" }
+                parmtag { "vray_type" "int" }
+                invisible
+            }
+            parm {
+                name    "alphaunitscale"
+                label   "Scale Opacity by Scene Units"
+                type    toggle
+                default { "0" }
+                range   { 0 1 }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "alphaunitscale" }
+                parmtag { "vray_type" "int" }
+            }
+            parm {
+                name    "sepparm1"
+                label   "Separator"
+                type    separator
+                default { "" }
+                range   { 0 1 }
+                export  none
+            }
+            parm {
+                name    "transp_curve"
+                label   "Opacity"
+                type    button
+                default { "1" }
+                range   { 0 1 }
+                export  none
+                parmtag { "vray_custom_handling" " " }
+                parmtag { "vray_ramp_type" "curve" }
+                disablewhen "{ targ != 1 targ != 2 targ != 3 targ != 10 }"
+            }
+        }
+        parm {
+            name "PhxShaderSim"
+            label "output"
+            parmtag { "cook_dependent" "0" }
+            parmtag { "vray_label" "output" }
+            parmtag { "vray_pluginattr" "" }
+            parmtag { "vray_type" "OutputPlugin" }
+            invisible
+        }
     }
-
-    group {
-	name	"folder7"
-	label	"Smoke Color"
-
-	parm {
-	    name	"darg"
-	    label	"Diffuse Input"
-	    type	string
-	    default	{ "1" }
-	    menu	{
-		"0"	"Disabled"
-		"1"	"Temperature"
-		"2"	"Smoke"
-		"3"	"Speed"
-		"10"	"Fuel"
-		"4"	"Texture"
-		"5"	"Constant Color"
-		"6"	"RGB"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_ramp_depend" "dcolor_ramp" }
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "darg" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"dtex"
-	    label	"Texture"
-	    type	uv
-	    size	2
-	    default	{ "0" "0" }
-	    disablewhen	"{ mod_d == 0 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "dtex" }
-	    parmtag { "vray_type" "Texture" }
-	}
-	parm {
-	    name	"mod_d"
-	    label	"Modulate by Texture"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "mod_d" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"simple_color"
-	    label	"Constant Color"
-	    type	color
-	    size	3
-	    default	{ "0.2" "0.2" "0.2" }
-	    disablewhen	"{ darg != 5 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "simple_color" }
-	    parmtag { "vray_type" "color" }
-	}
-	parm {
-	    name	"lightcache"
-	    label	"Light Cache"
-	    type	toggle
-	    default	{ "1" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "lightcache" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"lightcachesr"
-	    label	"Light Cache Speedup"
-	    type	float
-	    default	{ "0.9" }
-	    disablewhen	"{ lightcache != 1 }"
-	    range	{ 0! 0.999! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "lightcachesr" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"noscatter"
-	    label	"Scattering"
-	    type	string
-	    default	{ "2" }
-	    menu	{
-		"0"	"Ray-traced (GI Only)"
-		"1"	"Disabled"
-		"2"	"Approximate"
-		"3"	"Approximate+Shadows"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "noscatter" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"bounces"
-	    label	"Scatter Depth"
-	    type	integer
-	    default	{ "10" }
-	    disablewhen "{ noscatter != 0 }"
-	    range	{ 0! 65535! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "bounces" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"difmul"
-	    label	"Master Multiplier"
-	    type	float
-	    default	{ "1" }
-	    disablewhen	"{ noscatter == 0 }"
-	    range	{ 0! 4! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "difmul" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"transfown"
-	    label	"Own Light Scatter Mult"
-	    type	float
-	    default	{ "1" }
-	    disablewhen	"{ noscatter == 0 } { noscatter == 1 }"
-	    range	{ 0! 10! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "transfown" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"transfext"
-	    label	"External Scatter Mult"
-	    type	float
-	    default	{ "1" }
-	    disablewhen	"{ noscatter == 0 } { noscatter == 1 }"
-	    range	{ 0! 10! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "transfext" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"shad_strength"
-	    label	"Shadow Strength"
-	    type	float
-	    default	{ "1" }
-	    range	{ 0! 100! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "shad_strength" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"sepparm"
-	    label	"Separator"
-	    type	separator
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	}
-	parm {
-	    name	"dcolor_ramp"
-	    label	"Color Gradient"
-	    type	button
-	    default	{ "1" }
-	    disablewhen	"{ darg != 1 darg != 2 darg != 3 darg != 10 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_custom_handling" " " }
-	    parmtag	{ "vray_ramp_type" "color" }
-	}
-    }
-
-    group {
-	name	"folder8"
-	label	"Smoke Opacity"
-
-	parm {
-	    name	"targ"
-	    label	"Opacity Input"
-	    type	string
-	    default	{ "0" }
-	    menu	{
-		"0"	"Simple Smoke"
-		"1"	"Temperature"
-		"2"	"Smoke"
-		"3"	"Speed"
-		"10"	"Fuel"
-		"4"	"Texture"
-	    }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_ramp_depend" "transp_curve" }
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "targ" }
-	    parmtag { "vray_type" "enum" }
-	}
-	parm {
-	    name	"ttex"
-	    label	"Texture"
-	    type	uv
-	    size	2
-	    default	{ "0" "0" }
-	    disablewhen	"{ mod_t == 0 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "ttex" }
-	    parmtag { "vray_type" "Texture" }
-	}
-	parm {
-	    name	"mod_t"
-	    label	"Modulate by Texture"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "mod_t" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"smoketransp"
-	    label	"Simple Smoke Opacity"
-	    type	float
-	    default	{ "0.5" }
-	    disablewhen	"{ targ != 0 }"
-	    range	{ 0! 1! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "smoketransp" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"stoptransp"
-	    label	"Simple Smoke Stop Transparancy"
-	    type	float
-	    invisible
-	    default	{ "0.999" }
-	    range	{ 0! 1! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "stoptransp" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"skiptransp"
-	    label	"Simple Smoke Start Transparancy"
-	    type	float
-	    invisible
-	    default	{ "0.001" }
-	    range	{ 0! 1! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "skiptransp" }
-	    parmtag { "vray_type" "float" }
-	}
-	parm {
-	    name	"transpmode"
-	    label	"transpmode"
-	    type	integer
-	    invisible
-	    default	{ "1" }
-	    range	{ 0! 1! }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "transpmode" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"alphaunitscale"
-	    label	"Scale Opacity by Scene Units"
-	    type	toggle
-	    default	{ "0" }
-	    range	{ 0 1 }
-	    export	none
-	    parmtag { "cook_dependent" "1" }
-	    parmtag { "vray_plugin" "PhxShaderSim" }
-	    parmtag { "vray_pluginattr" "alphaunitscale" }
-	    parmtag { "vray_type" "int" }
-	}
-	parm {
-	    name	"sepparm1"
-	    label	"Separator"
-	    type	separator
-	    default	{ "" }
-	    range	{ 0 1 }
-	    export	none
-	}
-	parm {
-	    name	"transp_curve"
-	    label	"Opacity"
-	    type	button
-	    default	{ "1" }
-	    disablewhen	"{ targ != 1 targ != 2 targ != 3 targ != 10 }"
-	    range	{ 0 1 }
-	    export	none
-	    parmtag	{ "vray_custom_handling" " " }
-	    parmtag	{ "vray_ramp_type" "curve" }
-	}
-    }
-
-	parm {
-		name "PhxShaderSim"
-		label "output"
-		parmtag { "cook_dependent" "0" }
-		parmtag { "vray_label" "output" }
-		parmtag { "vray_pluginattr" "" }
-		parmtag { "vray_type" "OutputPlugin" }
-		invisible
-	}
 }
+

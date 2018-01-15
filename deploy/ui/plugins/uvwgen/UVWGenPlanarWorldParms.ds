@@ -24,7 +24,7 @@ parm {
 parm {
     NAMEM("wrap_u")
     label   "Wrap U"
-    type    ordinal
+    type    string
     menu {
         0 "No Wrapping"
         1 "Wrap"
@@ -37,13 +37,13 @@ parm {
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenPlanarWorld" }
     parmtag { "vray_pluginattr" "wrap_u" }
-    parmtag { "vray_type" "int" }
+    parmtag { "vray_type" "enum" }
 }
 
 parm {
     NAMEM("wrap_v")
     label   "Wrap V"
-    type    ordinal
+    type    string
     menu {
         0 "No Wrapping"
         1 "Wrap"
@@ -56,13 +56,13 @@ parm {
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenPlanarWorld" }
     parmtag { "vray_pluginattr" "wrap_v" }
-    parmtag { "vray_type" "int" }
+    parmtag { "vray_type" "enum" }
 }
 
 parm {
     NAMEM("wrap_w")
     label   "Wrap W"
-    type    ordinal
+    type    string
     menu {
         0 "No Wrapping"
         1 "Wrap"
@@ -75,7 +75,7 @@ parm {
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenPlanarWorld" }
     parmtag { "vray_pluginattr" "wrap_w" }
-    parmtag { "vray_type" "int" }
+    parmtag { "vray_type" "enum" }
 }
 
 parm {
@@ -138,7 +138,7 @@ parm {
 parm {
     NAMEM("wrap_mode")
     label   "Wrap Mode"
-    type    integer
+    type    string
     default { "0" }
     help    "Wrap mode"
     menu    {
@@ -157,7 +157,7 @@ parm {
     type    float
     default { "1" }
     help    "Additional scale factor for the texture derivatives"
-    range   { 0 64 }
+    range   { 0 5 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenPlanarWorld" }

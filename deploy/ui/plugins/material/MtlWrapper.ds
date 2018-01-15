@@ -4,7 +4,6 @@
     parmtag { spare_category "Wrapper" }
     parmtag { vray_plugin "MtlWrapper" }
 
-
 #include "$VRAY_UI_DS_PATH/common/vfh_material_common.ds"
 
     parm {
@@ -18,7 +17,7 @@
     }
      parm {
         name    "use"
-        label   "Use"
+        label   "Enabled"
         type    toggle
         default { "1" }
         help    "Use Wrapper material"
@@ -159,13 +158,13 @@
             type    toggle
             default { "0" }
             help    "Turn this on to make shadow visible on the matter surface"
-            disablewhen "{ matte_surface != 1 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "MtlWrapper" }
             parmtag { "vray_pluginattr" "shadows" }
             parmtag { "vray_type" "boolean" }
+            disablewhen "{ matte_surface != 1 }"
         }
         parm {
             name    "affect_alpha"
@@ -173,13 +172,13 @@
             type    toggle
             default { "0" }
             help    "Turn this on to make shadows affect the alpha contribution of the matte surface"
-            disablewhen "{ matte_surface != 1 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "MtlWrapper" }
             parmtag { "vray_pluginattr" "affect_alpha" }
             parmtag { "vray_type" "boolean" }
+            disablewhen "{ matte_surface != 1 }"
         }
         parm {
             name    "shadow_tint_color"
@@ -188,13 +187,13 @@
             size    3
             default { "0" "0" "0" }
             help    "Tint for the shadows on the matte surface"
-            disablewhen "{ matte_surface != 1 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "MtlWrapper" }
             parmtag { "vray_pluginattr" "shadow_tint_color" }
             parmtag { "vray_type" "color" }
+            disablewhen "{ matte_surface != 1 }"
         }
         parm {
             name    "shadow_brightness"
@@ -202,13 +201,13 @@
             type    float
             default { "1" }
             help    "An optional brightness parameter for the shadows on the matte surface.A value of 0.0 will make the shadows completely invisible, while a value of 1.0 will show the full shadows"
-            disablewhen "{ matte_surface != 1 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "MtlWrapper" }
             parmtag { "vray_pluginattr" "shadow_brightness" }
             parmtag { "vray_type" "float" }
+            disablewhen "{ matte_surface != 1 }"
         }
         parm {
             name    "reflection_amount"
@@ -216,13 +215,13 @@
             type    float
             default { "1" }
             help    "Shows the reflections of the base material"
-            disablewhen "{ matte_surface != 1 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "MtlWrapper" }
             parmtag { "vray_pluginattr" "reflection_amount" }
             parmtag { "vray_type" "float" }
+            disablewhen "{ matte_surface != 1 }"
         }
         parm {
             name    "refraction_amount"
@@ -230,13 +229,13 @@
             type    float
             default { "1" }
             help    "Shows the refractions of the base material"
-            disablewhen "{ matte_surface != 1 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "MtlWrapper" }
             parmtag { "vray_pluginattr" "refraction_amount" }
             parmtag { "vray_type" "float" }
+            disablewhen "{ matte_surface != 1 }"
         }
         parm {
             name    "gi_amount"
@@ -244,13 +243,13 @@
             type    float
             default { "1" }
             help    "Determines the amount of gi shadows"
-            disablewhen "{ matte_surface != 1 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "MtlWrapper" }
             parmtag { "vray_pluginattr" "gi_amount" }
             parmtag { "vray_type" "float" }
+            disablewhen "{ matte_surface != 1 }"
         }
         parm {
             name    "no_gi_on_other_mattes"
@@ -258,21 +257,20 @@
             type    toggle
             default { "1" }
             help    "This will cause the material to appear as a matte object in reflections, refractions, GI etc for other matte objects"
-            disablewhen "{ matte_surface != 1 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "MtlWrapper" }
             parmtag { "vray_pluginattr" "no_gi_on_other_mattes" }
             parmtag { "vray_type" "boolean" }
+            disablewhen "{ matte_surface != 1 }"
         }
         parm {
             name    "matte_for_secondary_rays"
             label   "Matte for all Secondary Rays"
-            type    integer
+            type    string
             default { "0" }
             help    "Set this to 1 to make the material act as matte for all secondary rays (reflections and refractions); if set to 2, the material will perform automatic projection mapping of theenvironment map on the matte geometry"
-            disablewhen "{ matte_surface != 1 }"
             menu    {
                 "0" "Disable"
                 "1" "Without Projection Mapping"
@@ -282,13 +280,13 @@
             parmtag { "vray_plugin" "MtlWrapper" }
             parmtag { "vray_pluginattr" "matte_for_secondary_rays" }
             parmtag { "vray_type" "enum" }
+            disablewhen "{ matte_surface != 1 }"
         }
     }
     groupcollapsible {
         name "folder_options"
         label "Options"
         hidewhentab "{ use == 0 }"
-        hidewhen "{ use == 0 }"
         parm {
             name    "maya_background_shader_compatibility"
             label   "Maya Background Shader Compatibility"
@@ -304,10 +302,10 @@
         }
         parm {
             name    "gi_surface_id"
-            label   "Gi Surface Id"
+            label   "GI Surface ID"
             type    integer
             default { "0" }
-            help    "If two objects have different GI surface ids, the light cache samples of the two objects will not be blended"
+            help    "If two objects have different GI surface IDs, the light cache samples of the two objects will not be blended"
             range   { 0 5 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -321,7 +319,7 @@
             type    integer
             default { "-1" }
             help    "The maximum reflection depth (-1 is controlled by the global options)"
-            range   { 0 50 }
+            range   { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "MtlWrapper" }
@@ -354,12 +352,10 @@
             parmtag { "vray_pluginattr" "refraction_list_is_inclusive" }
             parmtag { "vray_type" "boolean" }
         }
-
         parm {
             name    "alpha_contribution_tex"
             label   "Alpha Contribution Tex"
             type    float
-            invisible
             default { "1" }
             help    "Same as alpha_contribution but used for the Maya's useBackground shader which supports textures as alpha contribution"
             range   { 0 64 }
@@ -368,12 +364,12 @@
             parmtag { "vray_plugin" "MtlWrapper" }
             parmtag { "vray_pluginattr" "alpha_contribution_tex" }
             parmtag { "vray_type" "TextureFloat" }
+            invisible
         }
         parm {
             name    "shadow_brightness_tex"
             label   "Shadow Brightness Tex"
             type    float
-            invisible
             default { "1" }
             help    "Same as shadow_brightness but used for the Maya's useBackground shader which supports textures as shadow brightness"
             range   { 0 64 }
@@ -382,12 +378,12 @@
             parmtag { "vray_plugin" "MtlWrapper" }
             parmtag { "vray_pluginattr" "shadow_brightness_tex" }
             parmtag { "vray_type" "TextureFloat" }
+            invisible
         }
         parm {
             name    "reflection_filter_tex"
             label   "Reflection Filter Tex"
             type    color4
-            invisible
             size    4
             default { "1" "1" "1" "1" }
             range   { 0 10 }
@@ -396,6 +392,7 @@
             parmtag { "vray_plugin" "MtlWrapper" }
             parmtag { "vray_pluginattr" "reflection_filter_tex" }
             parmtag { "vray_type" "Texture" }
+            invisible
         }
     }
 }

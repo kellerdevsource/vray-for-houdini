@@ -9,7 +9,7 @@
     parm {
         name    "additive_mode"
         label   "Additive Mode"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Weight for the material layers"
         menu    {
@@ -29,13 +29,14 @@
         label   "Transparency"
         type    color
         size    3
-        default { "0" "0" "0" }
+        default { "1" "1" "1" }
         range   { 0 10 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "BRDFLayered" }
         parmtag { "vray_pluginattr" "transparency" }
         parmtag { "vray_type" "color" }
+        invisible
     }
     parm {
         name    "transparency_tex"
@@ -49,7 +50,6 @@
         parmtag { "vray_plugin" "BRDFLayered" }
         parmtag { "vray_pluginattr" "transparency_tex" }
         parmtag { "vray_type" "Texture" }
-        invisible
     }
     parm {
         name    "transparency_tex_mult"

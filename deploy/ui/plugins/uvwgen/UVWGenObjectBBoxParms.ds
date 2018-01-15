@@ -24,7 +24,7 @@ parm {
 parm {
     NAMEM("wrap_u")
     label   "Wrap U"
-    type    ordinal
+    type    string
     default { "0" }
     help    "0 - no wrapping, 1 - wrap, 2 - mirror tile"
     menu {
@@ -36,14 +36,14 @@ parm {
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenObjectBBox" }
     parmtag { "vray_pluginattr" "wrap_u" }
-    parmtag { "vray_type" "int" }
+    parmtag { "vray_type" "enum" }
 
 }
 
 parm {
     NAMEM("wrap_v")
     label   "Wrap V"
-    type    integer
+    type    string
     default { "0" }
     help    "0 - no wrapping, 1 - wrap, 2 - mirror tile"
     menu {
@@ -55,14 +55,14 @@ parm {
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenObjectBBox" }
     parmtag { "vray_pluginattr" "wrap_v" }
-    parmtag { "vray_type" "int" }
+    parmtag { "vray_type" "enum" }
 
 }
 
 parm {
     NAMEM("wrap_w")
     label   "Wrap W"
-    type    integer
+    type    string
     default { "0" }
     help    "0 - no wrapping, 1 - wrap, 2 - mirror tile"
     menu {
@@ -74,7 +74,7 @@ parm {
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenObjectBBox" }
     parmtag { "vray_pluginattr" "wrap_w" }
-    parmtag { "vray_type" "int" }
+    parmtag { "vray_type" "enum" }
 }
 
 parm {
@@ -137,7 +137,7 @@ parm {
 parm {
     NAMEM("wrap_mode")
     label   "Wrap Mode"
-    type    integer
+    type    string
     default { "0" }
     help    "Wrap mode"
     menu    {

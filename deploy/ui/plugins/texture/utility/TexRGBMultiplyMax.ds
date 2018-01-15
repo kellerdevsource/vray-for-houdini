@@ -34,7 +34,7 @@
     parm {
         name    "alpha_mode"
         label   "Alpha Mode"
-        type    ordinal
+        type    string
         default { "2" }
         help    "Alpha mode (0 - from color_a, 1 - from color_b, 2 - multiply"
         menu    {

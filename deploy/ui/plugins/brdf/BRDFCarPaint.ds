@@ -18,6 +18,7 @@
         parmtag { "vray_pluginattr" "doubleSided" }
         parmtag { "vray_type" "boolean" }
       }
+
     group {
       name "folder_base"
       label "Base"
@@ -62,7 +63,7 @@
       parm {
         name    "base_bump_type"
         label   "Bump Type"
-        type    ordinal
+        type    string
         default { "0" }
         help    "The type of bump mapping (see BRDFBump for more details)"
         menu    {
@@ -85,7 +86,6 @@
         name    "base_bump_float"
         label   "Bump Float"
         type    float
-        invisible
         default { "0" }
         help    "Bump texture for the base layer"
         range   { 0 1 }
@@ -94,6 +94,7 @@
         parmtag { "vray_plugin" "BRDFCarPaint" }
         parmtag { "vray_pluginattr" "base_bump_float" }
         parmtag { "vray_type" "TextureFloat" }
+        invisible
       }
       parm {
         name    "base_bump_color"
@@ -116,7 +117,7 @@
         type    float
         default { "0" }
         help    "Bump amount for the base layer"
-        range   { 0 64 }
+        range   { 0 2 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "BRDFCarPaint" }
@@ -125,7 +126,7 @@
       }
       parm {
         name    "base_traceReflections"
-        label   "Trace Reflections"
+        label   "Trace Base Reflections"
         type    toggle
         default { "1" }
         help    "Toggle reflections for base layer"
@@ -137,6 +138,7 @@
         parmtag { "vray_type" "boolean" }
       }
     }
+
     group {
       name "folder_coat"
       label "Coat"
@@ -183,7 +185,7 @@
       parm {
         name    "coat_bump_type"
         label   "Bump Type"
-        type    ordinal
+        type    string
         default { "0" }
         help    "The type of bump mapping"
         menu    {
@@ -246,10 +248,9 @@
         parmtag { "vray_type" "TextureFloat" }
         disablewhen "{ coat_strength == 0 }"
       }
-
       parm {
         name    "coat_traceReflections"
-        label   "Trace Reflections"
+        label   "Trace Coat Reflections"
         type    toggle
         default { "1" }
         help    "Toggle reflections for coat layer"
@@ -262,13 +263,14 @@
         disablewhen "{ coat_strength == 0 }"
       }
     }
+
     group {
       name "folder_flakes"
       label "Flakes"
       parm {
         name    "mapping_type"
         label   "Mapping Type"
-        type    ordinal
+        type    string
         default { "0" }
         help    "The mapping method for the flakes"
         menu    {
@@ -287,7 +289,7 @@
         type    integer
         default { "0" }
         help    "The mapping channel when the mapping_type is Explicit"
-        range   { 0 64 }
+        range   { 0 5 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "BRDFCarPaint" }
@@ -295,7 +297,6 @@
         parmtag { "vray_type" "int" }
         hidewhen " { mapping_type != 0 } "
       }
-
       parm {
         name    "flake_color"
         label   "Color"
@@ -385,7 +386,7 @@
       parm {
         name    "flake_filtering_mode"
         label   "Filtering Mode"
-        type    ordinal
+        type    string
         default { "1" }
         help    "Flake filtering mode"
         menu    {
@@ -403,7 +404,7 @@
         type    integer
         default { "1" }
         help    "The random seed for the flakes"
-        range   { 0 64 }
+        range   { 0 1000 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "BRDFCarPaint" }
@@ -412,7 +413,7 @@
       }
       parm {
         name    "flake_traceReflections"
-        label   "Trace Reflections"
+        label   "Trace Flakes Reflections"
         type    toggle
         default { "1" }
         help    "Toggle reflections for flake layer"
@@ -423,17 +424,14 @@
         parmtag { "vray_pluginattr" "flake_traceReflections" }
         parmtag { "vray_type" "boolean" }
       }
-
     }
 
     group {
       name "folder_options"
       label "Options"
-
-
       parm {
         name    "traceReflections"
-        label   "Trace Reflections"
+        label   "Trace Reflections for All Layers"
         type    toggle
         default { "1" }
         range   { 0 1 }
@@ -455,13 +453,14 @@
         parmtag { "vray_plugin" "BRDFCarPaint" }
         parmtag { "vray_pluginattr" "trace_depth" }
         parmtag { "vray_type" "int" }
+        disablewhen "{ traceReflections == 0 }"
       }
       parm {
         name    "subdivs"
         label   "Subdivs"
         type    integer
         default { "8" }
-        range   { 0 64 }
+        range   { 0 32 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "BRDFCarPaint" }
@@ -497,17 +496,16 @@
         name    "environment_override"
         label   "Environment Override"
         type    color4
-        hidewhen "{ use_environment_override==0 }"
         size    4
         default { "1" "1" "1" "1" }
         help    "Environment override texture"
-        disablewhen "{ use_environment_override != 1 }"
         range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "BRDFCarPaint" }
         parmtag { "vray_pluginattr" "environment_override" }
         parmtag { "vray_type" "Texture" }
+        disablewhen "{ use_environment_override != 1 }"
       }
       parm {
         name    "environment_priority"
@@ -515,13 +513,14 @@
         type    integer
         default { "0" }
         help    "Environment override priority (used when several materials override it along a ray path)"
-        disablewhen "{ use_environment_override != 1 }"
         range   { 0 8 }
         export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "BRDFCarPaint" }
         parmtag { "vray_pluginattr" "environment_priority" }
         parmtag { "vray_type" "int" }
+        disablewhen "{ use_environment_override != 1 }"
       }
     }
+
 }

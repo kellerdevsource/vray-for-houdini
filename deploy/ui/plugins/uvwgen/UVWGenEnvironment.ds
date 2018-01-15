@@ -1,8 +1,8 @@
 {
-    name	UVWGenEnvironment
-    label	"Environment"
-    parmtag	{ spare_category "Environment" }
-    parmtag	{ vray_plugin "UVWGenEnvironment" }
+    name    UVWGenEnvironment
+    label   "Environment"
+    parmtag { spare_category "Environment" }
+    parmtag { vray_plugin "UVWGenEnvironment" }
 
 #include "UVWGenEnvironmentParms.ds"
 #include "vfh_uvwgen_common.ds"

@@ -1,136 +1,131 @@
 groupsimple {
-  name "folder_options_dr"
-  label "Distributed rendering"
+    name "folder_options_dr"
+    label "Distributed rendering"
 
-  parm {
+    parm {
     name "dr_enabled"
     label "Enable"
     type toggle
     default { 0 }
-  }
-
-  parm {
-    name	"SettingsOptions_misc_transferAssets"
-    label	"Transfer Missing Assets"
-    type	toggle
-	disablewhen "{ dr_enabled == 0 }"
-    default	{ "0" }
-    help	"Transfer missing assets on DR"
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "misc_transferAssets" }
-    parmtag	{ "vray_type" "boolean" }
-  }
-  parm {
-    name	"SettingsOptions_misc_useCachedAssets"
-    label	"Use Cached Assets On Dr"
-    type	toggle
-    disablewhen "{ SettingsOptions_misc_transferAssets == 0 }"
-    default	{ "1" }
-    help	"Use cached assets on DR"
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "misc_useCachedAssets" }
-    parmtag	{ "vray_type" "boolean" }
-  }
-  parm {
-    name	"SettingsOptions_dr_assetsCacheLimitType"
-    label	"Cache Limit Type"
-    type	ordinal
-    disablewhen "{ SettingsOptions_misc_transferAssets == 0 }"
-    default	{ "0" }
-    help	"Type of the assets cache limit"
-    menu	{
-        "None"	"None"
-        "Age (Hours)"	"Age (Hours)"
-        "Size (GB)"	"Size (GB)"
     }
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_enumkeys" "0,1,2" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "dr_assetsCacheLimitType" }
-    parmtag	{ "vray_type" "int" }
-  }
-  parm {
-    name	"SettingsOptions_dr_assetsCacheLimitValue"
-    label	"Cache Limit Value"
-    type	float
-    disablewhen "{ SettingsOptions_misc_transferAssets == 0 } { SettingsOptions_dr_assetsCacheLimitType ==  \"None\" } "
-    default	{ "0" }
-    help	"Value of the assets cache limit"
-    range	{ 0 64 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "dr_assetsCacheLimitValue" }
-    parmtag	{ "vray_type" "float" }
-  }
-  parm {
-    name	"SettingsOptions_dr_overwriteLocalCacheSettings"
-    label	"Overwrite Local Cache Settings"
-    type	toggle
-    disablewhen "{ SettingsOptions_misc_transferAssets == 0 }"
-    default	{ "0" }
-    help	"If is true the client's cache settings will overwrite server settings"
-    range	{ 0 1 }
-    export	none
-    parmtag	{ "cook_dependent" "1" }
-    parmtag	{ "vray_plugin" "SettingsOptions" }
-    parmtag	{ "vray_pluginattr" "dr_overwriteLocalCacheSettings" }
-    parmtag	{ "vray_type" "boolean" }
-  }
-  parm {
-    name "drhost_port"
-    label "Default Port"
-    type int
-    default { 20207 }
-    disablewhen "{ dr_enabled == 0 }"
-  }
-
-  multiparm {
-    name "drhost_cnt"
-    label "Number of Hosts"
 
     parm {
-        name "drhost#_enabled"
-        label "Enabled"
-        type toggle
-        default { 1 }
+        name    "SettingsOptions_misc_transferAssets"
+        label   "Transfer Missing Assets"
+        type    toggle
+        default { "0" }
+        help    "Transfer missing assets on DR"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsOptions" }
+        parmtag { "vray_pluginattr" "misc_transferAssets" }
+        parmtag { "vray_type" "boolean" }
         disablewhen "{ dr_enabled == 0 }"
     }
-
     parm {
-        name "drhost#_address"
-        label "Host Address"
-        type string
-        disablewhen "{ dr_enabled == 0 } { drhost#_enabled == 0 }"
+        name    "SettingsOptions_misc_useCachedAssets"
+        label   "Use Cached Assets On DR"
+        type    toggle
+        default { "1" }
+        help    "Use cached assets on DR"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsOptions" }
+        parmtag { "vray_pluginattr" "misc_useCachedAssets" }
+        parmtag { "vray_type" "boolean" }
+        disablewhen "{ SettingsOptions_misc_transferAssets == 0 } { dr_enabled == 0 }"
     }
-
     parm {
-        name "drhost#_usedefaultport"
-        label "Use Default Port"
-        type toggle
-        default { 1 }
-        disablewhen "{ dr_enabled == 0 } { drhost#_enabled == 0 }"
+        name    "SettingsOptions_dr_assetsCacheLimitType"
+        label   "Cache Limit Type"
+        type    string
+        default { "0" }
+        help    "Type of the assets cache limit"
+        menu    {
+            "0"  "None"
+            "1"   "Age (Hours)"
+            "2" "Size (GB)"
+        }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_enumkeys" "0,1,2" }
+        parmtag { "vray_plugin" "SettingsOptions" }
+        parmtag { "vray_pluginattr" "dr_assetsCacheLimitType" }
+        parmtag { "vray_type" "enum" }
+        disablewhen "{ SettingsOptions_misc_transferAssets == 0 }"
     }
-
     parm {
-        name "drhost#_port"
-        label "Host Port"
+        name    "SettingsOptions_dr_assetsCacheLimitValue"
+        label   "Cache Limit Value"
+        type    float
+        default { "0" }
+        help    "Value of the assets cache limit"
+        range   { 0 5 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsOptions" }
+        parmtag { "vray_pluginattr" "dr_assetsCacheLimitValue" }
+        parmtag { "vray_type" "float" }
+        disablewhen "{ SettingsOptions_misc_transferAssets == 0 } { SettingsOptions_dr_assetsCacheLimitType ==  0 }"
+    }
+    parm {
+        name    "SettingsOptions_dr_overwriteLocalCacheSettings"
+        label   "Overwrite Local Cache Settings"
+        type    toggle
+        default { "0" }
+        help    "If is true the client's cache settings will overwrite server settings"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsOptions" }
+        parmtag { "vray_pluginattr" "dr_overwriteLocalCacheSettings" }
+        parmtag { "vray_type" "boolean" }
+        disablewhen "{ SettingsOptions_misc_transferAssets == 0 }"
+    }
+    parm {
+        name "drhost_port"
+        label "Default Port"
         type int
         default { 20207 }
-        hidewhen "{ drhost#_usedefaultport == 1 }"
-        disablewhen "{ dr_enabled == 0 } { drhost#_enabled == 0 }"
+        disablewhen "{ dr_enabled == 0 }"
     }
+    multiparm {
+        name "drhost_cnt"
+        label "Number of Hosts"
+        disablewhen "{ dr_enabled == 0 }"
 
-    disablewhen "{ dr_enabled == 0 }"
-  }
+        parm {
+            name "drhost#_enabled"
+            label "Enabled"
+            type toggle
+            default { 1 }
+            disablewhen "{ dr_enabled == 0 }"
+    }
+        parm {
+            name "drhost#_address"
+            label "Host Address"
+            type string
+            disablewhen "{ dr_enabled == 0 } { drhost#_enabled == 0 }"
+        }
+        parm {
+            name "drhost#_usedefaultport"
+            label "Use Default Port"
+            type toggle
+            default { 1 }
+            disablewhen "{ dr_enabled == 0 } { drhost#_enabled == 0 }"
+        }
+        parm {
+            name "drhost#_port"
+            label "Host Port"
+            type int
+            default { 20207 }
+            hidewhen "{ drhost#_usedefaultport == 1 }"
+            disablewhen "{ dr_enabled == 0 } { drhost#_enabled == 0 }"
+        }
+    }
 
 }
 
