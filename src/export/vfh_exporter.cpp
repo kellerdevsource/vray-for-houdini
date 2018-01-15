@@ -802,7 +802,11 @@ VRayExporter::~VRayExporter()
 	resetOpCallbacks();
 }
 
-ReturnValue VRayExporter::fillSettingsOutputWithoutPath(Attrs::PluginDesc &pluginDesc) {
+ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
+{
+	if (sessionType != VfhSessionType::production)
+		return ReturnValue::Success;
+
 	const fpreal t = getContext().getTime();
 	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 
@@ -849,51 +853,38 @@ ReturnValue VRayExporter::fillSettingsOutputWithoutPath(Attrs::PluginDesc &plugi
 			}
 		}
 	}
+	if (sessionType == VfhSessionType::production) {
+		pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("frames", frames));
-
-	return ReturnValue::Success;
-}
-
-ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
-{
-	if (sessionType != VfhSessionType::production)
-		return ReturnValue::Success;
-
-	if (fillSettingsOutputWithoutPath(pluginDesc) == ReturnValue::Error) {
-		return ReturnValue::Error;
-	}
-
-	if (!m_rop->evalInt("SettingsOutput_img_save", 0, 0.0)) {
-		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", Attrs::PluginAttr::AttrTypeIgnore));
-		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", Attrs::PluginAttr::AttrTypeIgnore));
-	}
-	else {
-		enum ImageFormat {
-			imageFormatPNG = 0,
-			imageFormatJPEG,
-			imageFormatTIFF,
-			imageFormatTGA,
-			imageFormatSGI,
-			imageFormatOpenEXR,
-			imageFormatVRayImage,
-		};
-
-		const fpreal t = getContext().getTime();
-		const ImageFormat imgFormat =
-			static_cast<ImageFormat>(m_rop->evalInt("SettingsOutput_img_format", 0, t));
-
-		UT_String fileName;
-		m_rop->evalString(fileName, "SettingsOutput_img_file", 0, t);
-
-		if (m_rop->evalInt("SettingsOutput_img_file_needFrameNumber", 0, 0.0)) {
-			// NOTE: Remove after AppSDK update.
-			fileName.append(".");
+		if (!m_rop->evalInt("SettingsOutput_img_save", 0, 0.0)) {
+			pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", Attrs::PluginAttr::AttrTypeIgnore));
+			pluginDesc.addAttribute(Attrs::PluginAttr("img_file", Attrs::PluginAttr::AttrTypeIgnore));
 		}
+		else {
+			enum ImageFormat {
+				imageFormatPNG = 0,
+				imageFormatJPEG,
+				imageFormatTIFF,
+				imageFormatTGA,
+				imageFormatSGI,
+				imageFormatOpenEXR,
+				imageFormatVRayImage,
+			};
 
-		fileName.append(".");
+			const ImageFormat imgFormat =
+				static_cast<ImageFormat>(m_rop->evalInt("SettingsOutput_img_format", 0, t));
 
-		switch (imgFormat) {
+			UT_String fileName;
+			m_rop->evalString(fileName, "SettingsOutput_img_file", 0, t);
+
+			if (m_rop->evalInt("SettingsOutput_img_file_needFrameNumber", 0, 0.0)) {
+				// NOTE: Remove after AppSDK update.
+				fileName.append(".");
+			}
+
+			fileName.append(".");
+
+			switch (imgFormat) {
 			case imageFormatPNG: fileName.append("png"); break;
 			case imageFormatJPEG: fileName.append("jpg"); break;
 			case imageFormatTIFF: fileName.append("tiff"); break;
@@ -902,32 +893,32 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			case imageFormatOpenEXR: fileName.append("exr"); break;
 			case imageFormatVRayImage: fileName.append("vrimg"); break;
 			default: fileName.append("tmp"); break;
-		}
-
-		UT_String dirPath;
-		m_rop->evalString(dirPath, "SettingsOutput_img_dir", 0, t);
-
-		// Ensure slash at the end.
-		if (!dirPath.endsWith("/")) {
-			dirPath.append("/");
-		}
-
-		// Create output directory.
-		directoryCreator.mkpath(dirPath.buffer());
-
-		if (imgFormat == imageFormatOpenEXR ||
-			imgFormat == imageFormatVRayImage)
-		{
-			const int relementsSeparateFiles = m_rop->evalInt("SettingsOutput_relements_separateFiles", 0, t);
-			if (relementsSeparateFiles == 0) {
-				pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
 			}
+
+			UT_String dirPath;
+			m_rop->evalString(dirPath, "SettingsOutput_img_dir", 0, t);
+
+			// Ensure slash at the end.
+			if (!dirPath.endsWith("/")) {
+				dirPath.append("/");
+			}
+
+			// Create output directory.
+			directoryCreator.mkpath(dirPath.buffer());
+
+			if (imgFormat == imageFormatOpenEXR ||
+				imgFormat == imageFormatVRayImage)
+			{
+				const int relementsSeparateFiles = m_rop->evalInt("SettingsOutput_relements_separateFiles", 0, t);
+				if (relementsSeparateFiles == 0) {
+					pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
+				}
+			}
+
+			pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirPath.toStdString()));
+			pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 		}
-
-		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirPath.toStdString()));
-		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 	}
-
 	return ReturnValue::Success;
 }
 
@@ -959,15 +950,8 @@ ReturnValue VRayExporter::exportSettings()
 		else {
 			Attrs::PluginDesc pluginDesc(sp, sp);
 			if (sp == "SettingsOutput") {
-				if (sessionType != VfhSessionType::production) {
-					if (fillSettingsOutputWithoutPath(pluginDesc) == ReturnValue::Error) {
-						return ReturnValue::Error;
-					}
-				}
-				else {
-					if (fillSettingsOutput(pluginDesc) == ReturnValue::Error) {
-						return ReturnValue::Error;
-					}
+				if (fillSettingsOutput(pluginDesc) == ReturnValue::Error) {
+					return ReturnValue::Error;
 				}
 			}
 
