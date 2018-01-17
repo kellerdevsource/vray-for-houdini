@@ -57,7 +57,7 @@ groupsimple {
     parm {
         name    "VRayStereoscopicSettings_focus_method"
         label   "Focus Method"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Specifies the focus method for the two views"
         menu    {
@@ -72,12 +72,12 @@ groupsimple {
         parmtag { "vray_enumkeys" "0,1,2" }
         parmtag { "vray_plugin" "VRayStereoscopicSettings" }
         parmtag { "vray_pluginattr" "focus_method" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
     parm {
         name    "VRayStereoscopicSettings_interocular_method"
         label   "Interocular Method"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Specifies how the two virtual cameras will be placed in relation to the real camera in the scene"
         menu    {
@@ -92,12 +92,12 @@ groupsimple {
         parmtag { "vray_enumkeys" "0,1,2" }
         parmtag { "vray_plugin" "VRayStereoscopicSettings" }
         parmtag { "vray_pluginattr" "interocular_method" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
     parm {
         name    "VRayStereoscopicSettings_view"
         label   "View"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Specifies which of the stereoscopic views will be rendered"
         menu    {
@@ -112,7 +112,7 @@ groupsimple {
         parmtag { "vray_enumkeys" "0,1,2" }
         parmtag { "vray_plugin" "VRayStereoscopicSettings" }
         parmtag { "vray_pluginattr" "view" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
     parm {
         name    "VRayStereoscopicSettings_adjust_resolution"
@@ -160,7 +160,7 @@ groupsimple {
     parm {
         name    "VRayStereoscopicSettings_sm_mode"
         label   "Sm Mode"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Allows us to specify the mode of operation for the shade map"
         menu    {
@@ -175,7 +175,7 @@ groupsimple {
         parmtag { "vray_enumkeys" "0,1,2" }
         parmtag { "vray_plugin" "VRayStereoscopicSettings" }
         parmtag { "vray_pluginattr" "sm_mode" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
     }
     groupsimple {
         name "folder_camera_stereoscopic_simmode"
@@ -187,7 +187,7 @@ groupsimple {
             type    float
             default { "1" }
             help    "Lower values will make V-Ray use less of the shade map and more real shading"
-            range   { 0 64 }
+            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "VRayStereoscopicSettings" }
@@ -258,12 +258,12 @@ groupsimple {
         parm {
             name    "VRayStereoscopicSettings_vrst_compression"
             label   "Vrst Compression"
-            type    ordinal
+            type    string
             default { "1" }
             help    "Compression type for the .vrst files"
             menu    {
-              "No Compression"  "No Compression"
-              "ZLIB Compression"    "ZLIB Compression"
+              "0"  "No Compression"
+              "1"    "ZLIB Compression"
             }
             range   { 0 1 }
             export  none
@@ -271,18 +271,18 @@ groupsimple {
             parmtag { "vray_enumkeys" "0,1" }
             parmtag { "vray_plugin" "VRayStereoscopicSettings" }
             parmtag { "vray_pluginattr" "vrst_compression" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
         parm {
             name    "VRayStereoscopicSettings_exr_compression"
             label   "Exr Compression"
-            type    ordinal
+            type    string
             default { "2" }
             help    "Compression type for the .exr files"
             menu    {
-              "No Compression"  "No Compression"
-              "RLE Compression" "RLE Compression"
-              "ZIPS Compression"    "ZIPS Compression"
+              "0"  "No Compression"
+              "1" "RLE Compression"
+              "2"    "ZIPS Compression"
             }
             range   { 0 1 }
             export  none
@@ -290,7 +290,7 @@ groupsimple {
             parmtag { "vray_enumkeys" "0,1,2" }
             parmtag { "vray_plugin" "VRayStereoscopicSettings" }
             parmtag { "vray_pluginattr" "exr_compression" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
         parm {
             name    "VRayStereoscopicSettings_exclude_list_inclusive"

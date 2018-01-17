@@ -12,7 +12,7 @@ parm {
     type    float
     default { "1" }
     help    "Additional scale factor for the texture derivatives"
-    range   { 0 64 }
+    range   { 0 5 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "UVWGenObject" }

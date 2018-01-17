@@ -313,7 +313,6 @@
                 parmtag { "vray_pluginattr" "primary_reflection_fresnel_ior" }
                 parmtag { "vray_type" "float" }
                 disablewhen "{ primary_reflection_amount == 0 }"
-                hidewhen    "{ primary_reflection_fresnel != 1 }"
             }
         }
         groupsimple {
@@ -396,7 +395,6 @@
                 parmtag { "vray_pluginattr" "secondary_reflection_fresnel_ior" }
                 parmtag { "vray_type" "float" }
                 disablewhen "{ secondary_reflection_amount == 0 }"
-                hidewhen    "{ secondary_reflection_fresnel != 1 }"
             }
         }
     }
@@ -406,7 +404,7 @@
         parm {
             name    "multiple_scattering"
             label   "Multiple Scattering"
-            type    ordinal
+            type    string
             default { "2" }
             help    "The algorithm used to compute multiple scattering"
             menu    {

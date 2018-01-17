@@ -6,7 +6,7 @@
     parm {
         name    "operation"
         label   "Condition"
-        type    ordinal
+        type    string
         default { "0" }
         help    "The condition check"
         menu    {
@@ -21,7 +21,7 @@
         parmtag { "vray_enumkeys" "0,1,2,3,4,5" }
         parmtag { "vray_plugin" "TexCondition2" }
         parmtag { "vray_pluginattr" "operation" }
-    parmtag { "vray_type" "enum" }
+        parmtag { "vray_type" "enum" }
     }
     parm {
         name    "first_term"

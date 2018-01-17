@@ -1,8 +1,8 @@
 {
-    name	UVWGenProjection
-    label	"Projection"
-    parmtag	{ spare_category "Projection" }
-    parmtag	{ vray_plugin "UVWGenProjection" }
+    name    UVWGenProjection
+    label   "Projection"
+    parmtag { spare_category "Projection" }
+    parmtag { vray_plugin "UVWGenProjection" }
 
 #include "UVWGenProjectionParms.ds"
 #include "vfh_uvwgen_common.ds"

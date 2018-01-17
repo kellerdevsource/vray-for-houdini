@@ -9,7 +9,7 @@
         parm {
             name    "operator"
             label   "Operator"
-            type    ordinal
+            type    string
             default { "0" }
             help    "Operator"
             menu    {
@@ -61,7 +61,7 @@
     parm {
         name    "compatibility_with"
         label   "Compatibility With"
-        type    ordinal
+        type    string
         default { "0" }
         help    "This is used to differentiate between textures exported from different applications"
         menu    {
@@ -74,7 +74,7 @@
         parmtag { "vray_enumkeys" "0,1" }
         parmtag { "vray_plugin" "TexCompMax" }
         parmtag { "vray_pluginattr" "compatibility_with" }
-        parmtag { "vray_type" "int" }
+        parmtag { "vray_type" "enum" }
         invisible
     }
 #include "vfh_texture_common_color.ds"

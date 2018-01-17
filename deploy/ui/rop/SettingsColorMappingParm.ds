@@ -1,17 +1,17 @@
 parm {
     name    "SettingsColorMapping_type"
     label   "Type"
-    type    ordinal
+    type    string
     default { "6" }
     help    "Type of color mapping."
     menu    {
-      "0"   "Linear"
-      "1"   "Exponential"
-      "2"   "HSV Exponential"
-      "3"   "Intensity Exponential"
-      "4"   "Gamma Correction"
-      "5"   "Intensity Gamma"
-      "6"   "Reinhard"
+        "0"   "Linear"
+        "1"   "Exponential"
+        "2"   "HSV Exponential"
+        "3"   "Intensity Exponential"
+        "4"   "Gamma Correction"
+        "5"   "Intensity Gamma"
+        "6"   "Reinhard"
     }
     range   { 0 1 }
     export  none
@@ -75,13 +75,13 @@ parm {
 parm {
     name    "SettingsColorMapping_adaptation_only"
     label   "Mode"
-    type    ordinal
+    type    string
     default { "2" }
     help    "When this parameter is on, the color mapping will not be applied to the final image, however V-Ray will proceed with all its calculations as though color mapping is applied (e.g. the noise levels will be corrected accordingly)"
     menu    {
-      "0"   "Color Mapping and Gamma"
-      "2"   "Don't Affect Colors, only adaptation"
-      "3"   "Color Mapping Only, no gamma"
+        "0"   "Color Mapping and Gamma"
+        "2"   "Don't Affect Colors, only adaptation"
+        "3"   "Color Mapping Only, no gamma"
     }
     range   { 0 1 }
     export  none
@@ -109,13 +109,13 @@ parm {
     type    float
     default { "1" }
     help    "The level at which colors will be clamped"
-    hidewhen    "{ SettingsColorMapping_clamp_output == 0 }"
     range   { 0 2 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "SettingsColorMapping" }
     parmtag { "vray_pluginattr" "clamp_level" }
     parmtag { "vray_type" "float" }
+    hidewhen    "{ SettingsColorMapping_clamp_output == 0 }"
 }
 parm {
     name    "SettingsColorMapping_subpixel_mapping"
@@ -134,7 +134,6 @@ parm {
     name    "SettingsColorMapping_linearWorkflow"
     label   "Linear Workflow"
     type    toggle
-    invisible
     default { "0" }
     help    "When this option is checked V-Ray will automatically apply the inverse of the Gamma correction that you have set in the Gamma field to all materials in the scene. Note: this is not a replacement for proper linear workflow."
     range   { 0 1 }
@@ -143,6 +142,7 @@ parm {
     parmtag { "vray_plugin" "SettingsColorMapping" }
     parmtag { "vray_pluginattr" "linearWorkflow" }
     parmtag { "vray_type" "boolean" }
+    invisible
 }
 parm {
     name    "SettingsColorMapping_exposure"

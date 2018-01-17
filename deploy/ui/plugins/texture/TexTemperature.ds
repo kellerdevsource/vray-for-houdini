@@ -7,7 +7,7 @@
     parm {
         name    "color_mode"
         label   "Mode"
-        type    ordinal
+        type    string
         help    "Choose color or temperature mode"
         menu    {
             "0" "Color"

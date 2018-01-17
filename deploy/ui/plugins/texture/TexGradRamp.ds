@@ -11,7 +11,7 @@
         parm {
             name    "gradient_type"
             label   "Type"
-            type    ordinal
+            type    string
             default { "0" }
             help    "Gradient type"
             menu    {
@@ -93,7 +93,7 @@
         parm {
             name    "noise_type"
             label   "Type"
-            type    ordinal
+            type    string
             default { "0" }
             help    ""
             menu    {

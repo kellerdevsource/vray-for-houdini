@@ -6,7 +6,7 @@
     parm {
         name    "operation"
         label   "Operation"
-        type    ordinal
+        type    string
         default { "1" }
         help    "Operation"
         menu    {
@@ -26,7 +26,7 @@
     }
     parm {
     name    "input1"
-    label   "Input1"
+    label   "Input 1"
     type    color4
     size    4
     default { "0" "0" "0" "1" }
@@ -39,7 +39,7 @@
     }
     parm {
     name    "input2"
-    label   "Input2"
+    label   "Input 2"
     type    color4
     size    4
     default { "0" "0" "0" "1" }

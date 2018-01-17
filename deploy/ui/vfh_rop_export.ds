@@ -1,19 +1,19 @@
 #include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 /*
 groupsimple {
-	name "VrayRendererFolderUIStyle"
-	label "UI"
-	
-	parm {
-		name "ui_style"
-		label "Style"
-		type ordinal
-		menu {
-			0 "Simple"
-			1 "Advanced"
-		}
-		default { "1" }
-	}
+    name "VrayRendererFolderUIStyle"
+    label "UI"
+
+    parm {
+        name "ui_style"
+        label "Style"
+        type string
+        menu {
+            0 "Simple"
+            1 "Advanced"
+        }
+        default { "1" }
+    }
 }
 */
 groupsimple {
@@ -23,7 +23,7 @@ groupsimple {
     parm {
         name "render_render_mode"
         label "Device"
-        type ordinal
+        type string
         menu {
             0 "CPU"
             1 "GPU (CUDA)"
@@ -40,7 +40,7 @@ groupsimple {
     parm {
         name "render_rt_mode"
         label "Device"
-        type ordinal
+        type string
         menu {
             0 "CPU"
             1 "GPU (CUDA)"
@@ -66,7 +66,7 @@ groupsimple {
     parm {
         name "exporter_log_level"
         label "Log Level"
-        type ordinal
+        type string
         menu {
             "0" "Errors"
             "1" "Debug"
@@ -77,11 +77,11 @@ groupsimple {
     parm {
         name "render_export_mode"
         label "Export Mode"
-        type ordinal
+        type string
         menu {
-            "No Export" "No Export"
-            "Export & Render" "Export & Render"
-            "Export" "Export"
+            0 "No Export"
+            1 "Export & Render"
+            2 "Export"
         }
         default { "0" }
     }
@@ -91,7 +91,7 @@ groupsimple {
         label "Export Filepath"
         type file
         default { "$HIP/$HIPNAME.vrscene" }
-        disablewhen "{ render_export_mode == \"No Export\" }"
+        disablewhen "{ render_export_mode == 0 }"
     }
 
     parm {
@@ -99,7 +99,7 @@ groupsimple {
         label   "Export Compressed Data"
         type    toggle
         default { "1" }
-        disablewhen "{ render_export_mode == \"No Export\" }"
+        disablewhen "{ render_export_mode == 0 }"
     }
 
     parm {
@@ -107,7 +107,7 @@ groupsimple {
         label   "Export Data In Hex Format"
         type    toggle
         default { "1" }
-        disablewhen "{ render_export_mode == \"No Export\" }"
+        disablewhen "{ render_export_mode == 0 }"
         hidewhen "{ exp_compressed == 1 }"
     }
 }

@@ -6,7 +6,7 @@
     parm {
         name    "mode"
         label   "Output Mode"
-        type    ordinal
+        type    string
         default { "0" }
         help    "Which output should be considered for the 'Output'"
         menu    {

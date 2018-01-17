@@ -137,13 +137,13 @@
             parm {
                 name    "spots_mode"
                 label   "Spots Mode"
-                type    ordinal
+                type    string
                 default { "0" }
                 help    "Spots mode"
                 hidewhen "{ spots_on != 1 }"
                 menu    {
-                    "Hot Spot"  "Hot Spot"
-                    "Dark Spot" "Dark Spot"
+                    "0"  "Hot Spot"
+                    "1" "Dark Spot"
                 }
                 parmtag { "cook_dependent" "1" }
                 parmtag { "vray_enumkeys" "0,1" }

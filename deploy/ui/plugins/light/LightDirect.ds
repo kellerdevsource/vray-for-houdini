@@ -29,6 +29,7 @@
             help    "Enable to map intensity"
             range   { 0 1 }
             export  none
+            invisible
         }
         parm {
             name    "intensity"
@@ -47,7 +48,7 @@
         parm {
             name    "intensity_tex"
             label   "Intensity"
-            type    oppath
+            type    file
             hidewhen    "{ map_intensity == 0 }"
             default { "" }
             help    "A float texture that if present will override the intensity parameter"
@@ -87,7 +88,7 @@
         parm {
             name    "color_tex"
             label   "Color"
-            type    oppath
+            type    file
             hidewhen "{ map_color == 0 }"
             default { "" }
             help    "A color texture that if present will override the color parameter"
@@ -103,7 +104,7 @@
         parm {
             name "units"
             label "Units"
-            type ordinal
+            type string
             help "Intensity units"
             menu {
             "0" "Default"
@@ -132,13 +133,13 @@
         }
     }
 
-    groupcollapsible {
+    groupsimple {
         name "folder_shadows"
         label "Shadows"
         disablewhen "{ enabled == 0 }"
         parm {
             name    "shadows"
-            label   "Shadows"
+            label   "Enabled"
             type    toggle
             default { "1" }
             help    "true if the light casts shadows and false otherwise"
@@ -178,7 +179,7 @@
         parm {
             name    "shadowColor_tex"
             label   "Color"
-            type    oppath
+            type    file
             hidewhen "{ map_shadow_color == 0 }"
             default { "" }
             help    "A color texture that if present will override the shadowColor parameter"
@@ -201,6 +202,7 @@
             range   { 0 1 }
             export  none
             disablewhen "{ shadows == 0 }"
+            invisible
         }
         parm {
             name    "shadowRadius"
@@ -209,7 +211,7 @@
             hidewhen "{ map_shadow_radius == 1 }"
             default { "0" }
             help    "The size of the light; 0.0 is a point light, larger values produces soft (area) shadows"
-            range   { 0 0.2 }
+            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "LightDirect" }
@@ -220,7 +222,7 @@
         parm {
             name    "shadowRadius_tex"
             label   "Radius"
-            type    oppath
+            type    file
             hidewhen "{ map_shadow_radius == 0 }"
             default { "" }
             help    "A float texture that if present will override the shadows radius parameter"
@@ -362,7 +364,7 @@
         }
         parm {
             name    "beamRadius"
-            label   "Beamradius"
+            label   "Beam Radius"
             type    float
             default { "0" }
             help    "0.0 if the light has no beam radius"
@@ -387,7 +389,6 @@
             parmtag { "vray_type" "boolean" }
         }
     }
-
     groupcollapsible {
         name "folder_gi"
         label "GI"

@@ -23,7 +23,7 @@
         parm {
             name    "color_space"
             label   "Color Space"
-            type    ordinal
+            type    string
             default { "1" }
             help    "Color space"
             menu    {
@@ -165,7 +165,7 @@
         parm {
             name    "alpha_type"
             label   "Alpha Type"
-            type    ordinal
+            type    string
             default { "0" }
             help    "Where to take the alpha from"
             menu    {
@@ -263,7 +263,7 @@
         parm {
             name    "ifl_end_condition"
             label   "At Sequence End"
-            type    ordinal
+            type    string
             default { "0" }
             hidewhen "{ use_image_sequence != 1 }"
             help    "Image file list (IFL) end condition"
@@ -285,7 +285,7 @@
         parm {
             name    "filter_type"
             label   "Filter Type"
-            type    integer
+            type    string
             default { "0" }
             help    "Type of filter used for the texture"
             menu    {

@@ -119,12 +119,12 @@
             parmtag { "vray_plugin" "EnvironmentFog" }
             parmtag { "vray_pluginattr" "emission_mult" }
             parmtag { "vray_type" "float" }
+            invisible
         }
         parm {
             name    "emission_mult_tex"
-            label   "Emission Multiplier (map)"
+            label   "Emission Multiplier "
             type    float
-            invisible
             default { "1" }
             help    "Fog emission texture multiplier"
             range   { 0 1 }
@@ -163,7 +163,7 @@
         }
         parm {
             name    "density_tex"
-            label   "Fog Density (map)"
+            label   "Fog Density"
             type    float
             default { "1" }
             help    "Texture for fog density"
@@ -191,30 +191,29 @@
             name    "yup"
             label   "Y Is Up"
             type    toggle
-            default { "0" }
+            default { "1" }
             help    "if true, y is the up axis, not z"
-            hidewhen    "{ use_height != 1 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "EnvironmentFog" }
             parmtag { "vray_pluginattr" "yup" }
             parmtag { "vray_type" "boolean" }
+            hidewhen    "{ use_height != 1 }"
         }
         parm {
             name    "height"
             label   "Height"
             type    float
-            hidewhen "{ use_height == 0 }"
             default { "100" }
             help    "Fog starting point along the Z-axis"
-            disablewhen "{ use_height != 1 }"
             range   { 0 64 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "EnvironmentFog" }
             parmtag { "vray_pluginattr" "height" }
             parmtag { "vray_type" "float" }
+            hidewhen "{ use_height != 1 }"
         }
         parm {
             name    "subdivs"
@@ -232,7 +231,7 @@
         parm {
             name    "light_mode"
             label   "Light Mode"
-            type    ordinal
+            type    string
             default { "1" }
             help    "Light mode"
             menu    {
@@ -252,9 +251,9 @@
             name    "ior"
             label   "Index of Refraction"
             type    float
-            default { "1" }
+            default { "1.1" }
             help    "Index of refraction for the volume, which describes the way light bends when crossing the material surface. A value of 1.0 means the light will not change direction"
-            range   { 0 10 }
+            range   { 0 5 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "EnvironmentFog" }
@@ -293,7 +292,7 @@
         label "Global Illumination"
         parm {
             name    "scatter_gi"
-            label   "Scatter Gi"
+            label   "Scatter GI"
             type    toggle
             default { "0" }
             help    "Scatter global illumination"
@@ -306,7 +305,7 @@
         }
         parm {
             name    "simplify_gi"
-            label   "Simplify Textures For Gi"
+            label   "Simplify Textures For GI"
             type    toggle
             default { "0" }
             help    "Simplify global illumination"
@@ -321,16 +320,15 @@
             name    "scatter_bounces"
             label   "Scatter Bounces"
             type    integer
-            disablewhen "{ scatter_gi == 0 }"
             default { "8" }
             help    "Number of GI bounces calculated inside the fog"
-            disablewhen "{ scatter_gi != 1 }"
             range   { 0 64 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "EnvironmentFog" }
             parmtag { "vray_pluginattr" "scatter_bounces" }
             parmtag { "vray_type" "int" }
+            disablewhen "{ scatter_gi == 0 }"
         }
     }
     groupcollapsible {
@@ -408,7 +406,7 @@
         parm {
             name    "fade_out_mode"
             label   "Fade Out Mode"
-            type    ordinal
+            type    string
             default { "0" }
             help    "Fade out mode"
             menu    {
@@ -519,7 +517,7 @@
         }
         parm {
             name    "affect_gi"
-            label   "Affect Gi"
+            label   "Affect GI"
             type    toggle
             default { "1" }
             help    "true if the fog affects GI rays"
@@ -588,13 +586,13 @@
             type    float
             default { "0.5" }
             help    "Solid mode transparency threshold"
-            disablewhen "{ solid_mode != 1 }"
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "EnvironmentFog" }
             parmtag { "vray_pluginattr" "solid_threshold" }
             parmtag { "vray_type" "float" }
+            disablewhen "{ solid_mode != 1 }"
         }
     }
 }

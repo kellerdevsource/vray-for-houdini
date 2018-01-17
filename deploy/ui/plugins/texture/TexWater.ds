@@ -6,7 +6,7 @@
     parm {
         name    "resolution"
         label   "Resolution"
-        type    integer
+        type    string
         default { "4" }
         help    "Resolution -> real resolution is 2^res"
         menu    {

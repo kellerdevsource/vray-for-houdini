@@ -49,7 +49,7 @@
             hidewhen  "{ map_intensity == 0 }"
             name  "intensity_tex"
             label "Intensity Tex"
-            type  oppath
+            type  file
             default   { "" }
             help  "A float texture that if present will override the intensity parameter"
             range { 0 1 }
@@ -89,7 +89,7 @@
             hidewhen "{ map_color == 0 }"
             name    "color_tex"
             label   "Color"
-            type    oppath
+            type    file
             default { "" }
             help    "A color texture that if present will override the color parameter"
             range   { 0 1 }
@@ -106,8 +106,8 @@
             label   "Cone Angle"
             type    angle
             default { "1" }
-            help    "The entire spot cone, in radians"
-            range   { 0 3.14 }
+            help    "The entire spot cone, in degrees"
+            range   { 0 180 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "LightSpot" }
@@ -121,7 +121,7 @@
             type    angle
             default { "0" }
             help    "The penumbra region, in radians; positive is outside the spot cone; negative is inside"
-            range   { -1 1 }
+            range   { -40 40 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "LightSpot" }
@@ -132,12 +132,12 @@
         parm {
             name    "falloffType"
             label   "Penumbra Falloff Type"
-            type    ordinal
+            type    string
             default { "0" }
             help    "The type of transition in the penumbra region"
             menu    {
-                "Linear"  "Linear"
-                "Smooth Cubic"    "Smooth Cubic"
+                "0"  "Linear"
+                "1"    "Smooth Cubic"
             }
             range   { 0 1 }
             export  none
@@ -145,7 +145,7 @@
             parmtag { "vray_enumkeys" "0,1" }
             parmtag { "vray_plugin" "LightSpot" }
             parmtag { "vray_pluginattr" "falloffType" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
         parm {
             name    "dropOff"
@@ -193,7 +193,7 @@
             hidewhen "{ barnDoor == 0}"
             default { "0.349066" }
             help    "angle between the light direction and the left barn door"
-            range   { 0 1 }
+            range   { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "LightSpot" }
@@ -208,7 +208,7 @@
             hidewhen "{ barnDoor == 0}"
             default { "0.349066" }
             help    "angle between the light direction and the right barn door"
-            range   { 0 1 }
+            range   { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "LightSpot" }
@@ -223,7 +223,7 @@
             hidewhen "{ barnDoor == 0}"
             default { "0.349066" }
             help    "angle between the light direction and the top barn door"
-            range   { 0 1 }
+            range   { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "LightSpot" }
@@ -238,7 +238,7 @@
             hidewhen "{ barnDoor == 0}"
             default { "0.349066" }
             help    "angle between the light direction and the bottom barn door"
-            range   { 0 1 }
+            range   { 0 10 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "LightSpot" }
@@ -346,15 +346,15 @@
         parm {
             name    "units"
             label   "Units"
-            type    ordinal
+            type    string
             default { "0" }
             help    "Units for the intensity (0 - default, 1 - lumens, 2 - lm/m/m/sr, 3 - watts, 4 - w/m/m/sr)"
             menu    {
-            "Default"   "Default"
-            "Lumens"    "Lumens"
-            "Lm/m/m/sr" "Lm/m/m/sr"
-            "Watts" "Watts"
-            "W/m/m/sr"  "W/m/m/sr"
+            "0"   "Default"
+            "1"    "Lumens"
+            "2" "Lm/m/m/sr"
+            "3" "Watts"
+            "4"  "W/m/m/sr"
             }
             range   { 0 1 }
             export  none
@@ -362,7 +362,7 @@
             parmtag { "vray_enumkeys" "0,1,2,3,4" }
             parmtag { "vray_plugin" "LightSpot" }
             parmtag { "vray_pluginattr" "units" }
-            parmtag { "vray_type" "int" }
+            parmtag { "vray_type" "enum" }
         }
         parm {
             name    "use_global_light_level"
@@ -379,13 +379,13 @@
         }
     }
 
-    groupcollapsible {
+    groupsimple {
         name "folder_shadows"
         label "Shadows"
         disablewhen "{ enabled == 0 }"
         parm {
             name    "shadows"
-            label   "Shadows"
+            label   "Enabled"
             type    toggle
             default { "1" }
             help    "true if the light casts shadows and false otherwise"
@@ -427,7 +427,7 @@
             hidewhen "{ map_shadow_color == 0 }"
             name    "shadowColor_tex"
             label   "Color"
-            type    oppath
+            type    file
             default { "" }
             help    "A color texture that if present will override the shadowColor parameter"
             range   { 0 1 }
@@ -448,6 +448,7 @@
             help    "Enable to map shadow color"
             range   { 0 1 }
             export  none
+            invisible
         }
         parm {
             disablewhen "{ shadows == 0 }"
@@ -457,7 +458,7 @@
             type    float
             default { "0" }
             help    "The size of the light; 0.0 is a point light, larger values produces soft (area) shadows"
-            range   { 0 64 }
+            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "LightSpot" }

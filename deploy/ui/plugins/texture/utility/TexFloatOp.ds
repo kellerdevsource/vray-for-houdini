@@ -32,7 +32,7 @@
     parm {
     name    "mode"
     label   "Mode"
-    type    ordinal
+    type    string
     default { "2" }
     help    "Determines what output to use when no output parameter is specified. Useful if the type of the operation needs to be animatable"
     menu    {

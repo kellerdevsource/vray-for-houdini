@@ -40,7 +40,7 @@
             label   "Color A"
             type    color
             size    3
-            default { "0" "0" "0" }
+            default { "1" "1" "1" }
             parmtag { "vray_pluginattr" "color1" }
             parmtag { "vray_type" "color" }
             invisible

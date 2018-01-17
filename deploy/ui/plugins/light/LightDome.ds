@@ -197,7 +197,7 @@
         parm {
             name "units"
             label "Units"
-            type ordinal
+            type string
             help "Intensity units"
             menu {
               "0"   "Default"
@@ -226,13 +226,13 @@
         }
     }
 
-    groupcollapsible {
+    groupsimple {
         name "folder_shadows"
         label "Shadows"
         disablewhen "{ enabled == 0 }"
         parm {
             name  "shadows"
-            label "Shadows"
+            label "Enabled"
             type  toggle
             default   { "1" }
             help  "true if the light casts shadows and false otherwise"

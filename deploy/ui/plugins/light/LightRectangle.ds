@@ -316,14 +316,13 @@
         }
     }
 
-
-    groupcollapsible {
+    groupsimple {
         name "folder_shadows"
         label "Shadows"
         disablewhen "{ enabled == 0 }"
         parm {
             name  "shadows"
-            label "Shadows"
+            label "Enabled"
             type  toggle
             default { "1" }
             help  "true if the light casts shadows and false otherwise"

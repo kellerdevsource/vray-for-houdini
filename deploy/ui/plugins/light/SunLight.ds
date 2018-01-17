@@ -38,7 +38,7 @@
         parm {
             name    "sky_model"
             label   "Sky Model"
-            type    ordinal
+            type    string
             default { "3" }
             help    "Selects the procedural model used to simulate the TexSky texture"
             menu    {
@@ -132,7 +132,7 @@
         parm {
             name    "color_mode"
             label   "Color Mode"
-            type    ordinal
+            type    string
             default { "0" }
             help    "This option affects the way the color in the Filter color parameter affects the color of the sun"
             menu    {
@@ -175,13 +175,13 @@
         }
     }
 
-    groupcollapsible {
+    groupsimple {
         name "folder_shadows"
         label "Shadows"
         disablewhen "{ enabled == 0 }"
         parm {
             name    "shadows"
-            label   "Shadows"
+            label   "Enabled"
             type    toggle
             default { "1" }
             help    "true if the light casts shadows and false otherwise"
@@ -237,7 +237,7 @@
             hidewhen "{ map_shadow_color == 0 }"
             name    "shadowColor_tex"
             label   "Color"
-            type    oppath
+            type    file
             default { "" }
             help    "A color texture that if present will override the shadowColor parameter"
             range   { 0 1 }

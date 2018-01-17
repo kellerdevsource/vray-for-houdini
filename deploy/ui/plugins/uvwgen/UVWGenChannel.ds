@@ -1,8 +1,8 @@
 {
-    name	UVWGenChannel
-    label	"Channel"
-    parmtag	{ spare_category "Channel" }
-    parmtag	{ vray_plugin "UVWGenChannel" }
+    name    UVWGenChannel
+    label   "Channel"
+    parmtag { spare_category "Channel" }
+    parmtag { vray_plugin "UVWGenChannel" }
 
 #include "UVWGenChannelParms.ds"
 #include "vfh_uvwgen_common.ds"

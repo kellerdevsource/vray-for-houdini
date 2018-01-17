@@ -5,7 +5,7 @@ groupcollapsible {
     parm {
         name    "alpha_from_intensity"
         label   "Source"
-        type    ordinal
+        type    string
         help    "Alpha sources"
         menu    {
             "0" "Alpha"
