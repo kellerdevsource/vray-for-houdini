@@ -514,7 +514,6 @@
             parmtag { "vray_plugin" "BRDFVRayMtl" }
             parmtag { "vray_pluginattr" "fog_color" }
             parmtag { "vray_type" "color" }
-            invisible
         }
         parm {
             name  "fog_color_tex"
@@ -527,6 +526,7 @@
             parmtag { "vray_pluginattr" "fog_color_tex" }
             parmtag { "vray_linked_only" "1" }
             parmtag { "vray_type" "Texture" }
+            invisible
         }
         parm {
             name  "fog_mult"
