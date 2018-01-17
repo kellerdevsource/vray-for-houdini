@@ -55,16 +55,37 @@ struct MapVertexHash
 	}
 };
 
+struct CharStringTable
+	: VUtils::Table<VRay::VUtils::CharString, 1>
+{
+	VRay::VUtils::CharStringRefList toRefList() const;
+};
 
 /// Helper structure to wrap relevant map channel properties
-struct MapChannel
-{
+struct MapChannel {
+	enum MapChannelType {
+		mapChannelTypeVertex = 0,
+		mapChannelTypeString,
+	};
+
+	MapChannelType type = mapChannelTypeVertex;
+
 	typedef std::unordered_set<MapVertex, MapVertexHash> VertexSet;
 
-	std::string                 name; ///< map channels name
-	VRay::VUtils::VectorRefList vertices; ///< map channel vertex data
-	VRay::VUtils::IntRefList    faces; ///< map channel face indices
-	VertexSet                   verticesSet; ///< helper to weld vertex attributes
+	/// Map channel name.
+	std::string name;
+
+	/// Vertex array.
+	VRay::VUtils::VectorRefList vertices;
+
+	/// Face indices or an array of indices into @c strings array per-face.
+	VRay::VUtils::IntRefList faces;
+
+	/// Helper structure to weld vertex attributes.
+	VertexSet verticesSet;
+
+	/// String data array.
+	CharStringTable strings;
 };
 
 typedef std::unordered_map<std::string, MapChannel> MapChannels;

@@ -47,12 +47,12 @@ static MHash getVRayValueHash(const VRay::VUtils::CharString &value)
 	return hash;
 }
 
-static MHash getMaterialIdListHash(VRay::VUtils::IntRefList idsList)
+static MHash getMaterialIdListHash(const VRay::VUtils::IntRefList &idsList)
 { 
 	return getVRayValueHash(idsList);
 }
 
-static MHash getMapChannelsHash(VRay::VUtils::ValueRefList mapChannels)
+static MHash getMapChannelsHash(VRay::VUtils::ValueRefList &mapChannels)
 { 
 	MHash hash = 0;
 
@@ -63,7 +63,13 @@ static MHash getMapChannelsHash(VRay::VUtils::ValueRefList mapChannels)
 		const MHash vertHash = getVRayValueHash(mapChannel[1].getListVector());
 		const MHash faceHash = getVRayValueHash(mapChannel[2].getListInt());
 
-		hash ^= (nameHash ^ vertHash ^ faceHash);
+		struct MapChannelsHash {
+			MHash nameHash;
+			MHash vertHash;
+			MHash faceHash;
+		} mapChannelsHash = { nameHash, vertHash, faceHash };
+
+		MurmurHash3_x86_32(&mapChannelsHash, sizeof(MapChannelsHash), 42, &hash);
 	}
 
 	return hash;
@@ -315,7 +321,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaces()
 		// if we don't have faces cached, digest valid poly primitives
 		// for current geometry detail
 		// count faces and proceed only if we do have such
-		int nFaces = getNumFaces();
+		const int nFaces = getNumFaces();
 		if (nFaces > 0) {
 			// calculate faces and edge visibility simultaneously
 			faces = VRay::VUtils::IntRefList(nFaces * 3);
@@ -352,7 +358,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaces()
 								// first edge v(i+1)->v(i) is always visible
 								// second edge v(i)->v(0) is visible only when i == 1
 								// third edge v(0)->v(i+1) is visible only when i+1 == vCnt-1
-								unsigned char edgeMask = 1 | ((i == 1) << 1) | ((i == (vCnt - 2)) << 2);
+								const unsigned char edgeMask = 1 | ((i == 1) << 1) | ((i == (vCnt - 2)) << 2);
 								edge_visibility[faceEdgeVisIndex / 10] |= (edgeMask << ((faceEdgeVisIndex % 10) * 3));
 								++faceEdgeVisIndex;
 							}
@@ -371,7 +377,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaces()
 							faces[faceVertIndex++] = prim->getPointIndex(i);
 							faces[faceVertIndex++] = prim->getPointIndex(0);
 
-							unsigned char edgeMask = (1 | ((i == 1) << 1) | ((i == (vCnt - 2)) << 2));
+							const unsigned char edgeMask = (1 | ((i == 1) << 1) | ((i == (vCnt - 2)) << 2));
 							edge_visibility[faceEdgeVisIndex / 10] |= (edgeMask << ((faceEdgeVisIndex % 10) * 3));
 							++faceEdgeVisIndex;
 						}
@@ -428,22 +434,29 @@ VRay::Plugin MeshExporter::getMaterial()
 
 	VRay::VUtils::IntRefList face_mtlIDs(numFaces);
 
-	typedef VUtils::HashMap<OP_Node*, VRay::Plugin> OpPluginCache;
-	typedef VUtils::HashMap<OP_Node*, int> MatOpToID;
+	struct SubMaterial {
+		explicit SubMaterial(VRay::Plugin mtl, int index)
+			: mtl(mtl)
+			, index(index)
+		{}
 
-	MatOpToID matNameToID;
-	OpPluginCache matPluginCache;
+		VRay::Plugin mtl;
+		int index;
+	};
+
+	typedef VUtils::HashMap<OP_Node*, SubMaterial> OpNodeToSubMaterial;
+
+	OpNodeToSubMaterial matOpNodeToMatPlugin;
 
 	int matIndex = 0;
 
 	if (objectMaterial) {
-		matPluginCache.insert(objMatNode, objectMaterial);
-		matNameToID.insert(objMatNode, matIndex++);
+		matOpNodeToMatPlugin.insert(objMatNode, SubMaterial(objectMaterial, matIndex));
 	}
 
 	const STY_Styler &geoStyler = objectExporter.getStyler();
 
-	GSTY_SubjectPrimGroup primSubjects(gdp, primList);
+	const GSTY_SubjectPrimGroup primSubjects(gdp, primList);
 	STY_StylerGroup primStylers;
 	primStylers.append(geoStyler, primSubjects);
 
@@ -480,28 +493,18 @@ VRay::Plugin MeshExporter::getMaterial()
 			}
 		}
 
-		// Object material is always 0.
-		int faceMtlID = 0;
+		int faceMtlID;
 
-		VRay::Plugin matPlugin;
-		OpPluginCache::iterator opIt = matPluginCache.find(primMtlNode);
-		if (opIt != matPluginCache.end()) {
-			matPlugin = opIt.data();
+		OpNodeToSubMaterial::iterator opIt = matOpNodeToMatPlugin.find(primMtlNode);
+		if (opIt != matOpNodeToMatPlugin.end()) {
+			faceMtlID = opIt.data().index;
 		}
 		else {
-			matPlugin = pluginExporter.exportMaterial(primMtlNode);
-			matPluginCache.insert(primMtlNode, matPlugin);
-		}
+			faceMtlID = ++matIndex;
 
-		if (matPlugin) {
-			MatOpToID::iterator mIt = matNameToID.find(primMtlNode);
-			if (mIt != matNameToID.end()) {
-				faceMtlID = mIt.data();
-			}
-			else {
-				faceMtlID = matIndex++;
-			}
-			matNameToID.insert(primMtlNode, faceMtlID);
+			const VRay::Plugin matPlugin = pluginExporter.exportMaterial(primMtlNode);
+
+			matOpNodeToMatPlugin.insert(primMtlNode, SubMaterial(matPlugin, faceMtlID));
 		}
 
 		switch (prim->getTypeId().get()) {
@@ -532,23 +535,18 @@ VRay::Plugin MeshExporter::getMaterial()
 
 	UT_ASSERT(faceIndex == numFaces);
 
-	const int numMaterials = matNameToID.size();
+	const int numMaterials = matOpNodeToMatPlugin.size();
 	if (numMaterials) {
 		ObjectExporter &objExproter = pluginExporter.getObjectExporter();
 
 		VRay::VUtils::ValueRefList materialList(numMaterials);
 		VRay::VUtils::IntRefList idsList(numMaterials);
 
-		FOR_IT (MatOpToID, mIt, matNameToID) {
-			VRay::Plugin mtlPlugin;
+		FOR_IT (OpNodeToSubMaterial, mIt, matOpNodeToMatPlugin) {
+			const SubMaterial &subMat = mIt.data();
 
-			OpPluginCache::iterator opIt = matPluginCache.find(mIt.key());
-			if (opIt != matPluginCache.end()) {
-				mtlPlugin = opIt.data();
-			}
-
-			materialList[mItIdx].setPlugin(mtlPlugin);
-			idsList[mItIdx] = mIt.data();
+			materialList[mItIdx].setPlugin(subMat.mtl);
+			idsList[mItIdx] = subMat.index;
 		}
 
 		VRay::Plugin texExtMaterialID;
@@ -584,7 +582,7 @@ VRay::Plugin MeshExporter::getMaterial()
 
 VRay::Plugin MeshExporter::exportExtMapChannels(const MapChannels &mapChannelOverrides) const
 {
-	if (mapChannelOverrides.size() <= 0)
+	if (mapChannelOverrides.empty())
 		return VRay::Plugin();
 
 	ObjectExporter &objExproter = pluginExporter.getObjectExporter();
@@ -598,7 +596,12 @@ VRay::Plugin MeshExporter::exportExtMapChannels(const MapChannels &mapChannelOve
 
 		VRay::VUtils::ValueRefList map_channel(3);
 		map_channel[0].setString(map_channel_name.c_str());
-		map_channel[1].setListVector(map_channel_data.vertices);
+		if (map_channel_data.type == MapChannel::mapChannelTypeVertex) {
+			map_channel[1].setListVector(map_channel_data.vertices);
+		}
+		else {
+			map_channel[1].setListString(map_channel_data.strings.toRefList());
+		}
 		map_channel[2].setListInt(map_channel_data.faces);
 
 		map_channels[i].setList(map_channel);
@@ -634,21 +637,16 @@ VRay::Plugin MeshExporter::getExtMapChannels()
 
 MapChannels& MeshExporter::getMapChannels()
 {
-	if (map_channels_data.size() <= 0) {
+	if (map_channels_data.empty()) {
 		getVertexAttrs(map_channels_data, skipMapChannelNonUV);
 		getPointAttrs(map_channels_data, skipMapChannelNonUV);
 	}
 	return map_channels_data;
 }
 
-/// Returns true if face is at least a tri-face.
-static int validNumVertices(const GA_Size numVertices)
-{
-	return numVertices >= 3;
-}
-
-/// Allocated map channel data.
-static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList &primList)
+/// Returns the number of tri-faces in GEOPrimList.
+/// @param primList Primitives list.
+static int getNumFaces(const GEOPrimList &primList)
 {
 	int numFaces = 0;
 
@@ -671,6 +669,69 @@ static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList
 		}
 	}
 
+	return numFaces;
+}
+
+/// Returns true if face is at least a tri-face.
+static int validNumVertices(const GA_Size numVertices)
+{
+	return numVertices >= 3;
+}
+
+/// Allocates string channel data.
+static void allocateOverrideStringChannel(MapChannel &mapChannel, const GEOPrimList &primList)
+{
+	// Allocate data if not yet allocated
+	if (mapChannel.faces.count())
+		return;
+
+	const int numFaces = getNumFaces(primList);
+
+	mapChannel.type = MapChannel::mapChannelTypeString;
+	mapChannel.faces = VRay::VUtils::IntRefList(numFaces);
+}
+
+/// Maps string with its index in the strings table.
+typedef VUtils::StringHashMap<int> StringToTableIndex;
+
+/// A hash for mapping string with its index in the strings table.
+static StringToTableIndex stringToTableIndex;
+
+static void setStringChannelOverrideData(MapChannel &mapChannel, int faceIndex, const MtlOverrideItem &overrideItem)
+{
+	vassert(overrideItem.getType() == MtlOverrideItem::itemTypeString);
+
+	const char *strItem = overrideItem.getString();
+
+	int stringTableIndex;
+
+	StringToTableIndex::const_iterator tIt = stringToTableIndex.find(strItem);
+	if (tIt != stringToTableIndex.end()) {
+		stringTableIndex = tIt.data();
+	}
+	else {
+		VRay::VUtils::CharString &newItem = *mapChannel.strings.newElement();
+		newItem.set(strItem);
+
+		stringTableIndex = mapChannel.strings.count()-1;
+
+		stringToTableIndex.insert(strItem, stringTableIndex);
+	}
+
+	mapChannel.faces[faceIndex] = stringTableIndex;
+}
+
+/// Allocates map channel data.
+static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList &primList)
+{
+	// Allocate data if not yet allocated
+	if (mapChannel.vertices.count() &&
+		mapChannel.faces.count())
+		return;
+
+	const int numFaces = getNumFaces(primList);
+
+	mapChannel.type = MapChannel::mapChannelTypeVertex;
 	mapChannel.vertices = VRay::VUtils::VectorRefList(numFaces * 3);
 	mapChannel.faces = VRay::VUtils::IntRefList(numFaces * 3);
 
@@ -680,15 +741,19 @@ static void allocateOverrideMapChannel(MapChannel &mapChannel, const GEOPrimList
 	}
 }
 
-static void setMapChannelOverrideData(const MtlOverrideItem &overrideItem, VRay::VUtils::VectorRefList &vertices, int v0, int v1, int v2)
+static void setMapChannelOverrideData(MapChannel &mapChannel, const MtlOverrideItem &overrideItem, int v0, int v1, int v2)
 {
-	UT_ASSERT(v0 < vertices.count());
-	UT_ASSERT(v1 < vertices.count());
-	UT_ASSERT(v2 < vertices.count());
+	vassert(v0 < mapChannel.faces.count());
+	vassert(v1 < mapChannel.faces.count());
+	vassert(v2 < mapChannel.faces.count());
 
-	VRay::Vector &vert0 = vertices[v0];
-	VRay::Vector &vert1 = vertices[v1];
-	VRay::Vector &vert2 = vertices[v2];
+	mapChannel.faces[v0] = v0;
+	mapChannel.faces[v1] = v1;
+	mapChannel.faces[v2] = v2;
+
+	VRay::Vector &vert0 = mapChannel.vertices[v0];
+	VRay::Vector &vert1 = mapChannel.vertices[v1];
+	VRay::Vector &vert2 = mapChannel.vertices[v2];
 
 	switch (overrideItem.getType()) {
 		case MtlOverrideItem::itemTypeInt: {
@@ -731,9 +796,8 @@ static void setMapChannelOverrideData(const MtlOverrideItem &overrideItem, VRay:
 
 static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPrimList &primList, const int faceIndex, const PrimMaterial &primMaterial)
 {
-	if (!primMaterial.overrides.size()) {
+	if (primMaterial.overrides.empty())
 		return;
-	}
 
 	const int v0 = (faceIndex * 3) + 0;
 	const int v1 = (faceIndex * 3) + 1;
@@ -742,35 +806,29 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 	FOR_CONST_IT(MtlOverrideItems, oiIt, primMaterial.overrides) {
 		const MtlOverrideItem &overrideItem = oiIt.data();
 
-		UT_ASSERT(overrideItem.getType() != MtlOverrideItem::itemTypeNone);
-
-		if (overrideItem.getType() == MtlOverrideItem::itemTypeString) {
-			continue;
-		}
+		vassert(overrideItem.getType() != MtlOverrideItem::itemTypeNone);
 
 		const tchar *paramName = oiIt.key();
 
 		MapChannel &mapChannel = mapChannels[paramName];
 
-		// Allocate data if not yet allocated
-		if (!mapChannel.vertices.count() || !mapChannel.faces.count()) {
-			allocateOverrideMapChannel(mapChannel, primList);
+		if (overrideItem.getType() == MtlOverrideItem::itemTypeString) {
+			allocateOverrideStringChannel(mapChannel, primList);
+
+			setStringChannelOverrideData(mapChannel, faceIndex, overrideItem);
 		}
+		else {
+			allocateOverrideMapChannel(mapChannel, primList);
 
-		UT_ASSERT(v0 < mapChannel.faces.count());
-		UT_ASSERT(v1 < mapChannel.faces.count());
-		UT_ASSERT(v2 < mapChannel.faces.count());
-
-		mapChannel.faces[v0] = v0;
-		mapChannel.faces[v1] = v1;
-		mapChannel.faces[v2] = v2;
-
-		setMapChannelOverrideData(overrideItem, mapChannel.vertices, v0, v1, v2);
+			setMapChannelOverrideData(mapChannel, overrideItem, v0, v1, v2);
+		}
 	}
 }
 
 void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 {
+	stringToTableIndex.clear();
+
 	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
 	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
 	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_OVERRIDE));
@@ -781,7 +839,7 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 
 	const STY_Styler &geoStyler = objectExporter.getStyler();
 
-	GSTY_SubjectPrimGroup primSubjects(gdp, primList);
+	const GSTY_SubjectPrimGroup primSubjects(gdp, primList);
 	STY_StylerGroup primStylers;
 	primStylers.append(geoStyler, primSubjects);
 
@@ -839,6 +897,8 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 
 		primIndex++;
 	}
+
+	stringToTableIndex.clear();
 }
 
 /// Returns true if we need to skip this attribute.
@@ -966,12 +1026,12 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 			{
 				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
 				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
-					GA_Size vCnt = pst.getVertexCount();
+					const GA_Size vCnt = pst.getVertexCount();
 					if (vCnt > 2) {
-						for (GA_Size i = 1; i < vCnt - 1; ++i) {
+						for (GA_Size vIdx = 1; vIdx < vCnt - 1; ++vIdx) {
 							// polygon orientation seems to be clockwise in Houdini
-							mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i + 1))))->index;
-							mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i))))->index;
+							mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(vIdx + 1))))->index;
+							mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(vIdx))))->index;
 							mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(0))))->index;
 						}
 					}
@@ -980,12 +1040,12 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 			}
 			case GEO_PRIMPOLY:
 			{
-				GA_Size vCnt = prim->getVertexCount();
+				const GA_Size vCnt = prim->getVertexCount();
 				if (vCnt > 2) {
-					for (GA_Size i = 1; i < vCnt - 1; ++i) {
+					for (GA_Size vIdx = 1; vIdx < vCnt - 1; ++vIdx) {
 						// polygon orientation seems to be clockwise in Houdini
-						mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i + 1))))->index;
-						mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(i))))->index;
+						mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(vIdx + 1))))->index;
+						mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(vIdx))))->index;
 						mapChannel.faces[faceVertIndex++] = mapChannel.verticesSet.find(MapVertex(vaHndl.get(prim->getVertexOffset(0))))->index;
 					}
 				}
