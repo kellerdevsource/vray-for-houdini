@@ -52,6 +52,8 @@ private:
 	/// Returns mesh sample time based on animation overrides settings.
 	/// @param t Current time.
 	double getFrame(fpreal t) const;
+
+	VUtils::CharString vrsceneFile;
 };
 
 } // namespace VRayForHoudini

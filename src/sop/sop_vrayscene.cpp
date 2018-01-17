@@ -58,6 +58,7 @@ void VRayScene::updatePrimitive(const OP_Context &context)
 	const int timeDependent = evalInt("animated_preview", 0, context.getTime());
 	setTimeDependent(timeDependent);
 	OP_Options primOptions;
+	primOptions.setOptionI("cache", timeDependent);
 	for (int i = 0; i < getParmList()->getEntries(); ++i) {
 		const PRM_Parm &prm = getParm(i);
 		primOptions.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), context.getTime());

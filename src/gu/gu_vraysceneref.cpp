@@ -58,15 +58,18 @@ void VRaySceneRef::install(GA_PrimitiveFactory *primFactory)
 	theTypeId = theFactory.install(*primFactory, theFactory);
 }
 
-VRaySceneRef::VRaySceneRef()
+VRaySceneRef::VRaySceneRef() :vrsceneFile("")
 {}
 
 VRaySceneRef::VRaySceneRef(const VRaySceneRef &src)
-	: VRaySceneRefBase(src)
+	: VRaySceneRefBase(src), vrsceneFile("")
 {}
 
 VRaySceneRef::~VRaySceneRef()
-{}
+{
+	Log::getLog().debug("Deregistering %s", vrsceneFile.ptr());
+	vrsceneMan.deregisterFromCache(vrsceneFile);
+}
 
 GA_PrimitiveTypeId VRaySceneRef::typeId()
 {
@@ -177,6 +180,12 @@ int VRaySceneRef::detailRebuild()
 	vrsceneSettings.usePreview = true;
 	vrsceneSettings.previewFacesCount = 100000;
 	vrsceneSettings.cacheSettings.cacheType = VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeRam;
+
+	if (vrsceneFile != getFilepath() && m_options.getOptionI("cache")) {
+		vrsceneMan.deregisterFromCache(vrsceneFile);
+		vrsceneFile = getFilepath();
+		vrsceneMan.registerInCache(vrsceneFile);
+	}
 
 	VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(getFilepath(), &vrsceneSettings);
 	if (!vrsceneDesc) {
