@@ -89,7 +89,7 @@ void VOP::TexMulti::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 		NodeBase::getInputTypeInfoSubclass(type_info, idx);
 	}
 	else {
-		type_info.setType(VOP_SURFACE_SHADER);
+		type_info.setType(VOP_TYPE_COLOR);
 	}
 }
 
@@ -101,7 +101,7 @@ void VOP::TexMulti::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeIn
 		NodeBase::getAllowedInputTypeInfosSubclass(idx, type_infos);
 	}
 	else {
-		type_infos.append(VOP_TypeInfo(VOP_SURFACE_SHADER));
+		type_infos.append(VOP_TypeInfo(VOP_TYPE_COLOR));
 	}
 }
 
