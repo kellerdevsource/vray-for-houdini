@@ -691,12 +691,6 @@ static void allocateOverrideStringChannel(MapChannel &mapChannel, const GEOPrimL
 	mapChannel.faces = VRay::VUtils::IntRefList(numFaces);
 }
 
-/// Maps string with its index in the strings table.
-typedef VUtils::StringHashMap<int> StringToTableIndex;
-
-/// A hash for mapping string with its index in the strings table.
-static StringToTableIndex stringToTableIndex;
-
 static void setStringChannelOverrideData(MapChannel &mapChannel, int faceIndex, const MtlOverrideItem &overrideItem)
 {
 	vassert(overrideItem.getType() == MtlOverrideItem::itemTypeString);
@@ -705,8 +699,8 @@ static void setStringChannelOverrideData(MapChannel &mapChannel, int faceIndex, 
 
 	int stringTableIndex;
 
-	StringToTableIndex::const_iterator tIt = stringToTableIndex.find(strItem);
-	if (tIt != stringToTableIndex.end()) {
+	MapChannel::StringToTableIndex::const_iterator tIt = mapChannel.stringToTableIndex.find(strItem);
+	if (tIt != mapChannel.stringToTableIndex.end()) {
 		stringTableIndex = tIt.data();
 	}
 	else {
@@ -715,7 +709,7 @@ static void setStringChannelOverrideData(MapChannel &mapChannel, int faceIndex, 
 
 		stringTableIndex = mapChannel.strings.count()-1;
 
-		stringToTableIndex.insert(strItem, stringTableIndex);
+		mapChannel.stringToTableIndex.insert(strItem, stringTableIndex);
 	}
 
 	mapChannel.faces[faceIndex] = stringTableIndex;
@@ -827,11 +821,9 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 
 void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 {
-	stringToTableIndex.clear();
-
-	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
-	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
-	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_OVERRIDE));
+	const GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
+	const GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GEO_STD_ATTRIB_MATERIAL));
+	const GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_OVERRIDE));
 
 	int faceIndex = 0;
 
@@ -897,8 +889,6 @@ void MeshExporter::getMtlOverrides(MapChannels &mapChannels) const
 
 		primIndex++;
 	}
-
-	stringToTableIndex.clear();
 }
 
 /// Returns true if we need to skip this attribute.

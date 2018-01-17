@@ -86,6 +86,12 @@ struct MapChannel {
 
 	/// String data array.
 	CharStringTable strings;
+
+	/// Maps string with its index in the strings table.
+	typedef VUtils::StringHashMap<int> StringToTableIndex;
+
+	/// A hash for mapping string with its index in the strings table.
+	StringToTableIndex stringToTableIndex;
 };
 
 typedef std::unordered_map<std::string, MapChannel> MapChannels;
