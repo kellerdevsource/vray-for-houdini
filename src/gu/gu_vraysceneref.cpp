@@ -101,7 +101,7 @@ private:
 		long references;
 	};
 
-	static VUtils::StringHashMap<CacheElement> vrsceneDescCache;
+	VUtils::StringHashMap<CacheElement> vrsceneDescCache;
 
 	VUTILS_DISABLE_COPY(VrsceneDescCache)
 }vrsceneCache;
