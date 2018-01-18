@@ -802,6 +802,38 @@ VRayExporter::~VRayExporter()
 	resetOpCallbacks();
 }
 
+enum ImageFormat {
+	imageFormatPNG = 0,
+	imageFormatJPEG,
+	imageFormatTIFF,
+	imageFormatTGA,
+	imageFormatSGI,
+	imageFormatOpenEXR,
+	imageFormatVRayImage,
+	imageFormatCount,
+	imageFormatError
+};
+
+static const char* const imgFormatExt[imageFormatCount] = {
+	".png",
+	".jpg",
+	".tiff",
+	".tga",
+	".sgi",
+	".exr",
+	".vrimg"
+};
+
+static ImageFormat getImgFormat(const UT_String& filePath)
+{
+	for (int imgFormat = 0; imgFormat < static_cast<int>(imageFormatCount); ++imgFormat) {
+		if (filePath.endsWith(imgFormatExt[imgFormat])) {
+			return static_cast<ImageFormat>(imgFormat);
+		}
+	}
+	
+	return imageFormatError;
+}
 
 ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 {
@@ -833,51 +865,33 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", Attrs::PluginAttr::AttrTypeIgnore));
 	}
 	else {
-		enum ImageFormat {
-			imageFormatPNG = 0,
-			imageFormatJPEG,
-			imageFormatTIFF,
-			imageFormatTGA,
-			imageFormatSGI,
-			imageFormatOpenEXR,
-			imageFormatVRayImage,
-		};
+		UT_String filePath;
+		m_rop->evalString(filePath, "SettingsOutput_img_file_path", 0, t);
 
-		const ImageFormat imgFormat =
-			static_cast<ImageFormat>(m_rop->evalInt("SettingsOutput_img_format", 0, t));
+		UT_String dirpath, filename;
+		filePath.splitPath(dirpath, filename);
 
-		UT_String fileName;
-		m_rop->evalString(fileName, "SettingsOutput_img_file", 0, t);
+		// format dirpath
+		dirpath.append('/');
+
+		// Create output directory.
+		directoryCreator.mkpath(dirpath.buffer());
 
 		if (m_rop->evalInt("SettingsOutput_img_file_needFrameNumber", 0, 0.0)) {
 			// NOTE: Remove after AppSDK update.
-			fileName.append(".");
+			int i = filename.length() - 1;
+			while (i >= 0 && filename[i] != '.') {
+				--i;
+			}
+			filename.insert(i, ".");
 		}
 
-		fileName.append(".");
-
-		switch (imgFormat) {
-			case imageFormatPNG: fileName.append("png"); break;
-			case imageFormatJPEG: fileName.append("jpg"); break;
-			case imageFormatTIFF: fileName.append("tiff"); break;
-			case imageFormatTGA: fileName.append("tga"); break;
-			case imageFormatSGI: fileName.append("sgi"); break;
-			case imageFormatOpenEXR: fileName.append("exr"); break;
-			case imageFormatVRayImage: fileName.append("vrimg"); break;
-			default: fileName.append("tmp"); break;
+		// append default file type if not set
+		ImageFormat imgFormat = getImgFormat(filePath.buffer());
+		if (imgFormat == imageFormatError) {
+			imgFormat = imageFormatOpenEXR;
+			filePath.append(imgFormatExt[imageFormatOpenEXR]);
 		}
-
-		UT_String dirPath;
-		m_rop->evalString(dirPath, "SettingsOutput_img_dir", 0, t);
-
-		// Ensure slash at the end.
-		if (!dirPath.endsWith("/")) {
-			dirPath.append("/");
-		}
-
-		// Create output directory.
-		directoryCreator.mkpath(dirPath.buffer());
-
 		if (imgFormat == imageFormatOpenEXR ||
 			imgFormat == imageFormatVRayImage)
 		{
@@ -887,8 +901,9 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			}
 		}
 
-		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirPath.toStdString()));
-		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
+
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirpath.toStdString()));
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", filename.toStdString()));
 	}
 
 	VRay::VUtils::ValueRefList frames(1);
