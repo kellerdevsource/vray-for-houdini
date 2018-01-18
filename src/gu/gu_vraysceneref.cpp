@@ -38,6 +38,10 @@ static VrsceneDescManager vrsceneMan(NULL);
 static class VrsceneDescCache {
 public:
 	VrsceneDescCache() {}
+
+	/// Register that an instance has a reference to a specific vrscene file
+	/// @param filepath [in] - Path to VRay scene file
+	/// @param settings [in] - Custom settings for the vrscene
 	void registerInCache(const VUtils::CharString &filepath, const VrsceneSettings *settings = nullptr) {
 		if (filepath.empty()) {
 			return;
@@ -49,10 +53,21 @@ public:
 		}
 	}
 
+	/// Get cached vrscene description with default vrscene settings
+	/// @param filepath [in] - Path to VRay scene file
 	VrsceneDesc *getCachedSceneDesc(const VUtils::CharString &filepath) {
 		return vrsceneMan.getVrsceneDesc(filepath, &vrsceneDescCache[filepath.ptr()].vrsceneSettings);
 	}
+	
+	/// Get cached vrscene description with custom vrscene settings
+	/// @param filepath [in] - Path to VRay scene file
+	/// @param settings [in] - Custom settings for the vrscene
+	VrsceneDesc *getCachedSceneDesc(const VUtils::CharString &filepath, VrsceneSettings &settings) {
+		return vrsceneMan.getVrsceneDesc(filepath, &settings);
+	}
 
+	/// Check if vrscene is cached, delete it if it isn't
+	/// @param filepath [in] - Path to VRay scene file
 	void deleteUncachedResources(const VUtils::CharString &filepath) {
 		if (!filepath.empty() && (
 			vrsceneDescCache.find(filepath.ptr()) == vrsceneDescCache.end() ||
@@ -61,6 +76,8 @@ public:
 		}
 	}
 
+	/// Log a reduction in the refference count, delete vrscene description if it reaches 0
+	/// @param filepath [in] - Path to VRay scene file
 	void unregister(const VUtils::CharString &filepath) {
 		if (filepath.empty()) {
 			return;
