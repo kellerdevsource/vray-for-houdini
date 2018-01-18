@@ -35,46 +35,59 @@ enum class FlipAxisMode {
 /// *.vrscene preview data manager.
 static VrsceneDescManager vrsceneMan(NULL);
 
-struct CacheElement {
-	CacheElement() : references(0)
-	{
-		vrsceneSettings.usePreview = true;
-		vrsceneSettings.previewFacesCount = 100000;
-		vrsceneSettings.cacheSettings.cacheType = VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeRam;
+static class VrsceneDescCache {
+public:
+	VrsceneDescCache() {}
+	void registerInCache(const VUtils::CharString &filepath, const VrsceneSettings *settings = nullptr) {
+		if (filepath.empty()) {
+			return;
+		}
+
+		vrsceneDescCache[filepath.ptr()].references++;
+		if (settings) {
+			vrsceneDescCache[filepath.ptr()].vrsceneSettings = *settings;
+		}
 	}
 
-	VrsceneSettings vrsceneSettings;
-	long references;
-};
-
-static VUtils::StringHashMap<CacheElement> vrsceneDescCache;
-
-void registerInCache(const VUtils::CharString &filepath, const VrsceneSettings *settings = nullptr) {
-	if (filepath.empty()) {
-		return;
+	VrsceneDesc *getCachedSceneDesc(const VUtils::CharString &filepath) {
+		return vrsceneMan.getVrsceneDesc(filepath, &vrsceneDescCache[filepath.ptr()].vrsceneSettings);
 	}
 
-	vrsceneDescCache[filepath.ptr()].references++;
-	if (settings) {
-		vrsceneDescCache[filepath.ptr()].vrsceneSettings = *settings;
-	}
-}
-
-VrsceneDesc *getSceneDesc(const VUtils::CharString &filepath) {
-	return vrsceneMan.getVrsceneDesc(filepath, &vrsceneDescCache[filepath.ptr()].vrsceneSettings);
-}
-
-void deregister(const VUtils::CharString &filepath) {
-	if (filepath.empty()) {
-		return;
+	void deleteUncachedResources(const VUtils::CharString &filepath) {
+		if (!filepath.empty() && (
+			vrsceneDescCache.find(filepath.ptr()) == vrsceneDescCache.end() ||
+			vrsceneDescCache[filepath.ptr()].references < 1)) {
+			vrsceneMan.delVrsceneDesc(filepath);
+		}
 	}
 
-	if (--vrsceneDescCache[filepath.ptr()].references < 1) {
-		Log::getLog().debug("Deleting vrsceneDesc associated with: %s", filepath.ptr());
-		vrsceneMan.delVrsceneDesc(filepath);
-	}
+	void unregister(const VUtils::CharString &filepath) {
+		if (filepath.empty()) {
+			return;
+		}
 
-}
+		if (--vrsceneDescCache[filepath.ptr()].references < 1) {
+			vrsceneMan.delVrsceneDesc(filepath);
+		}
+
+	}
+private:
+	struct CacheElement {
+		CacheElement() : references(0)
+		{
+			vrsceneSettings.usePreview = true;
+			vrsceneSettings.previewFacesCount = 100000;
+			vrsceneSettings.cacheSettings.cacheType = VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeRam;
+		}
+
+		VrsceneSettings vrsceneSettings;
+		long references;
+	};
+
+	static VUtils::StringHashMap<CacheElement> vrsceneDescCache;
+
+	VUTILS_DISABLE_COPY(VrsceneDescCache)
+}vrsceneCache;
 
 /// Converts "flip_axis" saved as a string parameter to its corresponding
 /// FlipAxisMode enum value.
@@ -108,7 +121,7 @@ VRaySceneRef::VRaySceneRef(const VRaySceneRef &src)
 
 VRaySceneRef::~VRaySceneRef()
 {
-	deregister(vrsceneFile);
+	vrsceneCache.unregister(vrsceneFile);
 }
 
 GA_PrimitiveTypeId VRaySceneRef::typeId()
@@ -218,11 +231,11 @@ int VRaySceneRef::detailRebuild()
 	VrsceneDesc *vrsceneDesc;
 	if (m_options.getOptionI("cache")) {
 		if (vrsceneFile != getFilepath()) {
-			deregister(vrsceneFile);
+			vrsceneCache.unregister(vrsceneFile);
 			vrsceneFile = getFilepath();
-			registerInCache(vrsceneFile);
+			vrsceneCache.registerInCache(vrsceneFile);
 		}
-		vrsceneDesc = getSceneDesc(vrsceneFile);
+		vrsceneDesc = vrsceneCache.getCachedSceneDesc(vrsceneFile);
 	}
 	else {
 		VrsceneSettings vrsceneSettings;
@@ -249,6 +262,7 @@ int VRaySceneRef::detailRebuild()
 		}
 		else {
 			res = detailRebuild(vrsceneDesc, shouldFlip);
+			vrsceneCache.deleteUncachedResources(getFilepath());
 		}
 	}
 
