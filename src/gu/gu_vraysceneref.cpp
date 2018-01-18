@@ -98,7 +98,7 @@ private:
 		}
 
 		VrsceneSettings vrsceneSettings;
-		long references;
+		int references;
 	};
 
 	VUtils::StringHashMap<CacheElement> vrsceneDescCache;
@@ -129,11 +129,13 @@ void VRaySceneRef::install(GA_PrimitiveFactory *primFactory)
 	theTypeId = theFactory.install(*primFactory, theFactory);
 }
 
-VRaySceneRef::VRaySceneRef() :vrsceneFile("")
+VRaySceneRef::VRaySceneRef() 
+	: vrsceneFile("")
 {}
 
 VRaySceneRef::VRaySceneRef(const VRaySceneRef &src)
-	: VRaySceneRefBase(src), vrsceneFile("")
+	: VRaySceneRefBase(src), 
+	vrsceneFile("")
 {}
 
 VRaySceneRef::~VRaySceneRef()
