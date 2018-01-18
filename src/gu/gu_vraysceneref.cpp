@@ -35,8 +35,6 @@ enum class FlipAxisMode {
 /// *.vrscene preview data manager.
 static VrsceneDescManager vrsceneMan(NULL);
 
-static bool globalCacheFlag(true);
-
 struct CacheElement {
 	CacheElement() : references(0)
 	{
@@ -51,12 +49,15 @@ struct CacheElement {
 
 static VUtils::StringHashMap<CacheElement> vrsceneDescCache;
 
-void registerInCache(const VUtils::CharString &filepath) {
+void registerInCache(const VUtils::CharString &filepath, const VrsceneSettings *settings = nullptr) {
 	if (filepath.empty()) {
 		return;
 	}
 
 	vrsceneDescCache[filepath.ptr()].references++;
+	if (settings) {
+		vrsceneDescCache[filepath.ptr()].vrsceneSettings = *settings;
+	}
 }
 
 VrsceneDesc *getSceneDesc(const VUtils::CharString &filepath) {
@@ -215,7 +216,7 @@ int VRaySceneRef::detailRebuild()
 {
 	int res;
 	VrsceneDesc *vrsceneDesc;
-	if (globalCacheFlag) {
+	if (m_options.getOptionI("cache")) {
 		if (vrsceneFile != getFilepath()) {
 			deregister(vrsceneFile);
 			vrsceneFile = getFilepath();
