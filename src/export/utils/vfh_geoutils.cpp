@@ -118,6 +118,17 @@ VRay::VUtils::CharStringRefList CharStringTable::toRefList() const
 	return refList;
 }
 
+MapChannel::MapChannel(const MapChannel &other)
+	: type(other.type)
+	, name(std::move(other.name))
+	, vertices(other.vertices)
+	, faces(other.faces)
+	, verticesSet(std::move(other.verticesSet))
+	, stringToTableIndex(other.stringToTableIndex)
+{
+	strings.copy(other.strings);
+}
+
 GA_AttributeFilter& VRayForHoudini::GEOgetV3AttribFilter()
 {
 	static GA_AttributeFilter theV3Filter = GA_AttributeFilter::selectAnd(
