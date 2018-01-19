@@ -18,59 +18,83 @@
 #include <SYS/SYS_Math.h>
 
 #include <unordered_set>
-#include <unordered_map>
-
 
 namespace VRayForHoudini {
 
 /// Helper structure to hash float3f vertex attribute values
 struct MapVertex {
-	MapVertex():
-		index(0)
-	{ }
-	MapVertex(const UT_Vector3 &vec):
-		index(0)
-	{
-		v[0] = vec[0]; v[1] = vec[1]; v[2] = vec[2];
+	MapVertex() = default;
+
+	explicit MapVertex(const UT_Vector3 &vec) {
+		v[0] = vec[0];
+		v[1] = vec[1];
+		v[2] = vec[2];
 	}
 
-	bool operator == (const MapVertex &_v) const
-	{
-		return SYSalmostEqual(v[0],_v.v[0]) && SYSalmostEqual(v[1],_v.v[1]) && SYSalmostEqual(v[2],_v.v[2]);
+	bool operator == (const MapVertex &other) const {
+		return SYSalmostEqual(v[0],other.v[0]) && SYSalmostEqual(v[1],other.v[1]) && SYSalmostEqual(v[2],other.v[2]);
 	}
 
-	float        v[3]; ///< vertex attribute value
-	mutable int  index; ///< the index of vertex attribute value
+	float v[3] = { 0.0f }; ///< vertex attribute value
+	mutable int index = 0; ///< the index of vertex attribute value
 };
-
 
 /// Helper structure to hash MapVertex
-struct MapVertexHash
-{
-	inline std::size_t operator () (const MapVertex &_v) const
-	{
-		VRayForHoudini::Hash::MHash hash;
-		VRayForHoudini::Hash::MurmurHash3_x86_32(_v.v, 3 * sizeof(float), 42, &hash);
-		return (std::size_t)hash;
+struct MapVertexHash {
+	std::size_t operator()(const MapVertex &v) const {
+		Hash::MHash hash;
+		Hash::MurmurHash3_x86_32(v.v, 3 * sizeof(float), 42, &hash);
+		return hash;
 	}
 };
 
+typedef std::unordered_set<MapVertex, MapVertexHash> VertexSet;
 
-/// Helper structure to wrap relevant map channel properties
-struct MapChannel
+struct CharStringTable
+	: VUtils::Table<VRay::VUtils::CharString, 1>
 {
-	typedef std::unordered_set<MapVertex, MapVertexHash> VertexSet;
-
-	std::string                 name; ///< map channels name
-	VRay::VUtils::VectorRefList vertices; ///< map channel vertex data
-	VRay::VUtils::IntRefList    faces; ///< map channel face indices
-	VertexSet                   verticesSet; ///< helper to weld vertex attributes
+	VRay::VUtils::CharStringRefList toRefList() const;
 };
 
-typedef std::unordered_map<std::string, MapChannel> MapChannels;
+/// Helper structure to wrap relevant map channel properties
+struct MapChannel {
+	/// Maps string with its index in the strings table.
+	typedef VUtils::StringHashMap<int> StringToTableIndex;
 
-typedef UT_ValArray< const GEO_Primitive* > GEOPrimList;
-typedef UT_Array< const GA_Attribute * >    GEOAttribList;
+	enum MapChannelType {
+		mapChannelTypeVertex = 0,
+		mapChannelTypeString,
+	};
+
+	MapChannel() = default;
+	MapChannel(const MapChannel &other);
+	~MapChannel() = default;
+
+	MapChannelType type = mapChannelTypeVertex;
+
+	/// Map channel name.
+	std::string name;
+
+	/// Vertex array.
+	VRay::VUtils::VectorRefList vertices;
+
+	/// Face indices or an array of indices into @c strings array per-face.
+	VRay::VUtils::IntRefList faces;
+
+	/// Helper structure to weld vertex attributes.
+	VertexSet verticesSet;
+
+	/// String data array.
+	CharStringTable strings;
+
+	/// A hash for mapping string with its index in the strings table.
+	StringToTableIndex stringToTableIndex;
+};
+
+typedef VUtils::StringHashMap<MapChannel> MapChannels;
+
+typedef UT_ValArray<const GEO_Primitive*> GEOPrimList;
+typedef UT_Array<const GA_Attribute*>     GEOAttribList;
 
 /// Get the commonly used float3f attribute filter
 GA_AttributeFilter& GEOgetV3AttribFilter();

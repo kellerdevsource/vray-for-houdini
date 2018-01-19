@@ -147,7 +147,7 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 	UT_Fpreal64Array floatVals;
 	UT_StringArray stringVals;
 
-	if (!styOverrideValues.size())
+	if (styOverrideValues.empty())
 		return;
 
 	for (const auto &styOverrideValueCategory : styOverrideValues) {
@@ -175,10 +175,10 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 		else if (key.equal(Styles::Overrides::materialParameters)) {
 			for (const auto &value : values) {
 				const UT_StringHolder &attrName = value.first;
-				STY_OptionEntryHandle opt = value.second.myValue;
+				const STY_OptionEntryHandle &opt = value.second.myValue;
 
 				if (mode == overrideAppend) {
-					MtlOverrideItems::iterator moIt = primMaterial.overrides.find(attrName);
+					const MtlOverrideItems::const_iterator &moIt = primMaterial.overrides.find(attrName);
 					if (moIt != primMaterial.overrides.end())
 						continue;
 				}
@@ -280,7 +280,7 @@ void VRayForHoudini::appendMaterialOverrides(PrimMaterial &primMaterial,
 				if (keyParm && channelIIdx >= 0 && channelIIdx < 4) {
 					const char *parmName = keyParm->getToken();
 
-					MtlOverrideItems::iterator moIt = primMaterial.overrides.find(parmName);
+					const MtlOverrideItems::iterator &moIt = primMaterial.overrides.find(parmName);
 					if (moIt == primMaterial.overrides.end()) {
 						validKeys.append(key);
 					}
@@ -301,18 +301,18 @@ void VRayForHoudini::appendMaterialOverrides(PrimMaterial &primMaterial,
 						MtlOverrideItem &overrideItem = primMaterial.overrides[parmName];
 
 						fpreal channelValue = 0.0;
-						mtlOverride.import(key, channelValue);
-
-						if (keyParmType.getFloatType() == PRM_Type::PRM_FLOAT_RGBA) {
-							overrideItem.setType(MtlOverrideItem::itemTypeVector);
-							overrideItem.valueVector[channelIIdx] = channelValue;
-						}
-						else if (channelIIdx == 0) {
-							overrideItem.setType(MtlOverrideItem::itemTypeDouble);
-							overrideItem.valueDouble = channelValue;
-						}
-						else {
-							// TODO: Implement other cases / print warning.
+						if (mtlOverride.import(key, channelValue)) {
+							if (keyParmType.getFloatType() == PRM_Type::PRM_FLOAT_RGBA) {
+								overrideItem.setType(MtlOverrideItem::itemTypeVector);
+								overrideItem.valueVector[channelIIdx] = channelValue;
+							}
+							else if (channelIIdx == 0) {
+								overrideItem.setType(MtlOverrideItem::itemTypeDouble);
+								overrideItem.valueDouble = channelValue;
+							}
+							else {
+								// TODO: Implement other cases / print warning.
+							}
 						}
 					}
 					else if (keyParmType.isOrdinalType() && channelIIdx == 0) {
@@ -325,9 +325,9 @@ void VRayForHoudini::appendMaterialOverrides(PrimMaterial &primMaterial,
 						overrideItem.setType(MtlOverrideItem::itemTypeString);
 
 						UT_WorkBuffer buf;
-						mtlOverride.import(key, buf);
-
-						overrideItem.valueString = buf.buffer();
+						if (mtlOverride.import(key, buf)) {
+							overrideItem.valueString = buf.buffer();
+						}
 					}
 					else {
 						// TODO: Implement other cases / print warning.

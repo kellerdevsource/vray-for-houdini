@@ -168,32 +168,34 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 			&& attr->getName() != VFH_ATTRIB_INCANDESCENCE
 			)
 		{
-			const std::string attrName = attr->getName().toStdString();
-			if (!mapChannels.count(attrName)) {
+			const char *attrName = attr->getName().buffer();
+			if (mapChannels.find(attrName) == mapChannels.end()) {
 				MapChannel &mapChannel = mapChannels[attrName];
 				mapChannel.name = attrName;
 				// assume we can use same count as for stands
 				mapChannel.faces = strands;
 				mapChannel.vertices = VRay::VUtils::VectorRefList(nVerts);
+
 				GEOgetDataFromAttribute(attr, primList, mapChannel.vertices);
 			}
 		}
 	}
+
 	// NOTE: Channel index 0 is used for UVW coordinates if and _only_ if strand_uvw is not set.
-	if (mapChannels.size()) {
+	if (!mapChannels.empty()) {
 		VRay::VUtils::ValueRefList map_channels(mapChannels.size());
-		int channelIdx = 0;
-		for (const auto &mc : mapChannels) {
-			const MapChannel &mapChannel = mc.second;
+
+		FOR_CONST_IT (MapChannels, mcIt, mapChannels) {
+			const MapChannel &mapChannel = mcIt.data();
+
 			// Channel data
 			VRay::VUtils::ValueRefList map_channel(4);
-			map_channel[0].setDouble(channelIdx);
+			map_channel[0].setDouble(mcItIdx);
 			map_channel[1].setListInt(mapChannel.faces);
 			map_channel[2].setListVector(mapChannel.vertices);
 			map_channel[3].setString(mapChannel.name.c_str());
 
-			map_channels[channelIdx].setList(map_channel);
-			++channelIdx;
+			map_channels[mcItIdx].setList(map_channel);
 		}
 
 		pluginDesc.addAttribute(Attrs::PluginAttr("map_channels", map_channels));
