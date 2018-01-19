@@ -102,18 +102,6 @@ groupcollapsible {
     }
 
     parm {
-        name    "SettingsOutput_img_file_needFrameNumber"
-        label   "Add Frame Number"
-        type    toggle
-        default { "0" }
-        help    "Add frame number to the image file name"
-        range   { 0 1 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_pluginattr" "img_file_needFrameNumber" }
-    }
-
-    parm {
         name    "SettingsOutput_img_dontSaveRgbChannel"
         label   "Don't Save RGB Channel"
         type    toggle

@@ -434,6 +434,7 @@ int VRayVolumeGridRef::getFrame() const
 QString VRayVolumeGridRef::getCurrentPath() const
 {
 	QString loadPath = getCachePath();
+	std::string s = loadPath.toStdString();
 	if (pathContainFramePattern(loadPath)) {
 		loadPath = loadPath.replace(framePattern,
 									QString::number(VUtils::fast_ceil(getCurrentFrame())));

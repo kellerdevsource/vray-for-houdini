@@ -827,7 +827,7 @@ static const char* const imgFormatExt[imageFormatCount] = {
 static ImageFormat getImgFormat(const UT_String& filePath)
 {
 	for (int imgFormat = 0; imgFormat < static_cast<int>(imageFormatCount); ++imgFormat) {
-		if (filePath.endsWith(imgFormatExt[imgFormat])) {
+		if (filePath.endsWith(imgFormatExt[imgFormat], false)) {
 			return static_cast<ImageFormat>(imgFormat);
 		}
 	}
@@ -877,15 +877,6 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		// Create output directory.
 		directoryCreator.mkpath(dirpath.buffer());
 
-		if (m_rop->evalInt("SettingsOutput_img_file_needFrameNumber", 0, 0.0)) {
-			// NOTE: Remove after AppSDK update.
-			int i = filename.length() - 1;
-			while (i >= 0 && filename[i] != '.') {
-				--i;
-			}
-			filename.insert(i, ".");
-		}
-
 		// append default file type if not set
 		ImageFormat imgFormat = getImgFormat(filePath.buffer());
 		if (imgFormat == imageFormatError) {
@@ -900,7 +891,6 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 				pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
 			}
 		}
-
 
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirpath.toStdString()));
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", filename.toStdString()));
