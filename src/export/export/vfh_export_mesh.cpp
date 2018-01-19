@@ -145,7 +145,7 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 		VRay::VUtils::ValueRefList map_channels(map_channels_data.size());
 
 		FOR_IT (MapChannels, mcIt, map_channels_data) {
-			const tchar *map_channel_name = mcIt.key();
+			const char *map_channel_name = mcIt.key();
 			const MapChannel &map_channel_data = mcIt.data();
 
 			// Channel data

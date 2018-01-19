@@ -169,9 +169,9 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 			)
 		{
 			const char *attrName = attr->getName().buffer();
+
 			if (mapChannels.find(attrName) == mapChannels.end()) {
 				MapChannel &mapChannel = mapChannels[attrName];
-				mapChannel.name = attrName;
 				// assume we can use same count as for stands
 				mapChannel.faces = strands;
 				mapChannel.vertices = VRay::VUtils::VectorRefList(nVerts);
@@ -186,6 +186,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 		VRay::VUtils::ValueRefList map_channels(mapChannels.size());
 
 		FOR_CONST_IT (MapChannels, mcIt, mapChannels) {
+			const char *map_channel_name = mcIt.key();
 			const MapChannel &mapChannel = mcIt.data();
 
 			// Channel data
@@ -193,7 +194,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 			map_channel[0].setDouble(mcItIdx);
 			map_channel[1].setListInt(mapChannel.faces);
 			map_channel[2].setListVector(mapChannel.vertices);
-			map_channel[3].setString(mapChannel.name.c_str());
+			map_channel[3].setString(map_channel_name);
 
 			map_channels[mcItIdx].setList(map_channel);
 		}
