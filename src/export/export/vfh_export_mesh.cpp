@@ -587,7 +587,7 @@ VRay::Plugin MeshExporter::exportExtMapChannels(const MapChannels &mapChannelOve
 
 	VRay::VUtils::ValueRefList map_channels(mapChannelOverrides.size());
 
-	FOR_CONST_IT (MapChannels, mcIt, map_channels_data) {
+	FOR_CONST_IT (MapChannels, mcIt, mapChannelOverrides) {
 		const tchar *map_channel_name = mcIt.key();
 		const MapChannel &map_channel_data = mcIt.data();
 
@@ -596,13 +596,13 @@ VRay::Plugin MeshExporter::exportExtMapChannels(const MapChannels &mapChannelOve
 		if (map_channel_data.type == MapChannel::mapChannelTypeVertex) {
 			map_channel[1].setListVector(map_channel_data.vertices);
 		}
-#if EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT
 		else {
+#if EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT
 			map_channel[1].setListString(map_channel_data.strings.toRefList());
-		}
 #else
-		vassert(false && "EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT");
+			vassert(false && "EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT");
 #endif
+		}
 		map_channel[2].setListInt(map_channel_data.faces);
 
 		map_channels[mcItIdx].setList(map_channel);
