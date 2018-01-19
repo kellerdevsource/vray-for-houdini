@@ -19,6 +19,8 @@
 
 #include <unordered_set>
 
+#define EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT 0
+
 namespace VRayForHoudini {
 
 /// Helper structure to hash float3f vertex attribute values
@@ -63,7 +65,9 @@ struct MapChannel {
 
 	enum MapChannelType {
 		mapChannelTypeVertex = 0,
+#if EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT
 		mapChannelTypeString,
+#endif
 	};
 
 	MapChannel() = default;
@@ -71,9 +75,6 @@ struct MapChannel {
 	~MapChannel() = default;
 
 	MapChannelType type = mapChannelTypeVertex;
-
-	/// Map channel name.
-	std::string name;
 
 	/// Vertex array.
 	VRay::VUtils::VectorRefList vertices;

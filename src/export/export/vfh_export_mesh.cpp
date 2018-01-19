@@ -21,8 +21,6 @@
 #include <GSTY/GSTY_SubjectPrimGroup.h>
 #include <STY/STY_StylerGroup.h>
 
-#define EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT 0
-
 using namespace VRayForHoudini;
 using namespace Hash;
 
@@ -593,19 +591,19 @@ VRay::Plugin MeshExporter::exportExtMapChannels(const MapChannels &mapChannelOve
 		const tchar *map_channel_name = mcIt.key();
 		const MapChannel &map_channel_data = mcIt.data();
 
-#if !EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT
-		if (map_channel_data.type == MapChannel::mapChannelTypeString)
-			continue;
-#endif
-
 		VRay::VUtils::ValueRefList map_channel(3);
 		map_channel[0].setString(map_channel_name);
 		if (map_channel_data.type == MapChannel::mapChannelTypeVertex) {
 			map_channel[1].setListVector(map_channel_data.vertices);
 		}
+#if EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT
 		else {
 			map_channel[1].setListString(map_channel_data.strings.toRefList());
 		}
+#else
+		vassert(false && "EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT");
+#endif
+		map_channel[2].setListInt(map_channel_data.faces);
 
 		map_channels[mcItIdx].setList(map_channel);
 	}
@@ -803,24 +801,23 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 	const int v2 = (faceIndex * 3) + 2;
 
 	FOR_CONST_IT(MtlOverrideItems, oiIt, primMaterial.overrides) {
+		const char *paramName = oiIt.key();
 		const MtlOverrideItem &overrideItem = oiIt.data();
 
 		vassert(overrideItem.getType() != MtlOverrideItem::itemTypeNone);
 
-		const tchar *paramName = oiIt.key();
-
-		if (overrideItem.getType() == MtlOverrideItem::itemTypeString) {
-#if EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT
-			MapChannel &mapChannel = mapChannels[paramName];
-			allocateOverrideStringChannel(mapChannel, primList);
-			setStringChannelOverrideData(mapChannel, faceIndex, overrideItem);
-#endif
-		}
-		else {
+		if (overrideItem.getType() == MtlOverrideItem::itemTypeVector) {
 			MapChannel &mapChannel = mapChannels[paramName];
 			allocateOverrideMapChannel(mapChannel, primList);
 			setMapChannelOverrideData(mapChannel, overrideItem, v0, v1, v2);
 		}
+#if EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT
+		else if (overrideItem.getType() == MtlOverrideItem::itemTypeString) {
+			MapChannel &mapChannel = mapChannels[paramName];
+			allocateOverrideStringChannel(mapChannel, primList);
+			setStringChannelOverrideData(mapChannel, faceIndex, overrideItem);
+		}
+#endif
 	}
 }
 
@@ -942,7 +939,6 @@ int MeshExporter::getPointAttrs(MapChannels &mapChannels, SkipMapChannel skipCha
 			continue;
 
 		MapChannel &mapChannel = mapChannels[attrName];
-		mapChannel.name = attrName;
 		mapChannel.vertices = VRay::VUtils::VectorRefList(getNumVertices());
 		// We can use the same face indices as for the mesh vertices.
 		mapChannel.faces = getFaces();
@@ -982,9 +978,6 @@ int MeshExporter::getVertexAttrs(MapChannels &mapChannels, SkipMapChannel skipCh
 
 void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChannel &mapChannel)
 {
-	mapChannel.name = attr.getName();
-	Log::getLog().debug("Found map channel: %s", mapChannel.name.c_str());
-
 	GA_ROPageHandleV3 vaPageHndl(&attr);
 	GA_ROHandleV3 vaHndl(&attr);
 

@@ -120,10 +120,9 @@ VRay::VUtils::CharStringRefList CharStringTable::toRefList() const
 
 MapChannel::MapChannel(const MapChannel &other)
 	: type(other.type)
-	, name(std::move(other.name))
 	, vertices(other.vertices)
 	, faces(other.faces)
-	, verticesSet(std::move(other.verticesSet))
+	, verticesSet(other.verticesSet)
 	, stringToTableIndex(other.stringToTableIndex)
 {
 	strings.copy(other.strings);
