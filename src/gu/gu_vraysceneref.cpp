@@ -35,6 +35,229 @@ enum class FlipAxisMode {
 /// *.vrscene preview data manager.
 static VrsceneDescManager vrsceneMan(NULL);
 
+static class VrsceneDescCachePrototype {
+public:
+	VrsceneDescCachePrototype() {}
+
+	/// Register that an instance has a reference to a specific vrscene file
+	/// @param filepath [in] - Path to VRay scene file
+	/// @param settings [in] - Custom settings for the vrscene, if not provided default settings are used
+	void registerInCache(const VUtils::CharString &filepath, const VrsceneSettings *settings = nullptr) {
+		if (filepath.empty()) {
+			return;
+		}
+
+		if (!settings) {
+			VrsceneSettings vrsceneSettings;
+			vrsceneSettings = getDefaultSettings();
+
+			vrsceneCache[filepath.ptr()][vrsceneSettings].references++;
+			Log::getLog().debug("references after increment: %d", vrsceneCache[filepath.ptr()][vrsceneSettings].references);
+		}
+		else {
+			vrsceneCache[filepath.ptr()][*settings].references++;
+			Log::getLog().debug("references after increment: %d", vrsceneCache[filepath.ptr()][*settings].references);
+		}
+	}
+
+	GU_Detail* getDetail(const VUtils::CharString &filepath,
+							const fpreal frame, 
+							UT_BoundingBox &bbox,
+							const VrsceneSettings *settings = nullptr, 
+							const bool shouldFlip = false) {
+
+		VrsceneSettings vrsceneSettings;
+		if (settings) {
+			vrsceneSettings = *settings;
+		}
+		else {
+			vrsceneSettings = getDefaultSettings();
+		}
+
+		VrsceneDesc *tempDesc = vrsceneMan.getVrsceneDesc(filepath, &vrsceneSettings);
+
+		if (!tempDesc) {
+			return nullptr;
+		}
+
+		if (vrsceneCache[filepath.ptr()][vrsceneSettings].vrsceneDesc != tempDesc) {
+			return rebuildDetail(filepath, vrsceneSettings, frame, tempDesc, bbox, shouldFlip);
+		}
+		else if (!vrsceneCache[filepath.ptr()][vrsceneSettings].frameDetailMap[frame]) {
+			return buildDetailForFrame(filepath, vrsceneSettings, frame, tempDesc, bbox, shouldFlip);
+		}
+
+		return vrsceneCache[filepath.ptr()][vrsceneSettings].frameDetailMap[frame];
+	}
+
+	/// Checks if filepath and Vrscene Settings pair is cached, 
+	/// if it is not removes cached vrscene description in vrscene manager asociated with the filepath
+	void deleteUncachedResources(const VUtils::CharString &filepath, const VrsceneSettings *settings = nullptr) {
+		VrsceneSettings vrsceneSettings;
+		if (settings) {
+			vrsceneSettings = *settings;
+		}
+		else {
+			vrsceneSettings = getDefaultSettings();
+		}
+		if (!filepath.empty() && (
+			vrsceneCache.find(filepath.ptr()) == vrsceneCache.end() ||
+			vrsceneCache[filepath.ptr()][vrsceneSettings].references < 1)) {
+			vrsceneMan.delVrsceneDesc(filepath);
+			Log::getLog().debug("deleting uncached vrscene: %s", filepath.ptr());
+		}
+	}
+
+	/// Unregister a specific filepath and Vrscene settings pair from cache
+	/// deletes cached data upon reference count reaching 0
+	void unregister(const VUtils::CharString &filepath, const VrsceneSettings *settings = nullptr) {
+		if (filepath.empty()) {
+			return;
+		}
+		VrsceneSettings vrsceneSettings;
+		if (settings) {
+			vrsceneSettings = *settings;
+		}
+		else {
+			vrsceneSettings = getDefaultSettings();
+		}
+		int references = vrsceneCache[filepath.ptr()][vrsceneSettings].references;
+		if (--vrsceneCache[filepath.ptr()][vrsceneSettings].references < 1) {
+			Log::getLog().debug("deleting cached vrscene: %s", filepath.ptr());
+			vrsceneMan.delVrsceneDesc(filepath);
+		}
+
+	}
+
+private:
+
+	/// Generate default Vrscene Settings
+	static VrsceneSettings& getDefaultSettings() {
+		VrsceneSettings tempSettings;
+		tempSettings.usePreview = true;
+		tempSettings.previewFacesCount = 100000;
+		tempSettings.cacheSettings.cacheType = VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeRam;
+
+		return tempSettings;
+	}
+
+	/// Reaquire vrscene Desctiption due to it being invalidated
+	GU_Detail* rebuildDetail(const VUtils::CharString &filepath,
+								const VrsceneSettings &settings, 
+								const fpreal frame, 
+								VrsceneDesc *desc, 
+								UT_BoundingBox &bbox,
+								const bool shouldFlip = false) {
+
+		vrsceneCache[filepath.ptr()][settings].frameDetailMap.empty();
+		vrsceneCache[filepath.ptr()][settings].vrsceneDesc = desc;
+
+		//Build Detail for specific frame
+		return buildDetailForFrame(filepath, settings, frame, desc, bbox, shouldFlip);
+	}
+
+	GU_Detail* buildDetailForFrame(const VUtils::CharString &filepath, 
+							const VrsceneSettings &settings, 
+							const fpreal frame, 
+							VrsceneDesc *desc,
+							UT_BoundingBox &bbox,
+							const bool shouldFlip = false) {
+
+		// Detail for the mesh
+		GU_Detail *meshDetail = new GU_Detail();
+
+		int meshVertexOffset = 0;
+		bbox.initBounds();
+
+		FOR_IT(VrsceneObjects, obIt, desc->m_objects) {
+			VrsceneObjectBase *ob = obIt.data();
+			if (ob && ob->getType() == ObjectTypeNode) {
+				const VUtils::TraceTransform &tm = ob->getTransform(frame);
+
+				VrsceneObjectNode     *node = static_cast<VrsceneObjectNode*>(ob);
+				VrsceneObjectDataBase *nodeData = node->getData();
+				if (nodeData && nodeData->getDataType() == ObjectDataTypeMesh) {
+					VrsceneObjectDataMesh *mesh = static_cast<VrsceneObjectDataMesh*>(nodeData);
+
+					const VUtils::VectorRefList &vertices = mesh->getVertices(frame);
+					const VUtils::IntRefList    &faces = mesh->getFaces(frame);
+
+					// Allocate the points, this is the offset of the first one
+					GA_Offset pointOffset = meshDetail->appendPointBlock(vertices.count());
+
+					// Iterate through points by their offsets
+					for (int v = 0; v < vertices.count(); ++v, ++pointOffset) {
+						VUtils::Vector vert = tm * vertices[v];
+						if (shouldFlip) {
+							vert = flipMatrixZY * vert;
+						}
+
+						const UT_Vector3 utVert(vert.x, vert.y, vert.z);
+
+						bbox.enlargeBounds(utVert);
+
+						meshDetail->setPos3(pointOffset, utVert);
+					}
+
+					for (int f = 0; f < faces.count(); f += 3) {
+						GU_PrimPoly *poly = GU_PrimPoly::build(meshDetail, 3, GU_POLY_CLOSED, 0);
+						for (int c = 0; c < 3; ++c) {
+							poly->setVertexPoint(c, meshVertexOffset + faces[f + c]);
+						}
+						poly->reverse();
+					}
+
+					meshVertexOffset += vertices.count();
+				}
+			}
+		}
+
+		vrsceneCache[filepath.ptr()][settings].frameDetailMap[frame] = meshDetail;
+		//Log::getLog().debug("Caching: %s, at frame %d, with hash: %d", filepath.ptr(), frame, vrsceneCache[filepath.ptr()].hash(settings));
+		//Log::getLog().debug("size of cache element map: %d", vrsceneCache[filepath.ptr()].size());
+		return meshDetail;
+	}
+
+	struct CacheElement {
+		CacheElement()
+			: references(0)
+			, vrsceneDesc(nullptr)
+		{}
+
+		bool operator == (const CacheElement &other) {
+			return (references == other.references && 
+					vrsceneDesc == other.vrsceneDesc);
+		}
+
+		int references;
+		VUtils::HashMap<fpreal, GU_Detail*> frameDetailMap;
+		VrsceneDesc *vrsceneDesc;
+	};
+	struct VrsceneSettingsHasher {
+		uint32 operator()(const VrsceneSettings &key) const {
+			uint32 data = -1;
+			data += key.usePreview;
+			data >> 3;
+			data += key.previewFacesCount;
+			data >> 3;
+			data += key.minPreviewFaces;
+			data >> 3;
+			data += key.maxPreviewFaces;
+			data >> 3;
+			data += key.previewFacesCount;
+			data >> 3;
+			data += key.previewType;
+			data >> 3;
+			data += key.previewFlags;
+			data >> 3;
+			return data;
+		}
+	};
+	VUtils::StringHashMap<VUtils::HashMap<VrsceneSettings, CacheElement, VrsceneSettingsHasher>> vrsceneCache;
+
+	VUTILS_DISABLE_COPY(VrsceneDescCachePrototype)
+}vrsCache;
+
 static class VrsceneDescCache {
 public:
 	VrsceneDescCache() {}
@@ -140,7 +363,7 @@ VRaySceneRef::VRaySceneRef(const VRaySceneRef &src)
 
 VRaySceneRef::~VRaySceneRef()
 {
-	vrsceneCache.unregister(vrsceneFile);
+	vrsCache.unregister(vrsceneFile);
 }
 
 GA_PrimitiveTypeId VRaySceneRef::typeId()
@@ -247,21 +470,11 @@ int VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 int VRaySceneRef::detailRebuild()
 {
 	int res;
-	VrsceneDesc *vrsceneDesc;
-	if (m_options.getOptionI("cache")) {
-		if (vrsceneFile != getFilepath()) {
-			vrsceneCache.unregister(vrsceneFile);
-			vrsceneFile = getFilepath();
-			vrsceneCache.registerInCache(vrsceneFile);
-		}
-		vrsceneDesc = vrsceneCache.getCachedSceneDesc(vrsceneFile);
-	}
-	else {
-		VrsceneSettings vrsceneSettings;
-		vrsceneSettings.usePreview = true;
-		vrsceneSettings.previewFacesCount = 100000;
-		vrsceneSettings.cacheSettings.cacheType = VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeRam;
-		vrsceneDesc = vrsceneMan.getVrsceneDesc(getFilepath(), &vrsceneSettings);
+	VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(getFilepath());
+	if (vrsceneFile != getFilepath()) {
+		vrsCache.unregister(vrsceneFile);
+		vrsceneFile = getFilepath();
+		vrsCache.registerInCache(vrsceneFile);
 	}
 
 	if (!vrsceneDesc) {
@@ -280,8 +493,11 @@ int VRaySceneRef::detailRebuild()
 			res = true;
 		}
 		else {
-			res = detailRebuild(vrsceneDesc, shouldFlip);
-			vrsceneCache.deleteUncachedResources(getFilepath());
+			// nullptr to simply generate the default vrsceneSettings
+			m_detail.allocateAndSet(vrsCache.getDetail(vrsceneFile, getFrame(getCurrentFrame()), m_bbox, nullptr, shouldFlip), false);
+			res = true;
+			//res = detailRebuild(vrsceneDesc, shouldFlip);
+			vrsCache.deleteUncachedResources(getFilepath());
 		}
 	}
 
