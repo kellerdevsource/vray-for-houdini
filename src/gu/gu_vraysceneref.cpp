@@ -162,14 +162,15 @@ private:
 
 	struct VrsceneSettingsHasher {
 		uint32 operator()(const VrsceneSettings &key) const {
-			uint32 data = 25303;
-			uint32 temp = key.usePreview 
-				^ key.previewFacesCount 
-				^ key.minPreviewFaces 
-				^ key.maxPreviewFaces 
-				^ key.previewType 
-				^ key.previewFlags;
-			VRayForHoudini::Hash::MurmurHash3_x86_32(&temp, sizeof(temp), data, &data);
+			uint32 data = 15337871; 
+			uint32 temp = (15337871 ^ key.usePreview) * 15338881;
+			temp = (temp ^ key.previewFacesCount) * 15338881;
+			temp = (temp ^ key.minPreviewFaces) * 15338881;
+			temp = (temp ^ key.maxPreviewFaces) * 15338881;
+			temp = (temp ^ key.previewType) * 15338881;
+			temp = (temp ^ key.previewFlags) * 15338881;
+			VRayForHoudini::Hash::MurmurHash3_x86_32(&temp, sizeof(temp), 15337871, &data);
+			Log::getLog().debug("Hash is: %d", data);
 			return data;
 		}
 	};
