@@ -51,15 +51,26 @@ namespace std {
 
 template <> struct hash<VRayForHoudini::VolumeCacheKey> {
 	size_t operator()(const VRayForHoudini::VolumeCacheKey &volumeKey) const {
-		VRayForHoudini::Hash::MHash hash = 42;
+		using namespace VRayForHoudini::Hash;
 
+		MHash pathHash = 42;
 		QByteArray path = volumeKey.path.toLocal8Bit();
-		VRayForHoudini::Hash::MurmurHash3_x86_32(path.constData(), path.length(), hash, &hash);
+		MurmurHash3_x86_32(path.constData(), path.length(), pathHash, &pathHash);
 
+		MHash mapHash = 42;
 		QByteArray map = volumeKey.map.toLocal8Bit();
-		VRayForHoudini::Hash::MurmurHash3_x86_32(map.constData(), map.length(), hash, &hash);
+		MurmurHash3_x86_32(map.constData(), map.length(), mapHash, &mapHash);
 
-		VRayForHoudini::Hash::MurmurHash3_x86_32(&volumeKey.flipYZ, sizeof(volumeKey.flipYZ), hash, &hash);
+#pragma pack(push, 1)
+		struct VolumeCacheKeyHash {
+			MHash pathHash;
+			MHash mapHash;
+			int flipYZ;
+		} volumeCacheKeyHash = { pathHash, mapHash, volumeKey.flipYZ };
+#pragma pack(pop)
+
+		MHash hash = 42;
+		MurmurHash3_x86_32(&volumeCacheKeyHash, sizeof(VolumeCacheKeyHash), hash, &hash);
 
 		return hash;
 	}
