@@ -34,10 +34,15 @@ void VRayScene::setTimeDependent()
 		still,
 	};
 
-	bool previewMeshAnimated =
-		evalInt("anim_override", 0, 0.0) ? 
-		static_cast<VRaySceneAnimType>(evalInt("anim_type", 0, 0.0)) != VRaySceneAnimType::still : true 
-		&& evalInt("animated_preview", 0, 0.0);
+	bool previewMeshAnimated;
+	if (evalInt("anim_override", 0, 0.0)) {
+		previewMeshAnimated = static_cast<VRaySceneAnimType>(evalInt("anim_type", 0, 0.0)) != VRaySceneAnimType::still;
+	}
+	else {
+		previewMeshAnimated = true;
+	}
+
+	previewMeshAnimated = evalInt("animated_preview", 0, 0.0) && previewMeshAnimated;
 
 	flags().setTimeDep(previewMeshAnimated);
 }

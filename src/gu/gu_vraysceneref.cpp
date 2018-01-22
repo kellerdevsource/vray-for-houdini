@@ -49,7 +49,7 @@ public:
 			return;
 		}
 
-		VrsceneSettings vrsceneSettings = vrsceneSettings = getDefaultSettings();
+		VrsceneSettings vrsceneSettings = getDefaultSettings();
 
 		vrsceneCache[filepath.ptr()][vrsceneSettings].references++;
 	}
@@ -81,10 +81,12 @@ public:
 	void deleteUncachedResources(const VUtils::CharString &filepath, const VrsceneSettings *settings = nullptr) {
 		VrsceneSettings vrsceneSettings = getCorrectSettings(settings);
 		
-		if (!filepath.empty() && (
-			vrsceneCache.find(filepath.ptr()) == vrsceneCache.end() ||
-			vrsceneCache[filepath.ptr()][vrsceneSettings].references < 1)) {
-			vrsceneMan.delVrsceneDesc(filepath);
+		if (!filepath.empty()) {
+			auto iterator = vrsceneCache.find(filepath.ptr());
+			if ( iterator == vrsceneCache.end() ||
+				iterator.data()[vrsceneSettings].references < 1) {
+				vrsceneMan.delVrsceneDesc(filepath);
+			}
 		}
 	}
 
@@ -147,30 +149,37 @@ private:
 	struct CacheElement {
 		CacheElement()
 			: references(0)
-			, vrsceneDesc(nullptr)
 		{}
 
 		bool operator == (const CacheElement &other) {
-			return (references == other.references && 
-					vrsceneDesc == other.vrsceneDesc);
+			return references == other.references;
 		}
 
 		int references;
 		VUtils::HashMap<fpreal, GU_Detail*> frameDetailMap;
-		VrsceneDesc *vrsceneDesc;
 	};
 
 	struct VrsceneSettingsHasher {
 		uint32 operator()(const VrsceneSettings &key) const {
-			uint32 data = 15337871; 
-			uint32 temp = (15337871 ^ key.usePreview) * 15338881;
-			temp = (temp ^ key.previewFacesCount) * 15338881;
-			temp = (temp ^ key.minPreviewFaces) * 15338881;
-			temp = (temp ^ key.maxPreviewFaces) * 15338881;
-			temp = (temp ^ key.previewType) * 15338881;
-			temp = (temp ^ key.previewFlags) * 15338881;
-			VRayForHoudini::Hash::MurmurHash3_x86_32(&temp, sizeof(temp), 15337871, &data);
-			Log::getLog().debug("Hash is: %d", data);
+#pragma pack(push, 1)
+			struct SettingsKey {
+				int v1;
+				int v2;
+				int v3;
+				int v4;
+				int v5;
+				int v6;
+			} settingsKey = { key.usePreview
+				, key.previewFacesCount
+				, key.minPreviewFaces
+				, key.maxPreviewFaces
+				, key.previewType
+				, key.previewFlags 
+			};
+#pragma pack(pop)
+
+			Hash::MHash data;
+			Hash::MurmurHash3_x86_32(&settingsKey, sizeof(SettingsKey), 42, &data);
 			return data;
 		}
 	};
