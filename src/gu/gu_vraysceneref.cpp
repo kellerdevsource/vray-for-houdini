@@ -169,7 +169,7 @@ private:
 				^ key.maxPreviewFaces 
 				^ key.previewType 
 				^ key.previewFlags;
-			VRayForHoudini::Hash::MurmurHash3_x86_32(&temp, sizeof(key.usePreview), data, &data);
+			VRayForHoudini::Hash::MurmurHash3_x86_32(&temp, sizeof(temp), data, &data);
 			return data;
 		}
 	};
