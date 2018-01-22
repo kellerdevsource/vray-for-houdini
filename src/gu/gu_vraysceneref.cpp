@@ -13,6 +13,7 @@
 #include "vfh_defines.h"
 #include "vfh_log.h"
 #include "gu_vraysceneref.h"
+#include "vfh_hashes.h"
 
 #include <vrscene_preview.h>
 
@@ -35,9 +36,9 @@ enum class FlipAxisMode {
 /// *.vrscene preview data manager.
 static VrsceneDescManager vrsceneMan(NULL);
 
-static class VrsceneDescCachePrototype {
+static class VrsceneDescCache {
 public:
-	VrsceneDescCachePrototype() {}
+	VrsceneDescCache() {}
 
 	/// Register that an instance has a reference to a specific vrscene file
 	/// @param filepath [in] - Path to VRay scene file
@@ -52,16 +53,16 @@ public:
 			vrsceneSettings = getDefaultSettings();
 
 			vrsceneCache[filepath.ptr()][vrsceneSettings].references++;
-			Log::getLog().debug("Incrementing to %d references for resource: %s", vrsceneCache[filepath.ptr()][vrsceneSettings].references, filepath.ptr());
-
 		}
 		else {
 			vrsceneCache[filepath.ptr()][*settings].references++;
-			Log::getLog().debug("Incrementing to %d references for resource: %s", vrsceneCache[filepath.ptr()][*settings].references, filepath.ptr());
-
 		}
 	}
 
+	/// Provide cached detail, if it is outdated returns nullptr
+	/// @param filepath[in] - Path to VRay scene file, used as ID for map
+	/// @param frame[in] - Frame at which provided detail is required
+	/// @param settings[in] - Settings for the cached data, used as seconday ID
 	GU_Detail* getDetail(const VUtils::CharString &filepath,
 							const fpreal frame,
 							const VrsceneSettings *settings = nullptr) {
@@ -100,7 +101,6 @@ public:
 			vrsceneCache.find(filepath.ptr()) == vrsceneCache.end() ||
 			vrsceneCache[filepath.ptr()][vrsceneSettings].references < 1)) {
 			vrsceneMan.delVrsceneDesc(filepath);
-			Log::getLog().debug("Deleting uncached resource: %s", filepath.ptr());
 		}
 	}
 
@@ -121,11 +121,15 @@ public:
 		if (--vrsceneCache[filepath.ptr()][vrsceneSettings].references < 1) {
 			deleteFrameData(filepath, vrsceneSettings);
 			vrsceneMan.delVrsceneDesc(filepath);
-			Log::getLog().debug("deleting cached resource: %s", filepath.ptr());
 		}
 
 	}
 
+	/// Save GU_Detail for specific filepath and vrscene settings pair
+	/// @param filepath[in] - Path to VRay scene file, used as ID for map
+	/// @param frame[in] - Frame at which provided detail is required
+	/// @param detail [in] - GU_Detail pointer to be cached
+	/// @param settings[in] - Settings for the cached data, used as seconday ID
 	void setDetail(const VUtils::CharString &filepath, const fpreal &frame, GU_Detail* detail, const VrsceneSettings *settings = nullptr) {
 		if (!detail || filepath.empty()) {
 			return;
@@ -143,6 +147,9 @@ public:
 	}
 
 private:
+	/// Delete all cached data associated with a given set of filepath + vrscene settings
+	/// @param filepath[in] - Path to VRay scene file, used as ID for map
+	/// @param settings[in] - Settings for the cached data, used as seconday ID
 	void deleteFrameData(const VUtils::CharString &filepath, const VrsceneSettings &settings) {
 		for (auto it = vrsceneCache[filepath.ptr()][settings].frameDetailMap.begin(); 
 			it != vrsceneCache[filepath.ptr()][settings].frameDetailMap.end(); 
@@ -152,6 +159,7 @@ private:
 			it.data() = nullptr;
 		}
 	}
+
 	/// Generate default Vrscene Settings
 	static VrsceneSettings getDefaultSettings() {
 		VrsceneSettings tempSettings;
@@ -161,7 +169,6 @@ private:
 
 		return tempSettings;
 	}
-
 
 	struct CacheElement {
 		CacheElement()
@@ -178,28 +185,23 @@ private:
 		VUtils::HashMap<fpreal, GU_Detail*> frameDetailMap;
 		VrsceneDesc *vrsceneDesc;
 	};
+
 	struct VrsceneSettingsHasher {
 		uint32 operator()(const VrsceneSettings &key) const {
-			uint32 data = -1;
-			data += key.usePreview;
-			data >>=3;
-			data += key.previewFacesCount;
-			data >>= 3;
-			data += key.minPreviewFaces;
-			data >>= 3;
-			data += key.maxPreviewFaces;
-			data >>= 3;
-			data += key.previewFacesCount;
-			data >>= 3;
-			data += key.previewType;
-			data >>= 3;
-			data += key.previewFlags;
-			return data >> 3;
+			uint32 data = 25303;
+			VRayForHoudini::Hash::MurmurHash3_x86_32(&key.usePreview, sizeof(key.usePreview), data, &data);
+			VRayForHoudini::Hash::MurmurHash3_x86_32(&key.previewFacesCount, sizeof(key.previewFacesCount), data, &data);
+			VRayForHoudini::Hash::MurmurHash3_x86_32(&key.minPreviewFaces, sizeof(key.minPreviewFaces), data, &data);
+			VRayForHoudini::Hash::MurmurHash3_x86_32(&key.maxPreviewFaces, sizeof(key.maxPreviewFaces), data, &data);
+			VRayForHoudini::Hash::MurmurHash3_x86_32(&key.previewType, sizeof(key.previewType), data, &data);
+			VRayForHoudini::Hash::MurmurHash3_x86_32(&key.previewFlags, sizeof(key.previewFlags), data, &data);
+			return data;
 		}
 	};
+
 	VUtils::StringHashMap<VUtils::HashMap<VrsceneSettings, CacheElement, VrsceneSettingsHasher>> vrsceneCache;
 
-	VUTILS_DISABLE_COPY(VrsceneDescCachePrototype)
+	VUTILS_DISABLE_COPY(VrsceneDescCache)
 }vrsCache;
 
 /// Converts "flip_axis" saved as a string parameter to its corresponding
@@ -230,8 +232,8 @@ VRaySceneRef::VRaySceneRef()
 {}
 
 VRaySceneRef::VRaySceneRef(const VRaySceneRef &src)
-	: VRaySceneRefBase(src), 
-	vrsceneFile("")
+	: VRaySceneRefBase(src)
+	, vrsceneFile("")
 {}
 
 VRaySceneRef::~VRaySceneRef()
@@ -348,7 +350,6 @@ int VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 int VRaySceneRef::detailRebuild()
 {
 	int res;
-	VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(getFilepath());
 	if (m_options.getOptionI("cache")) {
 		if (vrsceneFile != getFilepath()) {
 			vrsCache.unregister(vrsceneFile);
@@ -363,6 +364,7 @@ int VRaySceneRef::detailRebuild()
 		}
 	}
 
+	VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(getFilepath());
 	if (!vrsceneDesc) {
 		detailClear();
 		res = true;

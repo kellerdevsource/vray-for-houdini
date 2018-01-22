@@ -30,10 +30,6 @@ protected:
 	// From NodePackedBase.
 	void setTimeDependent() VRAY_OVERRIDE;
 	void updatePrimitive(const OP_Context &context) VRAY_OVERRIDE;
-	/// Set time dependency of vray scene
-	/// @param state[in] - Desired state of time dependency
-	void setTimeDependent(bool state);
-
 };
 
 } // namespace SOP

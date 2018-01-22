@@ -43,12 +43,9 @@ void VRayScene::setTimeDependent()
 
 	flags().setTimeDep(previewMeshAnimated);
 #else
-	NodePackedBase::setTimeDependent();
+	//NodePackedBase::setTimeDependent();
+	flags().setTimeDep(true);
 #endif
-}
-
-void VRayScene::setTimeDependent(bool state) {
-	flags().setTimeDep(state);
 }
 
 void VRayScene::updatePrimitive(const OP_Context &context)
@@ -56,7 +53,6 @@ void VRayScene::updatePrimitive(const OP_Context &context)
 	// Set the options on the primitive
 
 	const int timeDependent = evalInt("animated_preview", 0, context.getTime());
-	setTimeDependent(timeDependent);
 	OP_Options primOptions;
 	primOptions.setOptionI("cache", timeDependent);
 	for (int i = 0; i < getParmList()->getEntries(); ++i) {
