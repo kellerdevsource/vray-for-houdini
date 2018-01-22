@@ -63,11 +63,13 @@ static MHash getMapChannelsHash(VRay::VUtils::ValueRefList &mapChannels)
 		const MHash vertHash = getVRayValueHash(mapChannel[1].getListVector());
 		const MHash faceHash = getVRayValueHash(mapChannel[2].getListInt());
 
+#pragma pack(push, 1)
 		struct MapChannelsHash {
 			MHash nameHash;
 			MHash vertHash;
 			MHash faceHash;
 		} mapChannelsHash = { nameHash, vertHash, faceHash };
+#pragma pack(pop)
 
 		MurmurHash3_x86_32(&mapChannelsHash, sizeof(MapChannelsHash), 42, &hash);
 	}
