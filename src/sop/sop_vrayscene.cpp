@@ -27,9 +27,6 @@ void VRayScene::setPluginType()
 
 void VRayScene::setTimeDependent()
 {
-#if 0
-	// TODO: Implement animation caching and enable this.
-
 	enum class VRaySceneAnimType {
 		loop = 0,
 		once,
@@ -37,15 +34,10 @@ void VRayScene::setTimeDependent()
 		still,
 	};
 
-	previewMeshAnimated =
-		static_cast<VRaySceneAnimType>(evalInt("anim_type", 0, 0.0)) != VRaySceneAnimType::still;
-
+	bool previewMeshAnimated =
+		static_cast<VRaySceneAnimType>(evalInt("anim_type", 0, 0.0)) != VRaySceneAnimType::still && evalInt("animated_preview", 0, 0.0);
 
 	flags().setTimeDep(previewMeshAnimated);
-#else
-	//NodePackedBase::setTimeDependent();
-	flags().setTimeDep(true);
-#endif
 }
 
 void VRayScene::updatePrimitive(const OP_Context &context)
