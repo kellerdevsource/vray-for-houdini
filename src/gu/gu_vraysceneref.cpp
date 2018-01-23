@@ -39,17 +39,40 @@ static VrsceneDescManager vrsceneMan(NULL);
 /// Cache for GU_Detail for different frames, VRay scenes and VRay scene settings
 static class DetailCache {
 public:
+	struct SettingsWrapper {
+		SettingsWrapper()
+			: flipAxis(0)
+		{}
+
+		SettingsWrapper(const VrsceneSettings &other)
+			: settings(other)
+			, flipAxis(0)
+		{}
+
+		bool operator == (const SettingsWrapper &other) const {
+			return (settings == other.settings &&
+				flipAxis == other.flipAxis);
+		}
+
+		bool operator !=(const SettingsWrapper &other) {
+			return !(*this == other);
+		}
+
+		VrsceneSettings settings;
+		int flipAxis;
+	};
+
 	DetailCache() {}
 
 	/// Register that an instance has a reference to a specific vrscene file
 	/// @param filepath [in] - Path to VRay scene file
 	/// @param settings [in] - Custom settings for the vrscene, if not provided default settings are used
-	void registerInCache(const VUtils::CharString &filepath, const VrsceneSettings *settings = nullptr) {
+	void registerInCache(const VUtils::CharString &filepath, const SettingsWrapper *settings = nullptr) {
 		if (filepath.empty()) {
 			return;
 		}
 
-		VrsceneSettings vrsceneSettings = getDefaultSettings();
+		SettingsWrapper vrsceneSettings = getDefaultSettings();
 
 		vrsceneCache[filepath.ptr()][vrsceneSettings].references++;
 	}
@@ -60,10 +83,10 @@ public:
 	/// @param settings[in] - Settings for the cached data, used as seconday ID
 	GU_Detail* getDetail(const VUtils::CharString &filepath,
 							const fpreal frame,
-							const VrsceneSettings *settings = nullptr) {
-		VrsceneSettings vrsceneSettings = getCorrectSettings(settings);
+							const SettingsWrapper *settings = nullptr) {
+		SettingsWrapper vrsceneSettings = getCorrectSettings(settings);
 		
-		VrsceneDesc *tempDesc = vrsceneMan.getVrsceneDesc(filepath, &vrsceneSettings);
+		VrsceneDesc *tempDesc = vrsceneMan.getVrsceneDesc(filepath, &vrsceneSettings.settings);
 
 		if (tempDesc) {
 			int key = frame * 1000;
@@ -78,14 +101,13 @@ public:
 
 	/// Checks if filepath and Vrscene Settings pair is cached, 
 	/// if it is not removes cached vrscene description in vrscene manager asociated with the filepath
-	void deleteUncachedResources(const VUtils::CharString &filepath, const VrsceneSettings *settings = nullptr) {
-		VrsceneSettings vrsceneSettings = getCorrectSettings(settings);
+	void deleteUncachedResources(const VUtils::CharString &filepath, const SettingsWrapper *settings = nullptr) {
+		SettingsWrapper vrsceneSettings = getCorrectSettings(settings);
 		
 		if (!filepath.empty()) {
 			VUtils::StringHashMap<CacheElementMap>::iterator iterator = vrsceneCache.find(filepath.ptr());
 			if ( iterator == vrsceneCache.end() ||
 				iterator.data()[vrsceneSettings].references < 1) {
-				Log::getLog().debug("deleting: %s", filepath.ptr());
 				vrsceneMan.delVrsceneDesc(filepath);
 			}
 		}
@@ -93,16 +115,15 @@ public:
 
 	/// Unregister a specific filepath and Vrscene settings pair from cache
 	/// deletes cached data upon reference count reaching 0
-	void unregister(const VUtils::CharString &filepath, const VrsceneSettings *settings = nullptr) {
+	void unregister(const VUtils::CharString &filepath, const SettingsWrapper *settings = nullptr) {
 		if (filepath.empty()) {
 			return;
 		}
-		VrsceneSettings vrsceneSettings = getCorrectSettings(settings);
+		SettingsWrapper vrsceneSettings = getCorrectSettings(settings);
 
 		CacheElementMap &tempVal = vrsceneCache[filepath.ptr()];
 		if (--tempVal[vrsceneSettings].references < 1) {
 			deleteFrameData(filepath, vrsceneSettings);
-			Log::getLog().debug("deleting: %s", filepath.ptr());
 			vrsceneMan.delVrsceneDesc(filepath);
 			tempVal.erase(vrsceneSettings);
 			if (tempVal.empty())
@@ -116,16 +137,16 @@ public:
 	/// @param frame[in] - Frame at which provided detail is required
 	/// @param detail [in] - GU_Detail pointer to be cached
 	/// @param settings[in] - Settings for the cached data, used as seconday ID
-	void setDetail(const VUtils::CharString &filepath, const fpreal &frame, GU_Detail &detail, const VrsceneSettings *settings = nullptr) {
+	void setDetail(const VUtils::CharString &filepath, const fpreal &frame, GU_Detail &detail, const SettingsWrapper *settings = nullptr) {
 		vassert(!filepath.empty());
 
-		VrsceneSettings vrsceneSettings = getCorrectSettings(settings);
+		SettingsWrapper vrsceneSettings = getCorrectSettings(settings);
 		int key = frame * 1000;
 		vrsceneCache[filepath.ptr()][vrsceneSettings].frameDetailMap[key] = &detail;
 	}
 
 	/// Generate default Vrscene Settings
-	static VrsceneSettings getDefaultSettings() {
+	static SettingsWrapper getDefaultSettings() {
 		VrsceneSettings tempSettings;
 		tempSettings.usePreview = true;
 		tempSettings.previewFacesCount = 100000;
@@ -138,7 +159,7 @@ private:
 	/// Delete all cached data associated with a given set of filepath + vrscene settings
 	/// @param filepath[in] - Path to VRay scene file, used as ID for map
 	/// @param settings[in] - Settings for the cached data, used as seconday ID
-	void deleteFrameData(const VUtils::CharString &filepath, const VrsceneSettings &settings) {
+	void deleteFrameData(const VUtils::CharString &filepath, const SettingsWrapper &settings) {
 		typedef VUtils::HashMap<int, GU_Detail*> DetailMap;
 		FOR_IT(DetailMap, detailIt, vrsceneCache[filepath.ptr()][settings].frameDetailMap) {
 			delete detailIt.data();
@@ -148,7 +169,7 @@ private:
 
 	
 
-	static VrsceneSettings getCorrectSettings(const VrsceneSettings *settings) {
+	static SettingsWrapper getCorrectSettings(const SettingsWrapper *settings) {
 		return settings ? *settings : getDefaultSettings();
 	}
 
@@ -166,7 +187,7 @@ private:
 	};
 
 	struct VrsceneSettingsHasher {
-		uint32 operator()(const VrsceneSettings &key) const {
+		uint32 operator()(const SettingsWrapper &key) const {
 #pragma pack(push, 1)
 			struct SettingsKey {
 				int usePreview;
@@ -175,12 +196,14 @@ private:
 				int masPreviewFaces;
 				int previewType;
 				int previewFlags;
-			} settingsKey = { key.usePreview
-				, key.previewFacesCount
-				, key.minPreviewFaces
-				, key.maxPreviewFaces
-				, key.previewType
-				, key.previewFlags 
+				int shouldFlip;
+			} settingsKey = { key.settings.usePreview
+				, key.settings.previewFacesCount
+				, key.settings.minPreviewFaces
+				, key.settings.maxPreviewFaces
+				, key.settings.previewType
+				, key.settings.previewFlags
+				, key.flipAxis
 			};
 #pragma pack(pop)
 
@@ -190,7 +213,7 @@ private:
 		}
 	};
 
-	typedef VUtils::HashMap<VrsceneSettings, CacheElement, VrsceneSettingsHasher> CacheElementMap;
+	typedef VUtils::HashMap<SettingsWrapper, CacheElement, VrsceneSettingsHasher> CacheElementMap;
 	VUtils::StringHashMap<CacheElementMap> vrsceneCache;
 
 	VUTILS_DISABLE_COPY(DetailCache)
@@ -330,11 +353,10 @@ int VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 		}
 	}
 	if (m_options.getOptionI("cache")) {
-		VrsceneSettings settings = vrsCache.getDefaultSettings();
-		if (shouldFlip) {
-			settings.previewFlags |= (1<<7);// indicate that the detail is flipped axis wise
-		}
-		vrsCache.setDetail(vrsceneFile, t, *meshDetail, new VrsceneSettings(settings));
+		DetailCache::SettingsWrapper settings = vrsCache.getDefaultSettings();
+		settings.flipAxis = shouldFlip;// indicate that the detail is flipped axis wise
+		
+		vrsCache.setDetail(vrsceneFile, t, *meshDetail, new DetailCache::SettingsWrapper(settings));
 
 		m_detail.allocateAndSet(meshDetail, false);
 	}
@@ -379,12 +401,13 @@ int VRaySceneRef::detailRebuild()
 			res = true;
 		}
 		else {
-			VrsceneSettings settings = vrsCache.getDefaultSettings();
-			if (shouldFlip) {
-				settings.previewFlags |= (1<<7);
-			}
+			DetailCache::SettingsWrapper settings = vrsCache.getDefaultSettings();
+			settings.flipAxis = shouldFlip;
 			
-			GU_Detail* temp = vrsCache.getDetail(vrsceneFile, getFrame(getCurrentFrame()), new VrsceneSettings(settings));
+			
+			GU_Detail* temp = vrsCache.getDetail(vrsceneFile, 
+													getFrame(getCurrentFrame()), 
+													new DetailCache::SettingsWrapper(settings));
 			if (!temp) {
 				res = detailRebuild(vrsceneDesc, shouldFlip);
 			}
