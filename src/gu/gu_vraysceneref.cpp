@@ -61,13 +61,13 @@ public:
 	GU_Detail* getDetail(const VUtils::CharString &filepath,
 							const fpreal frame,
 							const VrsceneSettings *settings = nullptr) {
-
 		VrsceneSettings vrsceneSettings = getCorrectSettings(settings);
 		
 		VrsceneDesc *tempDesc = vrsceneMan.getVrsceneDesc(filepath, &vrsceneSettings);
 
 		if (tempDesc) {
-			GU_Detail *tempDetail = vrsceneCache[filepath.ptr()][vrsceneSettings].frameDetailMap[frame];
+			int key = frame * 1000;
+			GU_Detail *tempDetail = vrsceneCache[filepath.ptr()][vrsceneSettings].frameDetailMap[key];
 			if (tempDetail) {
 				return tempDetail;
 			}
@@ -85,6 +85,7 @@ public:
 			VUtils::StringHashMap<CacheElementMap>::iterator iterator = vrsceneCache.find(filepath.ptr());
 			if ( iterator == vrsceneCache.end() ||
 				iterator.data()[vrsceneSettings].references < 1) {
+				Log::getLog().debug("deleting: %s", filepath.ptr());
 				vrsceneMan.delVrsceneDesc(filepath);
 			}
 		}
@@ -101,6 +102,7 @@ public:
 		CacheElementMap &tempVal = vrsceneCache[filepath.ptr()];
 		if (--tempVal[vrsceneSettings].references < 1) {
 			deleteFrameData(filepath, vrsceneSettings);
+			Log::getLog().debug("deleting: %s", filepath.ptr());
 			vrsceneMan.delVrsceneDesc(filepath);
 			tempVal.erase(vrsceneSettings);
 			if (tempVal.empty())
@@ -118,20 +120,8 @@ public:
 		vassert(!filepath.empty());
 
 		VrsceneSettings vrsceneSettings = getCorrectSettings(settings);
-		
-		vrsceneCache[filepath.ptr()][vrsceneSettings].frameDetailMap[frame] = &detail;
-	}
-
-private:
-	/// Delete all cached data associated with a given set of filepath + vrscene settings
-	/// @param filepath[in] - Path to VRay scene file, used as ID for map
-	/// @param settings[in] - Settings for the cached data, used as seconday ID
-	void deleteFrameData(const VUtils::CharString &filepath, const VrsceneSettings &settings) {
-		typedef VUtils::HashMap<fpreal, GU_Detail*> DetailMap;
-		FOR_IT(DetailMap, detailIt, vrsceneCache[filepath.ptr()][settings].frameDetailMap) {
-			delete detailIt.data();
-			detailIt.data() = nullptr;
-		}
+		int key = frame * 1000;
+		vrsceneCache[filepath.ptr()][vrsceneSettings].frameDetailMap[key] = &detail;
 	}
 
 	/// Generate default Vrscene Settings
@@ -143,6 +133,20 @@ private:
 
 		return tempSettings;
 	}
+
+private:
+	/// Delete all cached data associated with a given set of filepath + vrscene settings
+	/// @param filepath[in] - Path to VRay scene file, used as ID for map
+	/// @param settings[in] - Settings for the cached data, used as seconday ID
+	void deleteFrameData(const VUtils::CharString &filepath, const VrsceneSettings &settings) {
+		typedef VUtils::HashMap<int, GU_Detail*> DetailMap;
+		FOR_IT(DetailMap, detailIt, vrsceneCache[filepath.ptr()][settings].frameDetailMap) {
+			delete detailIt.data();
+			detailIt.data() = nullptr;
+		}
+	}
+
+	
 
 	static VrsceneSettings getCorrectSettings(const VrsceneSettings *settings) {
 		return settings ? *settings : getDefaultSettings();
@@ -158,7 +162,7 @@ private:
 		}
 
 		int references;
-		VUtils::HashMap<fpreal, GU_Detail*> frameDetailMap;
+		VUtils::HashMap<int, GU_Detail*> frameDetailMap;
 	};
 
 	struct VrsceneSettingsHasher {
@@ -326,7 +330,11 @@ int VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 		}
 	}
 	if (m_options.getOptionI("cache")) {
-		vrsCache.setDetail(vrsceneFile, t, *meshDetail, nullptr);
+		VrsceneSettings settings = vrsCache.getDefaultSettings();
+		if (shouldFlip) {
+			settings.previewFlags |= (1<<7);// indicate that the detail is flipped axis wise
+		}
+		vrsCache.setDetail(vrsceneFile, t, *meshDetail, new VrsceneSettings(settings));
 
 		m_detail.allocateAndSet(meshDetail, false);
 	}
@@ -371,7 +379,12 @@ int VRaySceneRef::detailRebuild()
 			res = true;
 		}
 		else {
-			GU_Detail* temp = vrsCache.getDetail(vrsceneFile, getFrame(getCurrentFrame()), nullptr);
+			VrsceneSettings settings = vrsCache.getDefaultSettings();
+			if (shouldFlip) {
+				settings.previewFlags |= (1<<7);
+			}
+			
+			GU_Detail* temp = vrsCache.getDetail(vrsceneFile, getFrame(getCurrentFrame()), new VrsceneSettings(settings));
 			if (!temp) {
 				res = detailRebuild(vrsceneDesc, shouldFlip);
 			}
