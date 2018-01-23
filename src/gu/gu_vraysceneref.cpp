@@ -82,7 +82,7 @@ public:
 		VrsceneSettings vrsceneSettings = getCorrectSettings(settings);
 		
 		if (!filepath.empty()) {
-			auto iterator = vrsceneCache.find(filepath.ptr());
+			VUtils::StringHashMap<CacheElementMap>::iterator iterator = vrsceneCache.find(filepath.ptr());
 			if ( iterator == vrsceneCache.end() ||
 				iterator.data()[vrsceneSettings].references < 1) {
 				vrsceneMan.delVrsceneDesc(filepath);
@@ -97,10 +97,14 @@ public:
 			return;
 		}
 		VrsceneSettings vrsceneSettings = getCorrectSettings(settings);
-		
-		if (--vrsceneCache[filepath.ptr()][vrsceneSettings].references < 1) {
+
+		CacheElementMap &tempVal = vrsceneCache[filepath.ptr()];
+		if (--tempVal[vrsceneSettings].references < 1) {
 			deleteFrameData(filepath, vrsceneSettings);
 			vrsceneMan.delVrsceneDesc(filepath);
+			tempVal.erase(vrsceneSettings);
+			if (tempVal.empty())
+				vrsceneCache.erase(filepath.ptr());
 		}
 
 	}
@@ -123,12 +127,10 @@ private:
 	/// @param filepath[in] - Path to VRay scene file, used as ID for map
 	/// @param settings[in] - Settings for the cached data, used as seconday ID
 	void deleteFrameData(const VUtils::CharString &filepath, const VrsceneSettings &settings) {
-		for (auto it = vrsceneCache[filepath.ptr()][settings].frameDetailMap.begin(); 
-			it != vrsceneCache[filepath.ptr()][settings].frameDetailMap.end(); 
-			it++) {
-
-			delete it.data();
-			it.data() = nullptr;
+		typedef VUtils::HashMap<fpreal, GU_Detail*> DetailMap;
+		FOR_IT(DetailMap, detailIt, vrsceneCache[filepath.ptr()][settings].frameDetailMap) {
+			delete detailIt.data();
+			detailIt.data() = nullptr;
 		}
 	}
 
@@ -163,12 +165,12 @@ private:
 		uint32 operator()(const VrsceneSettings &key) const {
 #pragma pack(push, 1)
 			struct SettingsKey {
-				int v1;
-				int v2;
-				int v3;
-				int v4;
-				int v5;
-				int v6;
+				int usePreview;
+				int previewFacesCount;
+				int minPreviewFaces;
+				int masPreviewFaces;
+				int previewType;
+				int previewFlags;
 			} settingsKey = { key.usePreview
 				, key.previewFacesCount
 				, key.minPreviewFaces
@@ -184,7 +186,8 @@ private:
 		}
 	};
 
-	VUtils::StringHashMap<VUtils::HashMap<VrsceneSettings, CacheElement, VrsceneSettingsHasher>> vrsceneCache;
+	typedef VUtils::HashMap<VrsceneSettings, CacheElement, VrsceneSettingsHasher> CacheElementMap;
+	VUtils::StringHashMap<CacheElementMap> vrsceneCache;
 
 	VUTILS_DISABLE_COPY(DetailCache)
 }vrsCache;
@@ -337,7 +340,7 @@ int VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 int VRaySceneRef::detailRebuild()
 {
 	int res;
-	if (m_options.getOptionI("cache")) {
+	if (getCache()) {
 		if (vrsceneFile != getFilepath()) {
 			vrsCache.unregister(vrsceneFile);
 			vrsceneFile = getFilepath();
@@ -377,8 +380,7 @@ int VRaySceneRef::detailRebuild()
 				m_detail.allocateAndSet(temp, false);
 			}
 			res = true;
-			//res = detailRebuild(vrsceneDesc, shouldFlip);
-			vrsCache.deleteUncachedResources(vrsceneFile);
+			vrsCache.deleteUncachedResources(getFilepath());
 		}
 	}
 

@@ -10,6 +10,7 @@
         { "type": "FLOAT", "name" : "anim_offset","value" : 0 },
         { "type": "INT", "name" : "anim_start", "value" : 0 },
         { "type": "INT", "name" : "anim_length", "value" : 0 },
+        { "type": "BOOL", "name" : "cache", "value" : false },
         { "type": "CHAR", "name" : "material_override","value" :  "" },
         { "type": "BOOL", "name" : "disable", "value" : false },
         { "type": "INT", "name" : "objectID", "value" : -1 },

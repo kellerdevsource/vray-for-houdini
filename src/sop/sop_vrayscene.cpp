@@ -34,15 +34,12 @@ void VRayScene::setTimeDependent()
 		still,
 	};
 
-	bool previewMeshAnimated;
-	if (evalInt("anim_override", 0, 0.0)) {
-		previewMeshAnimated = static_cast<VRaySceneAnimType>(evalInt("anim_type", 0, 0.0)) != VRaySceneAnimType::still;
+	bool previewMeshAnimated = evalInt("animated_preview", 0, 0.0);
+	if (previewMeshAnimated) {
+		if (evalInt("anim_override", 0, 0.0)) {
+			previewMeshAnimated = static_cast<VRaySceneAnimType>(evalInt("anim_type", 0, 0.0)) != VRaySceneAnimType::still;
+		}
 	}
-	else {
-		previewMeshAnimated = true;
-	}
-
-	previewMeshAnimated = evalInt("animated_preview", 0, 0.0) && previewMeshAnimated;
 
 	flags().setTimeDep(previewMeshAnimated);
 }
@@ -51,9 +48,8 @@ void VRayScene::updatePrimitive(const OP_Context &context)
 {
 	// Set the options on the primitive
 
-	const int timeDependent = evalInt("animated_preview", 0, context.getTime());
 	OP_Options primOptions;
-	primOptions.setOptionI("cache", timeDependent);
+	primOptions.setOptionI("cache", flags().getTimeDep());
 	for (int i = 0; i < getParmList()->getEntries(); ++i) {
 		const PRM_Parm &prm = getParm(i);
 		primOptions.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), context.getTime());
