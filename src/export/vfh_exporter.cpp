@@ -865,23 +865,34 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", Attrs::PluginAttr::AttrTypeIgnore));
 	}
 	else {
-		UT_String filePath;
-		m_rop->evalString(filePath, "SettingsOutput_img_file_path", 0, t);
+		UT_String filePathRaw;
+		m_rop->evalStringRaw(filePathRaw, "SettingsOutput_img_file_path", 0, t);
+		
+		UT_String dirPathRaw, fileNameRaw;
+		filePathRaw.splitPath(dirPathRaw, fileNameRaw);
 
-		UT_String dirpath, filename;
-		filePath.splitPath(dirpath, filename);
+		// Format dirPathRaw.
+		dirPathRaw.append('/');
 
-		// format dirpath
-		dirpath.append('/');
+		// Replace frame number with Phoenix compatible frame pattern.
+		if (fileNameRaw.changeWord("$F", "#")) {
+			pluginDesc.addAttribute(Attrs::PluginAttr("img_file_needFrameNumber", 1));
+		}
+
+		// Expand paths.
+		UT_String fileName, dirPath;
+		CH_Manager *chanMan = OPgetDirector()->getChannelManager();
+		chanMan->expandString(fileNameRaw.buffer(), fileName, t);
+		chanMan->expandString(dirPathRaw.buffer(), dirPath, t);
 
 		// Create output directory.
-		directoryCreator.mkpath(dirpath.buffer());
+		directoryCreator.mkpath(dirPathRaw.buffer());
 
-		// append default file type if not set
-		ImageFormat imgFormat = getImgFormat(filePath.buffer());
+		// Append default file type if not set.
+		ImageFormat imgFormat = getImgFormat(filePathRaw.buffer());
 		if (imgFormat == imageFormatError) {
 			imgFormat = imageFormatOpenEXR;
-			filePath.append(imgFormatExt[imageFormatOpenEXR]);
+			fileName.append(imgFormatExt[imageFormatOpenEXR]);
 		}
 		if (imgFormat == imageFormatOpenEXR ||
 			imgFormat == imageFormatVRayImage)
@@ -892,8 +903,8 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			}
 		}
 
-		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirpath.toStdString()));
-		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", filename.toStdString()));
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirPath.toStdString()));
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
 	}
 
 	VRay::VUtils::ValueRefList frames(1);
