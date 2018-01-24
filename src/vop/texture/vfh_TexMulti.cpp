@@ -144,7 +144,7 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 									getName().buffer(), texSockName.toLocal8Bit().constData());
 			}
 			else {
-				exporter.convertInputPlugin(texPlugin, pluginDesc, texNode, VOP_SURFACE_SHADER, texSockName.toStdString().c_str());
+				exporter.convertInputPlugin(texPlugin, pluginDesc, texNode, VOP_TYPE_COLOR, texSockName.toStdString().c_str());
 
 				textures.push_back(VRay::Value(texPlugin));
 				textureIds.push_back(i-1);
