@@ -895,7 +895,7 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			imgFormat = imageFormatOpenEXR;
 			fileName.append(imgFormatExt[imageFormatOpenEXR]);
 
-			Log::getLog().warning("Output image file format not recognized from file extension! Setting output image format to Open EXR.");
+			Log::getLog().warning("Output image file format not supported/recognized! Setting output image format to Open EXR.");
 		}
 
 		if (imgFormat == imageFormatOpenEXR ||
