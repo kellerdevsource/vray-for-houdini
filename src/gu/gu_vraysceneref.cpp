@@ -70,14 +70,12 @@ public:
 	/// Register that an instance has a reference to a specific vrscene file
 	/// @param filepath [in] - Path to VRay scene file
 	/// @param settings [in] - Custom settings for the vrscene, if not provided default settings are used
-	void registerInCache(const VUtils::CharString &filepath, const SettingsWrapper *settings = nullptr) {
+	void registerInCache(const VUtils::CharString &filepath, const SettingsWrapper &settings) {
 		if (filepath.empty()) {
 			return;
 		}
 
-		SettingsWrapper vrsceneSettings = getDefaultSettings();
-
-		vrsceneCache[filepath.ptr()][vrsceneSettings].references++;
+		vrsceneCache[filepath.ptr()][settings].references++;
 	}
 
 	/// Provide cached detail, if it is outdated returns nullptr
@@ -86,14 +84,12 @@ public:
 	/// @param settings[in] - Settings for the cached data, used as seconday ID
 	GU_Detail* getDetail(const VUtils::CharString &filepath,
 							const fpreal frame,
-							const SettingsWrapper *settings = nullptr) {
-		SettingsWrapper vrsceneSettings = getCorrectSettings(settings);
-		
-		VrsceneDesc *tempDesc = vrsceneMan.getVrsceneDesc(filepath, &vrsceneSettings.settings);
+							const SettingsWrapper &settings) {
+		VrsceneDesc *tempDesc = vrsceneMan.getVrsceneDesc(filepath, &settings.settings);
 
 		if (tempDesc) {
 			int key = frame * 1000;
-			GU_Detail *tempDetail = vrsceneCache[filepath.ptr()][vrsceneSettings].frameDetailMap[key];
+			GU_Detail *tempDetail = vrsceneCache[filepath.ptr()][settings].frameDetailMap[key];
 			if (tempDetail) {
 				return tempDetail;
 			}
@@ -106,13 +102,13 @@ public:
 	/// if it is not, removes cached vrscene description in vrscene manager asociated with the filepath
 	/// @param filepath[in] - Path to VRay scene file, used as ID for map
 	/// @param settings[in] - Settings for the cached data, used as seconday ID
-	void deleteUncachedResources(const VUtils::CharString &filepath, const SettingsWrapper *settings = nullptr) {
-		SettingsWrapper vrsceneSettings = getCorrectSettings(settings);
+	void deleteUncachedResources(const VUtils::CharString &filepath, const SettingsWrapper &settings) {
 		
 		if (!filepath.empty()) {
 			VUtils::StringHashMap<CacheElementMap>::iterator iterator = vrsceneCache.find(filepath.ptr());
 			if ( iterator == vrsceneCache.end() ||
-				iterator.data()[vrsceneSettings].references < 1) {
+				iterator.data()[settings].references < 1) {
+				Log::getLog().debug("deleting: %s", filepath.ptr());
 				vrsceneMan.delVrsceneDesc(filepath);
 			}
 		}
@@ -122,16 +118,17 @@ public:
 	/// deletes cached data upon reference count reaching 0
 	/// @param filepath[in] - Path to VRay scene file, used as ID for map
 	/// @param settings[in] - Settings for the cached data, used as seconday ID
-	void unregister(const VUtils::CharString &filepath, const SettingsWrapper *settings = nullptr) {
-		vassert(!filepath.ptr());
-
-		SettingsWrapper vrsceneSettings = getCorrectSettings(settings);
+	void unregister(const VUtils::CharString &filepath, const SettingsWrapper &settings) {
+		if (filepath.empty()) {
+			return;
+		}
 
 		CacheElementMap &tempVal = vrsceneCache[filepath.ptr()];
-		if (--tempVal[vrsceneSettings].references < 1) {
-			deleteFrameData(filepath, vrsceneSettings);
+		if (--tempVal[settings].references < 1) {
+			deleteFrameData(filepath, settings);
+			Log::getLog().debug("deleting: %s", filepath.ptr());
 			vrsceneMan.delVrsceneDesc(filepath);
-			tempVal.erase(vrsceneSettings);
+			tempVal.erase(settings);
 			if (tempVal.empty())
 				vrsceneCache.erase(filepath.ptr());
 		}
@@ -142,14 +139,12 @@ public:
 	/// deletes all cached data, except vrscene Description, upon reference count reaching 0
 	/// @param filepath[in] - Path to VRay scene file, used as ID for map
 	/// @param settings[in] - Settings for the cached data, used as seconday ID
-	void settingsChange(const VUtils::CharString &filepath, const SettingsWrapper *settings = nullptr) {
+	void settingsChange(const VUtils::CharString &filepath, const SettingsWrapper &settings) {
 		vassert(!filepath.empty());
 
-		SettingsWrapper vrsSettings = getCorrectSettings(settings);
-
 		CacheElementMap &tempVal = vrsceneCache[filepath.ptr()];
-		if (--tempVal[vrsSettings].references < 1) {
-			deleteFrameData(filepath, vrsSettings);
+		if (--tempVal[settings].references < 1) {
+			deleteFrameData(filepath, settings);
 		}
 	}
 
@@ -273,12 +268,12 @@ VRaySceneRef::VRaySceneRef(const VRaySceneRef &src)
 	, vrsSettings(src.vrsSettings)
 	, shouldFlipAxis(src.shouldFlipAxis)
 {
-	vrsCache.registerInCache(vrsceneFile, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
+	vrsCache.registerInCache(vrsceneFile, DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
 }
 
 VRaySceneRef::~VRaySceneRef()
 {
-	vrsCache.unregister(vrsceneFile);
+	vrsCache.unregister(vrsceneFile, DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
 }
 
 GA_PrimitiveTypeId VRaySceneRef::typeId()
@@ -326,15 +321,14 @@ double VRaySceneRef::getFrame(fpreal t) const
 void VRaySceneRef::updateCacheRelatedVars() {
 	if (getCache()) {
 		if (vrsceneFile != getFilepath() ) {
-			vrsCache.unregister(vrsceneFile, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
+			vrsCache.unregister(vrsceneFile, DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
 			vrsceneFile = getFilepath();
-			//shouldFlipAxis = shouldFlip;
-			vrsCache.registerInCache(vrsceneFile, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
+			vrsCache.registerInCache(vrsceneFile, DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
 		}
 	}
 	else {
 		if (!vrsceneFile.empty()) {
-			vrsCache.unregister(vrsceneFile, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
+			vrsCache.unregister(vrsceneFile, DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
 			vrsceneFile.clear();
 		}
 	}
@@ -427,14 +421,14 @@ int VRaySceneRef::detailRebuild()
 		}
 		else {
 			if (shouldFlipAxis != shouldFlip) {
-				vrsCache.settingsChange(vrsceneFile, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
+				vrsCache.settingsChange(vrsceneFile, DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
 				shouldFlipAxis = shouldFlip;
-				vrsCache.registerInCache(vrsceneFile, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
+				vrsCache.registerInCache(vrsceneFile, DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
 			}
 
 			GU_Detail* temp = vrsCache.getDetail(vrsceneFile, 
 													getFrame(getCurrentFrame()), 
-													new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
+													DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
 			if (!temp) {
 				res = detailRebuild(vrsceneDesc, shouldFlip);
 			}
@@ -443,7 +437,7 @@ int VRaySceneRef::detailRebuild()
 				m_detail.allocateAndSet(temp, false);
 			}
 			res = true;
-			vrsCache.deleteUncachedResources(getFilepath());
+			vrsCache.deleteUncachedResources(getFilepath(), DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
 		}
 	}
 
