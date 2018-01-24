@@ -868,7 +868,8 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		UT_String filePathRaw;
 		m_rop->evalStringRaw(filePathRaw, "SettingsOutput_img_file_path", 0, t);
 		
-		UT_String dirPathRaw, fileNameRaw;
+		UT_String dirPathRaw;
+		UT_String fileNameRaw;
 		filePathRaw.splitPath(dirPathRaw, fileNameRaw);
 
 		// Format dirPathRaw.
@@ -879,8 +880,9 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			pluginDesc.addAttribute(Attrs::PluginAttr("img_file_needFrameNumber", 1));
 		}
 
+		UT_String dirPath;
+		UT_String fileName;
 		// Expand paths.
-		UT_String fileName, dirPath;
 		CH_Manager *chanMan = OPgetDirector()->getChannelManager();
 		chanMan->expandString(fileNameRaw.buffer(), fileName, t);
 		chanMan->expandString(dirPathRaw.buffer(), dirPath, t);
@@ -893,7 +895,10 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		if (imgFormat == imageFormatError) {
 			imgFormat = imageFormatOpenEXR;
 			fileName.append(imgFormatExt[imageFormatOpenEXR]);
+
+			Log::getLog().warning("Output image file format not recognized from file extension! Setting output image format to Open EXR.");
 		}
+
 		if (imgFormat == imageFormatOpenEXR ||
 			imgFormat == imageFormatVRayImage)
 		{
