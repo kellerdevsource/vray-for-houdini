@@ -810,11 +810,10 @@ enum ImageFormat {
 	imageFormatSGI,
 	imageFormatOpenEXR,
 	imageFormatVRayImage,
-	imageFormatCount,
-	imageFormatError
+	imageFormatLast
 };
 
-static const char* const imgFormatExt[imageFormatCount] = {
+static const char* const imgFormatExt[imageFormatLast] = {
 	".png",
 	".jpg",
 	".tiff",
@@ -826,13 +825,13 @@ static const char* const imgFormatExt[imageFormatCount] = {
 
 static ImageFormat getImgFormat(const UT_String& filePath)
 {
-	for (int imgFormat = 0; imgFormat < static_cast<int>(imageFormatCount); ++imgFormat) {
+	for (int imgFormat = 0; imgFormat < static_cast<int>(imageFormatLast); ++imgFormat) {
 		if (filePath.endsWith(imgFormatExt[imgFormat], false)) {
 			return static_cast<ImageFormat>(imgFormat);
 		}
 	}
 	
-	return imageFormatError;
+	return imageFormatLast;
 }
 
 ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
@@ -892,7 +891,7 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 
 		// Append default file type if not set.
 		ImageFormat imgFormat = getImgFormat(filePathRaw.buffer());
-		if (imgFormat == imageFormatError) {
+		if (imgFormat == imageFormatLast) {
 			imgFormat = imageFormatOpenEXR;
 			fileName.append(imgFormatExt[imageFormatOpenEXR]);
 
