@@ -15,8 +15,6 @@
 #include "gu_vraysceneref.h"
 #include "vfh_hashes.h"
 
-#include <vrscene_preview.h>
-
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PrimPacked.h>
 #include <GU/GU_PrimPoly.h>
@@ -47,6 +45,11 @@ public:
 		SettingsWrapper(const VrsceneSettings &other)
 			: settings(other)
 			, flipAxis(0)
+		{}
+
+		SettingsWrapper(const VrsceneSettings &other, bool flip)
+			: settings(other)
+			, flipAxis(flip)
 		{}
 
 		bool operator == (const SettingsWrapper &other) const {
@@ -100,7 +103,9 @@ public:
 	}
 
 	/// Checks if filepath and Vrscene Settings pair is cached, 
-	/// if it is not removes cached vrscene description in vrscene manager asociated with the filepath
+	/// if it is not, removes cached vrscene description in vrscene manager asociated with the filepath
+	/// @param filepath[in] - Path to VRay scene file, used as ID for map
+	/// @param settings[in] - Settings for the cached data, used as seconday ID
 	void deleteUncachedResources(const VUtils::CharString &filepath, const SettingsWrapper *settings = nullptr) {
 		SettingsWrapper vrsceneSettings = getCorrectSettings(settings);
 		
@@ -115,10 +120,11 @@ public:
 
 	/// Unregister a specific filepath and Vrscene settings pair from cache
 	/// deletes cached data upon reference count reaching 0
+	/// @param filepath[in] - Path to VRay scene file, used as ID for map
+	/// @param settings[in] - Settings for the cached data, used as seconday ID
 	void unregister(const VUtils::CharString &filepath, const SettingsWrapper *settings = nullptr) {
-		if (filepath.empty()) {
-			return;
-		}
+		vassert(!filepath.ptr());
+
 		SettingsWrapper vrsceneSettings = getCorrectSettings(settings);
 
 		CacheElementMap &tempVal = vrsceneCache[filepath.ptr()];
@@ -130,6 +136,21 @@ public:
 				vrsceneCache.erase(filepath.ptr());
 		}
 
+	}
+
+	/// Unregister a specific filepath and Vrscene settings pair from cache
+	/// deletes all cached data, except vrscene Description, upon reference count reaching 0
+	/// @param filepath[in] - Path to VRay scene file, used as ID for map
+	/// @param settings[in] - Settings for the cached data, used as seconday ID
+	void settingsChange(const VUtils::CharString &filepath, const SettingsWrapper *settings = nullptr) {
+		vassert(!filepath.empty());
+
+		SettingsWrapper vrsSettings = getCorrectSettings(settings);
+
+		CacheElementMap &tempVal = vrsceneCache[filepath.ptr()];
+		if (--tempVal[vrsSettings].references < 1) {
+			deleteFrameData(filepath, vrsSettings);
+		}
 	}
 
 	/// Save GU_Detail for specific filepath and vrscene settings pair
@@ -166,8 +187,6 @@ private:
 			detailIt.data() = nullptr;
 		}
 	}
-
-	
 
 	static SettingsWrapper getCorrectSettings(const SettingsWrapper *settings) {
 		return settings ? *settings : getDefaultSettings();
@@ -244,13 +263,17 @@ void VRaySceneRef::install(GA_PrimitiveFactory *primFactory)
 
 VRaySceneRef::VRaySceneRef() 
 	: vrsceneFile("")
+	, vrsSettings(vrsCache.getDefaultSettings().settings)
+	, shouldFlipAxis(false)
 {}
 
 VRaySceneRef::VRaySceneRef(const VRaySceneRef &src)
 	: VRaySceneRefBase(src)
 	, vrsceneFile(src.vrsceneFile)
+	, vrsSettings(src.vrsSettings)
+	, shouldFlipAxis(src.shouldFlipAxis)
 {
-	vrsCache.registerInCache(vrsceneFile);
+	vrsCache.registerInCache(vrsceneFile, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
 }
 
 VRaySceneRef::~VRaySceneRef()
@@ -298,6 +321,23 @@ double VRaySceneRef::getFrame(fpreal t) const
 	}
 
 	return t;
+}
+
+void VRaySceneRef::updateCacheRelatedVars() {
+	if (getCache()) {
+		if (vrsceneFile != getFilepath() ) {
+			vrsCache.unregister(vrsceneFile, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
+			vrsceneFile = getFilepath();
+			//shouldFlipAxis = shouldFlip;
+			vrsCache.registerInCache(vrsceneFile, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
+		}
+	}
+	else {
+		if (!vrsceneFile.empty()) {
+			vrsCache.unregister(vrsceneFile, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
+			vrsceneFile.clear();
+		}
+	}
 }
 
 int VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
@@ -353,10 +393,7 @@ int VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 		}
 	}
 	if (m_options.getOptionI("cache")) {
-		DetailCache::SettingsWrapper settings = vrsCache.getDefaultSettings();
-		settings.flipAxis = shouldFlip;// indicate that the detail is flipped axis wise
-		
-		vrsCache.setDetail(vrsceneFile, t, *meshDetail, new DetailCache::SettingsWrapper(settings));
+		vrsCache.setDetail(vrsceneFile, t, *meshDetail, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
 
 		m_detail.allocateAndSet(meshDetail, false);
 	}
@@ -370,19 +407,7 @@ int VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
 int VRaySceneRef::detailRebuild()
 {
 	int res;
-	if (getCache()) {
-		if (vrsceneFile != getFilepath()) {
-			vrsCache.unregister(vrsceneFile);
-			vrsceneFile = getFilepath();
-			vrsCache.registerInCache(vrsceneFile);
-		}
-	}
-	else {
-		if (!vrsceneFile.empty()) {
-			vrsCache.unregister(vrsceneFile);
-			vrsceneFile.clear();
-		}
-	}
+	updateCacheRelatedVars();
 
 	VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(getFilepath());
 	if (!vrsceneDesc) {
@@ -401,18 +426,20 @@ int VRaySceneRef::detailRebuild()
 			res = true;
 		}
 		else {
-			DetailCache::SettingsWrapper settings = vrsCache.getDefaultSettings();
-			settings.flipAxis = shouldFlip;
-			
-			
+			if (shouldFlipAxis != shouldFlip) {
+				vrsCache.settingsChange(vrsceneFile, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
+				shouldFlipAxis = shouldFlip;
+				vrsCache.registerInCache(vrsceneFile, new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
+			}
+
 			GU_Detail* temp = vrsCache.getDetail(vrsceneFile, 
 													getFrame(getCurrentFrame()), 
-													new DetailCache::SettingsWrapper(settings));
+													new DetailCache::SettingsWrapper(vrsSettings, shouldFlipAxis));
 			if (!temp) {
 				res = detailRebuild(vrsceneDesc, shouldFlip);
 			}
 			else {
-				// false due to the fact it is cached
+				// false due to the fact GU_Detail is already cached
 				m_detail.allocateAndSet(temp, false);
 			}
 			res = true;

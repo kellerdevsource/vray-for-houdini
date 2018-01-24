@@ -14,6 +14,8 @@
 #include "vfh_includes.h"
 #include "vfh_VRaySceneRefBase.h"
 
+#include <vrscene_preview.h>
+
 namespace VUtils {
 namespace Vrscene {
 namespace Preview {
@@ -53,7 +55,11 @@ private:
 	/// @param t Current time.
 	double getFrame(fpreal t) const;
 
+	void updateCacheRelatedVars();
+
 	VUtils::CharString vrsceneFile;
+	VUtils::Vrscene::Preview::VrsceneSettings vrsSettings;
+	bool shouldFlipAxis;
 };
 
 } // namespace VRayForHoudini
