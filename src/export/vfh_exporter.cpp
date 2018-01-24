@@ -874,7 +874,7 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		// Format dirPathRaw.
 		dirPathRaw.append('/');
 
-		// Replace frame number with Phoenix compatible frame pattern.
+		// Replace frame number with V-Ray compatible frame pattern.
 		if (fileNameRaw.changeWord("$F", "#")) {
 			pluginDesc.addAttribute(Attrs::PluginAttr("img_file_needFrameNumber", 1));
 		}
