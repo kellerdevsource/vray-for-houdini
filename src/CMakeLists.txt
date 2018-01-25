@@ -352,6 +352,9 @@ if(INSTALL_RELEASE)
 	install(FILES       ${APPSDK_ROOT}/tools/ply2vrmesh${TOOL_EXE_SUFFIX}
 			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/tools)
 
+	# Example houdini.env file
+	install(FILES       ${CMAKE_SOURCE_DIR}/deploy/houdini.env
+			DESTINATION ${INSTALL_RELEASE_PATH})
 
 	# Default libvray.dll is Qt5
 	if(HOUDINI_QT_VERSION VERSION_EQUAL 4)
