@@ -429,7 +429,7 @@ VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportConte
 /// Sets attribute plugin value to a specific output based on ConnectedPluginInfo.
 /// @param pluginDesc Plugin description to add parameter on.
 /// @param attrName Attribute name.
-/// @param conPluginInfo Connected plugin info.
+/// @param connectedPluginInfo Connected plugin info.
 static void setPluginValueFromConnectedPluginInfo(Attrs::PluginDesc &pluginDesc, const char *attrName, const ConnectedPluginInfo &conPluginInfo)
 {
 	if (!conPluginInfo.plugin)
@@ -457,7 +457,7 @@ static int isConnectedToTexTriplanar(VOP_Node &vopNode)
 	return false;
 }
 
-void VRayExporter::autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const Parm::SocketDesc &curSockInfo, const Parm::SocketDesc *fromSocketInfo, Attrs::PluginDesc &pluginDesc)
+void VRayExporter::autoconvertSocket(ConnectedPluginInfo &connectedPluginInfo, const Parm::SocketDesc &curSockInfo, const Parm::SocketDesc *fromSocketInfo, Attrs::PluginDesc &pluginDesc)
 {
 	const VUtils::CharString &attrName = curSockInfo.attrName.ptr();
 
@@ -469,7 +469,7 @@ void VRayExporter::autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const P
 	std::string floatColorConverterType;
 
 	// Check if some specific output was connected.
-	conPluginInfo.output = fromSocketInfo->attrName.ptr();
+	connectedPluginInfo.output = fromSocketInfo->attrName.ptr();
 
 	// If connected plugin type is BRDF, but we expect a Material, wrap it into "MtlSingleBRDF".
 	if (fromSocketInfo->socketType == VOP_TYPE_BSDF &&
@@ -480,10 +480,10 @@ void VRayExporter::autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const P
 			% attrName.ptr());
 
 		Attrs::PluginDesc brdfToMtl(convName, "MtlSingleBRDF");
-		brdfToMtl.addAttribute(Attrs::PluginAttr("brdf", conPluginInfo.plugin));
+		brdfToMtl.addAttribute(Attrs::PluginAttr("brdf", connectedPluginInfo.plugin));
 
-		conPluginInfo.plugin = exportPlugin(brdfToMtl);
-		conPluginInfo.output.clear();
+		connectedPluginInfo.plugin = exportPlugin(brdfToMtl);
+		connectedPluginInfo.output.clear();
 	}
 	else if (fromSocketInfo->socketType == VOP_TYPE_COLOR &&
 		curSockInfo.socketType == VOP_TYPE_FLOAT)
@@ -496,22 +496,22 @@ void VRayExporter::autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const P
 		// Check if plugin has "out_intensity" output
 		bool hasOutIntensity = false;
 
-		const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(conPluginInfo.plugin.getType());
-		if (!pluginInfo) {
+		const Parm::VRayPluginInfo *vrayPlugInfo = Parm::getVRayPluginInfo(connectedPluginInfo.plugin.getType());
+		if (!vrayPlugInfo) {
 			return;
 		}
 
-		for (int i = 0; i < pluginInfo->outputs.count(); ++i) {
-			const Parm::SocketDesc &sock = pluginInfo->outputs[i];
+		for (int i = 0; i < vrayPlugInfo->outputs.count(); ++i) {
+			const Parm::SocketDesc &sock = vrayPlugInfo->outputs[i];
 			if (VUtils::isEqual(sock.attrName, "out_intensity")) {
 				hasOutIntensity = true;
 				break;
 			}
 		}
 
-		// Wrap texture with TexOutput
+		// Use out_intensity
 		if (hasOutIntensity) {
-			pluginDesc.add(Attrs::PluginAttr("displacement_tex_float", conPluginInfo.plugin, "out_intensity"));
+			pluginDesc.add(Attrs::PluginAttr(curSockInfo.attrName.ptr(), connectedPluginInfo.plugin, "out_intensity"));
 		}
 		else {
 			floatColorConverterType = "TexFloatToColor";
@@ -525,12 +525,12 @@ void VRayExporter::autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const P
 			% attrName.ptr());
 
 		Attrs::PluginDesc convDesc(convName, floatColorConverterType);
-		setPluginValueFromConnectedPluginInfo(convDesc, "input", conPluginInfo);
+		setPluginValueFromConnectedPluginInfo(convDesc, "input", connectedPluginInfo);
 
-		conPluginInfo.plugin = exportPlugin(convDesc);
+		connectedPluginInfo.plugin = exportPlugin(convDesc);
 
 		// We've stored the original connected output in the "input" of the converter.
-		conPluginInfo.output.clear();
+		connectedPluginInfo.output.clear();
 	}
 }
 
