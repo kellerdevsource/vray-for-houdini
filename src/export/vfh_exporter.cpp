@@ -488,18 +488,13 @@ void VRayExporter::autoconvertSocket(ConnectedPluginInfo &connectedPluginInfo, c
 	else if (fromSocketInfo->socketType == VOP_TYPE_COLOR &&
 		curSockInfo.socketType == VOP_TYPE_FLOAT)
 	{
-		floatColorConverterType = "TexColorToFloat";
-	}
-	else if (fromSocketInfo->socketType == VOP_TYPE_FLOAT &&
-		curSockInfo.socketType == VOP_TYPE_COLOR)
-	{
 		// Check if plugin has "out_intensity" output
 		bool hasOutIntensity = false;
 
 		const Parm::VRayPluginInfo *vrayPlugInfo = Parm::getVRayPluginInfo(connectedPluginInfo.plugin.getType());
 		if (!vrayPlugInfo) {
 			// Plugin must be wrapped in TexFloatToColor
-			floatColorConverterType = "TexFloatToColor";
+			floatColorConverterType = "TexColorToFloat";
 		}
 		else {
 			for (int i = 0; i < vrayPlugInfo->outputs.count(); ++i) {
@@ -515,10 +510,15 @@ void VRayExporter::autoconvertSocket(ConnectedPluginInfo &connectedPluginInfo, c
 				pluginDesc.add(Attrs::PluginAttr(curSockInfo.attrName.ptr(), connectedPluginInfo.plugin, "out_intensity"));
 			}
 			else {
-				// Wrap in TexFloatToColor
-				floatColorConverterType = "TexFloatToColor";
+				// Wrap in TexColorToFloat
+				floatColorConverterType = "TexColorToFloat";
 			}
 		}
+	}
+	else if (fromSocketInfo->socketType == VOP_TYPE_FLOAT &&
+		curSockInfo.socketType == VOP_TYPE_COLOR)
+	{
+		floatColorConverterType = "TexFloatToColor";
 	}
 
 	if (!floatColorConverterType.empty()) {
