@@ -493,7 +493,29 @@ void VRayExporter::autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const P
 	else if (fromSocketInfo->socketType == VOP_TYPE_FLOAT &&
 		curSockInfo.socketType == VOP_TYPE_COLOR)
 	{
-		floatColorConverterType = "TexFloatToColor";
+		// Check if plugin has "out_intensity" output
+		bool hasOutIntensity = false;
+
+		const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(conPluginInfo.plugin.getType());
+		if (!pluginInfo) {
+			return;
+		}
+
+		for (int i = 0; i < pluginInfo->outputs.count(); ++i) {
+			const Parm::SocketDesc &sock = pluginInfo->outputs[i];
+			if (VUtils::isEqual(sock.attrName, "out_intensity")) {
+				hasOutIntensity = true;
+				break;
+			}
+		}
+
+		// Wrap texture with TexOutput
+		if (hasOutIntensity) {
+			pluginDesc.add(Attrs::PluginAttr("displacement_tex_float", conPluginInfo.plugin, "out_intensity"));
+		}
+		else {
+			floatColorConverterType = "TexFloatToColor";
+		}
 	}
 
 	if (!floatColorConverterType.empty()) {
