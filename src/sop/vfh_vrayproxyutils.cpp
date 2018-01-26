@@ -292,7 +292,7 @@ private:
 	/// proxy primitive options.
 	int getFrame(const VRayProxyRefKey &options) const;
 	
-	GU_DetailHandle VRayProxyCache::addDetail(const VRayProxyRefKey &options);
+	GU_DetailHandle addDetail(const VRayProxyRefKey &options);
 
 	/// MeshFile instance. 
 	VUtils::MeshFile *meshFile = nullptr;
