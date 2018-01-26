@@ -11,6 +11,7 @@
         { "type": "INT", "name" : "anim_length", "value" : 100 },
         { "type": "FLOAT", "name" : "scale", "value" : 1.0 },
         { "type": "INT", "name" : "flip_axis", "value" : 0 },
-        { "type": "FLOAT", "name" : "current_frame", "value" : 0 }
+        { "type": "FLOAT", "name" : "current_frame", "value" : 0 },
+        { "type": "BOOL", "name" : "cache", "value" : 0 }
     ]
 }

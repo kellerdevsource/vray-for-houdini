@@ -12,10 +12,41 @@
 #include "vfh_log.h"
 #include "gu_vrayproxyref.h"
 
+#include "DetailCachePrototype.h"
+#include "vfh_hashes.h"
+
 using namespace VRayForHoudini;
 
 static GA_PrimitiveTypeId theTypeId(-1);
 static VRayBaseRefFactory<VRayProxyRef> theFactory("VRayProxyRef");
+
+struct VRayProxyRefKeyHasher {
+	uint32 operator()(const VRayProxyRefKey &key) const {
+#pragma pack(push, 1)
+		struct SettingsKey {
+			int lod;
+			int frame;
+			int animType;
+			int animOffset;
+			int animSpeed;
+			int animOverride;
+			int animLength;
+		} settingsKey = { key.lod
+			, key.f
+			, key.animType
+			, key.animOffset
+			, key.animSpeed
+			, key.animOverride
+			, key.animLength
+		};
+#pragma pack(pop)
+		Hash::MHash data;
+		Hash::MurmurHash3_x86_32(&settingsKey, sizeof(SettingsKey), 42, &data);
+		return data;
+	}
+};
+
+static DetailCachePrototype<VUtils::MeshFile, VRayProxyRefKey, VRayProxyRefKeyHasher> cache;
 
 void VRayProxyRef::install(GA_PrimitiveFactory *primFactory)
 {
@@ -32,7 +63,10 @@ VRayProxyRef::VRayProxyRef(const VRayProxyRef &src)
 {}
 
 VRayProxyRef::~VRayProxyRef()
-{}
+{
+	const VRayProxyRefKey &key = getKey();
+	cache.unregister(key.filePath, key);
+}
 
 GU_PackedFactory* VRayProxyRef::getFactory() const
 {
@@ -94,8 +128,28 @@ VRayProxyRefKey VRayProxyRef::getKey() const
 int VRayProxyRef::detailRebuild()
 {
 	const VRayProxyRefKey &vrmeshKey = getKey();
+	if (getCache()) {
+		if (cache.isCached(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f, getMeshFile(vrmeshKey))) {
+			// if cached, getDetail
+			const GU_DetailHandle &detailHandle = cache.getDetail(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f);
+
+			const int res = m_detail != detailHandle;
+			m_detail = detailHandle;
+
+			return res;
+		}
+		// else create detail and cache it
+	}
 
 	const GU_DetailHandle &getail = getVRayProxyDetail(vrmeshKey);
+	
+	if (getCache()) {
+		cache.setDetail(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f, getMeshFile(vrmeshKey), getail);
+	}
+	
+	if (!cache.isCached(vrmeshKey.filePath)) {
+		clearVRayProxyCache(vrmeshKey.filePath.ptr());
+	}
 
 	const int res = m_detail != getail;
 	m_detail = getail;

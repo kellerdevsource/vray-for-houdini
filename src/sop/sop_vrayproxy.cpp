@@ -64,7 +64,7 @@ SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *ent
 	// may not cook correctly, so be *very* careful!
 
 	// NOTE: Is this still required?
-	mySopFlags.setManagesDataIDs(true);
+	//mySopFlags.setManagesDataIDs(true);
 }
 
 void SOP::VRayProxy::setPluginType()
@@ -106,5 +106,5 @@ void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 	updatePrimitiveFromOptions(primOptions);
 
 	// XXX: Is this needed?
-	m_primPacked->setViewportLOD(GEOviewportLOD(viewportlod));
+	//m_primPacked->setViewportLOD(GEOviewportLOD(viewportlod));
 }

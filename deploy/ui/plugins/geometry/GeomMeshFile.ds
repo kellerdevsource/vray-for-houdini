@@ -85,6 +85,18 @@
     }
 
     parm {
+        name "cache"
+        label "PLACEHOLDER-TEXT"
+        type toggle
+        default { "0" }
+        help "PLACEHOLDER-TEXT"
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "GeomMeshFile" }
+        parmtag { "vray_pluginattr" "anim_override" }
+        parmtag { "vray_type" "boolean" }
+    }
+
+    parm {
         name    "anim_override"
         label   "Sequence Override"
         type    toggle

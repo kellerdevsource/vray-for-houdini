@@ -284,6 +284,7 @@ public:
 
 	int open(const char *filepath);
 
+	VUtils::MeshFile *getMeshFile();
 private:
 	/// Clears the caches and resets current .vrmesh file.
 	void freeMem();
@@ -330,6 +331,29 @@ GU_DetailHandle VRayForHoudini::getVRayProxyDetail(const VRayProxyRefKey &option
 	}
 
 	return cache.getDetail(options);
+}
+
+VUtils::MeshFile *VRayForHoudini::getMeshFile(const VRayProxyRefKey &options) 
+{
+	UT_AutoLock lock(theLock);
+
+	if (options.filePath.empty())
+		return nullptr;
+
+	const char *filePath = options.filePath.ptr();
+
+	VRayProxyCacheMan::iterator it = theCacheMan.find(filePath);
+	if (it != theCacheMan.end()) {
+		return it.data().getMeshFile();
+	}
+
+	VRayProxyCache &cache = theCacheMan[filePath];
+	if (!cache.open(filePath)) {
+		theCacheMan.erase(filePath);
+		return nullptr;
+	}
+
+	return cache.getMeshFile();
 }
 
 bool VRayForHoudini::clearVRayProxyCache(const char *filepath)
@@ -507,4 +531,9 @@ GU_DetailHandle VRayProxyCache::getDetail(const VRayProxyRefKey &options)
 	}
 
 	return gdpHandle;
+}
+
+VUtils::MeshFile *VRayProxyCache::getMeshFile() 
+{
+	return meshFile;
 }

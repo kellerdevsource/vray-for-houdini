@@ -17,6 +17,8 @@
 
 #include <charstring.h>
 
+#include "mesh_file.h"
+
 namespace VRayForHoudini {
 
 /// Level of detail types for viewport display of .vrmesh geometry
@@ -39,6 +41,18 @@ struct VRayProxyRefKey {
 	bool animOverride = false;
 	int animStart = 0;
 	int animLength = 100;
+
+	bool operator== (const VRayProxyRefKey & other) const {
+		return (filePath == other.filePath &&
+			lod == other.lod &&
+			f == other.f &&
+			animType == other.animType &&
+			animOffset == other.animOffset &&
+			animSpeed == other.animSpeed &&
+			animOverride == other.animOverride &&
+			animStart == other.animStart &&
+			animLength == other.animLength);
+	}
 };
 
 /// Get detail handle for a proxy packed primitive.
@@ -60,6 +74,8 @@ bool getVRayProxyBoundingBox(const VRayProxyRefKey &options, UT_BoundingBox &box
 /// @param filepath File path.
 /// @retval true if cached file is deleted.
 bool clearVRayProxyCache(const char *filepath);
+
+VUtils::MeshFile *getMeshFile(const VRayProxyRefKey &options);
 
 } // namespace VRayForHoudini
 
