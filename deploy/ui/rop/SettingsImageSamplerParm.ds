@@ -175,27 +175,20 @@ groupsimple {
     hidewhen    "{ SettingsImageSampler_type != 1 }"
 
     parm {
-        name "SettingsImageSampler_dmc_lockSubdivs_toggle"
+        name "SettingsImageSampler_dmc_lockSubdivs"
         label "Lock Subdivs"
-        invisible
+        help "Switch between Adaptive and Fixed Sampler type"
         type toggle
         default { "0" }
-        help "Switch between Adaptive and Fixed Sampler type"
-        range { 0 1 }
-        export none
-        parmtag { "script_callback_language" "python" }
-        parmtag { "script_callback" "hou.pwd().parm(\"SettingsImageSampler_dmc_maxSubdivs\").setExpression(\"ch('SettingsImageSampler_dmc_minSubdivs')\") if hou.pwd().parm(\"SettingsImageSampler_dmc_lockSubdivs_toggle\").eval() else hou.pwd().parm(\"SettingsImageSampler_dmc_maxSubdivs\").deleteAllKeyframes()" }
     }
 
     parm {
         name    "SettingsImageSampler_dmc_minSubdivs"
         label   "Min Subdivs"
+        help    "Min. subdivs value for the adaptive DMC image sampler"
         type    integer
         default { "1" }
-        help    "Min. subdivs value for the adaptive DMC image sampler"
-        range   { 1 10 }
-        export  none
-        parmtag { "cook_dependent" "1" }
+        range   { 1 64 }
         parmtag { "vray_plugin" "SettingsImageSampler" }
         parmtag { "vray_pluginattr" "dmc_minSubdivs" }
         parmtag { "vray_type" "int" }
@@ -204,15 +197,14 @@ groupsimple {
     parm {
         name    "SettingsImageSampler_dmc_maxSubdivs"
         label   "Max Subdivs"
+        help    "Max. subdivs value for the adaptive DMC image sampler"
         type    integer
         default { "24" }
-        help    "Max. subdivs value for the adaptive DMC image sampler"
-        range   { 1 48 }
-        export  none
-        parmtag { "cook_dependent" "1" }
+        range   { 1 64 }
         parmtag { "vray_plugin" "SettingsImageSampler" }
         parmtag { "vray_pluginattr" "dmc_maxSubdivs" }
         parmtag { "vray_type" "int" }
+        hidewhen "{ SettingsImageSampler_dmc_lockSubdivs == 1 }"
     }
 
     parm {

@@ -41,7 +41,7 @@
 
     groupcollapsible {
       name "folder_sampler_dmc_advanced"
-      label "DMC - Advanced"
+      label "Advanced"
 
       parm {
         name    "SettingsDMCSampler_adaptive_amount"
@@ -58,7 +58,7 @@
       }
       parm {
         name    "SettingsDMCSampler_adaptive_threshold"
-        label   "Adaptive Threshold"
+        label   "Noise Threshold"
         type    float
         default { "0.005" }
         help    "Controls V-Ray's judgement of when a blurry value is \"good enough\" to be used"
@@ -71,7 +71,7 @@
       }
       parm {
         name    "SettingsDMCSampler_adaptive_min_samples"
-        label   "Adaptive Min Samples"
+        label   "Min Samples"
         type    integer
         default { "16" }
         help    "The minimum number of samples that must be made before the early termination algorithm is used"

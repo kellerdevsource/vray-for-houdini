@@ -834,6 +834,34 @@ static ImageFormat getImgFormat(const UT_String& filePath)
 	return imageFormatLast;
 }
 
+static void fillSettingsRegionsGenerator(OP_Node &rop, Attrs::PluginDesc &pluginDesc)
+{
+	const int bucketW = rop.evalInt("SettingsRegionsGenerator_xc", 0, 0.0);
+	int bucketH = bucketW;
+
+	const int lockBucketSize = rop.evalInt("SettingsRegionsGenerator_lock_size", 0, 0.0);
+	if (!lockBucketSize) {
+		bucketH = rop.evalInt("SettingsRegionsGenerator_yc", 0, 0.0);
+	}
+
+	pluginDesc.add(Attrs::PluginAttr("xc", bucketW));
+	pluginDesc.add(Attrs::PluginAttr("yc", bucketH));
+}
+
+static void fillSettingsImageSampler(OP_Node &rop, Attrs::PluginDesc &pluginDesc)
+{
+	const int minSubdivs = rop.evalInt("SettingsImageSampler_dmc_minSubdivs", 0, 0.0);
+	int maxSubdivs = minSubdivs;
+
+	const int lockSubdivs = rop.evalInt("SettingsImageSampler_dmc_lockSubdivs", 0, 0.0);
+	if (!lockSubdivs) {
+		maxSubdivs = rop.evalInt("SettingsImageSampler_dmc_maxSubdivs", 0, 0.0);
+	}
+
+	pluginDesc.add(Attrs::PluginAttr("dmc_minSubdivs", minSubdivs));
+	pluginDesc.add(Attrs::PluginAttr("dmc_maxSubdivs", maxSubdivs));
+}
+
 ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 {
 	if (sessionType != VfhSessionType::production)
@@ -979,6 +1007,12 @@ ReturnValue VRayExporter::exportSettings()
 				if (fillSettingsOutput(pluginDesc) == ReturnValue::Error) {
 					return ReturnValue::Error;
 				}
+			}
+			else if (sp == "SettingsRegionsGenerator") {
+				fillSettingsRegionsGenerator(*m_rop, pluginDesc);
+			}
+			else if (sp == "SettingsImageSampler") {
+				fillSettingsImageSampler(*m_rop, pluginDesc);
 			}
 
 			setAttrsFromOpNodePrms(pluginDesc, m_rop, boost::str(Parm::FmtPrefix % sp));
