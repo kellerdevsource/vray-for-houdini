@@ -371,10 +371,11 @@ if(INSTALL_RELEASE)
 	endif()
 
 	# Archive the installation directory
-	set(VFH_PACK ${CMAKE_BINARY_DIR}/vfh_pack.cmake)
-	configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_pack.cmake.in ${VFH_PACK})
-	install(SCRIPT ${VFH_PACK})
-
+	if(INSTALL_RELEASE_PACK)
+		set(VFH_PACK ${CMAKE_BINARY_DIR}/vfh_pack.cmake)
+		configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_pack.cmake.in ${VFH_PACK})
+		install(SCRIPT ${VFH_PACK})
+	endif()
 else()
 	cgr_install_runtime(${PROJECT_NAME} ${VFH_DSO_DIRPATH})
 

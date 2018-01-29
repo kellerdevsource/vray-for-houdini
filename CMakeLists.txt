@@ -34,6 +34,8 @@ if(INSTALL_RELEASE AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND "${CMAKE
 	message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
 endif()
 
+option(INSTALL_RELEASE_PACK "Pack release directory" ON)
+
 set(CGR_SRC_HASH "" CACHE STRING "Sources hash")
 
 set(SRC_GIT_HASH ${CGR_SRC_HASH})
