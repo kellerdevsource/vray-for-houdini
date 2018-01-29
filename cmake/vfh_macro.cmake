@@ -161,6 +161,11 @@ endfunction()
 # Generate launcher with all needed environment variables set.
 # NOTE: used to generate .bat launchers and also used in c++ launcher
 function(vfh_generate_launcher)
+	if(APPLE)
+		message(WARNING "Launcher is not supported on MacOS! Edit houdini.env.")
+		return()
+	endif()
+
 	cmake_parse_arguments(ARG "BATCH;RELEASE;CPP_LAUNCHER" "TEMPLATE_FILENAME;FILENAME;DESTINATION;BIN;TEMPLATE_DIR" "" ${ARGN})
 
 	if(NOT ARG_BIN)
