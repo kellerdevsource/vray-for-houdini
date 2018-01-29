@@ -171,7 +171,7 @@ endfunction()
 # NOTE: used to generate .bat launchers and also used in c++ launcher
 function(vfh_generate_launcher)
 	if(APPLE)
-		message(WARNING "Launcher is not supported on MacOS! Edit houdini.env.")
+		message(STATUS "Launcher is not supported on MacOS! Edit houdini.env.")
 		return()
 	endif()
 
