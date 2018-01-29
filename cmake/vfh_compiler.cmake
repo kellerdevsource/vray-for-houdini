@@ -16,11 +16,17 @@ endif()
 
 macro(vfh_osx_flags _project_name)
 	if(APPLE)
+		if(INSTALL_RELEASE)
+			set(VFH_RPATH "@loader_path/../../appsdk/bin")
+		else()
+			set(VFH_RPATH "${SDK_PATH}/appsdk/bin")
+		endif()
+
 		# This sets search paths for modules like libvray.dylib
 		# (no need for install_name_tool tweaks)
 		set_target_properties(${_project_name}
 			PROPERTIES
-				INSTALL_RPATH "@loader_path;@executable_path")
+				INSTALL_RPATH "${VFH_RPATH}")
 	endif()
 endmacro()
 
