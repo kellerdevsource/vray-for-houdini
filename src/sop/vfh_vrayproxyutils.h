@@ -53,6 +53,23 @@ struct VRayProxyRefKey {
 			animStart == other.animStart &&
 			animLength == other.animLength);
 	}
+
+	bool operator!=(const VRayProxyRefKey &other) const {
+		return !(*this == other);
+	}
+
+	/// Checks for difference between two instances,
+	/// without taking frame into account
+	bool differingSettings(const VRayProxyRefKey &other) const {
+		return (filePath == other.filePath &&
+			lod == other.lod &&
+			animType == other.animType &&
+			animOffset == other.animOffset &&
+			animSpeed == other.animSpeed &&
+			animOverride == other.animOverride &&
+			animStart == other.animStart &&
+			animLength == other.animLength);
+	}
 };
 
 /// Get detail handle for a proxy packed primitive.

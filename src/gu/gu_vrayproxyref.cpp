@@ -46,7 +46,15 @@ struct VRayProxyRefKeyHasher {
 	}
 };
 
-static DetailCachePrototype<VUtils::MeshFile, VRayProxyRefKey, VRayProxyRefKeyHasher> cache;
+class VRayProxyRefKeyBuilder : public DetailBuilder<VRayProxyRefKey> {
+public:
+	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const VRayProxyRefKey &settings, const fpreal &t, UT_BoundingBox &box) override {
+
+		return getVRayProxyDetail(settings);
+	}
+}builder;
+
+static DetailCachePrototype<VUtils::MeshFile, VRayProxyRefKey, VRayProxyRefKeyHasher> cache( builder );
 
 void VRayProxyRef::install(GA_PrimitiveFactory *primFactory)
 {
@@ -60,7 +68,10 @@ VRayProxyRef::VRayProxyRef()
 
 VRayProxyRef::VRayProxyRef(const VRayProxyRef &src)
 	: VRayProxyRefBase(src)
-{}
+{
+	const VRayProxyRefKey &key = getKey();
+	cache.registerInCache(key.filePath, key);
+}
 
 VRayProxyRef::~VRayProxyRef()
 {
@@ -128,31 +139,20 @@ VRayProxyRefKey VRayProxyRef::getKey() const
 int VRayProxyRef::detailRebuild()
 {
 	const VRayProxyRefKey &vrmeshKey = getKey();
-	if (getCache()) {
-		if (cache.isCached(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f, getMeshFile(vrmeshKey))) {
-			// if cached, getDetail
-			const GU_DetailHandle &detailHandle = cache.getDetail(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f);
+	updateCacheVars(vrmeshKey);
 
-			const int res = m_detail != detailHandle;
-			m_detail = detailHandle;
-
-			return res;
-		}
-		// else create detail and cache it
-	}
-
-	const GU_DetailHandle &getail = getVRayProxyDetail(vrmeshKey);
+	const GU_DetailHandle &getail = cache.getDetail(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f);//getVRayProxyDetail(vrmeshKey);
 	
-	if (getCache()) {
-		cache.setDetail(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f, getMeshFile(vrmeshKey), getail);
-	}
-	
-	if (!cache.isCached(vrmeshKey.filePath)) {
-		clearVRayProxyCache(vrmeshKey.filePath.ptr());
-	}
-
 	const int res = m_detail != getail;
 	m_detail = getail;
 
 	return res;
+}
+
+void VRayProxyRef::updateCacheVars(const VRayProxyRefKey &newKey) {
+	if (lastKey.differingSettings(newKey)) {
+		cache.unregister(lastKey.filePath, lastKey);
+		lastKey = newKey;
+		cache.registerInCache(lastKey.filePath, lastKey);
+	}
 }

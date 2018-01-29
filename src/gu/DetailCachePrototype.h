@@ -24,22 +24,36 @@
 #include <GU/GU_PackedGeometry.h>
 #include <FS/UT_DSO.h>
 
+template <typename key>
+class DetailBuilder {
+public:
+	virtual GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const key &settings, const fpreal &t, UT_BoundingBox &box) = 0;
+};
+
 template <typename BD, typename T, typename KeyHash = VUtils::DefaultHash<T>, typename KeysEqual = VUtils::DefaultKeyCompare<T>>
 class DetailCachePrototype
 {
 public:
-	DetailCachePrototype()
+	DetailCachePrototype(DetailBuilder<T> &builder)
+		: detailBuilder(&builder)
+		, isOn(true)
 	{}
 	
+	DetailCachePrototype() = delete;
+
 	~DetailCachePrototype()
 	{}
+
+	void enableCache(bool state) {
+		isOn = state;
+	}
 
 	void registerInCache(const VUtils::CharString &filepath, const T &settings) {
 		if (filepath.empty()) {
 			return;
 		}
-		Log::getLog().debug("Registering: %s", filepath.ptr());
-		vrsceneCache[filepath.ptr()][settings].references++;
+		Log::getLog().debug("Incrementing: %s", filepath.ptr());
+		detailCache[filepath.ptr()][settings].references++;
 	}
 
 	void unregister(const VUtils::CharString &filepath, const T &settings) {
@@ -47,51 +61,48 @@ public:
 			return;
 		}
 
-		CacheElementMap &tempVal = vrsceneCache[filepath.ptr()];
+		CacheElementMap &tempVal = detailCache[filepath.ptr()];
+		int temp = tempVal[settings].references;
 		if (--tempVal[settings].references < 1) {
-			Log::getLog().debug("Erasing: %s", filepath.ptr());
 			tempVal.erase(settings);
+			Log::getLog().debug("erasing: %s", filepath.ptr());
 			if (tempVal.empty())
-				vrsceneCache.erase(filepath.ptr());
+				detailCache.erase(filepath.ptr());
 		}
 	}
 
-	// have GU_DetailHandle be a GU_Detail* here?
-	void setDetail(const VUtils::CharString &filepath, const T &settings, const fpreal &frame, BD *baseData, const GU_DetailHandle &detail) {
+	GU_DetailHandle& getDetail(const VUtils::CharString &filepath, const T &settings, const fpreal &frame, UT_BoundingBox &box = UT_BoundingBox()) {
 		if (filepath.empty()) {
-			return;
+			return GU_DetailHandle();
 		}
-		CacheElement &temp = vrsceneCache[filepath.ptr()][settings];
-		int key = 1000 * frame;
-		Data &data = temp.frameDetailMap[key];
 
-		data.baseData = baseData;
-		data.detail = detail;
+		if (isOn) {
+			if (isCached(filepath, settings, frame)) {
+				return detailCache[filepath.ptr()][settings].frameDetailMap[getFrameKey(frame)].detail;
+			}
+			else {
+				return detailCache[filepath.ptr()][settings].frameDetailMap[getFrameKey(frame)].detail = detailBuilder->buildDetail(filepath, settings, frame, box);
+			}
+		}
+
+		return detailBuilder->buildDetail(filepath, settings, frame, box);
 	}
 
-	GU_DetailHandle& getDetail(const VUtils::CharString &filepath, const T &settings, const fpreal &frame) {
-		vassert(!filepath.empty());
-		int key = frame * 1000;
-		Log::getLog().debug("Returning detail for: %s", filepath.ptr());
-		return vrsceneCache[filepath.ptr()][settings].frameDetailMap[key].detail;
-	}
-
-	bool isCached(const VUtils::CharString &filepath, const T &settings, const fpreal &frame, const BD *baseData) {
+	bool isCached(const VUtils::CharString &filepath, const T &settings, const fpreal &frame) {
 		if (filepath.empty()) {
 			return false;
 		}
 
-		CacheElement &temp = vrsceneCache[filepath.ptr()][settings];
-		int key = frame * 1000;
-		Data &data = temp.frameDetailMap[key];
+		CacheElement &temp = detailCache[filepath.ptr()][settings];
+		Data &data = temp.frameDetailMap[getFrameKey(frame)];
 
-		if (baseData == data.baseData) {
-			return data.detail.isValid();
+		// --- check if it's here
+		if (data.detail.isValid()) {
+			return true;
 		}
 
 		// clear cache entries associated with this
 		data.detail.clear();// could this be an issue due to possible concurent access?
-		data.baseData = nullptr;
 
 		return false;
 	}
@@ -101,15 +112,18 @@ public:
 			return false;
 		}
 
-		return vrsceneCache.find(filepath.ptr()) != vrsceneCache.end();
+		return detailCache.find(filepath.ptr()) != detailCache.end();
 	}
 private:
+
+	int getFrameKey(const fpreal &frame) {
+		return frame * 1000;
+	}
+
 	struct Data {
 		Data()
-			: baseData(nullptr)
 		{}
 
-		BD* baseData;
 		GU_DetailHandle detail;
 	};
 
@@ -127,7 +141,10 @@ private:
 	};
 
 	typedef VUtils::HashMap<T, CacheElement, KeyHash> CacheElementMap;
-	VUtils::StringHashMap<CacheElementMap> vrsceneCache;
+	VUtils::StringHashMap<CacheElementMap> detailCache;
+
+	DetailBuilder<T> *detailBuilder;
+	bool isOn;
 
 	VUTILS_DISABLE_COPY(DetailCachePrototype)
 };
