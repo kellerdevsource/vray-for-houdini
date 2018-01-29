@@ -31,7 +31,16 @@ macro(link_with_boost _name)
 			set(BOOST_LIBS boost_system-vc140-mt-1_55)
 		endif()
 	else()
-		set(BOOST_LIBS boost_system)
+		if(APPLE)
+			set(BOOST_LIBS
+				boost_system
+				boost_filesystem
+				boost_regex
+				boost_wave
+			)
+		else()
+			set(BOOST_LIBS boost_system)
+		endif()
 
 		if(HOUDINI_VERSION VERSION_GREATER 16.0)
 			list(APPEND BOOST_LIBS

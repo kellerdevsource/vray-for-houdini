@@ -23,13 +23,18 @@ macro(use_vray_osl)
 	add_definitions(-DWITH_VRAY_OSL)
 endmacro()
 
-
-
 macro(link_with_vray_osl _name)
-	set(VRAY_OSL_LIBS vrayoslquery
-	                  vrayoslexec
-	                  vrayoslcomp
-	                  vrayopenimageio)
+	if(APPLE)
+		set(VRAY_OSL_LIBS vrayoslquery_s
+		                  vrayoslexec_s
+		                  vrayoslcomp_s
+		                  vrayopenimageio_s)
+	else()
+		set(VRAY_OSL_LIBS vrayoslquery
+		                  vrayoslexec
+		                  vrayoslcomp
+		                  vrayopenimageio)
+	endif()
 
 	target_link_libraries(${_name} ${VRAY_OSL_LIBS})
 endmacro()
