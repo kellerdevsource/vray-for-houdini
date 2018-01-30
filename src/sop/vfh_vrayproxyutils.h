@@ -91,9 +91,6 @@ bool getVRayProxyBoundingBox(const VRayProxyRefKey &options, UT_BoundingBox &box
 /// @param filepath File path.
 /// @retval true if cached file is deleted.
 bool clearVRayProxyCache(const char *filepath);
-
-VUtils::MeshFile *getMeshFile(const VRayProxyRefKey &options);
-
 } // namespace VRayForHoudini
 
 #endif // VRAY_FOR_HOUDINI_VRAYPROXYCACHE_H

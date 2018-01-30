@@ -100,8 +100,6 @@ public:
 private:
 	GU_DetailHandle build(VrsceneDesc *vrsceneDesc, int shouldFlip, const fpreal &t, UT_BoundingBox &box)
 	{
-		//const fpreal t = getFrame(getCurrentFrame()); // ---
-
 		// Detail for the mesh
 		GU_Detail *meshDetail = new GU_Detail();
 
@@ -258,7 +256,7 @@ double VRaySceneRef::getFrame(fpreal t) const
 	return t;
 }
 
-void VRaySceneRef::updateCacheRelatedVars() {// ---
+void VRaySceneRef::updateCacheRelatedVars() {
 	if (getCache()) {
 		if (vrsceneFile != getFilepath() ) {
 			cache.unregister(vrsceneFile, SettingsWrapper(vrsSettings, shouldFlipAxis));
@@ -273,73 +271,6 @@ void VRaySceneRef::updateCacheRelatedVars() {// ---
 		}
 	}
 }
-
-//int VRaySceneRef::detailRebuild(VrsceneDesc *vrsceneDesc, int shouldFlip)
-//{
-//	const fpreal t = getFrame(getCurrentFrame());
-//
-//	// Detail for the mesh
-//	GU_Detail *meshDetail = new GU_Detail();
-//
-//	int meshVertexOffset = 0;
-//	m_bbox.initBounds();
-//
-//	FOR_IT (VrsceneObjects, obIt, vrsceneDesc->m_objects) {
-//		VrsceneObjectBase *ob = obIt.data();
-//		if (ob && ob->getType() == ObjectTypeNode) {
-//			const VUtils::TraceTransform &tm = ob->getTransform(t);
-//
-//			VrsceneObjectNode     *node = static_cast<VrsceneObjectNode*>(ob);
-//			VrsceneObjectDataBase *nodeData = node->getData();
-//			if (nodeData && nodeData->getDataType() == ObjectDataTypeMesh) {
-//				VrsceneObjectDataMesh *mesh = static_cast<VrsceneObjectDataMesh*>(nodeData);
-//
-//				const VUtils::VectorRefList &vertices = mesh->getVertices(t);
-//				const VUtils::IntRefList    &faces = mesh->getFaces(t);
-//
-//				// Allocate the points, this is the offset of the first one
-//				GA_Offset pointOffset = meshDetail->appendPointBlock(vertices.count());
-//
-//				// Iterate through points by their offsets
-//				for (int v = 0; v < vertices.count(); ++v, ++pointOffset) {
-//					VUtils::Vector vert = tm * vertices[v];
-//					if (shouldFlip) {
-//						vert = flipMatrixZY * vert;
-//					}
-//
-//					const UT_Vector3 utVert(vert.x, vert.y, vert.z);
-//
-//					m_bbox.enlargeBounds(utVert);
-//
-//					meshDetail->setPos3(pointOffset, utVert);
-//				}
-//
-//				for (int f = 0; f < faces.count(); f += 3) {
-//					GU_PrimPoly *poly = GU_PrimPoly::build(meshDetail, 3, GU_POLY_CLOSED, 0);
-//					for (int c = 0; c < 3; ++c) {
-//						poly->setVertexPoint(c, meshVertexOffset + faces[f + c]);
-//					}
-//					poly->reverse();
-//				}
-//
-//				meshVertexOffset += vertices.count();
-//			}
-//		}
-//	}
-//
-//	if (getCache()) {
-//		GU_DetailHandle detailHandle;
-//		detailHandle.allocateAndSet(meshDetail);
-//		cache.setDetail(vrsceneFile, SettingsWrapper(vrsSettings, shouldFlipAxis), t, vrsceneDesc, detailHandle);// ---
-//
-//		m_detail = detailHandle;
-//	}
-//	else {
-//		m_detail.allocateAndSet(meshDetail);
-//	}
-//
-//	return true;
-//}
 
 int VRaySceneRef::detailRebuild()
 {
@@ -372,19 +303,6 @@ int VRaySceneRef::detailRebuild()
 			m_detail = cache.getDetail(vrsceneFile, SettingsWrapper(vrsSettings, shouldFlipAxis), getFrame(getCurrentFrame()), m_bbox);
 
 			res = true;
-
-			//if (cache.isCached(vrsceneFile, SettingsWrapper(vrsSettings, shouldFlipAxis), getFrame(getCurrentFrame())/*--- vrsceneDesc*/)) {
-			//	GU_DetailHandle &temp = cache.getDetail(vrsceneFile, SettingsWrapper(vrsSettings, shouldFlipAxis), getFrame(getCurrentFrame()));
-			//	res = m_detail != temp;
-			//	m_detail = temp;
-			//}
-			//else {
-			//	res = detailRebuild(vrsceneDesc, shouldFlip);
-			//	if (!cache.isCached(vrsceneFile)) {
-			//		Log::getLog().debug("Deleting: %s", vrsceneFile.ptr());
-			//		vrsceneMan.delVrsceneDesc(vrsceneFile);
-			//	}
-			//}
 		}
 	}
 

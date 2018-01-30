@@ -52,9 +52,9 @@ public:
 
 		return getVRayProxyDetail(settings);
 	}
-}builder;
+} builder;
 
-static DetailCachePrototype<VUtils::MeshFile, VRayProxyRefKey, VRayProxyRefKeyHasher> cache( builder );
+static DetailCachePrototype<VUtils::MeshFile, VRayProxyRefKey, VRayProxyRefKeyHasher> cache(builder);
 
 void VRayProxyRef::install(GA_PrimitiveFactory *primFactory)
 {
@@ -141,8 +141,8 @@ int VRayProxyRef::detailRebuild()
 	const VRayProxyRefKey &vrmeshKey = getKey();
 	updateCacheVars(vrmeshKey);
 
-	const GU_DetailHandle &getail = cache.getDetail(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f);//getVRayProxyDetail(vrmeshKey);
-	
+	const GU_DetailHandle &getail = cache.getDetail(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f);
+
 	const int res = m_detail != getail;
 	m_detail = getail;
 
