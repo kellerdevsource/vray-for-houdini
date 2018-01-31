@@ -200,6 +200,9 @@ void OSLNodeBase<MTL>::getOSLCode(UT_String & oslCode, bool &needCompile) const
 	} else {
 		UT_String filePath;
 		evalString(filePath, "osl_file", 0, 0.f);
+		if (filePath == "" || filePath.buffer() == nullptr) {
+			return;
+		}
 
 		needCompile = filePath.endsWith(".osl");
 
