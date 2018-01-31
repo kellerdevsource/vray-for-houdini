@@ -493,13 +493,18 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	ViewParams viewParams(newViewParams);
 
 	if (isAnimation() && HOU::isIndie()) {
+#if defined(HDK_16_5)
+		const int maxIndieW = 4096;
+		const int maxIndieH = 4096;
+#else
 		const int maxIndieW = 1920;
 		const int maxIndieH = 1080;
+#endif
 
 		const float aspect = float(maxIndieW) / float(maxIndieH);
 
 		if (viewParams.renderSize.w > maxIndieW ||
-			viewParams.renderSize.h > maxIndieH)
+		    viewParams.renderSize.h > maxIndieH)
 		{
 			if (viewParams.renderSize.w > maxIndieW) {
 				viewParams.renderSize.w = maxIndieW;
@@ -511,9 +516,10 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 				viewParams.renderSize.w = viewParams.renderSize.h * aspect;
 			}
 
-			Log::getLog().warning("Maximum resolution for animations in Houdini Indie is 1920 x 1080");
+			Log::getLog().warning("Maximum resolution for animations in Houdini Indie is %i x %i",
+								  maxIndieW, maxIndieH);
 			Log::getLog().warning("Clamping resolution to %i x %i",
-									viewParams.renderSize.w, viewParams.renderSize.h);
+			                      viewParams.renderSize.w, viewParams.renderSize.h);
 		}
 	}
 
