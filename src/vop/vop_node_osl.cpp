@@ -266,7 +266,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		OSLCompilerInput settings;
 		settings.inputMode = OSL_MEMORY_BUFFER;
 		settings.outputMode = OSL_MEMORY_BUFFER;
-		settings.buffer = std::move(oslCode.toStdString());
+		settings.buffer = oslCode.toStdString();
 		settings.stdoslpath = stdOslPath;
 		settings.errorHandler = &staticErrHandle;
 
@@ -280,7 +280,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		const int written = compiler->get_compiled_shader_code(&osoCode[0], size + 1);
 		UT_ASSERT_MSG(written == size, "Subsequent calls to get_compiled_shader_code return different size");
 	} else {
-		osoCode = std::move(oslCode.toStdString());
+		osoCode = oslCode.toStdString();
 	}
 
 	OSLQuery query;
