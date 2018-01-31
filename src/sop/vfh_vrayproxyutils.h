@@ -16,7 +16,7 @@
 #include <UT/UT_String.h>
 
 #include <charstring.h>
-
+#include <vfh_defines.h>
 #include "mesh_file.h"
 
 namespace VRayForHoudini {
@@ -45,10 +45,10 @@ struct VRayProxyRefKey {
 	bool operator== (const VRayProxyRefKey & other) const {
 		return (filePath == other.filePath &&
 			lod == other.lod &&
-			f == other.f &&
+			MemberFloatEq(f, other.f) &&
 			animType == other.animType &&
-			animOffset == other.animOffset &&
-			animSpeed == other.animSpeed &&
+			MemberFloatEq(animOffset, other.animOffset) &&
+			MemberFloatEq(animSpeed, other.animSpeed) &&
 			animOverride == other.animOverride &&
 			animStart == other.animStart &&
 			animLength == other.animLength);
@@ -61,11 +61,11 @@ struct VRayProxyRefKey {
 	/// Checks for difference between two instances,
 	/// without taking frame into account
 	bool differingSettings(const VRayProxyRefKey &other) const {
-		return (filePath == other.filePath &&
+		return !(filePath == other.filePath &&
 			lod == other.lod &&
 			animType == other.animType &&
-			animOffset == other.animOffset &&
-			animSpeed == other.animSpeed &&
+			MemberFloatEq(animOffset, other.animOffset) &&
+			MemberFloatEq(animSpeed, other.animSpeed) &&
 			animOverride == other.animOverride &&
 			animStart == other.animStart &&
 			animLength == other.animLength);

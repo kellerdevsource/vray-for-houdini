@@ -52,7 +52,6 @@ public:
 		if (filepath.empty()) {
 			return;
 		}
-		Log::getLog().debug("Incrementing: %s", filepath.ptr());
 		detailCache[filepath.ptr()][settings].references++;
 	}
 
@@ -62,10 +61,8 @@ public:
 		}
 
 		CacheElementMap &tempVal = detailCache[filepath.ptr()];
-		int temp = tempVal[settings].references;
-		if (--tempVal[settings].references < 1) {
+		if (--(tempVal[settings].references) < 1) {
 			tempVal.erase(settings);
-			Log::getLog().debug("erasing: %s", filepath.ptr());
 			if (tempVal.empty())
 				detailCache.erase(filepath.ptr());
 		}
@@ -78,10 +75,10 @@ public:
 
 		if (isOn) {
 			if (isCached(filepath, settings, frame)) {
-				return detailCache[filepath.ptr()][settings].frameDetailMap[getFrameKey(frame)].detail;
+				return detailCache[filepath.ptr()][settings].frameDetailMap[getFrameKey(frame)];
 			}
 			else {
-				return detailCache[filepath.ptr()][settings].frameDetailMap[getFrameKey(frame)].detail = detailBuilder->buildDetail(filepath, settings, frame, box);
+				return detailCache[filepath.ptr()][settings].frameDetailMap[getFrameKey(frame)] = detailBuilder->buildDetail(filepath, settings, frame, box);
 			}
 		}
 
@@ -94,16 +91,12 @@ public:
 		}
 
 		CacheElement &temp = detailCache[filepath.ptr()][settings];
-		Data &data = temp.frameDetailMap[getFrameKey(frame)];
+		GU_DetailHandle &detail = temp.frameDetailMap[getFrameKey(frame)];
 
 		// --- check if it's here
-		if (data.detail.isValid()) {
+		if (detail.isValid()) {
 			return true;
 		}
-
-		// clear cache entries associated with this
-		data.detail.clear();// could this be an issue due to possible concurent access?
-
 		return false;
 	}
 
@@ -120,13 +113,6 @@ private:
 		return frame * 1000;
 	}
 
-	struct Data {
-		Data()
-		{}
-
-		GU_DetailHandle detail;
-	};
-
 	struct CacheElement {
 		CacheElement()
 			: references(0)
@@ -137,7 +123,7 @@ private:
 		}
 
 		int references;
-		VUtils::HashMap<int, Data> frameDetailMap;
+		VUtils::HashMap<int, GU_DetailHandle> frameDetailMap;
 	};
 
 	typedef VUtils::HashMap<T, CacheElement, KeyHash> CacheElementMap;
