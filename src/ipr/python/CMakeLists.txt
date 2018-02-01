@@ -51,11 +51,19 @@ set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME _vfh_ipr)
 if (WIN32)
 	set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pyd")
 elseif(APPLE)
-	target_link_libraries(${PROJECT_NAME} python2.7)
+	find_library(HDK_PYTHON Python
+		PATHS
+			${PYTHON_ROOT}
+		NO_CMAKE_ENVIRONMENT_PATH
+		NO_CMAKE_PATH
+		NO_CMAKE_SYSTEM_PATH
+		NO_DEFAULT_PATH
+		NO_SYSTEM_ENVIRONMENT_PATH
+	)
+
+	target_link_libraries(${PROJECT_NAME} ${HDK_PYTHON})
 	set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".so")
 endif()
-
-vfh_osx_flags(${PROJECT_NAME})
 
 cgr_install_runtime(${PROJECT_NAME} ${VFH_PYTHON_DIRPATH})
 if (INSTALL_RELEASE)

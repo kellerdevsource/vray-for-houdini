@@ -33,7 +33,7 @@ macro(vfh_osx_flags _project_name)
 			COMMAND install_name_tool -change ../../lib/mavericks_x64/gcc-4.2-cpp/libvrayoslexec.dylib @rpath/libvrayoslexec.dylib $<TARGET_FILE:${_project_name}>
 			COMMAND install_name_tool -change ../../lib/mavericks_x64/gcc-4.2-cpp/libvrayoslcomp.dylib @rpath/libvrayoslcomp.dylib $<TARGET_FILE:${_project_name}>
 			COMMAND install_name_tool -change ./lib/mavericks_x64/gcc-4.2-cpp/libvrayopenimageio.dylib @rpath/libvrayopenimageio.dylib $<TARGET_FILE:${_project_name}>
-			COMMAND install_name_tool -change @rpath/Python.framework/Versions/16.5.323/Python @rpath/Python.framework/Versions/2.7/Python $<TARGET_FILE:${_project_name}>
+			COMMAND install_name_tool -change @rpath/Python @rpath/Python.framework/Versions/2.7/Python $<TARGET_FILE:${_project_name}>
 		)
 	endif()
 endmacro()
