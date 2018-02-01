@@ -915,7 +915,10 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		chanMan->expandString(dirPathRaw.buffer(), dirPath, t);
 
 		// Create output directory.
-		directoryCreator.mkpath(dirPathRaw.buffer());
+		if (!directoryCreator.mkpath(dirPath.buffer())) {
+			Log::getLog().error("Failed to create output directory \"%s\"!", dirPath.buffer());
+			return ReturnValue::Error;
+		}
 
 		// Append default file type if not set.
 		ImageFormat imgFormat = getImgFormat(filePathRaw.buffer());
