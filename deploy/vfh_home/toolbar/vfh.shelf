@@ -77,11 +77,9 @@ vfh_camera.add_physical_camera_attributes()
 
 import os
 import vfh.shelftools.vfh_object_properties as vfh_object_properties
+import vfh.vfh_reload as vfh_reload
 
-HOUDINI_SOHO_DEVELOPER = os.environ.get("HOUDINI_SOHO_DEVELOPER", False)
-if HOUDINI_SOHO_DEVELOPER:
-    print "Reloading: %s" % (vfh_object_properties)
-    reload(vfh_object_properties)
+vfh_reload.reload(vfh_object_properties)
 
 geoList = filter(lambda item: item.type().category().typeName() == 'OBJ' and item.type().name() == 'geo', hou.selectedNodes())
 map(vfh_object_properties.addVRayDisplamentParams, geoList)
@@ -96,11 +94,9 @@ map(vfh_object_properties.addVRayDisplamentParams, geoList)
 
 import os
 import vfh.shelftools.vfh_object_properties as vfh_object_properties
+import vfh.vfh_reload as vfh_reload
 
-HOUDINI_SOHO_DEVELOPER = os.environ.get("HOUDINI_SOHO_DEVELOPER", False)
-if HOUDINI_SOHO_DEVELOPER:
-    print "Reloading: %s" % (vfh_object_properties)
-    reload(vfh_object_properties)
+vfh_reload.reload(vfh_object_properties)
 
 geoList = filter(lambda item: item.type().category().typeName() == 'OBJ' and item.type().name() == 'geo', hou.selectedNodes())
 map(vfh_object_properties.addVRayHairParams, geoList)
@@ -115,11 +111,9 @@ map(vfh_object_properties.addVRayHairParams, geoList)
 
 import os
 import vfh.shelftools.vfh_object_properties as vfh_object_properties
+import vfh.vfh_reload as vfh_reload
 
-HOUDINI_SOHO_DEVELOPER = os.environ.get("HOUDINI_SOHO_DEVELOPER", False)
-if HOUDINI_SOHO_DEVELOPER:
-    print "Reloading: %s" % (vfh_object_properties)
-    reload(vfh_object_properties)
+vfh_reload.reload(vfh_object_properties)
 
 geoList = filter(lambda item: item.type().category().typeName() == 'OBJ' and item.type().name() == 'geo', hou.selectedNodes())
 map(vfh_object_properties.addVRayObjectProperties, geoList)

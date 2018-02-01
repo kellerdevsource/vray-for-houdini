@@ -11,13 +11,12 @@
 import hou
 import os
 
+from vfh import vfh_reload
 from vfh import vfh_attrs
 from vfh import vfh_json
 
-HOUDINI_SOHO_DEVELOPER = os.environ.get("HOUDINI_SOHO_DEVELOPER", False)
-if HOUDINI_SOHO_DEVELOPER:
-    reload(vfh_attrs)
-    reload(vfh_json)
+vfh_reload.reload(vfh_attrs)
+vfh_reload.reload(vfh_json)
 
 UI_FILEPATHS = {}
 
