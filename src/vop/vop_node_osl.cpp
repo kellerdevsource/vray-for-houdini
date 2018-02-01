@@ -200,6 +200,9 @@ void OSLNodeBase<MTL>::getOSLCode(UT_String & oslCode, bool &needCompile) const
 	} else {
 		UT_String filePath;
 		evalString(filePath, "osl_file", 0, 0.f);
+		if (!filePath.isstring()) {
+			return;
+		}
 
 		needCompile = filePath.endsWith(".osl");
 
@@ -263,7 +266,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		OSLCompilerInput settings;
 		settings.inputMode = OSL_MEMORY_BUFFER;
 		settings.outputMode = OSL_MEMORY_BUFFER;
-		settings.buffer = std::move(oslCode.toStdString());
+		settings.buffer = oslCode.toStdString();
 		settings.stdoslpath = stdOslPath;
 		settings.errorHandler = &staticErrHandle;
 
@@ -277,7 +280,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		const int written = compiler->get_compiled_shader_code(&osoCode[0], size + 1);
 		UT_ASSERT_MSG(written == size, "Subsequent calls to get_compiled_shader_code return different size");
 	} else {
-		osoCode = std::move(oslCode.toStdString());
+		osoCode = oslCode.toStdString();
 	}
 
 	OSLQuery query;
@@ -297,14 +300,14 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 				if (MTL) {
 					self->m_outputName = param->name;
 				} else {
-					Log::getLog().warning("TexOSL \"%s\" does not support closure color as output parameter!", this->getName().nonNullBuffer());
+					Log::getLog().warning("TexOSL \"%s\" does not support closure color as output parameter (%s)", this->getName().nonNullBuffer(), param->name.c_str());
 				}
 			} else {
 
 				if (param->type.vecsemantics == TypeDesc::COLOR) {
 					self->m_outputName = param->name;
 				} else {
-					Log::getLog().warning("Output %s is n");
+					Log::getLog().warning("TexOSL \"%s\" supports only color as output parameter (%s)", this->getName().nonNullBuffer(), param->name.c_str());
 				}
 			}
 			continue;
@@ -364,7 +367,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		}
 	}
 
-	if (MTL && m_outputName == "") {
+	if (MTL && m_outputName.empty()) {
 		self->m_outputName = "Ci";
 	}
 
@@ -419,7 +422,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		// show only the type this param is
 		const std::string & oslParamName = mapTypeToParam<MTL>(param);
 
-		if (oslParamName != "") {
+		if (!oslParamName.empty()) {
 			char paramName[256] = {0};
 			for (int f = 0; f < (oslParamCount - OSL_PARAM_TYPE_COUNT); f++) {
 				// label and separator
@@ -491,7 +494,7 @@ const char * OSLNodeBase<MTL>::outputLabel(unsigned idx) const
 	}
 
 	updateParamsIfNeeded();
-	if (m_outputName != "") {
+	if (!m_outputName.empty()) {
 		return OSLNodeBase<MTL>::getOutputName();
 	} else {
 		Log::getLog().warning("outputLabel(%d) out of range", idx);
@@ -553,7 +556,7 @@ void OSLNodeBase<MTL>::getOutputNameSubclass(UT_String &out, int idx) const
 {
 	if (idx >= NodeBase::getNumVisibleOutputs()) {
 		updateParamsIfNeeded();
-		if (m_outputName != "") {
+		if (!m_outputName.empty()) {
 			out = m_outputName;
 		} else {
 			Log::getLog().warning("Output index out of range");
@@ -601,7 +604,7 @@ void OSLNodeBase<MTL>::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int id
 {
 	if (idx >= NodeBase::getNumVisibleOutputs()) {
 		updateParamsIfNeeded();
-		if (m_outputName != "") {
+		if (!m_outputName.empty()) {
 			type_info.setType(OSLNodeBase<MTL>::getOutputType());
 		} else {
 			Log::getLog().warning("Trying to get output type of non-existent output!");
@@ -657,7 +660,7 @@ template <bool MTL>
 unsigned OSLNodeBase<MTL>::maxOutputs() const
 {
 	updateParamsIfNeeded();
-	return NodeBase::maxOutputs() + (m_outputName != "");
+	return NodeBase::maxOutputs() + !m_outputName.empty();
 }
 
 template <bool MTL>
@@ -708,7 +711,7 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 		oslParams.push_back(VRay::Value(m_paramList[c].name));
 
 		const std::string & paramTypeName = mapTypeToParam<MTL>(m_paramList[c]);
-		if (paramTypeName == "") {
+		if (paramTypeName.empty()) {
 			continue;
 		}
 		const std::string & paramName = "osl#" + paramTypeName;
