@@ -6,7 +6,9 @@
     <memberTool name="vray_render_rt"/>
     <memberTool name="vray_show_vfb"/>
     <memberTool name="vray_physical_camera"/>
+    <memberTool name="vray_object_properties"/>
     <memberTool name="vray_displacement"/>
+    <memberTool name="vray_hair"/>
     <memberTool name="vray_proxy_export"/>
     <memberTool name="vray_proxy_import"/>
     <memberTool name="vray_preset_fumefx"/>
@@ -69,21 +71,58 @@ vfh_camera.add_physical_camera_attributes()
     </script>
 </tool>
 
-
 <tool name="vray_displacement" label="Displacement" icon="ROP_vray.svg">
     <script scriptType="python">
 <![CDATA[
 
 import os
-import vfh.shelftools.vrayattr as vrayattr
+import vfh.shelftools.vfh_object_properties as vfh_object_properties
 
 HOUDINI_SOHO_DEVELOPER = os.environ.get("HOUDINI_SOHO_DEVELOPER", False)
 if HOUDINI_SOHO_DEVELOPER:
-    print "Reloading: %s" % (vrayattr)
-    reload(vrayattr)
+    print "Reloading: %s" % (vfh_object_properties)
+    reload(vfh_object_properties)
 
 geoList = filter(lambda item: item.type().category().typeName() == 'OBJ' and item.type().name() == 'geo', hou.selectedNodes())
-map(vrayattr.addVRayDisplamentParams, geoList)
+map(vfh_object_properties.addVRayDisplamentParams, geoList)
+
+]]>
+    </script>
+</tool>
+
+<tool name="vray_hair" label="Hair" icon="ROP_vray.svg">
+    <script scriptType="python">
+<![CDATA[
+
+import os
+import vfh.shelftools.vfh_object_properties as vfh_object_properties
+
+HOUDINI_SOHO_DEVELOPER = os.environ.get("HOUDINI_SOHO_DEVELOPER", False)
+if HOUDINI_SOHO_DEVELOPER:
+    print "Reloading: %s" % (vfh_object_properties)
+    reload(vfh_object_properties)
+
+geoList = filter(lambda item: item.type().category().typeName() == 'OBJ' and item.type().name() == 'geo', hou.selectedNodes())
+map(vfh_object_properties.addVRayHairParams, geoList)
+
+]]>
+    </script>
+</tool>
+
+<tool name="vray_object_properties" label="Object Properties" icon="ROP_vray.svg">
+    <script scriptType="python">
+<![CDATA[
+
+import os
+import vfh.shelftools.vfh_object_properties as vfh_object_properties
+
+HOUDINI_SOHO_DEVELOPER = os.environ.get("HOUDINI_SOHO_DEVELOPER", False)
+if HOUDINI_SOHO_DEVELOPER:
+    print "Reloading: %s" % (vfh_object_properties)
+    reload(vfh_object_properties)
+
+geoList = filter(lambda item: item.type().category().typeName() == 'OBJ' and item.type().name() == 'geo', hou.selectedNodes())
+map(vfh_object_properties.addVRayObjectProperties, geoList)
 
 ]]>
     </script>

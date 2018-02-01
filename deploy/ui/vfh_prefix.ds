@@ -7,6 +7,8 @@
 
 #define VFH_HIDE_WHEN_PARAM_TRUE(name)  hidewhen "{ "PREFIX##name##" == 1 }"
 #define VFH_HIDE_WHEN_PARAM_FALSE(name) hidewhen "{ "PREFIX##name##" == 0 }"
+#define VFH_HIDETAB_WHEN_PARAM_TRUE(name)  hidewhentab "{ "PREFIX##name##" == 1 }"
+#define VFH_HIDETAB_WHEN_PARAM_FALSE(name) hidewhentab "{ "PREFIX##name##" == 0 }"
 
 #define VFH_DISABLE_WHEN_PARAM_TRUE(name)  disablewhen "{ "PREFIX##name##" == 1 }"
 #define VFH_DISABLE_WHEN_PARAM_FALSE(name) disablewhen "{ "PREFIX##name##" == 0 }"
@@ -23,6 +25,9 @@ hidewhen "{ "PREFIX##n1##" "##op1##" "##v1##"} { "PREFIX##n2##" "##op2##" "##v2#
 
 #define VFH_HIDE_WHEN_PARAM_FALSE(name) hidewhen "{ "##name##" == 0 }"
 #define VFH_HIDE_WHEN_PARAM_TRUE(name)  hidewhen "{ "##name##" == 1 }"
+
+#define VFH_HIDETAB_WHEN_PARAM_FALSE(name) hidewhentab "{ "##name##" == 0 }"
+#define VFH_HIDETAB_WHEN_PARAM_TRUE(name)  hidewhentab "{ "##name##" == 1 }"
 
 #define VFH_DISABLE_WHEN_PARAM_TRUE(name)  disablewhen "{ "##name##" == 1 }"
 #define VFH_DISABLE_WHEN_PARAM_FALSE(name) disablewhen "{ "##name##" == 0 }"

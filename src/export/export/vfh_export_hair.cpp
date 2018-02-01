@@ -11,15 +11,16 @@
 #include "vfh_export_hair.h"
 #include "vfh_exporter.h"
 #include "vfh_geoutils.h"
+#include "vfh_prm_templates.h"
 
 #include <GEO/GEO_PrimPoly.h>
 
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Attrs;
 
-const char* const theHairParm = "geom_splines";
-const char* const VFH_ATTRIB_INCANDESCENCE = "incandescence";
-const char* const VFH_ATTRIB_TRANSPARENCY = "transparency";
+static const char const theHairParm[] = "GeomMayaHair_geom_splines";
+static const char const VFH_ATTRIB_INCANDESCENCE[] = "incandescence";
+static const char const VFH_ATTRIB_TRANSPARENCY[] = "transparency";
 
 HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList)
 	: PrimitiveExporter(obj, ctx, exp)
@@ -66,11 +67,15 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	pluginDesc.addAttribute(Attrs::PluginAttr("num_hair_vertices", strands));
 	pluginDesc.addAttribute(Attrs::PluginAttr("hair_vertices", verts));
 
+	fpreal defaultWidth = 0.01f;
+
 	OP_Node *prmOwner = findPramOwnerForHairParms(objNode);
 	if (prmOwner) {
 		// found parent node with hair rendering parameters set
 		// so update plugin description with those parameters
 		pluginExporter.setAttrsFromOpNodePrms(pluginDesc, prmOwner);
+
+		defaultWidth = Parm::getParmFloat(*prmOwner, "GeomMayaHair_width", 0.01f);
 	}
 	else {
 		// no hair rendering parameters found - use defaults
@@ -101,7 +106,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	}
 	if (widthHdl.isInvalid()) {
 		for (int i = 0; i < widths.count(); ++i) {
-			widths[i] = 0.01f;
+			widths[i] = defaultWidth;
 		}
 	}
 	else {

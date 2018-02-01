@@ -1,0 +1,17 @@
+#define PREFIX "vray_"
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
+{
+    name VRayObjectProperties
+    label "V-Ray Object Properties"
+
+    parmtag { spare_category "V-Ray Object" }
+
+    parm {
+        VFH_NAME("objectID")
+        label "Object ID"
+        help "Object ID."
+        type integer
+        default { "0" }
+        range { 0! 10000! }
+    }
+}

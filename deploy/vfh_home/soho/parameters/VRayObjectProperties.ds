@@ -1,15 +1,3 @@
-{
-    name VRayObjectProperties
-    label "V-Ray Object Properties"
-
-    parmtag { spare_category "V-Ray Object" }
-
-    parm {
-        name    "vray_objectID"
-        label   "Object ID"
-        type    integer
-        default { "0" }
-        range   { 0! 10000! }
-        export  none
-    }
-}
+#if environment(VRAY_UI_DS_PATH)
+#include "$VRAY_UI_DS_PATH/vfh_object_properties.ds"
+#endif // VRAY_UI_DS_PATH
