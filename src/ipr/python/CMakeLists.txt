@@ -54,6 +54,8 @@ elseif(APPLE)
 	target_link_libraries(${PROJECT_NAME} python2.7)
 endif()
 
+vfh_osx_flags(${PROJECT_NAME})
+
 cgr_install_runtime(${PROJECT_NAME} ${VFH_PYTHON_DIRPATH})
 if (INSTALL_RELEASE)
 	cgr_install_runtime(${PROJECT_NAME} ${INSTALL_RELEASE_PATH}/vfh_home/soho/python2.7)
