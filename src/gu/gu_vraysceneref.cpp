@@ -209,7 +209,6 @@ VRaySceneRef::~VRaySceneRef()
 {
 	cache.unregister(vrsceneFile, SettingsWrapper(vrsSettings, shouldFlipAxis));
 	if (!cache.isCached(vrsceneFile)) {
-		Log::getLog().debug("Deleting: %s", vrsceneFile.ptr());
 		vrsceneMan.delVrsceneDesc(vrsceneFile);
 	}
 }

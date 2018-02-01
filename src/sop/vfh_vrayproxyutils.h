@@ -45,10 +45,10 @@ struct VRayProxyRefKey {
 	bool operator== (const VRayProxyRefKey & other) const {
 		return (filePath == other.filePath &&
 			lod == other.lod &&
-			MemberFloatEq(f, other.f) &&
+			MemberFloatEq(f) &&
 			animType == other.animType &&
-			MemberFloatEq(animOffset, other.animOffset) &&
-			MemberFloatEq(animSpeed, other.animSpeed) &&
+			MemberFloatEq(animOffset) &&
+			MemberFloatEq(animSpeed) &&
 			animOverride == other.animOverride &&
 			animStart == other.animStart &&
 			animLength == other.animLength);
@@ -64,8 +64,8 @@ struct VRayProxyRefKey {
 		return !(filePath == other.filePath &&
 			lod == other.lod &&
 			animType == other.animType &&
-			MemberFloatEq(animOffset, other.animOffset) &&
-			MemberFloatEq(animSpeed, other.animSpeed) &&
+			MemberFloatEq(animOffset) &&
+			MemberFloatEq(animSpeed) &&
 			animOverride == other.animOverride &&
 			animStart == other.animStart &&
 			animLength == other.animLength);
