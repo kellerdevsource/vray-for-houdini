@@ -89,6 +89,8 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 		GA_ATTRIB_POINT,		// Shared vertex data
 	};
 
+	VRay::VUtils::FloatRefList widths(nVerts);
+
 	GA_ROHandleF widthHdl = gdp.findAttribute(GEO_STD_ATTRIB_WIDTH,
 											  vSearchOrder,
 											  COUNT_OF(vSearchOrder));
@@ -97,13 +99,16 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 									 vSearchOrder,
 									 COUNT_OF(vSearchOrder));
 	}
-
-	if (widthHdl.isValid()) {
-		VRay::VUtils::FloatRefList  widths(nVerts);
-		GEOgetDataFromAttribute(widthHdl.getAttribute(), primList, widths);
-
-		pluginDesc.addAttribute(Attrs::PluginAttr("widths", widths));
+	if (widthHdl.isInvalid()) {
+		for (int i = 0; i < widths.count(); ++i) {
+			widths[i] = 0.01f;
+		}
 	}
+	else {
+		GEOgetDataFromAttribute(widthHdl.getAttribute(), primList, widths);
+	}
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("widths", widths));
 
 	// colors
 	GA_ROHandleV3 cdHdl = gdp.findAttribute(GEO_STD_ATTRIB_DIFFUSE,
