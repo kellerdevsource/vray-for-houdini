@@ -12,7 +12,7 @@ parm {
 
 parm {
     VFH_NAME(    "use")
-    label   "Enabled"
+    label   "Enable"
     type    toggle
     default { "1" }
     help    "Use Wrapper material"
@@ -30,19 +30,6 @@ groupsimple {
     VFH_HIDETAB_WHEN_PARAM_FALSE("use")
 
     parm {
-        VFH_NAME("use_irrad_map")
-        label   "Use Irradiance Map"
-        type    toggle
-        default { "1" }
-        help    "Allow enable/disable of irradiance map per surface"
-        range   { 0 1 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "MtlWrapper" }
-        parmtag { "vray_pluginattr" "use_irrad_map" }
-        parmtag { "vray_type" "boolean" }
-    }
-    parm {
         VFH_NAME(    "generate_gi")
         label   "Generated GI Mult."
         type    float
@@ -55,6 +42,7 @@ groupsimple {
         parmtag { "vray_pluginattr" "generate_gi" }
         parmtag { "vray_type" "float" }
     }
+
     parm {
         VFH_NAME(    "receive_gi")
         label   "Received GI Mult."
@@ -68,6 +56,7 @@ groupsimple {
         parmtag { "vray_pluginattr" "receive_gi" }
         parmtag { "vray_type" "float" }
     }
+
     parm {
         VFH_NAME(    "generate_caustics")
         label   "Generated Caustics Mult."
@@ -81,6 +70,7 @@ groupsimple {
         parmtag { "vray_pluginattr" "generate_caustics" }
         parmtag { "vray_type" "float" }
     }
+
     parm {
         VFH_NAME(    "receive_caustics")
         label   "Received Caustics Mult."
@@ -94,6 +84,7 @@ groupsimple {
         parmtag { "vray_pluginattr" "receive_caustics" }
         parmtag { "vray_type" "float" }
     }
+
     parm {
         VFH_NAME(    "gi_quality_multiplier")
         label   "Subdivs Mult."
@@ -107,6 +98,20 @@ groupsimple {
         parmtag { "vray_pluginattr" "gi_quality_multiplier" }
         parmtag { "vray_type" "float" }
     }
+
+    parm {
+        VFH_NAME("use_irrad_map")
+        label   "Use Irradiance Map"
+        type    toggle
+        default { "1" }
+        help    "Allow enable/disable of irradiance map per surface"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "MtlWrapper" }
+        parmtag { "vray_pluginattr" "use_irrad_map" }
+        parmtag { "vray_type" "boolean" }
+    }
 }
 
 groupsimple {
@@ -115,6 +120,34 @@ groupsimple {
     label "Matte Properties"
 
     VFH_HIDETAB_WHEN_PARAM_FALSE("use")
+
+    parm {
+        VFH_NAME(    "alpha_contribution")
+        label   "Alpha Contribution"
+        type    float
+        default { "1" }
+        help    "The contribution of the resulting color to the alpha channel"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "MtlWrapper" }
+        parmtag { "vray_pluginattr" "alpha_contribution" }
+        parmtag { "vray_type" "float" }
+    }
+
+    parm {
+        VFH_NAME(    "generate_render_elements")
+        label   "Generate Render Elements"
+        type    toggle
+        default { "1" }
+        help    "Setting this to false makes objects to not affect the render elements"
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "MtlWrapper" }
+        parmtag { "vray_pluginattr" "generate_render_elements" }
+        parmtag { "vray_type" "boolean" }
+    }
 
     parm {
         VFH_NAME(    "matte_surface")
@@ -129,32 +162,7 @@ groupsimple {
         parmtag { "vray_pluginattr" "matte_surface" }
         parmtag { "vray_type" "boolean" }
     }
-    parm {
-        VFH_NAME(    "alpha_contribution")
-        label   "Alpha Contribution"
-        type    float
-        default { "1" }
-        help    "The contribution of the resulting color to the alpha channel"
-        range   { 0 1 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "MtlWrapper" }
-        parmtag { "vray_pluginattr" "alpha_contribution" }
-        parmtag { "vray_type" "float" }
-    }
-    parm {
-        VFH_NAME(    "generate_render_elements")
-        label   "Generate Render Elements"
-        type    toggle
-        default { "1" }
-        help    "Setting this to false makes objects to not affect the render elements"
-        range   { 0 1 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "MtlWrapper" }
-        parmtag { "vray_pluginattr" "generate_render_elements" }
-        parmtag { "vray_type" "boolean" }
-    }
+
     parm {
         VFH_NAME(    "shadows")
         label   "Shadows"
@@ -167,8 +175,9 @@ groupsimple {
         parmtag { "vray_plugin" "MtlWrapper" }
         parmtag { "vray_pluginattr" "shadows" }
         parmtag { "vray_type" "boolean" }
-        disablewhen "{ matte_surface != 1 }"
+        VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
+
     parm {
         VFH_NAME(    "affect_alpha")
         label   "Affect Alpha"
@@ -181,11 +190,11 @@ groupsimple {
         parmtag { "vray_plugin" "MtlWrapper" }
         parmtag { "vray_pluginattr" "affect_alpha" }
         parmtag { "vray_type" "boolean" }
-        disablewhen "{ matte_surface != 1 }"
+        VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
         VFH_NAME(    "shadow_tint_color")
-        label   "Shadow Tint Color"
+        label   "Shadow Tint"
         type    color
         size    3
         default { "0" "0" "0" }
@@ -196,7 +205,7 @@ groupsimple {
         parmtag { "vray_plugin" "MtlWrapper" }
         parmtag { "vray_pluginattr" "shadow_tint_color" }
         parmtag { "vray_type" "color" }
-        disablewhen "{ matte_surface != 1 }"
+        VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
         VFH_NAME(    "shadow_brightness")
@@ -210,7 +219,7 @@ groupsimple {
         parmtag { "vray_plugin" "MtlWrapper" }
         parmtag { "vray_pluginattr" "shadow_brightness" }
         parmtag { "vray_type" "float" }
-        disablewhen "{ matte_surface != 1 }"
+        VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
         VFH_NAME(    "reflection_amount")
@@ -224,7 +233,7 @@ groupsimple {
         parmtag { "vray_plugin" "MtlWrapper" }
         parmtag { "vray_pluginattr" "reflection_amount" }
         parmtag { "vray_type" "float" }
-        disablewhen "{ matte_surface != 1 }"
+        VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
         VFH_NAME(    "refraction_amount")
@@ -238,7 +247,7 @@ groupsimple {
         parmtag { "vray_plugin" "MtlWrapper" }
         parmtag { "vray_pluginattr" "refraction_amount" }
         parmtag { "vray_type" "float" }
-        disablewhen "{ matte_surface != 1 }"
+        VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
         VFH_NAME(    "gi_amount")
@@ -252,7 +261,7 @@ groupsimple {
         parmtag { "vray_plugin" "MtlWrapper" }
         parmtag { "vray_pluginattr" "gi_amount" }
         parmtag { "vray_type" "float" }
-        disablewhen "{ matte_surface != 1 }"
+        VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
         VFH_NAME(    "no_gi_on_other_mattes")
@@ -266,11 +275,11 @@ groupsimple {
         parmtag { "vray_plugin" "MtlWrapper" }
         parmtag { "vray_pluginattr" "no_gi_on_other_mattes" }
         parmtag { "vray_type" "boolean" }
-        disablewhen "{ matte_surface != 1 }"
+        VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
         VFH_NAME(    "matte_for_secondary_rays")
-        label   "Matte for all Secondary Rays"
+        label   "Matte For Secondary Rays"
         type    string
         default { "0" }
         help    "Set this to 1 to make the material act as matte for all secondary rays (reflections and refractions); if set to 2, the material will perform automatic projection mapping of theenvironment map on the matte geometry"
@@ -283,14 +292,14 @@ groupsimple {
         parmtag { "vray_plugin" "MtlWrapper" }
         parmtag { "vray_pluginattr" "matte_for_secondary_rays" }
         parmtag { "vray_type" "enum" }
-        disablewhen "{ matte_surface != 1 }"
+        VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
 }
 
-groupcollapsible {
+groupsimple {
     VFH_NAME("folder_options")
 
-    label "Options"
+    label "Misc"
 
     VFH_HIDETAB_WHEN_PARAM_FALSE("use")
 
@@ -306,6 +315,7 @@ groupcollapsible {
         parmtag { "vray_plugin" "MtlWrapper" }
         parmtag { "vray_pluginattr" "maya_background_shader_compatibility" }
         parmtag { "vray_type" "boolean" }
+        invisible
     }
     parm {
         VFH_NAME(    "gi_surface_id")
@@ -345,6 +355,7 @@ groupcollapsible {
         parmtag { "vray_plugin" "MtlWrapper" }
         parmtag { "vray_pluginattr" "reflection_list_is_inclusive" }
         parmtag { "vray_type" "boolean" }
+        invisible
     }
     parm {
         VFH_NAME(    "refraction_list_is_inclusive")
@@ -358,6 +369,7 @@ groupcollapsible {
         parmtag { "vray_plugin" "MtlWrapper" }
         parmtag { "vray_pluginattr" "refraction_list_is_inclusive" }
         parmtag { "vray_type" "boolean" }
+        invisible
     }
     parm {
         VFH_NAME(    "alpha_contribution_tex")
