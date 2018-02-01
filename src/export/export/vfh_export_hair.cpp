@@ -89,6 +89,8 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 		GA_ATTRIB_POINT,		// Shared vertex data
 	};
 
+	VRay::VUtils::FloatRefList widths(nVerts);
+
 	GA_ROHandleF widthHdl = gdp.findAttribute(GEO_STD_ATTRIB_WIDTH,
 											  vSearchOrder,
 											  COUNT_OF(vSearchOrder));
@@ -97,13 +99,16 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 									 vSearchOrder,
 									 COUNT_OF(vSearchOrder));
 	}
-
-	if (widthHdl.isValid()) {
-		VRay::VUtils::FloatRefList  widths(nVerts);
-		GEOgetDataFromAttribute(widthHdl.getAttribute(), primList, widths);
-
-		pluginDesc.addAttribute(Attrs::PluginAttr("widths", widths));
+	if (widthHdl.isInvalid()) {
+		for (int i = 0; i < widths.count(); ++i) {
+			widths[i] = 0.01f;
+		}
 	}
+	else {
+		GEOgetDataFromAttribute(widthHdl.getAttribute(), primList, widths);
+	}
+
+	pluginDesc.addAttribute(Attrs::PluginAttr("widths", widths));
 
 	// colors
 	GA_ROHandleV3 cdHdl = gdp.findAttribute(GEO_STD_ATTRIB_DIFFUSE,
@@ -168,32 +173,35 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 			&& attr->getName() != VFH_ATTRIB_INCANDESCENCE
 			)
 		{
-			const std::string attrName = attr->getName().toStdString();
-			if (!mapChannels.count(attrName)) {
+			const char *attrName = attr->getName().buffer();
+
+			if (mapChannels.find(attrName) == mapChannels.end()) {
 				MapChannel &mapChannel = mapChannels[attrName];
-				mapChannel.name = attrName;
 				// assume we can use same count as for stands
 				mapChannel.faces = strands;
 				mapChannel.vertices = VRay::VUtils::VectorRefList(nVerts);
+
 				GEOgetDataFromAttribute(attr, primList, mapChannel.vertices);
 			}
 		}
 	}
+
 	// NOTE: Channel index 0 is used for UVW coordinates if and _only_ if strand_uvw is not set.
-	if (mapChannels.size()) {
+	if (!mapChannels.empty()) {
 		VRay::VUtils::ValueRefList map_channels(mapChannels.size());
-		int channelIdx = 0;
-		for (const auto &mc : mapChannels) {
-			const MapChannel &mapChannel = mc.second;
+
+		FOR_CONST_IT (MapChannels, mcIt, mapChannels) {
+			const char *map_channel_name = mcIt.key();
+			const MapChannel &mapChannel = mcIt.data();
+
 			// Channel data
 			VRay::VUtils::ValueRefList map_channel(4);
-			map_channel[0].setDouble(channelIdx);
+			map_channel[0].setDouble(mcItIdx);
 			map_channel[1].setListInt(mapChannel.faces);
 			map_channel[2].setListVector(mapChannel.vertices);
-			map_channel[3].setString(mapChannel.name.c_str());
+			map_channel[3].setString(map_channel_name);
 
-			map_channels[channelIdx].setList(map_channel);
-			++channelIdx;
+			map_channels[mcItIdx].setList(map_channel);
 		}
 
 		pluginDesc.addAttribute(Attrs::PluginAttr("map_channels", map_channels));

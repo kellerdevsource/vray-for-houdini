@@ -109,6 +109,25 @@ bool GEOgetDataFromAttributeT(const GA_Attribute *attr,
 
 }
 
+VRay::VUtils::CharStringRefList CharStringTable::toRefList() const
+{
+	VRay::VUtils::CharStringRefList refList(count());
+	for (int i = 0; i < count(); ++i) {
+		refList[i] = (*this)[i];
+	}
+	return refList;
+}
+
+MapChannel::MapChannel(const MapChannel &other)
+	: type(other.type)
+	, vertices(other.vertices)
+	, faces(other.faces)
+	, verticesSet(other.verticesSet)
+	, stringToTableIndex(other.stringToTableIndex)
+{
+	strings.copy(other.strings);
+}
+
 GA_AttributeFilter& VRayForHoudini::GEOgetV3AttribFilter()
 {
 	static GA_AttributeFilter theV3Filter = GA_AttributeFilter::selectAnd(

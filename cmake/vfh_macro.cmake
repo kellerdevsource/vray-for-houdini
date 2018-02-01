@@ -31,7 +31,16 @@ macro(link_with_boost _name)
 			set(BOOST_LIBS boost_system-vc140-mt-1_55)
 		endif()
 	else()
-		set(BOOST_LIBS boost_system)
+		if(APPLE)
+			set(BOOST_LIBS
+				boost_system
+				boost_filesystem
+				boost_regex
+				boost_wave
+			)
+		else()
+			set(BOOST_LIBS boost_system)
+		endif()
 
 		if(HOUDINI_VERSION VERSION_GREATER 16.0)
 			list(APPEND BOOST_LIBS
@@ -161,6 +170,11 @@ endfunction()
 # Generate launcher with all needed environment variables set.
 # NOTE: used to generate .bat launchers and also used in c++ launcher
 function(vfh_generate_launcher)
+	if(APPLE)
+		message(STATUS "Launcher is not supported on MacOS! Edit houdini.env.")
+		return()
+	endif()
+
 	cmake_parse_arguments(ARG "BATCH;RELEASE;CPP_LAUNCHER" "TEMPLATE_FILENAME;FILENAME;DESTINATION;BIN;TEMPLATE_DIR" "" ${ARGN})
 
 	if(NOT ARG_BIN)

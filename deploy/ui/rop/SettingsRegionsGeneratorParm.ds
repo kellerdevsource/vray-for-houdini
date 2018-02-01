@@ -1,25 +1,19 @@
 parm {
     name    "SettingsRegionsGenerator_lock_size"
-    label   "Lock Region X and Y"
+    label   "Lock Bucket Size"
+    help    "Lock bucket size"
     type    toggle
-    invisible
     default { "1" }
-    help    "Lock bucket size (X = Y)"
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
     parmtag { "vray_custom_handling" "1" }
 }
 
 parm {
     name    "SettingsRegionsGenerator_xc"
-    label   "X"
+    label   "W"
+    help    "Determines the maximum region width in pixels (Bucket W/H is selected) or the number of regions in the horizontal direction (when Region Count is selected)"
     type    integer
     default { "64" }
-    help    "Determines the maximum region width in pixels (Bucket W/H is selected) or the number of regions in the horizontal direction (when Region Count is selected)"
     range   { 1 256 }
-    export  none
-    parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "SettingsRegionsGenerator" }
     parmtag { "vray_pluginattr" "xc" }
     parmtag { "vray_type" "int" }
@@ -27,35 +21,20 @@ parm {
 
 parm {
     name    "SettingsRegionsGenerator_yc"
-    label   "Y"
+    label   "H"
+    help    "Determines the maximum region height in pixels (Bucket W/H is selected) or the number of regions in the vertical direction (when Region Count is selected)"
     type    integer
     default { "64" }
-    help    "Determines the maximum region height in pixels (Bucket W/H is selected) or the number of regions in the vertical direction (when Region Count is selected)"
     range   { 1 256 }
-    export  none
-    parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "SettingsRegionsGenerator" }
     parmtag { "vray_pluginattr" "yc" }
     parmtag { "vray_type" "int" }
+    disablewhen "{ SettingsRegionsGenerator_lock_size == 1 }"
 }
 
 groupcollapsible {
     name "folder_sampler_buckets_advanced"
-    label "Render Region - Advanced"
-
-    parm {
-        name    "SettingsRegionsGenerator_dynbuckets"
-        label   "Dynamic Splitting"
-        type    toggle
-        help    "Dynamically reduces the size of the render buckets when a small part of the image remains to be rendered. This ensures that all rendering cores are utilized when rendering the last few buckets."
-        default { "1" }
-        range   { 0 1 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "SettingsRegionsGenerator" }
-        parmtag { "vray_pluginattr" "dynbuckets" }
-        parmtag { "vray_type" "boolean" }
-    }
+    label "Advanced"
 
     parm {
         name    "SettingsRegionsGenerator_xymeans"
@@ -106,6 +85,17 @@ groupcollapsible {
         parmtag { "vray_type" "boolean" }
     }
 
+    parm {
+        name    "SettingsRegionsGenerator_dynbuckets"
+        label   "Dynamic Splitting"
+        type    toggle
+        help    "Dynamically reduces the size of the render buckets when a small part of the image remains to be rendered. This ensures that all rendering cores are utilized when rendering the last few buckets."
+        default { "1" }
+        range   { 0 1 }
+        export  none
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_plugin" "SettingsRegionsGenerator" }
+        parmtag { "vray_pluginattr" "dynbuckets" }
+        parmtag { "vray_type" "boolean" }
+    }
 }
-
-

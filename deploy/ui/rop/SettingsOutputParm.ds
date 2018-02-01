@@ -9,48 +9,15 @@ parm {
 VFH_UI_PARM_TOGGLE("SettingsOutput_img_save", "Save Image", "Save rendered image to file", 1)
 
 parm {
-    name    "SettingsOutput_img_format"
-    label   "File Format"
+    name    "SettingsOutput_img_file_path"
+    label   "File Path"
     type    string
-    default { "5" }
-    help    "Output image format"
-    menu {
-        0 "PNG"
-        1 "JPEG"
-        2 "TIFF"
-        3 "TGA"
-        4 "SGI"
-        5 "OpenEXR"
-        6 "VRayImage"
-    }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_custom_handling" "1" }
-    parmtag { "vray_enumkeys" "0,1,2,3,4,5,6" }
-}
-
-parm {
-    name    "SettingsOutput_img_file"
-    label   "File Name"
-    type    string
-    default { "$HIPNAME" }
-    help    "Render file name"
+    default { "$HIP/render/$HIPNAME.exr" }
+    help    "Render file path. Accepted file extensions are: .png, .jpg, .tiff, .tga, .sgi, .exr, .vrimg. A file without one of these extensions is given .exr extension by default."
     range   { 0 1 }
     export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_pluginattr" "img_file" }
-}
-
-parm {
-    name    "SettingsOutput_img_dir"
-    label   "Directory Path"
-    type    file
-    default { "$HIP/render" }
-    help    "Render output directory"
-    range   { 0 1 }
-    export  none
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_pluginattr" "img_dir" }
 }
 
 groupsimple {
@@ -132,18 +99,6 @@ groupcollapsible {
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "img_pixelAspect" }
         invisible
-    }
-
-    parm {
-        name    "SettingsOutput_img_file_needFrameNumber"
-        label   "Add Frame Number"
-        type    toggle
-        default { "0" }
-        help    "Add frame number to the image file name"
-        range   { 0 1 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_pluginattr" "img_file_needFrameNumber" }
     }
 
     parm {

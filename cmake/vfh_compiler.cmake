@@ -16,11 +16,24 @@ endif()
 
 macro(vfh_osx_flags _project_name)
 	if(APPLE)
+		if(INSTALL_RELEASE)
+			set(VFH_RPATH "@loader_path/../../appsdk/bin")
+		else()
+			set(VFH_RPATH "${SDK_PATH}/appsdk/bin")
+		endif()
+
 		# This sets search paths for modules like libvray.dylib
 		# (no need for install_name_tool tweaks)
 		set_target_properties(${_project_name}
 			PROPERTIES
-				INSTALL_RPATH "@loader_path;@executable_path")
+				INSTALL_RPATH "${VFH_RPATH}")
+
+		add_custom_command(TARGET ${_project_name} POST_BUILD
+			COMMAND install_name_tool -change ../../lib/mavericks_x64/gcc-4.2-cpp/libvrayoslquery.dylib @rpath/libvrayoslquery.dylib $<TARGET_FILE:${_project_name}>
+			COMMAND install_name_tool -change ../../lib/mavericks_x64/gcc-4.2-cpp/libvrayoslexec.dylib @rpath/libvrayoslexec.dylib $<TARGET_FILE:${_project_name}>
+			COMMAND install_name_tool -change ../../lib/mavericks_x64/gcc-4.2-cpp/libvrayoslcomp.dylib @rpath/libvrayoslcomp.dylib $<TARGET_FILE:${_project_name}>
+			COMMAND install_name_tool -change ./lib/mavericks_x64/gcc-4.2-cpp/libvrayopenimageio.dylib @rpath/libvrayopenimageio.dylib $<TARGET_FILE:${_project_name}>
+		)
 	endif()
 endmacro()
 

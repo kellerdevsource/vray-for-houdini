@@ -802,6 +802,66 @@ VRayExporter::~VRayExporter()
 	resetOpCallbacks();
 }
 
+enum ImageFormat {
+	imageFormatPNG = 0,
+	imageFormatJPEG,
+	imageFormatTIFF,
+	imageFormatTGA,
+	imageFormatSGI,
+	imageFormatOpenEXR,
+	imageFormatVRayImage,
+	imageFormatLast
+};
+
+static const char* const imgFormatExt[imageFormatLast] = {
+	".png",
+	".jpg",
+	".tiff",
+	".tga",
+	".sgi",
+	".exr",
+	".vrimg"
+};
+
+static ImageFormat getImgFormat(const UT_String& filePath)
+{
+	for (int imgFormat = 0; imgFormat < static_cast<int>(imageFormatLast); ++imgFormat) {
+		if (filePath.endsWith(imgFormatExt[imgFormat], false)) {
+			return static_cast<ImageFormat>(imgFormat);
+		}
+	}
+	
+	return imageFormatLast;
+}
+
+static void fillSettingsRegionsGenerator(OP_Node &rop, Attrs::PluginDesc &pluginDesc)
+{
+	const int bucketW = rop.evalInt("SettingsRegionsGenerator_xc", 0, 0.0);
+	int bucketH = bucketW;
+
+	const int lockBucketSize = rop.evalInt("SettingsRegionsGenerator_lock_size", 0, 0.0);
+	if (!lockBucketSize) {
+		bucketH = rop.evalInt("SettingsRegionsGenerator_yc", 0, 0.0);
+	}
+
+	pluginDesc.add(Attrs::PluginAttr("xc", bucketW));
+	pluginDesc.add(Attrs::PluginAttr("yc", bucketH));
+}
+
+static void fillSettingsImageSampler(OP_Node &rop, Attrs::PluginDesc &pluginDesc)
+{
+	const int minSubdivs = rop.evalInt("SettingsImageSampler_dmc_minSubdivs", 0, 0.0);
+	int maxSubdivs = minSubdivs;
+
+	const int lockSubdivs = rop.evalInt("SettingsImageSampler_dmc_lockSubdivs", 0, 0.0);
+	if (!lockSubdivs) {
+		maxSubdivs = rop.evalInt("SettingsImageSampler_dmc_maxSubdivs", 0, 0.0);
+	}
+
+	pluginDesc.add(Attrs::PluginAttr("dmc_minSubdivs", minSubdivs));
+	pluginDesc.add(Attrs::PluginAttr("dmc_maxSubdivs", maxSubdivs));
+}
+
 ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 {
 	if (sessionType != VfhSessionType::production)
@@ -826,6 +886,59 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	}
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
+
+
+	if (!m_rop->evalInt("SettingsOutput_img_save", 0, 0.0)) {
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", Attrs::PluginAttr::AttrTypeIgnore));
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", Attrs::PluginAttr::AttrTypeIgnore));
+	}
+	else {
+		UT_String filePathRaw;
+		m_rop->evalStringRaw(filePathRaw, "SettingsOutput_img_file_path", 0, t);
+		
+		UT_String dirPathRaw;
+		UT_String fileNameRaw;
+		filePathRaw.splitPath(dirPathRaw, fileNameRaw);
+
+		// Format dirPathRaw.
+		dirPathRaw.append('/');
+
+		// Replace frame number with V-Ray compatible frame pattern.
+		if (fileNameRaw.changeWord("$F", "#")) {
+			pluginDesc.addAttribute(Attrs::PluginAttr("img_file_needFrameNumber", 1));
+		}
+
+		UT_String dirPath;
+		UT_String fileName;
+		// Expand paths.
+		CH_Manager *chanMan = OPgetDirector()->getChannelManager();
+		chanMan->expandString(fileNameRaw.buffer(), fileName, t);
+		chanMan->expandString(dirPathRaw.buffer(), dirPath, t);
+
+		// Create output directory.
+		directoryCreator.mkpath(dirPathRaw.buffer());
+
+		// Append default file type if not set.
+		ImageFormat imgFormat = getImgFormat(filePathRaw.buffer());
+		if (imgFormat == imageFormatLast) {
+			imgFormat = imageFormatOpenEXR;
+			fileName.append(imgFormatExt[imageFormatOpenEXR]);
+
+			Log::getLog().warning("Output image file format not supported/recognized! Setting output image format to Open EXR.");
+		}
+
+		if (imgFormat == imageFormatOpenEXR ||
+			imgFormat == imageFormatVRayImage)
+		{
+			const int relementsSeparateFiles = m_rop->evalInt("SettingsOutput_relements_separateFiles", 0, t);
+			if (relementsSeparateFiles == 0) {
+				pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
+			}
+		}
+
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", dirPath.toStdString()));
+		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", fileName.toStdString()));
+	}
 
 	VRay::VUtils::ValueRefList frames(1);
 
@@ -953,6 +1066,12 @@ ReturnValue VRayExporter::exportSettings()
 				if (fillSettingsOutput(pluginDesc) == ReturnValue::Error) {
 					return ReturnValue::Error;
 				}
+			}
+			else if (sp == "SettingsRegionsGenerator") {
+				fillSettingsRegionsGenerator(*m_rop, pluginDesc);
+			}
+			else if (sp == "SettingsImageSampler") {
+				fillSettingsImageSampler(*m_rop, pluginDesc);
 			}
 
 			setAttrsFromOpNodePrms(pluginDesc, m_rop, boost::str(Parm::FmtPrefix % sp));

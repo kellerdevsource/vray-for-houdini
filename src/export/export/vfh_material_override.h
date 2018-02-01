@@ -76,6 +76,8 @@ struct MtlOverrideItem {
 	/// Returns override value type.
 	MtlOverrideItemType getType() const { return type; }
 
+	const char *getString() const { return valueString.toLocal8Bit().constData(); }
+
 	/// Override value type.
 	MtlOverrideItemType type;
 

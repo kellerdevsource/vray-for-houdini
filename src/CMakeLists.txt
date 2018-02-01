@@ -353,6 +353,9 @@ if(INSTALL_RELEASE)
 	install(FILES       ${APPSDK_ROOT}/tools/ply2vrmesh${TOOL_EXE_SUFFIX}
 			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/tools)
 
+	# Example houdini.env file
+	install(FILES       ${CMAKE_SOURCE_DIR}/deploy/houdini.env
+			DESTINATION ${INSTALL_RELEASE_PATH})
 
 	# Default libvray.dll is Qt5
 	if(HOUDINI_QT_VERSION VERSION_EQUAL 4)
@@ -369,10 +372,11 @@ if(INSTALL_RELEASE)
 	endif()
 
 	# Archive the installation directory
-	set(VFH_PACK ${CMAKE_BINARY_DIR}/vfh_pack.cmake)
-	configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_pack.cmake.in ${VFH_PACK})
-	install(SCRIPT ${VFH_PACK})
-
+	if(INSTALL_RELEASE_PACK)
+		set(VFH_PACK ${CMAKE_BINARY_DIR}/vfh_pack.cmake)
+		configure_file(${CMAKE_SOURCE_DIR}/cmake/vfh_pack.cmake.in ${VFH_PACK})
+		install(SCRIPT ${VFH_PACK})
+	endif()
 else()
 	cgr_install_runtime(${PROJECT_NAME} ${VFH_DSO_DIRPATH})
 

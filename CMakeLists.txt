@@ -28,11 +28,12 @@ option(WITH_TEST_APP         "Build AppSDK test applications" OFF)
 
 option(WITH_LAUNCHER         "Build development launcher"     OFF)
 
-
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
 if(INSTALL_RELEASE AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
 	message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
 endif()
+
+option(INSTALL_RELEASE_PACK "Pack release directory" ON)
 
 set(CGR_SRC_HASH "" CACHE STRING "Sources hash")
 
@@ -44,7 +45,7 @@ endif()
 message(STATUS "Source revision: ${SRC_GIT_HASH}")
 
 set(INSTALL_RELEASE_ROOT "" CACHE PATH "Release install path")
-set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}${INSTALL_RELEASE_SUFFIX}")
+set(INSTALL_RELEASE_SUBDIR "vfh-${SRC_GIT_HASH}${INSTALL_RELEASE_SUFFIX}" CACHE STRING "Release sub-directory")
 
 if(INSTALL_RELEASE AND "${INSTALL_RELEASE_ROOT}" STREQUAL "")
 	message(FATAL_ERROR "INSTALL_RELEASE is ON, but INSTALL_RELEASE_ROOT is not set!")
