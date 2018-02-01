@@ -64,6 +64,7 @@ macro(set_compiler_flags)
 
 		if (APPLE)
 			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility-inlines-hidden")
 			add_definitions(-DBOOST_NO_CXX11_RVALUE_REFERENCES)
 		endif()
 
