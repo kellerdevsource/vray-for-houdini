@@ -200,7 +200,7 @@ void OSLNodeBase<MTL>::getOSLCode(UT_String & oslCode, bool &needCompile) const
 	} else {
 		UT_String filePath;
 		evalString(filePath, "osl_file", 0, 0.f);
-		if (filePath == "" || filePath.buffer() == nullptr) {
+		if (!filePath.isstring()) {
 			return;
 		}
 
@@ -367,7 +367,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		}
 	}
 
-	if (MTL && m_outputName == "") {
+	if (MTL && m_outputName.empty()) {
 		self->m_outputName = "Ci";
 	}
 
@@ -422,7 +422,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		// show only the type this param is
 		const std::string & oslParamName = mapTypeToParam<MTL>(param);
 
-		if (oslParamName != "") {
+		if (!oslParamName.empty()) {
 			char paramName[256] = {0};
 			for (int f = 0; f < (oslParamCount - OSL_PARAM_TYPE_COUNT); f++) {
 				// label and separator
@@ -494,7 +494,7 @@ const char * OSLNodeBase<MTL>::outputLabel(unsigned idx) const
 	}
 
 	updateParamsIfNeeded();
-	if (m_outputName != "") {
+	if (!m_outputName.empty()) {
 		return OSLNodeBase<MTL>::getOutputName();
 	} else {
 		Log::getLog().warning("outputLabel(%d) out of range", idx);
@@ -556,7 +556,7 @@ void OSLNodeBase<MTL>::getOutputNameSubclass(UT_String &out, int idx) const
 {
 	if (idx >= NodeBase::getNumVisibleOutputs()) {
 		updateParamsIfNeeded();
-		if (m_outputName != "") {
+		if (!m_outputName.empty()) {
 			out = m_outputName;
 		} else {
 			Log::getLog().warning("Output index out of range");
@@ -604,7 +604,7 @@ void OSLNodeBase<MTL>::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int id
 {
 	if (idx >= NodeBase::getNumVisibleOutputs()) {
 		updateParamsIfNeeded();
-		if (m_outputName != "") {
+		if (!m_outputName.empty()) {
 			type_info.setType(OSLNodeBase<MTL>::getOutputType());
 		} else {
 			Log::getLog().warning("Trying to get output type of non-existent output!");
@@ -660,7 +660,7 @@ template <bool MTL>
 unsigned OSLNodeBase<MTL>::maxOutputs() const
 {
 	updateParamsIfNeeded();
-	return NodeBase::maxOutputs() + (m_outputName != "");
+	return NodeBase::maxOutputs() + !m_outputName.empty();
 }
 
 template <bool MTL>
@@ -711,7 +711,7 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 		oslParams.push_back(VRay::Value(m_paramList[c].name));
 
 		const std::string & paramTypeName = mapTypeToParam<MTL>(m_paramList[c]);
-		if (paramTypeName == "") {
+		if (paramTypeName.empty()) {
 			continue;
 		}
 		const std::string & paramName = "osl#" + paramTypeName;
