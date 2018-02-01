@@ -52,6 +52,7 @@ if (WIN32)
 	set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".pyd")
 elseif(APPLE)
 	target_link_libraries(${PROJECT_NAME} python2.7)
+	set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".so")
 endif()
 
 vfh_osx_flags(${PROJECT_NAME})
