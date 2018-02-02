@@ -27,7 +27,7 @@
 template <typename key, typename ReturnValue>
 class DetailBuilder {
 public:
-	virtual GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const key &settings, const fpreal &t, ReturnValue &rval) = 0;
+	virtual GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const key &settings, fpreal t, ReturnValue &rval) = 0;
 };
 
 template <typename ReturnValue, typename T, typename KeyHash = VUtils::DefaultHash<T>, typename KeysEqual = VUtils::DefaultKeyCompare<T>>
@@ -68,12 +68,12 @@ public:
 		}
 	}
 
-	GU_DetailHandle& getDetail(const VUtils::CharString &filepath, const T &settings, const fpreal &frame) {
+	GU_DetailHandle& getDetail(const VUtils::CharString &filepath, const T &settings, fpreal frame) {
 		ReturnValue temp;
 		return getDetail(filepath, settings, frame, temp);
 	}
 
-	GU_DetailHandle& getDetail(const VUtils::CharString &filepath, const T &settings, const fpreal &frame, ReturnValue &rval) {
+	GU_DetailHandle& getDetail(const VUtils::CharString &filepath, const T &settings, fpreal frame, ReturnValue &rval) {
 		if (filepath.empty()) {
 			return GU_DetailHandle();
 		}
@@ -90,7 +90,7 @@ public:
 		return detailBuilder->buildDetail(filepath, settings, frame, rval);
 	}
 
-	bool isCached(const VUtils::CharString &filepath, const T &settings, const fpreal &frame) {
+	bool isCached(const VUtils::CharString &filepath, const T &settings, fpreal frame) {
 		if (filepath.empty()) {
 			return false;
 		}
@@ -114,7 +114,7 @@ public:
 	}
 private:
 
-	int getFrameKey(const fpreal &frame) {
+	int getFrameKey(fpreal frame) {
 		return frame * 1000;
 	}
 

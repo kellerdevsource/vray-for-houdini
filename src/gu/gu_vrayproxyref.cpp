@@ -48,7 +48,7 @@ struct VRayProxyRefKeyHasher {
 
 class VRayProxyRefKeyBuilder : public DetailBuilder<VRayProxyRefKey, bool> {
 public:
-	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const VRayProxyRefKey &settings, const fpreal &t, bool &rval) override {
+	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const VRayProxyRefKey &settings, fpreal t, bool &rval) override {
 		return getVRayProxyDetail(settings);
 	}
 } builder;

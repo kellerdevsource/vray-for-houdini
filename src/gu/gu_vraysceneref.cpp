@@ -105,7 +105,7 @@ struct ReturnSettings {
 
 class VrsceneDescBuilder : public DetailBuilder<SettingsWrapper, ReturnSettings> {
 public:
-	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const SettingsWrapper &settings, const fpreal &frame, ReturnSettings &rvalue) override {
+	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const SettingsWrapper &settings, fpreal frame, ReturnSettings &rvalue) override {
 		VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(filepath, &settings.settings);
 
 		rvalue.shouldFlip = rvalue.flipAxis == FlipAxisMode::flipZY ||
