@@ -140,7 +140,6 @@ int VRayProxyRef::detailRebuild()
 	const VRayProxyRefKey &vrmeshKey = getKey();
 	updateCacheVars(vrmeshKey);
 
-	bool temp(false);
 	const GU_DetailHandle &getail = cache.getDetail(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f);
 
 	const int res = m_detail != getail;
