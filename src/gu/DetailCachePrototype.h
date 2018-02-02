@@ -24,17 +24,17 @@
 #include <GU/GU_PackedGeometry.h>
 #include <FS/UT_DSO.h>
 
-template <typename key>
+template <typename key, typename ReturnValue>
 class DetailBuilder {
 public:
-	virtual GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const key &settings, const fpreal &t, UT_BoundingBox &box) = 0;
+	virtual GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const key &settings, const fpreal &t, ReturnValue &rval) = 0;
 };
 
-template <typename BD, typename T, typename KeyHash = VUtils::DefaultHash<T>, typename KeysEqual = VUtils::DefaultKeyCompare<T>>
+template <typename ReturnValue, typename T, typename KeyHash = VUtils::DefaultHash<T>, typename KeysEqual = VUtils::DefaultKeyCompare<T>>
 class DetailCachePrototype
 {
 public:
-	DetailCachePrototype(DetailBuilder<T> &builder)
+	DetailCachePrototype(DetailBuilder<T, ReturnValue> &builder)
 		: detailBuilder(&builder)
 		, isOn(true)
 	{}
@@ -68,7 +68,12 @@ public:
 		}
 	}
 
-	GU_DetailHandle& getDetail(const VUtils::CharString &filepath, const T &settings, const fpreal &frame, UT_BoundingBox &box = UT_BoundingBox()) {
+	GU_DetailHandle& getDetail(const VUtils::CharString &filepath, const T &settings, const fpreal &frame) {
+		ReturnValue temp;
+		return getDetail(filepath, settings, frame, temp);
+	}
+
+	GU_DetailHandle& getDetail(const VUtils::CharString &filepath, const T &settings, const fpreal &frame, ReturnValue &rval) {
 		if (filepath.empty()) {
 			return GU_DetailHandle();
 		}
@@ -78,11 +83,11 @@ public:
 				return detailCache[filepath.ptr()][settings].frameDetailMap[getFrameKey(frame)];
 			}
 			else {
-				return detailCache[filepath.ptr()][settings].frameDetailMap[getFrameKey(frame)] = detailBuilder->buildDetail(filepath, settings, frame, box);
+				return detailCache[filepath.ptr()][settings].frameDetailMap[getFrameKey(frame)] = detailBuilder->buildDetail(filepath, settings, frame, rval);
 			}
 		}
 
-		return detailBuilder->buildDetail(filepath, settings, frame, box);
+		return detailBuilder->buildDetail(filepath, settings, frame, rval);
 	}
 
 	bool isCached(const VUtils::CharString &filepath, const T &settings, const fpreal &frame) {
@@ -129,7 +134,7 @@ private:
 	typedef VUtils::HashMap<T, CacheElement, KeyHash> CacheElementMap;
 	VUtils::StringHashMap<CacheElementMap> detailCache;
 
-	DetailBuilder<T> *detailBuilder;
+	DetailBuilder<T, ReturnValue> *detailBuilder;
 	bool isOn;
 
 	VUTILS_DISABLE_COPY(DetailCachePrototype)

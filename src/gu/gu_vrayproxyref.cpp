@@ -46,14 +46,14 @@ struct VRayProxyRefKeyHasher {
 	}
 };
 
-class VRayProxyRefKeyBuilder : public DetailBuilder<VRayProxyRefKey> {
+class VRayProxyRefKeyBuilder : public DetailBuilder<VRayProxyRefKey, bool> {
 public:
-	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const VRayProxyRefKey &settings, const fpreal &t, UT_BoundingBox &box) override {
+	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const VRayProxyRefKey &settings, const fpreal &t, bool &rval) override {
 		return getVRayProxyDetail(settings);
 	}
 } builder;
 
-static DetailCachePrototype<VUtils::MeshFile, VRayProxyRefKey, VRayProxyRefKeyHasher> cache(builder);
+static DetailCachePrototype<bool, VRayProxyRefKey, VRayProxyRefKeyHasher> cache(builder);
 
 void VRayProxyRef::install(GA_PrimitiveFactory *primFactory)
 {
@@ -140,6 +140,7 @@ int VRayProxyRef::detailRebuild()
 	const VRayProxyRefKey &vrmeshKey = getKey();
 	updateCacheVars(vrmeshKey);
 
+	bool temp(false);
 	const GU_DetailHandle &getail = cache.getDetail(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f);
 
 	const int res = m_detail != getail;
