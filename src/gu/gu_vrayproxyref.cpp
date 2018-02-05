@@ -51,6 +51,11 @@ public:
 	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const VRayProxyRefKey &settings, fpreal t, bool &rval) override {
 		return getVRayProxyDetail(settings);
 	}
+
+	void cleanResource(const VUtils::CharString &filepath) override {
+		clearVRayProxyCache(filepath.ptr());
+	}
+
 } builder;
 
 static DetailCachePrototype<bool, VRayProxyRefKey, VRayProxyRefKeyHasher> cache(builder);

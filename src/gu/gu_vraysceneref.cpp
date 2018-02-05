@@ -118,6 +118,9 @@ public:
 
 		return build(vrsceneDesc, rvalue.shouldFlip, frame, rvalue);
 	}
+
+	void cleanResource(const VUtils::CharString &filepath) override {}
+
 private:
 	GU_DetailHandle build(VrsceneDesc *vrsceneDesc, int shouldFlip, const fpreal &t, ReturnSettings &rvalue)
 	{
@@ -300,9 +303,9 @@ int VRaySceneRef::detailRebuild()
 	ReturnSettings update(m_bbox);
 	update.flipAxis = parseFlipAxisMode(getFlipAxis());
 
-	m_detail = cache.getDetail(vrsceneFile, SettingsWrapper(vrsSettings, shouldFlipAxis), getFrame(getCurrentFrame()), update);
+	m_detail = cache.getDetail(getFilepath(), SettingsWrapper(vrsSettings, shouldFlipAxis), getFrame(getCurrentFrame()), update);
 
-	if (!update.clearDetail && !getAddNodes()) {
+	if (!update.clearDetail && getAddNodes()) {
 		// Update flip axis intrinsic.
 		setShouldFlip(update.shouldFlip);
 		if (getCache() && shouldFlipAxis != update.shouldFlip) {
