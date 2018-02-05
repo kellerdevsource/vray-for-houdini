@@ -136,9 +136,52 @@ void VOP::BRDFLayered::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTyp
 		VOP::NodeBase::getAllowedInputTypeInfosSubclass(idx, type_infos);
 	}
 	else {
-		VOP_TypeInfo type_info(VOP_TYPE_BSDF);
-		type_infos.append(type_info);
+		VOP_TypeInfo vopTypeInfo;
+		getInputTypeInfoSubclass(vopTypeInfo, idx);
+		if (vopTypeInfo == VOP_TypeInfo(VOP_TYPE_BSDF)) {
+			type_infos.append(VOP_TypeInfo(VOP_SURFACE_SHADER));
+		}
+		if (vopTypeInfo == VOP_TypeInfo(VOP_TYPE_FLOAT)) {
+			type_infos.append(VOP_TypeInfo(VOP_TYPE_COLOR));
+		}
 	}
+}
+
+void VOP::BRDFLayered::getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &voptypes)
+{
+	if (idx < VOP::NodeBase::orderedInputs()) {
+		VOP::NodeBase::getAllowedInputTypesSubclass(idx, voptypes);
+	}
+	else {
+		VOP_TypeInfo vopTypeInfo;
+		getInputTypeInfoSubclass(vopTypeInfo, idx);
+		if (vopTypeInfo == VOP_TypeInfo(VOP_TYPE_BSDF)) {
+			voptypes.append(VOP_SURFACE_SHADER);
+		}
+		if (vopTypeInfo == VOP_TypeInfo(VOP_TYPE_FLOAT)) {
+			voptypes.append(VOP_TYPE_COLOR);
+		}
+	}
+}
+
+
+bool VOP::BRDFLayered::willAutoconvertInputType(int idx)
+{
+	if (idx < VOP::NodeBase::orderedInputs()) {
+		return VOP::NodeBase::willAutoconvertInputType(idx);
+	}
+
+	VOP_TypeInfo vopTypeInfo;
+	getInputTypeInfoSubclass(vopTypeInfo, idx);
+
+	if (vopTypeInfo == VOP_TypeInfo(VOP_TYPE_BSDF)) {
+		return true;
+	}
+	if (vopTypeInfo == VOP_TypeInfo(VOP_TYPE_FLOAT)) {
+		return true;
+	}
+
+	return false;
 }
 
 
@@ -176,7 +219,6 @@ void VOP::BRDFLayered::getCode(UT_String &codestr, const VOP_CodeGenContext &)
 {
 }
 
-
 OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	const fpreal &t = exporter.getContext().getTime();
@@ -208,6 +250,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 				VRay::Plugin weight_plugin = VRay::Plugin();
 
 				OP_Node *weight_node = VRayExporter::getConnectedNode(this, weightSockName);
+
 				if (weight_node) {
 					weight_plugin = exporter.exportVop(weight_node, parentContext);
 				}
@@ -225,6 +268,11 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 								getName().buffer(), brdfSockName.c_str());
 				}
 				else {
+					// convert weight plugin
+					exporter.convertInputPlugin(weight_plugin, pluginDesc, this, VOP_TYPE_FLOAT, weightSockName.c_str());
+					// convert brdf plugin
+					exporter.convertInputPlugin(brdf_plugin, pluginDesc, this, VOP_TYPE_BSDF, brdfSockName.c_str());
+
 					brdfs.push_back(VRay::Value(brdf_plugin));
 					weights.push_back(VRay::Value(weight_plugin));
 				}

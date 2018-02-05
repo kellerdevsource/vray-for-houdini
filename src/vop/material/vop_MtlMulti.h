@@ -45,6 +45,8 @@ protected:
 	virtual int           getInputFromNameSubclass(const UT_String &in) const VRAY_OVERRIDE;
 	virtual void          getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx) VRAY_OVERRIDE;
 	virtual void          getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos) VRAY_OVERRIDE;
+	virtual void          getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &voptypes) VRAY_OVERRIDE;
+	virtual bool          willAutoconvertInputType(int input_idx) VRAY_OVERRIDE;
 
 private:
 	int                   customInputsCount() const;

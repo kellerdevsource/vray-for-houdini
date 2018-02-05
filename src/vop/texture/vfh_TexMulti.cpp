@@ -134,7 +134,7 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 	VRay::IntList textureIds;
 
 	for (int i = 1; i <= numTextures; ++i) {
-		const QString texSockName = QString("tex_%1").arg(i);
+		QString texSockName = QString("tex_%1").arg(i);
 
 		OP_Node *texNode = VRayExporter::getConnectedNode(this, texSockName.toStdString());
 		if (!texNode) {
@@ -142,12 +142,14 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 								  getName().buffer(), texSockName.toLocal8Bit().constData());
 		}
 		else {
-			const VRay::Plugin texPlugin = exporter.exportVop(texNode, parentContext);
+			VRay::Plugin texPlugin = exporter.exportVop(texNode, parentContext);
 			if (!texPlugin) {
 				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
 									getName().buffer(), texSockName.toLocal8Bit().constData());
 			}
 			else {
+				exporter.convertInputPlugin(texPlugin, pluginDesc, texNode, VOP_TYPE_COLOR, texSockName.toStdString().c_str());
+
 				textures.push_back(VRay::Value(texPlugin));
 				textureIds.push_back(i-1);
 			}
