@@ -899,9 +899,6 @@ static void fillSettingsImageSampler(OP_Node &rop, Attrs::PluginDesc &pluginDesc
 
 ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 {
-	if (sessionType != VfhSessionType::production)
-		return ReturnValue::Success;
-
 	const fpreal t = getContext().getTime();
 	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
 
@@ -922,7 +919,7 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
 
-	if (!m_rop->evalInt("SettingsOutput_img_save", 0, 0.0)) {
+	if (!m_rop->evalInt("SettingsOutput_img_save", 0, 0.0) || sessionType != VfhSessionType::production) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", Attrs::PluginAttr::AttrTypeIgnore));
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", Attrs::PluginAttr::AttrTypeIgnore));
 	}
@@ -1035,11 +1032,6 @@ ReturnValue VRayExporter::exportSettings()
 								sp.c_str());
 		}
 		else {
-			if (sessionType != VfhSessionType::production) {
-				if (sp == "SettingsOutput")
-					continue;
-			}
-
 			Attrs::PluginDesc pluginDesc(sp, sp);
 			if (sp == "SettingsOutput") {
 				if (fillSettingsOutput(pluginDesc) == ReturnValue::Error) {
