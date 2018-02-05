@@ -133,11 +133,9 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 
 		OP_Node *connectedInput = getInput(idx);
 		if (connectedInput) {
-			VRay::Plugin connectedPlugin = exporter.exportVop(connectedInput, parentContext);
+			const VRay::Plugin connectedPlugin = exporter.exportVop(connectedInput, parentContext);
 			if (connectedPlugin) {
 				const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, inputName);
-				exporter.convertInputPlugin(connectedPlugin, pluginDesc, this, VOP_TYPE_VECTOR, inputName.c_str());
-
 				selectedUVPluginDesc.addAttribute(Attrs::PluginAttr(inputName, connectedPlugin, fromSocketInfo->attrName.ptr()));
 			}
 		}
