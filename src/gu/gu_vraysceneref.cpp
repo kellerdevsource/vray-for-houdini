@@ -108,8 +108,6 @@ public:
 	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const SettingsWrapper &settings, fpreal frame, ReturnSettings &rvalue) override {
 		VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(filepath, &settings.settings);
 
-		
-
 		if (!vrsceneDesc) {
 			rvalue.clearDetail = true;
 			return GU_DetailHandle();

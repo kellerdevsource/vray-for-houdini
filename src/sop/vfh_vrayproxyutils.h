@@ -41,6 +41,7 @@ struct VRayProxyRefKey {
 	bool animOverride = false;
 	int animStart = 0;
 	int animLength = 100;
+	bool flipAxis = false;
 
 	bool operator== (const VRayProxyRefKey & other) const {
 		return (filePath == other.filePath &&
@@ -51,7 +52,8 @@ struct VRayProxyRefKey {
 			MemberFloatEq(animSpeed) &&
 			animOverride == other.animOverride &&
 			animStart == other.animStart &&
-			animLength == other.animLength);
+			animLength == other.animLength &&
+			flipAxis == other.flipAxis);
 	}
 
 	bool operator!=(const VRayProxyRefKey &other) const {
@@ -68,7 +70,8 @@ struct VRayProxyRefKey {
 			MemberFloatEq(animSpeed) &&
 			animOverride == other.animOverride &&
 			animStart == other.animStart &&
-			animLength == other.animLength);
+			animLength == other.animLength &&
+			flipAxis == other.flipAxis);
 	}
 };
 

@@ -31,6 +31,7 @@ struct VRayProxyRefKeyHasher {
 			int animSpeed;
 			int animOverride;
 			int animLength;
+			bool flipAxis;
 		} settingsKey = { key.lod
 			, key.f
 			, key.animType
@@ -38,6 +39,7 @@ struct VRayProxyRefKeyHasher {
 			, key.animSpeed
 			, key.animOverride
 			, key.animLength
+			, key.flipAxis
 		};
 #pragma pack(pop)
 		Hash::MHash data;
@@ -137,6 +139,7 @@ VRayProxyRefKey VRayProxyRef::getKey() const
 	key.animOverride = getAnimOverride();
 	key.animStart = getAnimStart();
 	key.animLength = getAnimLength();
+	key.flipAxis = getFlipAxis();
 	return key;
 }
 
