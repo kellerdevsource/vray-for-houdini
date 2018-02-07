@@ -16,6 +16,7 @@ groupsimple {
     }
 }
 */
+
 groupsimple {
     name "VRayRendererFolderDriverProduction"
     label "Production"
@@ -30,6 +31,26 @@ groupsimple {
             2 "GPU (OpenCL)"
         }
         default { "0" }
+    }
+
+    VFH_UI_PARM_TOGGLE("render_in_cloud", "Submit To Cloud", "Submit job to V-Ray Cloud", 0)
+
+    parm {
+        name "cloud_project_name"
+        label "Project"
+        help "Cloud project name"
+        type string
+        default { "VRayForHoudini" }
+        VFH_DISABLE_WHEN_PARAM_FALSE("render_in_cloud")
+    }
+
+    parm {
+        name "cloud_job_name"
+        label "Job"
+        help "Cloud job name"
+        type string
+        default { "$HIPNAME" }
+        VFH_DISABLE_WHEN_PARAM_FALSE("render_in_cloud")
     }
 }
 
