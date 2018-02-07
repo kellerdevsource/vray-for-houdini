@@ -2503,7 +2503,7 @@ static void fillJobSettingsFromROP(OP_Node &rop, Cloud::Job &job)
 	UT_String jobName;
 	rop.evalString(jobName, "cloud_job_name", 0, 0.0);
 
-	job.project = projectName.buffer();
+	job.setProject(projectName.buffer());
 	job.setName(jobName.buffer());
 }
 

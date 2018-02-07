@@ -33,6 +33,16 @@ static QString vrayCloudClient;
 /// V-Ray Cloud Client binary file path.
 static int vrayCloudClientChecked = false;
 
+/// Not allowed characters regular expression.
+static QRegExp cloudNameFilter("[^a-zA-Z\\d\\s\\_\\-.,\\(\\)\\[\\]]");
+
+/// Only letters, digits, spaces and _-.,()[] allowed.
+/// NOTE: QString::remove is non-const.
+static QString filterName(QString value)
+{
+	return value.remove(cloudNameFilter);
+}
+
 /// Parses vcloud.json and extracts executable file path.
 static void findVRayCloudClient()
 {
@@ -135,13 +145,9 @@ Job::Job(const QString &sceneFile)
 	: sceneFile(sceneFile)
 {}
 
-static QRegExp cloudNameFilter("[^a-zA-Z\\d\\s\\_\\-.,\\(\\)\\[\\]]");
-
-/// Only letters, digits, spaces and _-.,()[] allowed.
-/// NOTE: QString::remove is non-const.
-static QString filterName(QString value)
+void Job::setProject(const QString &value)
 {
-	return value.remove(cloudNameFilter);
+	project = filterName(value);
 }
 
 void Job::setName(const QString &value)
@@ -151,7 +157,7 @@ void Job::setName(const QString &value)
 
 void Job::toArguments(const Job &job, QStringList &arguments)
 {
-	arguments << "--project" << job.project;
+	arguments << "--project" << job.getProject();
 	arguments << "--name" << job.getName();
 	arguments << "--sceneFile" << job.sceneFile;
 
@@ -214,7 +220,7 @@ int VRayForHoudini::Cloud::submitJob(const Job &job)
 
 	{
 		QStringList projectArgs;
-		projectArgs << "project" << "create" << "--name" << job.project;
+		projectArgs << "project" << "create" << "--name" << job.getProject();
 
 		executeVRayCloudClient(projectArgs);
 	}

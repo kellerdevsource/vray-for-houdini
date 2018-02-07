@@ -52,15 +52,17 @@ struct Job {
 
 	explicit Job(const QString &sceneFile);
 
+	/// Sets project name filtering incompatible characters.
+	void setProject(const QString &value);
+
+	/// Returns project name.
+	QString getProject() const { return project; }
+
+	/// Sets job name filtering incompatible characters.
 	void setName(const QString &value);
 
+	/// Returns project name.
 	QString getName() const { return name; }
-
-	/// Name of the rendering project.
-	QString project;
-
-	/// Name of the rendering job.
-	QString name;
 
 	/// Path to a .vrscene file (required).
 	const QString sceneFile;
@@ -126,6 +128,13 @@ struct Job {
 	/// @param job Job settings.
 	/// @param[out] arguments Command line arguments list.
 	static void toArguments(const Job &job, QStringList &arguments);
+
+private:
+	/// Name of the rendering project.
+	QString project;
+
+	/// Name of the rendering job.
+	QString name;
 };
 
 /// Submits job to the V-Ray Cloud using command line V-Ray Cloud Client.
