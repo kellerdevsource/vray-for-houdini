@@ -70,6 +70,10 @@ static void findVRayCloudClient()
 		}
 	}
 
+	if (vrayCloudClient.isEmpty()) {
+		Log::getLog().error("V-Ray Cloud Client is not found! Please, register at https://vray.cloud!");
+	}
+
 	vrayCloudClientChecked = true;
 }
 
