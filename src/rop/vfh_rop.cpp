@@ -26,6 +26,7 @@
 #include <TAKE/TAKE_Manager.h>
 
 #include <UT/UT_Interrupt.h>
+#include "../vop/brdf/vop_BRDFVRayMtl.h"
 
 using namespace VRayForHoudini;
 
@@ -149,9 +150,19 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 /// @param sessionType Session type.
 static VRay::RendererOptions::RenderMode getRenderModeFromROP(const OP_Node &ropNode, VfhSessionType sessionType)
 {
-	if (sessionType == VfhSessionType::production)
-		return getRendererMode(ropNode);
-	return getRendererIprMode(ropNode);
+	switch (sessionType) {
+		case VfhSessionType::ipr:
+		case VfhSessionType::rt: {
+			return getRendererIprMode(ropNode);
+		}
+		default:
+			return getRendererMode(ropNode);
+	}
+}
+
+static int isRenderInCloud(OP_Node &rop)
+{
+	return rop.evalInt("render_in_cloud", 0, 0.0);
 }
 
 int VRayRendererNode::initSession(VfhSessionType sessionType, int nframes, fpreal tstart, fpreal tend)
@@ -175,13 +186,19 @@ int VRayRendererNode::initSession(VfhSessionType sessionType, int nframes, fprea
 			sessionType = VfhSessionType::production;
 		}
 
+		if (sessionType == VfhSessionType::production) {
+			if (isRenderInCloud(*this)) {
+				sessionType = VfhSessionType::cloud;
+			}
+		}
+
 		const VRay::RendererOptions::RenderMode renderMode =
 			getRenderModeFromROP(*this, sessionType);
 
 		m_exporter.setRopPtr(this);
 
 		m_exporter.setSessionType(sessionType);
-		m_exporter.setExportMode(getExportMode(*this));
+		m_exporter.setExportMode(sessionType == VfhSessionType::cloud ? VRayExporter::ExpExport : getExportMode(*this));
 		m_exporter.setRenderMode(renderMode);
 		m_exporter.setDRSettings();
 

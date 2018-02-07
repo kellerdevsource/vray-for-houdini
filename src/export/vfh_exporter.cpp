@@ -52,6 +52,7 @@
 
 #include "vfh_export_geom.h"
 #include "vfh_op_utils.h"
+#include "vfh_vray_cloud.h"
 
 using namespace VRayForHoudini;
 
@@ -919,7 +920,10 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("img_pixelAspect", pixelAspect));
 
-	if (!m_rop->evalInt("SettingsOutput_img_save", 0, 0.0) || sessionType != VfhSessionType::production) {
+	if (sessionType == VfhSessionType::rt ||
+		sessionType == VfhSessionType::ipr ||
+		!m_rop->evalInt("SettingsOutput_img_save", 0, 0.0))
+	{
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_dir", Attrs::PluginAttr::AttrTypeIgnore));
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", Attrs::PluginAttr::AttrTypeIgnore));
 	}
@@ -1761,13 +1765,13 @@ static void onDumpMessage(VRay::VRayRenderer& /*renderer*/, const char *msg, int
 	const QString message(QString(msg).simplified());
 
 	if (level <= VRay::MessageError) {
-		Log::getLog().error("V-Ray: %s", message.toLocal8Bit().constData());
+		Log::getLog().error("V-Ray: %s", _toChar(message));
 	}
 	else if (level > VRay::MessageError && level <= VRay::MessageWarning) {
-		Log::getLog().warning("V-Ray: %s", message.toLocal8Bit().constData());
+		Log::getLog().warning("V-Ray: %s", _toChar(message));
 	}
 	else if (level > VRay::MessageWarning && level <= VRay::MessageInfo) {
-		Log::getLog().info("V-Ray: %s", message.toLocal8Bit().constData());
+		Log::getLog().info("V-Ray: %s", _toChar(message));
 	}
 }
 
@@ -1779,7 +1783,7 @@ static void onProgress(VRay::VRayRenderer& /*renderer*/, const char *msg, int el
 	const float percentage = 100.0f * elementNumber / elementsCount;
 
 	Log::getLog().progress("V-Ray: %s %.1f%% %s",
-						   message.toLocal8Bit().constData(),
+						   _toChar(message),
 						   percentage,
 						   (elementNumber >= elementsCount) ? "\n" : "\r");
 }
@@ -2169,7 +2173,11 @@ int VRayExporter::exportVrscene(const std::string &filepath, VRay::VRayExportSet
 {
 	// Create export directory.
 	QFileInfo filePathInfo(filepath.c_str());
-	directoryCreator.mkpath(filePathInfo.absoluteDir().path());
+	if (!directoryCreator.mkpath(filePathInfo.absoluteDir().path())) {
+		Log::getLog().error("Failed to create export directory: %s!",
+							_toChar(filePathInfo.absoluteDir().path()));
+		return false;
+	}
 
 	return m_renderer.exportScene(filepath, settings);
 }
@@ -2206,6 +2214,16 @@ int VRayExporter::initRenderer(int hasUI, int reInit)
 	return m_renderer.initRenderer(hasUI, reInit);
 }
 
+static int sessionSupportsAnimation(const VfhSessionType sessionType)
+{
+	return sessionType == VfhSessionType::production || sessionType == VfhSessionType::cloud;
+}
+
+static int sessionNeedsUI(const VfhSessionType sessionType)
+{
+	return sessionType == VfhSessionType::production || sessionType == VfhSessionType::rt;
+}
+
 void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal tend)
 {
 	const int logLevel = m_rop->evalInt("exporter_log_level", 0, 0.0);
@@ -2233,10 +2251,10 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 
 	// Reset time before exporting settings.
 	setTime(0.0);
-	setAnimation(sessionType == VfhSessionType::production &&
+	setAnimation(sessionSupportsAnimation(sessionType) &&
 		(m_isAnimation || m_isMotionBlur || m_isVelocityOn));
 
-	if (hasUI) {
+	if (hasUI && sessionNeedsUI(sessionType)) {
 		if (!getRenderer().getVRay().vfb.isShown()) {
 			restoreVfbState();
 		}
@@ -2255,10 +2273,15 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 		m_workMode == ExpExport ||
 		m_workMode == ExpExportRender;
 
-	exportFilePerFrame =
-		isExportMode &&
-		isAnimation() &&
-		isExportFramesToSeparateFiles(*m_rop);
+	if (sessionType == VfhSessionType::cloud) {
+		exportFilePerFrame = false;
+	}
+	else {
+		exportFilePerFrame =
+			isExportMode &&
+			isAnimation() &&
+			isExportFramesToSeparateFiles(*m_rop);
+	}
 
 	m_error = ROP_CONTINUE_RENDER;
 }
@@ -2467,15 +2490,51 @@ void VRayExporter::exportFrame(fpreal time)
 		Log::getLog().info("Operation is aborted by the user!");
 		m_error = ROP_ABORT_RENDER;
 	}
-	else {
+	else if (sessionType != VfhSessionType::cloud) {
 		renderFrame(!isInteractive());
 	}
 }
 
+static void fillJobSettingsFromROP(OP_Node &rop, Cloud::Job &job)
+{
+	UT_String projectName;
+	rop.evalString(projectName, "cloud_project_name", 0, 0.0);
+
+	UT_String jobName;
+	rop.evalString(jobName, "cloud_job_name", 0, 0.0);
+
+	job.project = projectName.buffer();
+	job.setName(jobName.buffer());
+}
 
 void VRayExporter::exportEnd()
 {
 	Log::getLog().debug("VRayExporter::exportEnd()");
+
+	if (sessionType == VfhSessionType::cloud) {
+		if (m_error != ROP_ABORT_RENDER) {
+			JobFilePath jobFilePath;
+			if (jobFilePath.isValid()) {
+				const QString jobSceneFilePath = jobFilePath.getFilePath();
+
+				VRay::VRayExportSettings expSettings;
+				expSettings.useHexFormat = true;
+				expSettings.compressed = true;
+
+				if (!exportVrscene(jobSceneFilePath.toStdString(), expSettings)) {
+					Cloud::Job job(jobSceneFilePath);
+
+					fillJobSettingsFromROP(*m_rop, job);
+
+					job.width = m_viewParams.renderSize.w;
+					job.height = m_viewParams.renderSize.h;
+					job.animation = m_isAnimation;
+
+					Cloud::submitJob(job);
+				}
+			}
+		}
+	}
 
 	clearKeyFrames(SYS_FP64_MAX);
 	reset();
@@ -2565,7 +2624,7 @@ void VRayExporter::saveVfbState()
 
 	PRM_Parm *vfbSettingsParm = m_rop->getParmPtr("_vfb_settings");
 	if (vfbSettingsParm) {
-		vfbSettingsParm->setValue(0.0, buf.toLocal8Bit().constData(), CH_STRING_LITERAL);
+		vfbSettingsParm->setValue(0.0, _toChar(buf), CH_STRING_LITERAL);
 	}
 }
 

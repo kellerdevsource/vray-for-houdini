@@ -33,6 +33,7 @@ enum class VfhSessionType {
 	production = 0, ///< Production rendering mode. Same as "Render To Disk".
 	rt, ///< RT session with VFB. 
 	ipr, ///< IPR mode. Used for "Render View" and viewport rendering.
+	cloud, ///< Submit scene to V-Ray Cloud.
 };
 
 struct VfhSessionData {
