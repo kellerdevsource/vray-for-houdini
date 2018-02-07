@@ -155,8 +155,8 @@ int VRayProxyRef::detailRebuild()
 
 void VRayProxyRef::updateCacheVars(const VRayProxyRefKey &newKey) {
 	if (lastKey.differingSettings(newKey)) {
+		cache.registerInCache(newKey.filePath, lastKey);
 		cache.unregister(lastKey.filePath, lastKey);
 		lastKey = newKey;
-		cache.registerInCache(lastKey.filePath, lastKey);
 	}
 }
