@@ -299,7 +299,7 @@ void VRaySceneRef::updateCacheRelatedVars() {
 
 int VRaySceneRef::detailRebuild()
 {
-	int res;
+	int res = false;
 	updateCacheRelatedVars();
 
 	ReturnSettings update(&m_bbox);
@@ -316,7 +316,7 @@ int VRaySceneRef::detailRebuild()
 			shouldFlipAxis = update.shouldFlip;
 		}
 
-		res = true;
+		return m_detail.isValid();
 	}
 	else {
 		detailClear();
