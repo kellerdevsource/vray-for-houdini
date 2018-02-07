@@ -55,3 +55,9 @@ def render():
 def render_rt():
     vrayRopNode = _getVrayRop()
     vrayRopNode.parm('render_rt').pressButton()
+
+def render_cloud():
+    vrayRopNode = _getVrayRop()
+    vrayRopNode.parm("render_in_cloud").set(True)
+    vrayRopNode.parm('execute').pressButton()
+    vrayRopNode.parm("render_in_cloud").set(False)
