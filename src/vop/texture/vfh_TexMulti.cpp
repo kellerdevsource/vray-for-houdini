@@ -139,13 +139,13 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 		OP_Node *texNode = VRayExporter::getConnectedNode(this, texSockName.toStdString());
 		if (!texNode) {
 			Log::getLog().warning("Node \"%s\": Texture node is not connected to \"%s\", ignoring...",
-								  getName().buffer(), texSockName.toLocal8Bit().constData());
+								  getName().buffer(), _toChar(texSockName));
 		}
 		else {
 			VRay::Plugin texPlugin = exporter.exportVop(texNode, parentContext);
 			if (!texPlugin) {
 				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
-									getName().buffer(), texSockName.toLocal8Bit().constData());
+									getName().buffer(), _toChar(texSockName));
 			}
 			else {
 				exporter.convertInputPlugin(texPlugin, pluginDesc, texNode, VOP_TYPE_COLOR, texSockName.toStdString().c_str());

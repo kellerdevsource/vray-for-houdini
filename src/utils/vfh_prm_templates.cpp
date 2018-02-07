@@ -434,9 +434,9 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *dsFileName)
 	const QString &dsFilePath = dsFilesLocations.getFilePath(dsFileName);
 	const DsFilesLocations::DsIncludePaths &incPaths = dsFilesLocations.getIncludePaths();
 
-	DS_Stream stream(dsFilePath.toLocal8Bit().constData());
+	DS_Stream stream(_toChar(dsFilePath));
 	for (const QString &incPath : incPaths) {
-		stream.addIncludePath(incPath.toLocal8Bit().constData());
+		stream.addIncludePath(_toChar(incPath));
 	}
 
 	// Need to keep all the pages as myTemplate will have references to it.
@@ -449,7 +449,7 @@ Parm::PRMList& Parm::PRMList::addFromFile(const char *dsFileName)
 		group->addPage(currentPage);
 	}
 	else {
-		Log::getLog().error("Error parsing file: \"%s\"!", dsFilePath.toLocal8Bit().constData());
+		Log::getLog().error("Error parsing file: \"%s\"!", _toChar(dsFilePath));
 		FreePtr(currentPage);
 	}
 

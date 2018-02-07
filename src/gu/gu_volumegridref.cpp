@@ -158,10 +158,10 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 	const time_point tStart = time_clock::now();
 	IAur *aurPtr;
 	if (key.map.isEmpty()) {
-		aurPtr = newIAurMaxVox(key.path.toLocal8Bit().constData(), voxelCount, infoOnly);
+		aurPtr = newIAurMaxVox(_toChar(key.path), voxelCount, infoOnly);
 	}
 	else {
-		aurPtr = newIAurWithChannelsMappingMaxVox(key.path.toLocal8Bit().constData(), key.map.toLocal8Bit().constData(), voxelCount, infoOnly);
+		aurPtr = newIAurWithChannelsMappingMaxVox(_toChar(key.path), _toChar(key.map), voxelCount, infoOnly);
 	}
 	data.aurPtr = VRayVolumeGridRef::CachePtr(aurPtr, [](IAur *ptr) { deleteIAur(ptr); });
 	const time_point tEndCache = time_clock::now();
@@ -172,7 +172,7 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 		Log::getLog().debug("Loading cache took %dms", static_cast<int>(std::chrono::duration_cast<milliseconds>(tEndCache - tStart).count()));
 	}
 	else {
-		Log::getLog().error("Failed to load cache \"%s\"", key.path.toLocal8Bit().constData());
+		Log::getLog().error("Failed to load cache \"%s\"", _toChar(key.path));
 		return;
 	}
 
@@ -256,7 +256,7 @@ void VRayVolumeGridRef::initDataCache() const
 	// We don't need the evict callback, because the data is in RAII objects and will be freed when evicted from cache,
 	// so just print info.
 	m_dataCache.setEvictCallback([](const VolumeCacheKey &key, VolumeCacheData&) {
-		Log::getLog().debug("Removing \"%s\" from cache", key.path.toLocal8Bit().constData());
+		Log::getLog().debug("Removing \"%s\" from cache", _toChar(key.path));
 	});
 }
 
@@ -316,7 +316,7 @@ UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
 	int isChannelVector3D = 0;
 	char chanName[MAX_CHAN_MAP_LEN];
 
-	while (1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, loadPath.toLocal8Bit().constData(), chanIndex++)) {
+	while (1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, _toChar(loadPath), chanIndex++)) {
 		channels.append(chanName);
 	}
 
@@ -373,7 +373,7 @@ void VRayVolumeGridRef::buildMapping()
 
 		// user made no mappings - get default
 		if (chanMap.equal("")) {
-			chanMap = getDefaultMapping(loadPath.toLocal8Bit().constData());
+			chanMap = getDefaultMapping(_toChar(loadPath));
 		}
 	}
 
@@ -455,7 +455,7 @@ i64 VRayVolumeGridRef::getFullCacheVoxelCount() const
 	if (!key.isValid())
 		return -1;
 
-	QScopedPointer<IAur, IAurPointerDeleter> aurPtr(newIAurMaxVox(key.path.toLocal8Bit().constData(), -1, true));
+	QScopedPointer<IAur, IAurPointerDeleter> aurPtr(newIAurMaxVox(_toChar(key.path), -1, true));
 	if (!aurPtr)
 		return -1;
 

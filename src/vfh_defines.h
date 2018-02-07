@@ -34,6 +34,7 @@
 
 #define FOR_IT(type, itName, var) int itName##Idx = 0; for (type::iterator itName = (var).begin(); itName != (var).end(); ++itName, ++itName##Idx)
 #define FOR_CONST_IT(type, itName, var) int itName##Idx = 0; for (type::const_iterator itName = (var).begin(); itName != (var).end(); ++itName, ++itName##Idx)
+#define _toChar(qt_string) (qt_string).toLocal8Bit().constData()
 
 template <typename T>
 FORCEINLINE void FreePtr(T* &p) {
@@ -48,10 +49,10 @@ FORCEINLINE void FreePtrArr(T* &p) {
 }
 
 template <typename A>
-FORCEINLINE bool IsFloatEq(const A&, const A&) { vassert(false); return false; }
+FORCEINLINE bool IsFloatEq(const A, const A) { vassert(false); return false; }
 template <>
-FORCEINLINE bool IsFloatEq(const float &a, const float &b) { return VUtils::isZero(a - b, 1e-6f); }
+FORCEINLINE bool IsFloatEq(const float a, const float b) { return VUtils::isZero(a - b, 1e-6f); }
 template <>
-FORCEINLINE bool IsFloatEq(const double &a, const double &b) { return VUtils::isZero(a - b, 1e-6); }
+FORCEINLINE bool IsFloatEq(const double a, const double b) { return VUtils::isZero(a - b, 1e-6); }
 
 #endif // VRAY_FOR_HOUDINI_UTIL_DEFINES_H

@@ -55,6 +55,7 @@ set(EXPORTER_SOURCES
 	export/vfh_exporter.cpp
 	export/vfh_plugin_attrs.cpp
 	export/vfh_plugin_exporter.cpp
+	export/vfh_vray_cloud.cpp
 	utils/vfh_error.cpp
 	utils/vfh_hashes.cpp
 	utils/vfh_hou_utils.cpp
@@ -87,6 +88,7 @@ set(EXPORTER_HEADERS
 	export/vfh_exporter.h
 	export/vfh_plugin_attrs.h
 	export/vfh_plugin_exporter.h
+	export/vfh_vray_cloud.h
 	export/vfh_vray.h
 	gu/vfh_gu_base.h
 	gu/gu_volumegridref.h

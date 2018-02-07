@@ -502,7 +502,7 @@ static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QSt
 			case MtlOverrideItem::itemTypeString: {
 				userAttributes += buf.sprintf("%s=%s;",
 											  overrideName,
-											  overrideItem.valueString.toLocal8Bit().constData());
+											  _toChar(overrideItem.valueString));
 				break;
 			}
 			default: {
@@ -1012,7 +1012,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		item[indexOffs++].setDouble(additional_params_flags);
 		item[indexOffs++].setDouble(primItem.objectID != objectIdUndefined ? primItem.objectID : objectID);
 		if (additional_params_flags & VRay::InstancerParamFlags::useUserAttributes) {
-			item[indexOffs++].setString(userAttributes.toLocal8Bit().constData());
+			item[indexOffs++].setString(_toChar(userAttributes));
 		}
 		if (additional_params_flags & VRay::InstancerParamFlags::useMaterial) {
 			item[indexOffs++].setPlugin(material);
