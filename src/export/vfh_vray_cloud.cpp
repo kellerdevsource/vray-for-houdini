@@ -23,11 +23,17 @@
 using namespace VRayForHoudini;
 using namespace Cloud;
 
+/// JSON config key for the executable file path.
 static const QString keyExecutable = "executable";
 
+/// Resolved V-Ray Cloud Client binary file path.
 static QString vrayCloudClient;
+
+/// Flag indicatig that we've already tried to resolved
+/// V-Ray Cloud Client binary file path.
 static int vrayCloudClientChecked = false;
 
+/// Parses vcloud.json and extracts executable file path.
 static void findVRayCloudClient()
 {
 	if (vrayCloudClientChecked)
@@ -87,6 +93,8 @@ JobFilePath::~JobFilePath()
 	removeFilePath();
 }
 
+/// Deletes file by the provided path.
+/// @param filePath File path.
 static int deleteFilePath(const QString &filePath)
 {
 	const int removeRes = QFile::remove(filePath);
@@ -127,7 +135,7 @@ Job::Job(const QString &sceneFile)
 	: sceneFile(sceneFile)
 {}
 
-static QRegExp cloudNameFilter("[^a-zA-Z\\d\\s]");
+static QRegExp cloudNameFilter("[^a-zA-Z\\d\\s\\_\\-.,\\(\\)\\[\\]]");
 
 /// Only letters, digits, spaces and _-.,()[] allowed.
 /// NOTE: QString::remove is non-const.
