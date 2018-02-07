@@ -18,9 +18,9 @@
 using namespace VRayForHoudini;
 using namespace VRayForHoudini::Attrs;
 
-static const char const theHairParm[] = "GeomMayaHair_geom_splines";
-static const char const VFH_ATTRIB_INCANDESCENCE[] = "incandescence";
-static const char const VFH_ATTRIB_TRANSPARENCY[] = "transparency";
+static const char theHairParm[] = "GeomMayaHair_geom_splines";
+static const char VFH_ATTRIB_INCANDESCENCE[] = "incandescence";
+static const char VFH_ATTRIB_TRANSPARENCY[] = "transparency";
 
 HairPrimitiveExporter::HairPrimitiveExporter(OBJ_Node &obj, OP_Context &ctx, VRayExporter &exp, const GEOPrimList &primList)
 	: PrimitiveExporter(obj, ctx, exp)

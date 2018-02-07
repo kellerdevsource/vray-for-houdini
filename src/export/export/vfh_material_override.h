@@ -13,6 +13,7 @@
 
 #include "vfh_includes.h"
 #include "vfh_geoutils.h"
+#include "vfh_defines.h"
 
 #include <QString>
 
@@ -76,7 +77,7 @@ struct MtlOverrideItem {
 	/// Returns override value type.
 	MtlOverrideItemType getType() const { return type; }
 
-	const char *getString() const { return valueString.toLocal8Bit().constData(); }
+	const char *getString() const { return _toChar(valueString); }
 
 	/// Override value type.
 	MtlOverrideItemType type;

@@ -106,12 +106,12 @@ static int getCreateSharedMemory()
 		return 1;
 
 	if (vrayInstances.create(memSize)) {
-		Log::getLog().debug("InstancesStorage: \"%s\"", memKey.toLocal8Bit().constData());
+		Log::getLog().debug("InstancesStorage: \"%s\"", _toChar(memKey));
 		clearSharedMemory();
 	}
 	else {
 		Log::getLog().debug("InstancesStorage: %s",
-							vrayInstances.errorString().toLocal8Bit().constData());
+							_toChar(vrayInstances.errorString()));
 		switch (vrayInstances.error()) {
 			case QSharedMemory::NoError:
 			case QSharedMemory::AlreadyExists: {
@@ -120,7 +120,7 @@ static int getCreateSharedMemory()
 			}
 			default: {
 				Log::getLog().error("InstancesStorage error: %s",
-									vrayInstances.errorString().toLocal8Bit().constData());
+									_toChar(vrayInstances.errorString()));
 				return 0;
 			}
 		}

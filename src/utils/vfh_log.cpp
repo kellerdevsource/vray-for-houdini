@@ -117,19 +117,19 @@ static void logMessage(const VfhLogMessage &data)
 		consoleMsg.append(msgSimplified);
 		consoleMsg.append(VUTILS_COLOR_DEFAULT);
 
-		vutils_cprintf(true, "%s%s", consoleMsg.toLocal8Bit().constData(), msgEnd);
+		vutils_cprintf(true, "%s%s", _toChar(consoleMsg), msgEnd);
 		fflush(stdout);
 	}
 
 	// Print to debugger without timestamp.
 	if (isDebuggerAttached) {
-		VUtilsPrintVisualStudio("%s\n", guiMsg.toLocal8Bit().constData());
+		VUtilsPrintVisualStudio("%s\n", _toChar(guiMsg));
 	}
 
 	if (!isConsoleAttached) {
 		guiMsg.prepend(" ");
 		guiMsg.prepend(timeStamp);
-		printf("%s\n", guiMsg.toLocal8Bit().constData());
+		printf("%s\n", _toChar(guiMsg));
 	}
 }
 

@@ -166,13 +166,13 @@ void ImdisplayThread::processImageHeaderMessage(ImageHeaderMessage &msg) const
 
 	for (const QString &planeName : msg.planeNames) {
 		IMG_TileOptions	*tileOptions = new IMG_TileOptions();
-		tileOptions->setPlaneInfo(msg.ropName.toLocal8Bit().constData(),
-								  planeName.toLocal8Bit().constData(),
+		tileOptions->setPlaneInfo(_toChar(msg.ropName),
+								  _toChar(planeName),
 								  0,
 								  IMG_FLOAT32,
 								  IMG_RGBA);
 		tileOptions->setFormatOption("socketport",
-									 QString::number(port).toLocal8Bit().constData());
+									 _toChar(QString::number(port)));
 
 		tileOptionList.append(tileOptions);
 	}
