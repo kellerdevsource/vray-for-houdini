@@ -912,8 +912,8 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 
 	UT_String resfraction;
 	m_rop->evalString(resfraction, "res_fraction", 0, t);
-	if (   m_rop->evalInt("override_camerares", 0, t)
-		&& NOT(resfraction.isFloat()) )
+	if (m_rop->evalInt("override_camerares", 0, t) &&
+		!resfraction.isFloat())
 	{
 		pixelAspect = m_rop->evalFloat("aspect_override", 0, t);
 	}
@@ -950,10 +950,12 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		chanMan->expandString(fileNameRaw.buffer(), fileName, t);
 		chanMan->expandString(dirPathRaw.buffer(), dirPath, t);
 
-		// Create output directory.
-		if (!directoryCreator.mkpath(dirPath.buffer())) {
-			Log::getLog().error("Failed to create output directory \"%s\"!", dirPath.buffer());
-			return ReturnValue::Error;
+		if (sessionType != VfhSessionType::cloud) {
+			// Create output directory.
+			if (!directoryCreator.mkpath(dirPath.buffer())) {
+				Log::getLog().error("Failed to create output directory \"%s\"!", dirPath.buffer());
+				return ReturnValue::Error;
+			}
 		}
 
 		// Append default file type if not set.
@@ -969,8 +971,11 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 			imgFormat == imageFormatVRayImage)
 		{
 			const int relementsSeparateFiles = m_rop->evalInt("SettingsOutput_relements_separateFiles", 0, t);
-			if (relementsSeparateFiles == 0) {
-				pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
+			if (!relementsSeparateFiles) {
+				if (sessionType != VfhSessionType::cloud) {
+#pragma message("Remove img_rawFile workaround after AppSDK fix!")
+					pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
+				}
 			}
 		}
 
