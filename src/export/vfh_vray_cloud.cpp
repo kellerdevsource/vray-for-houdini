@@ -193,7 +193,7 @@ static void executeVRayCloudClient(const QStringList &args)
 	QProcess vrayCloudClientProc;
 	vrayCloudClientProc.setProcessChannelMode(QProcess::ForwardedChannels);
 	vrayCloudClientProc.start(vrayCloudClient, args, QIODevice::ReadOnly);
-	vrayCloudClientProc.waitForFinished();
+	vrayCloudClientProc.waitForFinished(-1);
 }
 
 int VRayForHoudini::Cloud::submitJob(const Job &job)
