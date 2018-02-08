@@ -31,7 +31,7 @@ struct VRayProxyRefKeyHasher {
 			int animSpeed;
 			int animOverride;
 			int animLength;
-			bool flipAxis;
+			int numPreviewFaces;
 		} settingsKey = { key.lod
 			, key.f
 			, key.animType
@@ -39,7 +39,7 @@ struct VRayProxyRefKeyHasher {
 			, key.animSpeed
 			, key.animOverride
 			, key.animLength
-			, key.flipAxis
+			, key.previewFaces
 		};
 #pragma pack(pop)
 		Hash::MHash data;
@@ -104,10 +104,10 @@ bool VRayProxyRef::getLocalTransform(UT_Matrix4D &m) const
 
 	if (getFlipAxis()) {
 		UT_Matrix4D flipTm(0.0);
-		flipTm(0,0) *=  1.0;
-		flipTm(1,2) *= -1.0;
-		flipTm(2,1) *=  1.0;
-		flipTm(3,3) *=  1.0;
+		flipTm(0,0) =  1.0;
+		flipTm(1,2) =  1.0;
+		flipTm(2,1) =  1.0;
+		flipTm(3,3) =  1.0;
 
 		m = flipTm * m;
 	}
@@ -139,7 +139,7 @@ VRayProxyRefKey VRayProxyRef::getKey() const
 	key.animOverride = getAnimOverride();
 	key.animStart = getAnimStart();
 	key.animLength = getAnimLength();
-	key.flipAxis = getFlipAxis();
+	key.previewFaces = getNumPreviewFaces();
 	return key;
 }
 
