@@ -17,7 +17,6 @@
 
 #include <charstring.h>
 #include <vfh_defines.h>
-#include "mesh_file.h"
 
 namespace VRayForHoudini {
 

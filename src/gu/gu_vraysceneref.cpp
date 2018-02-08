@@ -314,7 +314,7 @@ int VRaySceneRef::detailRebuild()
 			shouldFlipAxis = update.shouldFlip;
 		}
 
-		return m_detail.isValid();
+		res = m_detail.isValid();
 	}
 	else {
 		detailClear();

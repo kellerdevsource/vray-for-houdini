@@ -77,7 +77,6 @@ static int addMeshVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel, int maxFac
 	const int numFaces = faceChan->numElements;
 
 	if (!useMaxFaces || numFaces <= maxFaces) {
-
 		const GA_Offset pointOffset = gdp.appendPointBlock(numVerts);
 		for (int vertexIndex = 0; vertexIndex < numVerts; ++vertexIndex) {
 			const VUtils::Vector &vert = verts[vertexIndex];
@@ -113,7 +112,6 @@ static int addMeshVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel, int maxFac
 				}
 				numPreviewFaces++;
 			}
-
 		}
 
 		const GA_Offset pointOffset = gdp.appendPointBlock(numPreviewVerts);
@@ -128,8 +126,6 @@ static int addMeshVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel, int maxFac
 				poly->setVertexPoint(k, pointOffset + previewFacesRaw[faceIndex + k]);
 			}
 		}
-		
-
 	}
 
 	return true;
