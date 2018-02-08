@@ -163,24 +163,8 @@ void Job::toArguments(const Job &job, QStringList &arguments)
 
 	arguments << "--renderMode" << job.renderMode;
 
-#if 0
-	// Use only SettingsOutput
-	if (job.exr) {
-		arguments << "--exr";
-	}
-	else if (job.jpg) {
-		arguments << "--jpg";
-	}
-	else if (job.png) {
-		arguments << "--png";
-		if (job.preserveAlpha) {
-			arguments << "--preserveAlpha";
-		}
-	}
-
 	arguments << "--width" << QString::number(job.width);
 	arguments << "--height" << QString::number(job.height);
-#endif
 
 	if (job.animation) {
 		arguments << "--animation";

@@ -76,18 +76,6 @@ struct Job {
 	/// Height of the rendered image.
 	int height{1080};
 
-	/// Output EXR image.
-	int exr{true};
-
-	/// Output JPG image.
-	int jpg{false};
-
-	/// Output PNG image.
-	int png{false};
-
-	/// Preserve alpha chanel of the PNG output.
-	int preserveAlpha{true};
-
 	/// Render animation instead of a single shot.
 	int animation{false};
 
