@@ -24,14 +24,14 @@ using namespace VRayForHoudini;
 using namespace Cloud;
 
 /// JSON config key for the executable file path.
-static const QString keyExecutable = "executable";
+static const QString keyExecutable("executable");
 
 /// Resolved V-Ray Cloud Client binary file path.
 static QString vrayCloudClient;
 
 /// Flag indicatig that we've already tried to resolved
 /// V-Ray Cloud Client binary file path.
-static int vrayCloudClientChecked = false;
+static int vrayCloudClientChecked(false);
 
 /// Not allowed characters regular expression.
 static QRegExp cloudNameFilter("[^a-zA-Z\\d\\s\\_\\-.,\\(\\)\\[\\]]");
