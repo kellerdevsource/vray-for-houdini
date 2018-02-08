@@ -47,9 +47,21 @@ void NodePackedBase::updatePrimitive(const OP_Context &context)
 	updatePrimitiveFromOptions(primOptions);
 }
 
-OP_ERROR NodePackedBase::cookMySop(OP_Context &context)
+void NodePackedBase::getCreatePrimitive()
 {
-	Log::getLog().debug("NodePackedBase::cookMySop(\"%s\")", m_primType.buffer());
+	vassert(gdp);
+
+	m_primPacked = nullptr;
+
+	for (GA_Iterator jt(gdp->getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = gdp->getGEOPrimitive(*jt);
+		if (prim && GU_PrimPacked::isPackedPrimitive(*prim)) {
+			if (m_primType.equal(prim->getTypeName())) {
+				m_primPacked = const_cast<GU_PrimPacked*>(static_cast<const GU_PrimPacked*>(prim));
+				break;
+			}
+		}
+	}
 
 	if (!m_primPacked) {
 		m_primPacked = GU_PrimPacked::build(*gdp, m_primType);
@@ -61,6 +73,13 @@ OP_ERROR NodePackedBase::cookMySop(OP_Context &context)
 
 		gdp->setPos3(m_primPacked->getPointOffset(0), pivot);
 	}
+}
+
+OP_ERROR NodePackedBase::cookMySop(OP_Context &context)
+{
+	Log::getLog().debug("NodePackedBase::cookMySop(\"%s\")", m_primType.buffer());
+
+	getCreatePrimitive();
 
 	setTimeDependent();
 

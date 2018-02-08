@@ -58,6 +58,9 @@ protected:
 	/// @param options New options.
 	virtual void updatePrimitiveFromOptions(const OP_Options &options);
 
+	/// Use existing or create a new primitive.
+	void getCreatePrimitive();
+
 	/// Packed primitive type.
 	const UT_String m_primType;
 
