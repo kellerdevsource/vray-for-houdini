@@ -16,6 +16,7 @@
 #include <UT/UT_String.h>
 
 #include <charstring.h>
+#include <vfh_defines.h>
 
 namespace VRayForHoudini {
 
@@ -39,6 +40,38 @@ struct VRayProxyRefKey {
 	bool animOverride = false;
 	int animStart = 0;
 	int animLength = 100;
+	int previewFaces = 10000;
+
+	bool operator== (const VRayProxyRefKey & other) const {
+		return (filePath == other.filePath &&
+			lod == other.lod &&
+			MemberFloatEq(f) &&
+			animType == other.animType &&
+			MemberFloatEq(animOffset) &&
+			MemberFloatEq(animSpeed) &&
+			animOverride == other.animOverride &&
+			animStart == other.animStart &&
+			animLength == other.animLength &&
+			previewFaces == other.previewFaces);
+	}
+
+	bool operator!=(const VRayProxyRefKey &other) const {
+		return !(*this == other);
+	}
+
+	/// Checks for difference between two instances,
+	/// without taking frame into account
+	bool differingSettings(const VRayProxyRefKey &other) const {
+		return !(filePath == other.filePath &&
+			lod == other.lod &&
+			animType == other.animType &&
+			MemberFloatEq(animOffset) &&
+			MemberFloatEq(animSpeed) &&
+			animOverride == other.animOverride &&
+			animStart == other.animStart &&
+			animLength == other.animLength &&
+			previewFaces == other.previewFaces);
+	}
 };
 
 /// Get detail handle for a proxy packed primitive.
@@ -60,7 +93,6 @@ bool getVRayProxyBoundingBox(const VRayProxyRefKey &options, UT_BoundingBox &box
 /// @param filepath File path.
 /// @retval true if cached file is deleted.
 bool clearVRayProxyCache(const char *filepath);
-
 } // namespace VRayForHoudini
 
 #endif // VRAY_FOR_HOUDINI_VRAYPROXYCACHE_H

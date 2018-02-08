@@ -27,9 +27,6 @@ void VRayScene::setPluginType()
 
 void VRayScene::setTimeDependent()
 {
-#if 0
-	// TODO: Implement animation caching and enable this.
-
 	enum class VRaySceneAnimType {
 		loop = 0,
 		once,
@@ -37,20 +34,22 @@ void VRayScene::setTimeDependent()
 		still,
 	};
 
-	previewMeshAnimated =
-		static_cast<VRaySceneAnimType>(evalInt("anim_type", 0, 0.0)) != VRaySceneAnimType::still;
-
+	bool previewMeshAnimated = evalInt("animated_preview", 0, 0.0);
+	if (previewMeshAnimated) {
+		if (evalInt("anim_override", 0, 0.0)) {
+			previewMeshAnimated = static_cast<VRaySceneAnimType>(evalInt("anim_type", 0, 0.0)) != VRaySceneAnimType::still;
+		}
+	}
 
 	flags().setTimeDep(previewMeshAnimated);
-#else
-	NodePackedBase::setTimeDependent();
-#endif
 }
 
 void VRayScene::updatePrimitive(const OP_Context &context)
 {
 	// Set the options on the primitive
+
 	OP_Options primOptions;
+	primOptions.setOptionI("cache", flags().getTimeDep());
 	for (int i = 0; i < getParmList()->getEntries(); ++i) {
 		const PRM_Parm &prm = getParm(i);
 		primOptions.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), context.getTime());

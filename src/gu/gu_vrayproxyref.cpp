@@ -12,10 +12,55 @@
 #include "vfh_log.h"
 #include "gu_vrayproxyref.h"
 
+#include "DetailCachePrototype.h"
+#include "vfh_hashes.h"
+
 using namespace VRayForHoudini;
 
 static GA_PrimitiveTypeId theTypeId(-1);
 static VRayBaseRefFactory<VRayProxyRef> theFactory("VRayProxyRef");
+
+struct VRayProxyRefKeyHasher {
+	uint32 operator()(const VRayProxyRefKey &key) const {
+#pragma pack(push, 1)
+		struct SettingsKey {
+			int lod;
+			int frame;
+			int animType;
+			int animOffset;
+			int animSpeed;
+			int animOverride;
+			int animLength;
+			int numPreviewFaces;
+		} settingsKey = { key.lod
+			, key.f
+			, key.animType
+			, key.animOffset
+			, key.animSpeed
+			, key.animOverride
+			, key.animLength
+			, key.previewFaces
+		};
+#pragma pack(pop)
+		Hash::MHash data;
+		Hash::MurmurHash3_x86_32(&settingsKey, sizeof(SettingsKey), 42, &data);
+		return data;
+	}
+};
+
+class VRayProxyRefKeyBuilder : public DetailBuilder<VRayProxyRefKey, bool> {
+public:
+	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const VRayProxyRefKey &settings, fpreal t, bool &rval) override {
+		return getVRayProxyDetail(settings);
+	}
+
+	void cleanResource(const VUtils::CharString &filepath) override {
+		clearVRayProxyCache(filepath.ptr());
+	}
+
+} builder;
+
+static DetailCachePrototype<bool, VRayProxyRefKey, VRayProxyRefKeyHasher> cache(builder);
 
 void VRayProxyRef::install(GA_PrimitiveFactory *primFactory)
 {
@@ -29,10 +74,16 @@ VRayProxyRef::VRayProxyRef()
 
 VRayProxyRef::VRayProxyRef(const VRayProxyRef &src)
 	: VRayProxyRefBase(src)
-{}
+{
+	const VRayProxyRefKey &key = getKey();
+	cache.registerInCache(key.filePath, key);
+}
 
 VRayProxyRef::~VRayProxyRef()
-{}
+{
+	const VRayProxyRefKey &key = getKey();
+	cache.unregister(key.filePath, key);
+}
 
 GU_PackedFactory* VRayProxyRef::getFactory() const
 {
@@ -53,10 +104,10 @@ bool VRayProxyRef::getLocalTransform(UT_Matrix4D &m) const
 
 	if (getFlipAxis()) {
 		UT_Matrix4D flipTm(0.0);
-		flipTm(0,0) *=  1.0;
-		flipTm(1,2) *= -1.0;
-		flipTm(2,1) *=  1.0;
-		flipTm(3,3) *=  1.0;
+		flipTm(0,0) =  1.0;
+		flipTm(1,2) =  1.0;
+		flipTm(2,1) =  1.0;
+		flipTm(3,3) =  1.0;
 
 		m = flipTm * m;
 	}
@@ -88,17 +139,27 @@ VRayProxyRefKey VRayProxyRef::getKey() const
 	key.animOverride = getAnimOverride();
 	key.animStart = getAnimStart();
 	key.animLength = getAnimLength();
+	key.previewFaces = getNumPreviewFaces();
 	return key;
 }
 
 int VRayProxyRef::detailRebuild()
 {
 	const VRayProxyRefKey &vrmeshKey = getKey();
+	updateCacheVars(vrmeshKey);
 
-	const GU_DetailHandle &getail = getVRayProxyDetail(vrmeshKey);
+	const GU_DetailHandle &getail = cache.getDetail(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f);
 
 	const int res = m_detail != getail;
 	m_detail = getail;
 
 	return res;
+}
+
+void VRayProxyRef::updateCacheVars(const VRayProxyRefKey &newKey) {
+	if (lastKey.differingSettings(newKey)) {
+		cache.registerInCache(newKey.filePath, lastKey);
+		cache.unregister(lastKey.filePath, lastKey);
+		lastKey = newKey;
+	}
 }

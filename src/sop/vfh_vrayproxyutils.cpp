@@ -57,7 +57,7 @@ private:
 /// Appends mesh data to detail.
 /// @param gdp Detail.
 /// @param voxel Voxel of type MVF_GEOMETRY_VOXEL.
-static int addMeshVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel)
+static int addMeshVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel, int maxFaces, bool useMaxFaces)
 {
 	const VUtils::MeshChannel *vertChan = voxel.getChannel(VERT_GEOM_CHANNEL);
 	const VUtils::MeshChannel *faceChan = voxel.getChannel(FACE_TOPO_CHANNEL);
@@ -76,20 +76,56 @@ static int addMeshVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel)
 	const int numVerts = vertChan->numElements;
 	const int numFaces = faceChan->numElements;
 
-	const GA_Offset pointOffset = gdp.appendPointBlock(numVerts);
-	for (int vertexIndex = 0; vertexIndex < numVerts; ++vertexIndex) {
-		const VUtils::Vector &vert = verts[vertexIndex];
-		gdp.setPos3(pointOffset + vertexIndex, UT_Vector3F(vert.x, vert.y, vert.z));
+	if (!useMaxFaces || numFaces <= maxFaces) {
+		const GA_Offset pointOffset = gdp.appendPointBlock(numVerts);
+		for (int vertexIndex = 0; vertexIndex < numVerts; ++vertexIndex) {
+			const VUtils::Vector &vert = verts[vertexIndex];
+			gdp.setPos3(pointOffset + vertexIndex, UT_Vector3F(vert.x, vert.y, vert.z));
+		}
+
+		for (int faceIndex = 0; faceIndex < numFaces; ++faceIndex) {
+			const VUtils::FaceTopoData &face = faces[faceIndex];
+
+			GU_PrimPoly *poly = GU_PrimPoly::build(&gdp, 3, GU_POLY_CLOSED, 0);
+			poly->setVertexPoint(0, pointOffset + face.v[0]);
+			poly->setVertexPoint(1, pointOffset + face.v[1]);
+			poly->setVertexPoint(2, pointOffset + face.v[2]);
+			poly->reverse();
+		}
 	}
+	else {
+		VUtils::VectorRefList previewVertsRaw(maxFaces * 3);
+		VUtils::IntRefList    previewFacesRaw(maxFaces * 3);
 
-	for (int faceIndex = 0; faceIndex < numFaces; ++faceIndex) {
-		const VUtils::FaceTopoData &face = faces[faceIndex];
+		int numPreviewFaces = 0;
+		int numPreviewVerts = 0;
+		
+		for (int i = 0; i < numFaces; ++i) {
+			const double ratio = double(maxFaces)/ double(faceChan->numElements);
+			int p0 = i * ratio;
+			int p1 = (i + 1) * ratio;
 
-		GU_PrimPoly *poly = GU_PrimPoly::build(&gdp, 3, GU_POLY_CLOSED, 0);
-		poly->setVertexPoint(0, pointOffset + face.v[0]);
-		poly->setVertexPoint(1, pointOffset + face.v[1]);
-		poly->setVertexPoint(2, pointOffset + face.v[2]);
-		poly->reverse();
+			if ((p0 != p1) && (numPreviewFaces < maxFaces)) {
+				for (int k = 0; k < 3; ++k) {
+					previewFacesRaw[numPreviewFaces * 3 + k] = numPreviewVerts;
+					previewVertsRaw[numPreviewVerts++] = verts[faces->v[i * 3 + k]];
+				}
+				numPreviewFaces++;
+			}
+		}
+
+		const GA_Offset pointOffset = gdp.appendPointBlock(numPreviewVerts);
+		for (int vertexIndex = 0; vertexIndex < numPreviewVerts; ++vertexIndex) {
+			const VUtils::Vector &vert = previewVertsRaw[vertexIndex];
+			gdp.setPos3(pointOffset+vertexIndex, UT_Vector3F(vert.x, vert.y, vert.z));
+		}
+
+		for (int faceIndex = 0; faceIndex < numPreviewFaces*3; faceIndex+=3) {
+			GU_PrimPoly *poly = GU_PrimPoly::build(&gdp, 3, GU_POLY_CLOSED, 0);
+			for (int k = 0; k < 3; k++) {
+				poly->setVertexPoint(k, pointOffset + previewFacesRaw[faceIndex + k]);
+			}
+		}
 	}
 
 	return true;
@@ -140,12 +176,12 @@ static int addHairVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel)
 /// Appends voxel data to detail.
 /// @param gdp Detail.
 /// @param voxel Voxel.
-static int addVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel, uint32 voxelFlags)
+static int addVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel, uint32 voxelFlags, int maxFaces, bool useMaxFaces)
 {
 	if (voxelFlags & MVF_GEOMETRY_VOXEL ||
 		voxelFlags & MVF_PREVIEW_VOXEL)
 	{
-		return addMeshVoxelData(gdp, voxel);
+		return addMeshVoxelData(gdp, voxel, maxFaces, useMaxFaces);
 	}
 	if (voxelFlags & MVF_HAIR_GEOMETRY_VOXEL) {
 		return addHairVoxelData(gdp, voxel);
@@ -153,7 +189,7 @@ static int addVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel, uint32 voxelFl
 	return false;
 }
 
-static int addVoxelData(GU_Detail &gdp, VUtils::MeshInterface &mi, int voxelIndex)
+static int addVoxelData(GU_Detail &gdp, VUtils::MeshInterface &mi, int voxelIndex, int maxFaces = 100000, bool useMaxFaces = false)
 {
 	MeshVoxelRAII voxelRaii(&mi, voxelIndex);
 	if (!voxelRaii.isValid())
@@ -161,7 +197,7 @@ static int addVoxelData(GU_Detail &gdp, VUtils::MeshInterface &mi, int voxelInde
 
 	const uint32 voxelFlags = mi.getVoxelFlags(voxelIndex);
 
-	return addVoxelData(gdp, voxelRaii.getVoxel(), voxelFlags);
+	return addVoxelData(gdp, voxelRaii.getVoxel(), voxelFlags, maxFaces, useMaxFaces);
 }
 
 static VUtils::Box getBoundingBox(VUtils::MeshInterface &mi)
@@ -248,28 +284,6 @@ public:
 	/// Geometry hash type.
 	typedef Hash::MHash DetailKey;
 
-	/// Detail cache entry.
-	struct DetailEntry {
-		DetailEntry() {
-			bbox.initBounds();
-		}
-
-		/// Geometry bounding box.
-		UT_BoundingBox bbox;
-
-		/// Geometry preview type.
-		LOD lod = LOD_PREVIEW;
-
-		/// Geometry detail.
-		GU_DetailHandle detail;
-	};
-
-	/// Maps geometry hash (currently vertex array hash) to GU_DetailHandle.
-	typedef VUtils::HashMap<DetailKey, DetailEntry> DetailCache;
-
-	/// Maps frame key to geometry hash.
-	typedef VUtils::HashMap<int, DetailKey> FrameCache;
-
 	VRayProxyCache() {}
 
 	~VRayProxyCache() {
@@ -296,12 +310,6 @@ private:
 
 	/// MeshFile instance. 
 	VUtils::MeshFile *meshFile = nullptr;
-
-	/// Frame key to geometry hash cache.
-	FrameCache frameCache;
-
-	/// Geometry hash to detail cache.
-	DetailCache detailCache;
 };
 
 typedef VUtils::StringHashMap<VRayProxyCache> VRayProxyCacheMan;
@@ -375,9 +383,6 @@ void VRayProxyCache::freeMem()
 		deleteDefaultMeshFile(meshFile);
 		meshFile = nullptr;
 	}
-
-	frameCache.clear();
-	detailCache.clear();
 }
 
 int VRayProxyCache::getFrame(const VRayProxyRefKey &options) const
@@ -406,105 +411,36 @@ GU_DetailHandle VRayProxyCache::addDetail(const VRayProxyRefKey &options)
 	const int frameIndex = getFrame(options);
 	meshFile->setCurrentFrame(frameIndex);
 
-	Hash::MHash detailHash;
+	GU_Detail *gdp = new GU_Detail;
 
 	if (options.lod == LOD_BBOX) {
-		detailHash = getBoundingBoxHash(*meshFile);
+		addBoundingBoxData(*gdp, *meshFile);
 	}
 	else {
-		const int numHashVoxels = options.lod == LOD_PREVIEW ? 1 : meshFile->getNumVoxels();
-		VUtils::Table<Hash::MHash> voxelsHash(numHashVoxels, 0);
-
 		for (int voxelIndex = 0; voxelIndex < meshFile->getNumVoxels(); ++voxelIndex) {
 			const uint32 voxelFlags = meshFile->getVoxelFlags(voxelIndex);
 			if (options.lod == LOD_PREVIEW) {
 				if (voxelFlags & MVF_PREVIEW_VOXEL) {
-					voxelsHash[0] = getVoxelHash(*meshFile, voxelIndex);
+					addVoxelData(*gdp, *meshFile, voxelIndex, options.previewFaces, true);
 					break;
 				}
 			}
 			else if (options.lod == LOD_FULL) {
-				voxelsHash[voxelIndex] = getVoxelHash(*meshFile, voxelIndex);
+				addVoxelData(*gdp, *meshFile, voxelIndex);
 			}
 		}
-
-		Hash::MurmurHash3_x86_32(voxelsHash.elements, voxelsHash.count() * sizeof(Hash::MHash), 42, &detailHash);
 	}
 
-	const DetailCache::iterator detailIt = detailCache.find(detailHash);
-	if (detailIt != detailCache.end()) {
-		gdpHandle = detailIt.data().detail;
-	}
-	else {
-		const FrameCache::iterator frameIt = frameCache.find(frameIndex);
-		if (frameIt != frameCache.end()) {
-			frameCache.erase(frameIt);
-		}
-
-		GU_Detail *gdp = new GU_Detail;
-
-		if (options.lod == LOD_BBOX) {
-			addBoundingBoxData(*gdp, *meshFile);
-		}
-		else {
-			for (int voxelIndex = 0; voxelIndex < meshFile->getNumVoxels(); ++voxelIndex) {
-				const uint32 voxelFlags = meshFile->getVoxelFlags(voxelIndex);
-				if (options.lod == LOD_PREVIEW) {
-					if (voxelFlags & MVF_PREVIEW_VOXEL) {
-						addVoxelData(*gdp, *meshFile, voxelIndex); 
-						break;
-					}
-				}
-				else if (options.lod == LOD_FULL) {
-					addVoxelData(*gdp, *meshFile, voxelIndex);
-				}
-			}
-		}
-
-		DetailEntry &entry = detailCache[detailHash];
-		entry.lod = options.lod;
-		entry.detail.allocateAndSet(gdp);
-
-		gdpHandle = entry.detail;
-	}
-
-	frameCache.insert(frameIndex, detailHash);
-
+	gdpHandle.allocateAndSet(gdp);
+	
 	return gdpHandle;
 }
 
 
 GU_DetailHandle VRayProxyCache::getDetail(const VRayProxyRefKey &options)
 {
-	GU_DetailHandle gdpHandle;
-
 	if (!meshFile)
-		return gdpHandle;
+		return GU_DetailHandle();
 
-	const int frameIndex = getFrame(options);
-
-	const FrameCache::iterator frameIt = frameCache.find(frameIndex);
-	if (frameIt == frameCache.end()) {
-		gdpHandle = addDetail(options);
-	}
-	else {
-		const DetailKey detailKey = frameIt.data();
-
-		const DetailCache::iterator detailIt = detailCache.find(detailKey);
-		if (detailIt == detailCache.end()) {
-			gdpHandle = addDetail(options);
-		}
-		else {
-			const DetailEntry detailEntry = detailIt.data();
-			if (detailEntry.lod == options.lod) {
-				gdpHandle = detailEntry.detail;
-			}
-			else {
-				detailCache.erase(detailIt);
-				gdpHandle = addDetail(options);
-			}			
-		}
-	}
-
-	return gdpHandle;
+	return addDetail(options);
 }

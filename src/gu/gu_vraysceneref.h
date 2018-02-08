@@ -14,6 +14,8 @@
 #include "vfh_includes.h"
 #include "vfh_VRaySceneRefBase.h"
 
+#include <vrscene_preview.h>
+
 namespace VUtils {
 namespace Vrscene {
 namespace Preview {
@@ -44,14 +46,15 @@ public:
 private:
 	int detailRebuild() VRAY_OVERRIDE;
 
-	/// Re-builds *.vrscene preview detail.
-	/// @param vrsceneDesc *.vrscene file preview data.
-	/// @param flipAxis Flip axis Z-Y.
-	int detailRebuild(VUtils::Vrscene::Preview::VrsceneDesc *vrsceneDesc, int flipAxis);
-
 	/// Returns mesh sample time based on animation overrides settings.
 	/// @param t Current time.
 	double getFrame(fpreal t) const;
+
+	void updateCacheRelatedVars();
+
+	VUtils::CharString vrsceneFile;
+	VUtils::Vrscene::Preview::VrsceneSettings vrsSettings;
+	bool shouldFlipAxis;
 };
 
 } // namespace VRayForHoudini

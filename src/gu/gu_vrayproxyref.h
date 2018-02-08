@@ -41,6 +41,10 @@ private:
 	VRayProxyRefKey getKey() const;
 
 	int detailRebuild() VRAY_OVERRIDE;
+
+	void updateCacheVars(const VRayProxyRefKey &newKey);
+
+	VRayProxyRefKey lastKey;
 };
 
 } // namespace VRayForHoudini
