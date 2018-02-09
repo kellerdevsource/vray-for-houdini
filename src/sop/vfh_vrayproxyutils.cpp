@@ -298,6 +298,8 @@ public:
 
 	int open(const char *filepath);
 
+	int getBBox(UT_BoundingBox &box);
+
 private:
 	/// Clears the caches and resets current .vrmesh file.
 	void freeMem();
@@ -352,9 +354,24 @@ bool VRayForHoudini::getVRayProxyBoundingBox(const VRayProxyRefKey &options, UT_
 
 	if (options.filePath.empty())
 		return false;
+	
+	int res = 0;
+		VRayProxyCacheMan::iterator it = theCacheMan.find(options.filePath.ptr());
+	
+	if (it != theCacheMan.end()) {
+		res = it.data().getBBox(box);
+	}
+	else {
+		// build a mesh, get bbox from that
+		VRayProxyCache &cache = theCacheMan[options.filePath.ptr()];
+		if (!cache.open(options.filePath.ptr())) {
+			theCacheMan.erase(options.filePath.ptr());
+			res = false;
+		}
+		res = cache.getBBox(box);
+	}
 
-	// TODO
-	return true;
+	return res;
 }
 
 int VRayProxyCache::open(const char *filepath)
@@ -443,4 +460,19 @@ GU_DetailHandle VRayProxyCache::getDetail(const VRayProxyRefKey &options)
 		return GU_DetailHandle();
 
 	return addDetail(options);
+}
+
+int VRayProxyCache::getBBox(UT_BoundingBox &box) {
+	if (!meshFile) {
+		return false;
+	}
+
+	const VUtils::Box &bbox = getBoundingBox(*meshFile);
+
+	const VUtils::Vector &boxMin = bbox.pmin;
+	const VUtils::Vector &boxMax = bbox.pmax;
+
+	box.setBounds(boxMin.x, boxMin.y, boxMin.z, boxMax.x, boxMax.y, boxMax.z);
+
+	return true;
 }
