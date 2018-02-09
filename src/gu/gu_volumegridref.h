@@ -113,6 +113,7 @@ public:
 		CachePtr aurPtr;
 		UT_Matrix4F tm;
 		GU_DetailHandle detailHandle;
+		UT_BoundingBox bbox;
 		DataRangeMap dataRange;
 	};
 	typedef Caches::LRUCache<VolumeCacheKey, VolumeCacheData, std::hash<VolumeCacheKey>, std::equal_to<VolumeCacheKey>, 10> VolumeCache;
@@ -140,6 +141,7 @@ public:
 	GU_PackedImpl *copy() const VRAY_OVERRIDE { return new VRayVolumeGridRef(*this); }
 	bool getLocalTransform(UT_Matrix4D &m) const VRAY_OVERRIDE;
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
+	bool getBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
 
 	const DataRangeMap &getChannelDataRanges() const { return m_currentData.dataRange; }
 

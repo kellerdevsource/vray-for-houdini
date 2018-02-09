@@ -219,6 +219,10 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 
 			volumeGdp->setTransform4(data.tm);
 
+			data.bbox.initBounds();
+			data.bbox.enlargeBounds(UT_Vector3(1.0f, 1.0f, 1.0f));
+			data.bbox.enlargeBounds(UT_Vector3(-1.0f, -1.0f, -1.0f));
+
 			break;
 		}
 	}
@@ -285,6 +289,12 @@ bool VRayVolumeGridRef::unpack(GU_Detail&) const
 {
 	// This will show error and indicate that we don't support unpacking.
 	return false;
+}
+
+bool VRayVolumeGridRef::getBounds(UT_BoundingBox &box) const
+{
+	box = m_currentData.bbox;
+	return true;
 }
 
 int VRayVolumeGridRef::detailRebuild()
