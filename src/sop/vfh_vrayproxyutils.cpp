@@ -356,7 +356,7 @@ bool VRayForHoudini::getVRayProxyBoundingBox(const VRayProxyRefKey &options, UT_
 		return false;
 	
 	int res = 0;
-		VRayProxyCacheMan::iterator it = theCacheMan.find(options.filePath.ptr());
+	VRayProxyCacheMan::iterator it = theCacheMan.find(options.filePath.ptr());
 	
 	if (it != theCacheMan.end()) {
 		res = it.data().getBBox(box);
@@ -368,7 +368,9 @@ bool VRayForHoudini::getVRayProxyBoundingBox(const VRayProxyRefKey &options, UT_
 			theCacheMan.erase(options.filePath.ptr());
 			res = false;
 		}
-		res = cache.getBBox(box);
+		else {
+			res = cache.getBBox(box);
+		}
 	}
 
 	return res;
