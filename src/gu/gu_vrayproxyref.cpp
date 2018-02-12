@@ -9,16 +9,11 @@
 //
 
 #include "vfh_vray.h"
-#include "vfh_log.h"
 #include "vfh_gu_cache.h"
 #include "vfh_hashes.h"
 
 #include "gu_vrayproxyref.h"
 
-#include <GT/GT_GEOAttributeFilter.h>
-#include <GT/GT_GEOPrimCollect.h>
-#include <GT/GT_GEOPrimPacked.h>
-#include <GT/GT_PrimInstance.h>
 #include <GT/GT_GEODetail.h>
 
 using namespace VRayForHoudini;
@@ -56,7 +51,9 @@ struct VRayProxyRefKeyHasher {
 	}
 };
 
-class VRayProxyRefKeyBuilder : public DetailBuilder<VRayProxyRefKey, bool> {
+class VRayProxyRefKeyBuilder
+	: public DetailBuilder<VRayProxyRefKey, bool>
+{
 public:
 	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const VRayProxyRefKey &settings, fpreal t, bool &rval) override {
 		return getVRayProxyDetail(settings);
