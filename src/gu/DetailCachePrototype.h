@@ -9,34 +9,28 @@
 //
 
 #ifndef VRAY_FOR_HOUDINI_DETAILCACHE
-
 #define VRAY_FOR_HOUDINI_DETAILCACHE
 
-#include "vfh_defines.h"
-#include "vfh_log.h"
-#include "vfh_includes.h"
 #include "hash_map.h"
 
-#include <GU/GU_PackedFactory.h>
-#include <GU/GU_PrimPacked.h>
-#include <GU/GU_PrimPoly.h>
-#include <GU/GU_PackedContext.h>
 #include <GU/GU_PackedGeometry.h>
 #include <FS/UT_DSO.h>
 
 template <typename key, typename ReturnValue>
 class DetailBuilder {
 public:
+	virtual ~DetailBuilder() = default;
+
 	/// Method to be used to obtain the GU_DetailHandle to be cached
-	/// @param filepath[in] File path.
-	/// @param settings[in] Specific settings that the cached detail adheres to.
-	/// @param t[in] Frame at which the detail is required.
-	/// @param rval[out] Return value, for any data that is created during the creation of the detail and is required after the fact.
-	/// @retval detail to be cached, if cache is enabled, and returned.
+	/// @param filepath File path.
+	/// @param settings Specific settings that the cached detail adheres to.
+	/// @param t Frame at which the detail is required.
+	/// @param[out] rval Return value, for any data that is created during the creation of the detail and is required after the fact.
+	/// @returns detail to be cached, if cache is enabled, and returned.
 	virtual GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const key &settings, fpreal t, ReturnValue &rval) = 0;
 
 	/// Method called when there are no more references to the given filepath
-	/// @param filepath[in] File path.
+	/// @param filepath File path.
 	virtual void cleanResource(const VUtils::CharString &filepath) = 0;
 };
 
@@ -44,141 +38,175 @@ template <typename ReturnValue, typename T, typename KeyHash = VUtils::DefaultHa
 class DetailCachePrototype
 {
 public:
+	typedef DetailBuilder<T, ReturnValue> DetailBuilderType;
+
 	/// Cache constructor
-	/// @param builder[in] Builder object, to be used to create the details.
-	DetailCachePrototype(DetailBuilder<T, ReturnValue> &builder)
-		: detailBuilder(&builder)
-		, isOn(true)
+	/// @param builder Builder object, to be used to create the details.
+	explicit DetailCachePrototype(DetailBuilderType &builder)
+		: detailBuilder(builder)
 	{}
 	
 	DetailCachePrototype() = delete;
+	~DetailCachePrototype() = default;
 
-	~DetailCachePrototype()
-	{}
-
+	/// Sets cache enabled state.
+	/// @param state Cache state.
 	void enableCache(bool state) {
 		isOn = state;
 	}
 
 	/// Method for registering a filepath and settings pair, increments the reference
 	/// counter for the given filepath and settings pair
-	/// @param filepath[in] File path.
-	/// @param settings[in] Specific settings that the cached detail will adheres to.
+	/// @param filepath File path.
+	/// @param settings Specific settings that the cached detail will adheres to.
 	void registerInCache(const VUtils::CharString &filepath, const T &settings) {
-		if (filepath.empty()) {
+		if (filepath.empty())
 			return;
-		}
-		detailCache[filepath.ptr()][settings].references++;
+
+		detailCache[filepath.ptr()][settings].references += 1;
 	}
 
 	/// Method for unregistering a filepath and settings pair, decrements the reference
 	/// counter. Calls the cleanResource method when counter reaches 0
-	/// @param filepath[in] File path.
-	/// @param settings[in] Specific settings that the cached detail adheres to.
+	/// @param filepath File path.
+	/// @param settings Specific settings that the cached detail adheres to.
 	void unregister(const VUtils::CharString &filepath, const T &settings) {
-		if (filepath.empty()) {
+		if (filepath.empty())
 			return;
-		}
 
 		CacheElementMap &tempVal = detailCache[filepath.ptr()];
-		if (--(tempVal[settings].references) < 1) {
+		if (--tempVal[settings].references < 1) {
 			tempVal.erase(settings);
 			if (tempVal.empty()) {
 				detailCache.erase(filepath.ptr());
-				detailBuilder->cleanResource(filepath.ptr());
+				detailBuilder.cleanResource(filepath.ptr());
 			}
 		}
 	}
 	
 	/// Retrieve the detail for the given filepath and settings pair at the given frame, 
 	/// if the cache is disabled or the detail is not cached, creates the detail using the builder
-	/// @param filepath[in] File path.
-	/// @param settings[in] Specific settings that the cached detail adheres to.
-	/// @param frame[in] Frame for the corresponding detail.
-	/// @retval Requested detail, empty if filepath is empty or wrong.
-	GU_DetailHandle& getDetail(const VUtils::CharString &filepath, const T &settings, fpreal frame) {
+	/// @param filepath File path.
+	/// @param settings Specific settings that the cached detail adheres to.
+	/// @param frame Frame for the corresponding detail.
+	/// @returns Requested detail, empty if filepath is empty or wrong.
+	GU_DetailHandle getDetail(const VUtils::CharString &filepath, const T &settings, fpreal frame) {
 		ReturnValue temp;
 		return getDetail(filepath, settings, frame, temp);
 	}
 
 	/// Retrieve the detail for the given filepath and settings pair at the given frame,
 	/// if the cache is disabled or the detail is not cached, creates the detail using the builder
-	/// @param filepath[in] File path.
-	/// @param settings[in] Specific settings that the cached detail adheres to.
-	/// @param frame[in] Frame for the corresponding detail.
-	/// @param rval[out] Return value, for any data that is created during the creation of the detail and is required after the fact.
-	/// @retval Requested detail, empty if filepath is empty or wrong.
-	GU_DetailHandle& getDetail(const VUtils::CharString &filepath, const T &settings, fpreal frame, ReturnValue &rval) {
-		if (filepath.empty()) {
+	/// @param filepath File path.
+	/// @param settings Specific settings that the cached detail adheres to.
+	/// @param frame Frame for the corresponding detail.
+	/// @param[out] rval Return value for any data that is created during the creation of the detail and is required after the fact.
+	/// @returns Requested detail, empty if filepath is empty or wrong.
+	GU_DetailHandle getDetail(const VUtils::CharString &filepath, const T &settings, fpreal frame, ReturnValue &rval) {
+		GU_DetailHandle gdpHndl;
+
+		if (filepath.empty())
+			return gdpHndl;
+
+		if (!isOn) {
+			gdpHndl = detailBuilder.buildDetail(filepath, settings, frame, rval);
+		}
+		else {
+			gdpHndl = getCachedCached(filepath, settings, frame);
+			if (!gdpHndl.isValid()) {
+				gdpHndl = detailBuilder.buildDetail(filepath, settings, frame, rval);
+
+				detailCache[filepath.ptr()][settings].frameDetailMap.insert(getFrameKey(frame), gdpHndl);
+			}
+		}
+
+		return gdpHndl;
+	}
+
+	/// Return GU_DetailHandle from cache.
+	/// @param filepath File path.
+	/// @param settings Specific settings that the cached detail adheres to.
+	/// @param frame Frame for the corresponding detail.
+	/// @returns GU_DetailHandle. May be invalid if cache entry doesn't exists.
+	GU_DetailHandle getCachedCached(const VUtils::CharString &filepath, const T &settings, fpreal frame) const {
+		if (filepath.empty())
 			return GU_DetailHandle();
-		}
 
-		if (isOn) {
-			if (isCached(filepath, settings, frame)) {
-				return detailCache[filepath.ptr()][settings].frameDetailMap[getFrameKey(frame)];
-			}
-			else {
-				return detailCache[filepath.ptr()][settings].frameDetailMap[getFrameKey(frame)] = detailBuilder->buildDetail(filepath, settings, frame, rval);
-			}
-		}
+		const typename DetailCacheMap::const_iterator fIt = detailCache.find(filepath.ptr());
+		if (fIt == detailCache.end())
+			return GU_DetailHandle();
 
-		return detailBuilder->buildDetail(filepath, settings, frame, rval);
+		const CacheElementMap &cacheElements = fIt.data();
+		const typename CacheElementMap::const_iterator ceIt = cacheElements.find(settings);
+		if (ceIt == cacheElements.end())
+			return GU_DetailHandle();
+
+		const CacheElement &cacheElement = ceIt.data();
+
+		const typename CacheElement::DetailMap &detailMap = cacheElement.frameDetailMap;
+		const typename CacheElement::DetailMap::const_iterator dIt = detailMap.find(getFrameKey(frame));
+		if (dIt == detailMap.end())
+			return GU_DetailHandle();
+
+		return dIt.data();
 	}
 
 	/// Method for checking if sepcific filepath and settings pair is cached for a given frame
-	/// @param filepath[in] File path.
-	/// @param settings[in] Specific settings that the cached detail adheres to.
-	/// @param frame[in] Frame for the corresponding detail.
-	/// @retval true if the detail is cached and valid
-	bool isCached(const VUtils::CharString &filepath, const T &settings, fpreal frame) {
-		if (filepath.empty()) {
-			return false;
-		}
-
-		CacheElement &temp = detailCache[filepath.ptr()][settings];
-		GU_DetailHandle &detail = temp.frameDetailMap[getFrameKey(frame)];
-
-		// --- check if it's here
-		if (detail.isValid()) {
-			return true;
-		}
-		return false;
+	/// @param filepath File path.
+	/// @param settings Specific settings that the cached detail adheres to.
+	/// @param frame Frame for the corresponding detail.
+	/// @returns true if the detail is cached and valid
+	bool isCached(const VUtils::CharString &filepath, const T &settings, fpreal frame) const {
+		const GU_DetailHandle &detail = getCachedCached(filepath, settings, frame);
+		return detail.isValid();
 	}
 
 	/// Method for checking if there are any cached details for a given filepath
-	/// @param filepath[in] File path.
-	/// @retval true if there are any cached details with given filepath
-	bool isCached(const VUtils::CharString &filepath) {
-		if (filepath.empty()) {
+	/// @param filepath File path.
+	/// @returns true if there are any cached details with given filepath
+	bool isCached(const VUtils::CharString &filepath) const {
+		if (filepath.empty())
 			return false;
-		}
 
 		return detailCache.find(filepath.ptr()) != detailCache.end();
 	}
-private:
 
-	int getFrameKey(fpreal frame) {
-		return frame * 1000;
+private:
+	/// Frame key type.
+	typedef int FrameKey;
+
+	/// Returns cache key for the float frame.
+	/// @param frame Float frame number.
+	static FrameKey getFrameKey(fpreal frame) {
+		return VUtils::fast_ceil(frame * 1000.0);
 	}
 
+	/// Reference counted cache element. Contains frame / detail map.
 	struct CacheElement {
-		CacheElement()
-			: references(0)
-		{}
+		typedef VUtils::HashMap<FrameKey, GU_DetailHandle> DetailMap;
 
-		bool operator == (const CacheElement &other) {
+		bool operator == (const CacheElement &other) const {
 			return references == other.references;
 		}
 
-		int references;
-		VUtils::HashMap<int, GU_DetailHandle> frameDetailMap;
+		/// Reference counter.
+		int references = 0;
+
+		/// Frame to detail map.
+		DetailMap frameDetailMap;
 	};
 
 	typedef VUtils::HashMap<T, CacheElement, KeyHash> CacheElementMap;
-	VUtils::StringHashMap<CacheElementMap> detailCache;
+	typedef VUtils::StringHashMap<CacheElementMap> DetailCacheMap;
 
-	DetailBuilder<T, ReturnValue> *detailBuilder;
-	bool isOn;
+	/// Cache container.
+	DetailCacheMap detailCache;
+
+	/// A class for building new detail if cache entry is not found.
+	DetailBuilderType &detailBuilder;
+
+	/// Cache enabled state.
+	bool isOn = true;
 
 	VUTILS_DISABLE_COPY(DetailCachePrototype)
 };
