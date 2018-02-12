@@ -74,7 +74,8 @@ static DetailCachePrototype<bool, VRayProxyRefKey, VRayProxyRefKeyHasher> cache(
 /// When rendering proxy primitives, we collect all
 /// primitives using same detail together based on detail id
 /// For each different detail id a separate GT primitive is generated
-class GT_PrimVRayProxyCollect : public GT_GEOPrimCollect
+class GT_PrimVRayProxyCollect
+	: public GT_GEOPrimCollect
 {
 public:
 	/// Register the GT collector
@@ -217,10 +218,8 @@ void VRayProxyRef::updateCacheVars(const VRayProxyRefKey &newKey) {
 	}
 }
 
-//////////
-/// \brief The GT_GEOPrimCollectGeoIDData class
-///
-class GT_GEOPrimCollectGeoIDData : public GT_GEOPrimCollectData
+class GT_GEOPrimCollectGeoIDData
+	: public GT_GEOPrimCollectData
 {
 public:
 	GT_GEOPrimCollectGeoIDData()
@@ -248,16 +247,14 @@ public:
 	}
 
 private:
-	std::unordered_set< int > m_geoidset;
+	std::unordered_set<int> m_geoidset;
 };
-
 
 void GT_PrimVRayProxyCollect::registerPrimitive(const GA_PrimitiveTypeId &id)
 {
 	// Just construct.  The constructor registers itself.
 	new GT_PrimVRayProxyCollect(id);
 }
-
 
 GT_PrimVRayProxyCollect::GT_PrimVRayProxyCollect(const GA_PrimitiveTypeId &id)
 	: m_primTypeId(id)
@@ -268,11 +265,8 @@ GT_PrimVRayProxyCollect::GT_PrimVRayProxyCollect(const GA_PrimitiveTypeId &id)
 	bind(m_primTypeId);
 }
 
-
 GT_PrimVRayProxyCollect::~GT_PrimVRayProxyCollect()
-{ }
-
-
+{}
 
 GT_GEOPrimCollectData * GT_PrimVRayProxyCollect::beginCollecting(const GT_GEODetailListHandle &geometry, const GT_RefineParms *parms) const
 {
@@ -280,18 +274,17 @@ GT_GEOPrimCollectData * GT_PrimVRayProxyCollect::beginCollecting(const GT_GEODet
 	return new GT_GEOPrimCollectGeoIDData();
 }
 
-
 GT_PrimitiveHandle GT_PrimVRayProxyCollect::collect(const GT_GEODetailListHandle &geometry,
 	const GEO_Primitive *const* prim_list,
 	int nsegments,
 	GT_GEOPrimCollectData *data) const
 {
-	auto primpacked = UTverify_cast< const GU_PrimPacked * >(prim_list[0]);
+	const GU_PrimPacked *primpacked = UTverify_cast<const GU_PrimPacked*>(prim_list[0]);
 	if (primpacked->viewportLOD() == GEO_VIEWPORT_HIDDEN) {
 		return GT_PrimitiveHandle();
 	}
 
-	GT_GEOPrimCollectGeoIDData *collector = data->asPointer< GT_GEOPrimCollectGeoIDData >();
+	GT_GEOPrimCollectGeoIDData *collector = data->asPointer<GT_GEOPrimCollectGeoIDData>();
 	int geoid = collector->insert(prim_list[0]);
 	if (geoid == -1) {
 		return GT_PrimitiveHandle();
@@ -343,7 +336,7 @@ GT_PrimitiveHandle GT_PrimVRayProxyCollect::collect(const GT_GEODetailListHandle
 	GT_TransformArrayHandle transforms = new GT_TransformArray();
 	transforms->setEntries(offsets.entries());
 	for (exint i = 0; i < offsets.entries(); ++i) {
-		auto primpacked = UTverify_cast< const GU_PrimPacked * >(gdp.getGEOPrimitive(offsets(i)));
+		const GU_PrimPacked *primpacked = UTverify_cast<const GU_PrimPacked*>(gdp.getGEOPrimitive(offsets(i)));
 
 		UT_Matrix4D m(1.);
 		primpacked->getFullTransform4(m);
@@ -364,13 +357,11 @@ GT_PrimitiveHandle GT_PrimVRayProxyCollect::collect(const GT_GEODetailListHandle
 	return gtinstance;
 }
 
-
 GT_PrimitiveHandle GT_PrimVRayProxyCollect::endCollecting(const GT_GEODetailListHandle &geometry,
 	GT_GEOPrimCollectData *data) const
 {
 	return GT_PrimitiveHandle();
 }
-
 
 GT_PrimitiveHandle GT_PrimVRayProxyCollect::getGTPrimPoints(const GU_PrimPacked &prim) const
 {
