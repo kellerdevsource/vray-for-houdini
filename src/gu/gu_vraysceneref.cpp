@@ -12,9 +12,10 @@
 
 #include "vfh_defines.h"
 #include "vfh_log.h"
-#include "gu_vraysceneref.h"
 #include "vfh_hashes.h"
-#include "DetailCachePrototype.h"
+#include "vfh_gu_cache.h"
+
+#include "gu_vraysceneref.h"
 
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PrimPacked.h>

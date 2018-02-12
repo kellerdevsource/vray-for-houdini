@@ -10,10 +10,10 @@
 
 #include "vfh_vray.h"
 #include "vfh_log.h"
-#include "gu_vrayproxyref.h"
-
-#include "DetailCachePrototype.h"
+#include "vfh_gu_cache.h"
 #include "vfh_hashes.h"
+
+#include "gu_vrayproxyref.h"
 
 #include <GT/GT_GEOAttributeFilter.h>
 #include <GT/GT_GEOPrimCollect.h>

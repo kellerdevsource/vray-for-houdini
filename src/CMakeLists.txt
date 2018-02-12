@@ -96,7 +96,7 @@ set(EXPORTER_HEADERS
 	gu/gu_vraysceneref.h
 	gu/gu_geomplaneref.h
 	gu/gu_pgyeti.h
-	gu/DetailCachePrototype.h
+	gu/vfh_gu_cache.h
 	utils/vfh_attr_utils.h
 	utils/vfh_error.h
 	utils/vfh_hashes.h
