@@ -8,8 +8,8 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#ifndef VRAY_FOR_HOUDINI_DETAILCACHE
-#define VRAY_FOR_HOUDINI_DETAILCACHE
+#ifndef VRAY_FOR_HOUDINI_VFH_GU_CACHE_H
+#define VRAY_FOR_HOUDINI_VFH_GU_CACHE_H
 
 #include "hash_map.h"
 
@@ -211,4 +211,4 @@ private:
 	VUTILS_DISABLE_COPY(DetailCachePrototype)
 };
 
-#endif
+#endif // VRAY_FOR_HOUDINI_VFH_GU_CACHE_H
