@@ -156,15 +156,14 @@ GT_GEOPrimCollectData *VRayBaseRefCollect::beginCollecting(const GT_GEODetailLis
 GT_PrimitiveHandle VRayBaseRefCollect::collect(const GT_GEODetailListHandle &, const GEO_Primitive * const *prim_list,
                                                int, GT_GEOPrimCollectData *data) const
 {
-	const GU_PrimPacked *curPrim = UTverify_cast<const GU_PrimPacked*>(prim_list[0]);
-	if (curPrim->viewportLOD() == GEO_VIEWPORT_HIDDEN)
-		return GT_PrimitiveHandle();
-
 	VRayBaseRefCollectData &collectData =
 		*data->asPointer<VRayBaseRefCollectData>();
 
+	const GU_PrimPacked *curPrim = UTverify_cast<const GU_PrimPacked*>(prim_list[0]);
 	if (curPrim->getTypeId() == collectData.getMyTypeID()) {
-		collectData.append(curPrim);
+		if (curPrim->viewportLOD() != GEO_VIEWPORT_HIDDEN) {
+			collectData.append(curPrim);
+		}
 		if (!collectData.getMyPrim()) {
 			collectData.setMyPrim(curPrim);
 		}
