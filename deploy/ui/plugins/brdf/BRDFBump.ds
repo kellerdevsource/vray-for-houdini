@@ -7,6 +7,17 @@
 #include "vfh_brdf_common.ds"
 
     parm {
+        name "base_brdf"
+        label "Base BRDF"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_label" "base_brdf" }
+        parmtag { "vray_pluginattr" "base_brdf" }
+        parmtag { "vray_type" "PluginBRDF" }
+        invisible
+    }
+
+    parm {
         name    "map_type"
         label   "Type"
         type    string
