@@ -92,19 +92,22 @@ struct VrsceneSettingsHasher {
 };
 
 struct ReturnSettings {
-	ReturnSettings(UT_BoundingBox *bbox)
-		: box(bbox)
-		, clearDetail(false)
+	explicit ReturnSettings(UT_BoundingBox &box)
+		: box(box)
 		, shouldFlip(false)
+		, flipAxis(FlipAxisMode::none)
+		, clearDetail(false)
 	{}
 
-	UT_BoundingBox *box;
+	UT_BoundingBox &box;
 	bool shouldFlip;
 	FlipAxisMode flipAxis;
 	bool clearDetail;
 };
 
-class VrsceneDescBuilder : public DetailBuilder<SettingsWrapper, ReturnSettings> {
+class VrsceneDescBuilder
+	: public DetailBuilder<SettingsWrapper, ReturnSettings>
+{
 public:
 	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const SettingsWrapper &settings, fpreal frame, ReturnSettings &rvalue) override {
 		VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(filepath, &settings.settings);
@@ -123,13 +126,12 @@ public:
 	void cleanResource(const VUtils::CharString &filepath) override {}
 
 private:
-	GU_DetailHandle build(VrsceneDesc *vrsceneDesc, int shouldFlip, const fpreal &t, ReturnSettings &rvalue)
-	{
+	static GU_DetailHandle build(VrsceneDesc *vrsceneDesc, int shouldFlip, const fpreal &t, ReturnSettings &rvalue) {
 		// Detail for the mesh
 		GU_Detail *meshDetail = new GU_Detail();
 
 		int meshVertexOffset = 0;
-		rvalue.box->initBounds();
+		rvalue.box.initBounds();
 
 		FOR_IT(VrsceneObjects, obIt, vrsceneDesc->m_objects) {
 			VrsceneObjectBase *ob = obIt.data();
@@ -156,7 +158,7 @@ private:
 
 						const UT_Vector3 utVert(vert.x, vert.y, vert.z);
 
-						rvalue.box->enlargeBounds(utVert);
+						rvalue.box.enlargeBounds(utVert);
 
 						meshDetail->setPos3(pointOffset, utVert);
 					}
@@ -207,12 +209,16 @@ static FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
 	return mode;
 }
 
+typedef VRayBaseRefFactory<VRaySceneRef> VRaySceneRefFactory;
+
 static GA_PrimitiveTypeId theTypeId(-1);
-static VRayBaseRefFactory<VRaySceneRef> theFactory("VRaySceneRef");
+static VRaySceneRefFactory theFactory("VRaySceneRef");
 
 void VRaySceneRef::install(GA_PrimitiveFactory *primFactory)
 {
-	theTypeId = theFactory.install(*primFactory, theFactory);
+	theTypeId = VRaySceneRefFactory::install(*primFactory, theFactory);
+
+	VRayBaseRefCollect::install(theTypeId);
 }
 
 VRaySceneRef::VRaySceneRef() 
@@ -301,7 +307,7 @@ int VRaySceneRef::detailRebuild()
 	int res = false;
 	updateCacheRelatedVars();
 
-	ReturnSettings update(&m_bbox);
+	ReturnSettings update(m_bbox);
 	update.flipAxis = parseFlipAxisMode(getFlipAxis());
 
 	m_detail = cache.getDetail(getFilepath(), SettingsWrapper(vrsSettings, shouldFlipAxis), getFrame(getCurrentFrame()), update);

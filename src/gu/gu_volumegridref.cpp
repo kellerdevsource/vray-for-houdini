@@ -7,6 +7,7 @@
 //
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
+
 #ifdef CGR_HAS_AUR
 
 #include "vfh_log.h"
@@ -56,11 +57,10 @@ const ChannelInfo chInfo[] = {
 /// Number of valid channels.
 const int CHANNEL_COUNT = (sizeof(chInfo) / sizeof(chInfo[0])) - 1;
 
-UT_Matrix4F getCacheTm(VRayForHoudini::VRayVolumeGridRef::CachePtr cache, bool flipYZ)
+UT_Matrix4F getCacheTm(VRayForHoudini::VRayVolumeGridRef::CachePtr &cache, bool flipYZ)
 {
-	if (!cache) {
+	if (!cache)
 		return UT_Matrix4F(1.f);
-	}
 
 	float flTransform[12];
 	cache->GetObject2GridTransform(flTransform);
@@ -102,12 +102,14 @@ UT_Matrix4F getCacheTm(VRayForHoudini::VRayVolumeGridRef::CachePtr cache, bool f
 
 using namespace VRayForHoudini;
 
+typedef VRayBaseRefFactory<VRayVolumeGridRef> VRayVolumeGridRefFactory;
+
 static const int MAX_CHAN_MAP_LEN = 2048;
 static const int MAX_RESOLUTION = 255;
 static const QString framePattern("####");
 
 static GA_PrimitiveTypeId theTypeId(-1);
-static VRayBaseRefFactory<VRayVolumeGridRef> theFactory("VRayVolumeGridRef");
+static VRayVolumeGridRefFactory theFactory("VRayVolumeGridRef");
 
 static bool pathContainFramePattern(const QString &path)
 {
@@ -139,9 +141,9 @@ bool VolumeCacheKey::isValid() const
 
 void VRayVolumeGridRef::install(GA_PrimitiveFactory *primfactory)
 {
-	theTypeId = theFactory.install(*primfactory, theFactory);
+	theTypeId = VRayVolumeGridRefFactory::install(*primfactory, theFactory);
 
-	SYSconst_cast(theFactory.typeDef()).setHasLocalTransform(true);
+	VRayBaseRefCollect::install(theTypeId);
 }
 
 void VRayVolumeGridRef::fetchData(const VolumeCacheKey &key, VolumeCacheData &data)
@@ -272,17 +274,6 @@ VolumeCacheKey VRayVolumeGridRef::genKey() const
 GU_PackedFactory* VRayVolumeGridRef::getFactory() const
 {
 	return &theFactory;
-}
-
-bool VRayVolumeGridRef::getLocalTransform(UT_Matrix4D &m) const
-{
-#if 1
-	// We'll use GEO_PrimVolume::setTransform().
-	m.identity();
-#else
-	m = m_currentData.tm;
-#endif;
-	return true;
 }
 
 bool VRayVolumeGridRef::unpack(GU_Detail&) const

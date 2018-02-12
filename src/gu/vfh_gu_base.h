@@ -18,6 +18,10 @@
 #include <GU/GU_PackedImpl.h>
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PrimPacked.h>
+#include <GT/GT_GEOAttributeFilter.h>
+#include <GT/GT_GEOPrimCollect.h>
+#include <GT/GT_GEOPrimPacked.h>
+#include <GT/GT_PrimInstance.h>
 #include <UT/UT_Options.h>
 #include <UT/UT_BoundingBox.h>
 
@@ -77,6 +81,55 @@ protected:
 
 	/// Geometry detail.
 	GU_DetailHandle m_detail;
+};
+
+struct VRayBaseRefCollectData
+	: GT_GEOPrimCollectOffsets
+{
+	explicit VRayBaseRefCollectData(const GA_PrimitiveTypeId &typeId)
+		: myPrimTypeId(typeId)
+	{}
+
+	/// Returns VRayBaseRef packed primitive type ID.
+	GA_PrimitiveTypeId getMyTypeID() const;
+
+	/// Returns VRayBaseRef packed primitive.
+	const GU_PrimPacked *getMyPrim() const;
+
+	/// Sets VRayBaseRef packed primitive.
+	void setMyPrim(const GU_PrimPacked *value);
+
+private:
+	/// VRayBaseRef packed primitive.
+	const GU_PrimPacked *myPrim = nullptr;
+
+	/// VRayBaseRef primitive type ID.
+	const GA_PrimitiveTypeId &myPrimTypeId;
+
+	VUTILS_DISABLE_COPY(VRayBaseRefCollectData)
+};
+
+struct VRayBaseRefCollect
+	: GT_GEOPrimCollect
+{
+	static void install(const GA_PrimitiveTypeId &typeId);
+
+	explicit VRayBaseRefCollect(const GA_PrimitiveTypeId &typeId);
+	virtual ~VRayBaseRefCollect() = default;
+
+	// From GT_GEOPrimCollect.
+	GT_GEOPrimCollectData *beginCollecting(const GT_GEODetailListHandle &, const GT_RefineParms *) const VRAY_OVERRIDE;
+	GT_PrimitiveHandle collect(const GT_GEODetailListHandle &,
+	                           const GEO_Primitive* const* prim_list,
+	                           int,
+	                           GT_GEOPrimCollectData *data) const VRAY_OVERRIDE;
+	GT_PrimitiveHandle endCollecting(const GT_GEODetailListHandle &geometry,
+									 GT_GEOPrimCollectData *data) const VRAY_OVERRIDE;
+
+private:
+	const GA_PrimitiveTypeId &typeId;
+
+	VUTILS_DISABLE_COPY(VRayBaseRefCollect)
 };
 
 template <typename T>

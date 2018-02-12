@@ -139,7 +139,6 @@ public:
 	// From GU_PackedImpl.
 	GU_PackedFactory *getFactory() const VRAY_OVERRIDE;
 	GU_PackedImpl *copy() const VRAY_OVERRIDE { return new VRayVolumeGridRef(*this); }
-	bool getLocalTransform(UT_Matrix4D &m) const VRAY_OVERRIDE;
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
 	bool getBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
 

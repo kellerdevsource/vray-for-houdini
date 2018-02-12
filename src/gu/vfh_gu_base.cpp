@@ -120,3 +120,104 @@ int VRayBaseRef::updateFrom(const UT_Options &options)
 
 	return true;
 }
+
+GA_PrimitiveTypeId VRayBaseRefCollectData::getMyTypeID() const
+{
+	return myPrimTypeId;
+}
+
+const GU_PrimPacked *VRayBaseRefCollectData::getMyPrim() const
+{
+	return myPrim;
+}
+
+void VRayBaseRefCollectData::setMyPrim(const GU_PrimPacked *value)
+{
+	myPrim = value;
+}
+
+VRayBaseRefCollect::VRayBaseRefCollect(const GA_PrimitiveTypeId &typeId)
+	: typeId(typeId)
+{
+	bind(typeId);
+}
+
+void VRayBaseRefCollect::install(const GA_PrimitiveTypeId &typeId)
+{
+	new VRayBaseRefCollect(typeId);
+}
+
+GT_GEOPrimCollectData *VRayBaseRefCollect::beginCollecting(const GT_GEODetailListHandle &,
+                                                           const GT_RefineParms *) const
+{
+	return new VRayBaseRefCollectData(typeId);
+}
+
+GT_PrimitiveHandle VRayBaseRefCollect::collect(const GT_GEODetailListHandle &, const GEO_Primitive * const *prim_list,
+                                               int, GT_GEOPrimCollectData *data) const
+{
+	const GU_PrimPacked *curPrim = UTverify_cast<const GU_PrimPacked*>(prim_list[0]);
+	if (curPrim->viewportLOD() == GEO_VIEWPORT_HIDDEN)
+		return GT_PrimitiveHandle();
+
+	VRayBaseRefCollectData &collectData =
+		*data->asPointer<VRayBaseRefCollectData>();
+
+	if (curPrim->getTypeId() == collectData.getMyTypeID()) {
+		collectData.append(curPrim);
+		if (!collectData.getMyPrim()) {
+			collectData.setMyPrim(curPrim);
+		}
+	}
+
+	return GT_PrimitiveHandle();
+}
+
+GT_PrimitiveHandle VRayBaseRefCollect::endCollecting(const GT_GEODetailListHandle &geometry,
+                                                     GT_GEOPrimCollectData *data) const
+{
+	const GU_ConstDetailHandle gdh(geometry->getGeometry(0));
+
+	const GU_DetailHandleAutoReadLock rlock(gdh);
+	const GU_Detail &gdp = *rlock;
+
+	const VRayBaseRefCollectData &collectData =
+		*data->asPointer<VRayBaseRefCollectData>();
+
+	const GT_GEOOffsetList &offsets = collectData.getPrimitives();
+	if (!offsets.entries())
+		return GT_PrimitiveHandle();
+
+	const GT_GEOAttributeFilter filter;
+
+	const GT_AttributeListHandle uniform =
+		geometry->getPrimitiveAttributes(filter, &offsets);
+	const GT_AttributeListHandle detail =
+		geometry->getDetailAttributes(filter);
+
+	GT_TransformArrayHandle transforms(new GT_TransformArray);
+	transforms->setEntries(offsets.entries());
+
+	for (int i = 0; i < offsets.entries(); ++i) {
+		const GU_PrimPacked *currentPrim =
+			UTverify_cast<const GU_PrimPacked*>(gdp.getGEOPrimitive(offsets(i)));
+
+		UT_Matrix4D m;
+		currentPrim->getFullTransform4(m);
+
+		GT_TransformHandle xform(new GT_Transform);
+		xform->alloc(1);
+		xform->setMatrix(m, 0);
+
+		transforms->set(i, xform);
+	}
+
+	const GT_PrimitiveHandle myPackedPrim(new GT_GEOPrimPacked(gdh, collectData.getMyPrim()));
+
+	return GT_PrimitiveHandle(new GT_PrimInstance(myPackedPrim,
+	                                              transforms,
+	                                              offsets,
+	                                              uniform,
+	                                              detail,
+	                                              geometry));
+}
