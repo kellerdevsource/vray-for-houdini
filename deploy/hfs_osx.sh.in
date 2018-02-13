@@ -1,7 +1,7 @@
 # V-Ray For Houdini OS X Launcher
 #
 
-LAUNCHER_LOCATION=`dirname $0`
+LAUNCHER_LOCATION="$(cd "$(dirname "$0")"; pwd -P)"
 
 HOUDINI_VER_MAJOR=@HOUDINI_VERSION@
 HOUDINI_VER_BUILD=@HOUDINI_VERSION_BUILD@
