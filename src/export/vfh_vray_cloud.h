@@ -23,7 +23,7 @@ class JobFilePath
 {
 public:
 	/// Creates new file path at temporal writable location.
-	JobFilePath();
+	explicit JobFilePath(const QString &filePath);
 
 	/// Removes created file path if exists.
 	~JobFilePath();
@@ -34,15 +34,15 @@ public:
 	/// Returns file path.
 	QString getFilePath() const { return filePath; }
 
-private:
 	/// Creates new file path.
-	void createFilePath();
+	static QString createFilePath();
 
 	/// Remove file path.
-	void removeFilePath();
+	static void removeFilePath(const QString &filePath);
 
+private:
 	/// Temporary file path for export.
-	QString filePath;
+	const QString filePath;
 };
 
 namespace Cloud {

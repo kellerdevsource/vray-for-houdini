@@ -19,6 +19,15 @@
 #include <QJsonObject>
 #include <QProcess>
 #include <QRegExp>
+#include <QMainWindow>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPlainTextEdit>
+#include <QProgressBar>
+#include <QPushButton>
+#include <QQueue>
+
+#include <RE/RE_Window.h>
 
 using namespace VRayForHoudini;
 using namespace Cloud;
@@ -93,29 +102,19 @@ static void findVRayCloudClient()
 	vrayCloudClientChecked = true;
 }
 
-JobFilePath::JobFilePath()
-{
-	createFilePath();
-}
+JobFilePath::JobFilePath(const QString &filePath)
+	: filePath(filePath)
+{}
 
 JobFilePath::~JobFilePath()
 {
-	removeFilePath();
+	removeFilePath(filePath);
 }
 
-/// Deletes file by the provided path.
-/// @param filePath File path.
-static int deleteFilePath(const QString &filePath)
+QString JobFilePath::createFilePath()
 {
-	const int removeRes = QFile::remove(filePath);
-	if (!removeRes) {
-		Log::getLog().error("Failed to remove \"%s\"!", _toChar(filePath));
-	}
-	return removeRes;
-}
+	QString tmpFilePath;
 
-void JobFilePath::createFilePath()
-{
 	QFileInfo tempDir(QDir::tempPath());
 	if (!tempDir.isDir() || !tempDir.isWritable()) {
 		Log::getLog().error("Temporary location \"%s\" is not writable!",
@@ -124,21 +123,21 @@ void JobFilePath::createFilePath()
 	else {
 		QFileInfo tempFile(tempDir.absoluteFilePath(), "vfhVRayCloud.vrscene");
 		if (tempFile.exists()) {
-			deleteFilePath(tempFile.absoluteFilePath());
+			removeFilePath(tempFile.absoluteFilePath());
 		}
 
-		filePath = tempFile.absoluteFilePath();
+		tmpFilePath = tempFile.absoluteFilePath();
 	}
+
+	return tmpFilePath;
 }
 
-void JobFilePath::removeFilePath()
+void JobFilePath::removeFilePath(const QString &filePath)
 {
-	if (!isValid())
-		return;
-
-	deleteFilePath(filePath);
-
-	filePath.clear();
+	const int removeRes = QFile::remove(filePath);
+	if (!removeRes) {
+		Log::getLog().error("Failed to remove \"%s\"!", _toChar(filePath));
+	}
 }
 
 Job::Job(const QString &sceneFile)
@@ -186,15 +185,160 @@ void Job::toArguments(const Job &job, QStringList &arguments)
 	}
 }
 
-static void executeVRayCloudClient(const QStringList &args)
+class CloudWindow
+	: public QMainWindow
 {
-	Log::getLog().info("Calling V-Ray Cloud Client: %s", _toChar(args.join(" ")));
+	Q_OBJECT
 
-	QProcess vrayCloudClientProc;
-	vrayCloudClientProc.setProcessChannelMode(QProcess::ForwardedChannels);
-	vrayCloudClientProc.start(vrayCloudClient, args, QIODevice::ReadOnly);
-	vrayCloudClientProc.waitForFinished(-1);
-}
+public:
+	struct CloudCommand {
+		QString command;
+		QStringList arguments; 
+	};
+
+	typedef QQueue<CloudCommand> CloudCommands;
+
+	CloudWindow(CloudWindow* &cloudWindowInstance, const QString &jobFile, QWidget *parent)
+		: QMainWindow(parent)
+		, jobFile(jobFile)
+		, cloudWindowInstance(cloudWindowInstance)
+	{
+		setWindowTitle("V-Ray Cloud Client");
+		setAttribute(Qt::WA_DeleteOnClose);
+
+		proc.setProcessChannelMode(QProcess::MergedChannels);
+
+		connect(&proc, SIGNAL(readyReadStandardOutput()),
+				this, SLOT(onProcStdOutput()));
+
+		connect(&proc, SIGNAL(readyReadStandardError()),
+				this, SLOT(onProcStdError()));
+
+		connect(&proc, SIGNAL(error(QProcess::ProcessError)),
+				this, SLOT(onProcError()));
+
+		connect(&proc, SIGNAL(finished(int)),
+				this, SLOT(onProcFinished()));
+
+		editor = new QPlainTextEdit(this);
+		editor->setReadOnly(true);
+
+		progress = new QProgressBar(this);
+
+		// Busy progress.
+		progress->setMinimum(0);
+		progress->setMaximum(0);
+
+		stopButton = new QPushButton("Abort", this);
+
+		connect(stopButton, SIGNAL(clicked()),
+				this, SLOT(onPressTerminate()));
+
+		QHBoxLayout *hlayout = new QHBoxLayout;
+		hlayout->addWidget(progress);
+		hlayout->addWidget(stopButton);
+
+		QVBoxLayout *vlayout = new QVBoxLayout;
+		vlayout->setMargin(5);
+		vlayout->addWidget(editor);
+		vlayout->addLayout(hlayout);
+
+		QWidget *centralWidget = new QWidget(this);
+		centralWidget->setLayout(vlayout);
+
+		setCentralWidget(centralWidget);
+
+		resize(640, 480);
+	}
+
+	~CloudWindow() VRAY_DTOR_OVERRIDE {
+		cloudWindowInstance = nullptr;
+	}
+
+	void uploadScene(const Job &job) {
+		{
+			CloudCommand cmd;
+			cmd.command = vrayCloudClient;
+			cmd.arguments << "project" << "create" << "--name" << job.getProject();
+
+			commands.enqueue(cmd);
+		}
+		{
+			CloudCommand cmd;
+			cmd.command = vrayCloudClient;
+			cmd.arguments << "job" << "submit";
+
+			Job::toArguments(job, cmd.arguments);
+
+			commands.enqueue(cmd);
+		}
+
+		executeVRayCloudClient();
+	}
+
+	void executeVRayCloudClient() {
+		if (commands.empty())
+			return;
+
+		const CloudCommand &cmd = commands.dequeue();
+
+		Log::getLog().info("Calling V-Ray Cloud Client: %s", _toChar(cmd.arguments.join(" ")));
+
+		proc.start(cmd.command, cmd.arguments, QIODevice::ReadOnly);
+	}
+
+	void uploadCompleted() const {
+		progress->hide();
+		stopButton->hide();
+	}
+
+private Q_SLOTS:
+	void onPressTerminate() {
+		commands.clear();
+		proc.terminate();
+	}
+
+	void onProcError() {
+		commands.clear();
+		uploadCompleted();
+	}
+
+	void onProcFinished() {
+		if (commands.empty()) {
+			uploadCompleted();
+			return;
+		}
+
+		executeVRayCloudClient();
+	}
+
+	void onProcStdError() {
+		appendText(proc.readAllStandardError());
+	}
+
+	void onProcStdOutput() {
+		appendText(proc.readAllStandardOutput());
+	}
+
+protected:
+	void appendText(const QByteArray &data) const {
+		QString text(data);
+		editor->appendPlainText(text.simplified());
+	}
+
+	QPlainTextEdit *editor = nullptr;
+	QProgressBar *progress = nullptr;
+	QPushButton *stopButton = nullptr;
+
+	QProcess proc;
+	CloudCommands commands;
+
+private:
+	JobFilePath jobFile;
+	CloudWindow* &cloudWindowInstance;
+};
+
+static CloudWindow *cloudWindowInstance = nullptr;
 
 int VRayForHoudini::Cloud::submitJob(const Job &job)
 {
@@ -205,20 +349,15 @@ int VRayForHoudini::Cloud::submitJob(const Job &job)
 
 	Log::getLog().info("Using V-Ray Cloud Client: \"%s\"", _toChar(vrayCloudClient));
 
-	{
-		QStringList projectArgs;
-		projectArgs << "project" << "create" << "--name" << job.getProject();
-
-		executeVRayCloudClient(projectArgs);
-	}
-	{
-		QStringList submitArgs;
-		submitArgs << "job" << "submit";
-
-		Job::toArguments(job, submitArgs);
-
-		executeVRayCloudClient(submitArgs);
+	if (!cloudWindowInstance) {
+		cloudWindowInstance = new CloudWindow(cloudWindowInstance, job.sceneFile, RE_Window::mainQtWindow());
+		cloudWindowInstance->show();
+		cloudWindowInstance->uploadScene(job);
 	}
 
 	return true;
 }
+
+#ifndef Q_MOC_RUN
+#include <vfh_vray_cloud.cpp.moc>
+#endif

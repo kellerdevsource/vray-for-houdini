@@ -227,6 +227,12 @@ if (Phoenix_FOUND)
 endif()
 
 houdini_library(vray_for_houdini_exporter "${EXPORTER_SOURCES};${EXPORTER_HEADERS}")
+
+vfh_make_moc(TARGET vray_for_houdini_exporter
+	FILE_IN       ${CMAKE_CURRENT_SOURCE_DIR}/export/vfh_vray_cloud.cpp
+	FILE_OUT_NAME vfh_vray_cloud.cpp.moc
+)
+
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
 
 # Generate GU intrinsics.
