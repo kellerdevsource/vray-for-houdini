@@ -181,8 +181,9 @@ private:
 
 		return detail;
 	}
-} builder;
+};
 
+static VrsceneDescBuilder builder;
 static DetailCachePrototype<ReturnSettings, SettingsWrapper, VrsceneSettingsHasher> cache(builder);
 
 static SettingsWrapper getDefaultSettings() {

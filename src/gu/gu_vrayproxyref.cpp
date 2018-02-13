@@ -63,8 +63,9 @@ public:
 		clearVRayProxyCache(filepath.ptr());
 	}
 
-} builder;
+};
 
+static VRayProxyRefKeyBuilder builder;
 static DetailCachePrototype<bool, VRayProxyRefKey, VRayProxyRefKeyHasher> cache(builder);
 
 void VRayProxyRef::install(GA_PrimitiveFactory *primFactory)
