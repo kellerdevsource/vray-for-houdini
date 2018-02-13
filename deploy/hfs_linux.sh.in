@@ -18,9 +18,6 @@ export LAUNCHER_LOCATION=`dirname ${LAUNCHER_FILEPATH}`
 # V-Ray Application SDK variables
 export VRAY_APPSDK=${LAUNCHER_LOCATION}/appsdk
 
-# Set VFB on top
-export VRAY_VFB_ALWAYS_ON_TOP=1
-
 # V-Ray UI dialog scripts
 export VRAY_UI_DS_PATH=${LAUNCHER_LOCATION}/ui
 

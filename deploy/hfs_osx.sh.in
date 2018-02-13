@@ -1,59 +1,27 @@
 # V-Ray For Houdini OS X Launcher
 #
 
-# Houdini Version
-export HOUDINI_VER_MAJOR=@HOUDINI_VERSION@
-export HOUDINI_VER_FULL=${HOUDINI_VER_MAJOR}.@HOUDINI_VERSION_BUILD@
+LAUNCHER_LOCATION=`dirname $0`
 
-# Houdini Install Location
-export HFS="@HOUDINI_FRAMEWORK_ROOT@/Resources"
+HOUDINI_VER_MAJOR=@HOUDINI_VERSION@
+HOUDINI_VER_BUILD=@HOUDINI_VERSION_BUILD@
 
-# Use OpenVDB < 3
-#
+HOUDINI_INSTALL_ROOT=/Applications/Houdini/Houdini${HOUDINI_VER_MAJOR}.${HOUDINI_VER_BUILD}
+
+cd ${HOUDINI_INSTALL_ROOT}/Frameworks/Houdini.framework/Versions/${HOUDINI_VER_MAJOR}.${HOUDINI_VER_BUILD}/Resources
+source houdini_setup
+cd ${LAUNCHER_LOCATION}
+
+export VRAY_APPSDK="${LAUNCHER_LOCATION}/appsdk"
+export VRAY_UI_DS_PATH="${LAUNCHER_LOCATION}/ui"
+export VRAY_FOR_HOUDINI_AURA_LOADERS="${LAUNCHER_LOCATION}/vfh_home/libs"
+export VFH_PATH="${LAUNCHER_LOCATION}/vfh_home/bin:${VRAY_APPSDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}"
+export VFH_HOUDINI_PATH="${LAUNCHER_LOCATION}/vfh_home"
+
+export PATH="${VFH_PATH}:${PATH}"
+export HOUDINI_PATH="${VFH_HOUDINI_PATH}:${HOUDINI_PATH}:&"
 export HOUDINI13_VOLUME_COMPATIBILITY=1
-export HOUDINI_PYTHON_VERSION=2.6
-
-# DO NOT EDIT STUFF BELOW
-#
-LAUNCHER_FILEPATH=`readlink -f $0`
-export LAUNCHER_LOCATION=`dirname ${LAUNCHER_FILEPATH}`
-
-# Environment Setup
-#
-# V-Ray Application SDK variables
-export VRAY_APPSDK=@_vfh_appsdk_path@
-
-# Set VFB on top
-export VRAY_VFB_ALWAYS_ON_TOP=1
-
-# V-Ray UI dialog scripts
-export VRAY_UI_DS_PATH="@_vfh_config_path@/ui"
-
-# Phoenix Loaders
-export VRAY_FOR_HOUDINI_AURA_LOADERS=@_vfh_deploy_path@/vfh_home/libs
-
-# V-Ray for Houdini dso path
-export HOUDINI_PATH=@_vfh_deploy_path@/vfh_home:\&
-
-# Report loading errors
-export HOUDINI_DSO_ERROR=1
 export HDF5_DISABLE_VERSION_CHECK=1
 
-# Houdini
-export H="${HFS}"
-export HB="${H}/bin"
-export HDSO="${H}/../Libraries"
-export HD="${H}/demo"
-export HH="${H}/houdini"
-export HHC="${HH}/config"
-export HT="${H}/toolkit"
-export HSB="${HH}/sbin"
-export TEMP=/tmp
-export JAVA_HOME=/Library/Java/Home
-
-# Add libs to path
-export PATH=${HB}:${HSB}:${VRAY_APPSDK}/bin:@_vfh_deploy_path@/vfh_home/bin:${PATH}
-export DYLD_LIBRARY_PATH=${VRAY_APPSDK}/bin:${VRAY_FOR_HOUDINI_AURA_LOADERS}:${DYLD_LIBRARY_PATH}
-
 # Start Houdini
-@HFS_BIN@ $*
+houdini -foreground $*
