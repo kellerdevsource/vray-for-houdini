@@ -206,33 +206,27 @@ public:
 		setWindowTitle("V-Ray Cloud Client");
 		setAttribute(Qt::WA_DeleteOnClose);
 
-		proc.setProcessChannelMode(QProcess::MergedChannels);
+		setupUI();
 
-		connect(&proc, SIGNAL(readyReadStandardOutput()),
-				this, SLOT(onProcStdOutput()));
+		connectSlotsUI();
+		connectSlotsProcess();
 
-		connect(&proc, SIGNAL(readyReadStandardError()),
-				this, SLOT(onProcStdError()));
+		resize(640, 480);
+	}
 
-		connect(&proc, SIGNAL(error(QProcess::ProcessError)),
-				this, SLOT(onProcError()));
+	~CloudWindow() VRAY_DTOR_OVERRIDE {
+		terminateProcess();
 
-		connect(&proc, SIGNAL(finished(int)),
-				this, SLOT(onProcFinished()));
+		cloudWindowInstance = nullptr;
+	}
 
+	void setupUI() {
 		editor = new QPlainTextEdit(this);
 		editor->setReadOnly(true);
 
 		progress = new QProgressBar(this);
 
-		// Busy progress.
-		progress->setMinimum(0);
-		progress->setMaximum(0);
-
 		stopButton = new QPushButton("Abort", this);
-
-		connect(stopButton, SIGNAL(clicked()),
-				this, SLOT(onPressTerminate()));
 
 		QHBoxLayout *hlayout = new QHBoxLayout;
 		hlayout->addWidget(progress);
@@ -247,14 +241,25 @@ public:
 		centralWidget->setLayout(vlayout);
 
 		setCentralWidget(centralWidget);
-
-		resize(640, 480);
 	}
 
-	~CloudWindow() VRAY_DTOR_OVERRIDE {
-		terminateProcess();
+	void connectSlotsUI() const {
+		connect(stopButton, SIGNAL(clicked()),
+		        this, SLOT(onPressTerminate()));
+	}
 
-		cloudWindowInstance = nullptr;
+	void connectSlotsProcess() const {
+		connect(&proc, SIGNAL(readyReadStandardOutput()),
+		        this, SLOT(onProcStdOutput()));
+
+		connect(&proc, SIGNAL(readyReadStandardError()),
+		        this, SLOT(onProcStdError()));
+
+		connect(&proc, SIGNAL(error(QProcess::ProcessError)),
+		        this, SLOT(onProcError()));
+
+		connect(&proc, SIGNAL(finished(int)),
+		        this, SLOT(onProcFinished()));
 	}
 
 	void uploadScene(const Job &job) {
@@ -274,6 +279,10 @@ public:
 
 			commands.enqueue(cmd);
 		}
+
+		// Busy progress.
+		progress->setMinimum(0);
+		progress->setMaximum(0);
 
 		executeVRayCloudClient();
 	}
@@ -345,8 +354,7 @@ protected:
 	}
 
 	void appendText(const QByteArray &data) const {
-		QString text(data);
-		editor->appendPlainText(text.simplified());
+		editor->appendPlainText(data);
 	}
 
 	void terminateProcess() {
