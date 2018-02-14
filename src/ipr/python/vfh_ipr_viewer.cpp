@@ -42,7 +42,6 @@ static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int 
 	rgbaImage->setRegion(region);
 	planes.append(rgbaImage);
 
-#if USE_RENDER_CHANNELS
 	const VRay::RenderElements &reMan = renderer.getRenderElements();
 	const RenderElementsList &reList = reMan.getAllByType(VRay::RenderElement::NONE);
 	for (const VRay::RenderElement &re : reList) {
@@ -51,7 +50,6 @@ static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int 
 
 		planes.append(renderElementImage);
 	}
-#endif
 
 	imdisplayThread.add(new TileImageMessage(planes));
 }
@@ -88,12 +86,10 @@ void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer, const char *rop
 	imageHeaderMsg->planeNames.append("C");
 	imageHeaderMsg->ropName = ropName;
 
-#if USE_RENDER_CHANNELS
 	const VRay::RenderElements &reMan = renderer.getRenderElements();
 	for (const VRay::RenderElement &re : reMan.getAllByType(VRay::RenderElement::NONE)) {
 		imageHeaderMsg->planeNames.append(re.getName().c_str());
 	}
-#endif
 
 	imdisplayThread.add(imageHeaderMsg);
 }

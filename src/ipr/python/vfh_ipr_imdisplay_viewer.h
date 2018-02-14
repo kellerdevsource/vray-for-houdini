@@ -18,12 +18,6 @@
 #include <QQueue>
 #include <QMutex>
 
-/// Write image as buckets.
-#define USE_BUCKETS 1
-
-/// Write render channels in IRP.
-#define USE_RENDER_CHANNELS 1
-
 class TIL_TileMPlay;
 
 struct ImageHeader {

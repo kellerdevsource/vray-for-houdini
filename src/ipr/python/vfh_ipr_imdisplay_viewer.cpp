@@ -17,7 +17,7 @@
 
 using namespace VRayForHoudini;
 
-static const int tileSize = 64;
+static const int tileSize = 128;
 
 ImdisplayThread::ImdisplayThread()
 {
@@ -200,11 +200,8 @@ void ImdisplayThread::processTileMessage(TileImageMessage &msg)
 
 		image->flipImage();
 
-#if USE_BUCKETS
 		writeTileBuckets(planeIndex, *image);
-#else
-		writeTile(planeIndex, *image);
-#endif
+
 		planeIndex++;
 	}
 }
