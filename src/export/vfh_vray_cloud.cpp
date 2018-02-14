@@ -20,7 +20,7 @@
 #include <QProcess>
 #include <QRegExp>
 #include <QMainWindow>
-#include <QVBoxLayout>
+#include <QMessageBox>
 #include <QHBoxLayout>
 #include <QPlainTextEdit>
 #include <QProgressBar>
@@ -252,6 +252,8 @@ public:
 	}
 
 	~CloudWindow() VRAY_DTOR_OVERRIDE {
+		terminateProcess();
+
 		cloudWindowInstance = nullptr;
 	}
 
@@ -280,7 +282,7 @@ public:
 		if (commands.empty())
 			return;
 
-		const CloudCommand &cmd = commands.dequeue();
+		const CloudCommand cmd = commands.dequeue();
 
 		Log::getLog().info("Calling V-Ray Cloud Client: %s", _toChar(cmd.arguments.join(" ")));
 
@@ -294,17 +296,18 @@ public:
 
 private Q_SLOTS:
 	void onPressTerminate() {
-		commands.clear();
-		proc.terminate();
+		terminateProcess();
+		close();
 	}
 
 	void onProcError() {
 		commands.clear();
+
 		uploadCompleted();
 	}
 
 	void onProcFinished() {
-		if (commands.empty()) {
+		if (commands.isEmpty()) {
 			uploadCompleted();
 			return;
 		}
@@ -321,9 +324,45 @@ private Q_SLOTS:
 	}
 
 protected:
+	void closeEvent(QCloseEvent *ev) VRAY_OVERRIDE {
+		QMessageBox::StandardButton res(QMessageBox::Yes);
+
+		if (proc.state() != QProcess::NotRunning ||
+		    !commands.isEmpty())
+		{
+			res = QMessageBox::question(this, "V-Ray Cloud Client: Abort upload",
+			                            tr("This will abort scene upload. Are u sure?"),
+			                            QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+			                            QMessageBox::Yes);
+		}
+
+		if (res != QMessageBox::Yes) {
+			ev->ignore();
+		}
+		else {
+			ev->accept();
+		}
+	}
+
 	void appendText(const QByteArray &data) const {
 		QString text(data);
 		editor->appendPlainText(text.simplified());
+	}
+
+	void terminateProcess() {
+		if (proc.state() == QProcess::NotRunning)
+			return;
+
+		progress->setFormat("Aborting upload...");
+		progress->setMinimum(0);
+		progress->setMaximum(1);
+		progress->setValue(1);
+
+		stopButton->setEnabled(false);
+
+		commands.clear();
+		proc.terminate();
+		proc.waitForFinished(-1);
 	}
 
 	QPlainTextEdit *editor = nullptr;
