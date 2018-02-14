@@ -260,3 +260,7 @@ void ImdisplayThread::writeTile(int planeIndex, const TileImage &image)
 		device->flush();
 	}
 }
+
+#ifndef Q_MOC_RUN
+#include <vfh_ipr_imdisplay_viewer.h.moc>
+#endif
