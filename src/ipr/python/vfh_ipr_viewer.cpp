@@ -30,7 +30,8 @@ static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int 
 
 	int width = 0;
 	int height = 0;
-	image->getSize(width, height);
+	if (!image->getSize(width, height))
+		return;
 
 	VRay::ImageRegion region(x, y);
 	region.setWidth(width);
