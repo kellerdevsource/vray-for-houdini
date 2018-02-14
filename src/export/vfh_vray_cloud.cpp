@@ -22,10 +22,11 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QHBoxLayout>
-#include <QPlainTextEdit>
+#include <QTextBrowser>
 #include <QProgressBar>
 #include <QPushButton>
 #include <QQueue>
+#include <QCloseEvent>
 
 #include <RE/RE_Window.h>
 
@@ -44,6 +45,13 @@ static int vrayCloudClientChecked(false);
 
 /// Not allowed characters regular expression.
 static QRegExp cloudNameFilter("[^a-zA-Z\\d\\s\\_\\-.,\\(\\)\\[\\]]");
+
+/// HTML log block format.
+static const QString block("<pre>%1</pre>");
+
+/// URL match to replace with link.
+static const QRegExp urlMatch("((?:https?|ftp)://\\S+)");
+static const QString urlMatchReplace("<a href=\"\\1\">\\1</a>");
 
 /// Only letters, digits, spaces and _-.,()[] allowed.
 /// NOTE: QString::remove is non-const.
@@ -211,7 +219,7 @@ public:
 		connectSlotsUI();
 		connectSlotsProcess();
 
-		resize(640, 480);
+		resize(1024, 768);
 	}
 
 	~CloudWindow() VRAY_DTOR_OVERRIDE {
@@ -221,8 +229,10 @@ public:
 	}
 
 	void setupUI() {
-		editor = new QPlainTextEdit(this);
+		editor = new QTextBrowser(this);
 		editor->setReadOnly(true);
+		editor->setOpenLinks(true);
+		editor->setOpenExternalLinks(true);
 
 		progress = new QProgressBar(this);
 
@@ -354,7 +364,16 @@ protected:
 	}
 
 	void appendText(const QByteArray &data) const {
-		editor->appendPlainText(data);
+		QString text(QString(data).trimmed());
+		if (text.isEmpty())
+			return;
+
+		text = text.replace(urlMatch, urlMatchReplace);
+
+		editor->insertHtml(block.arg(text));
+
+		// XXX: Ugly; haven't figured out how to add a new via insertHtml();
+		editor->insertPlainText("\n");
 	}
 
 	void terminateProcess() {
@@ -373,7 +392,7 @@ protected:
 		proc.waitForFinished(-1);
 	}
 
-	QPlainTextEdit *editor = nullptr;
+	QTextBrowser *editor = nullptr;
 	QProgressBar *progress = nullptr;
 	QPushButton *stopButton = nullptr;
 
