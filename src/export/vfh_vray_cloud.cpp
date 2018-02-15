@@ -352,10 +352,10 @@ protected:
 		if (proc.state() != QProcess::NotRunning ||
 		    !commands.isEmpty())
 		{
-			res = QMessageBox::question(this, "V-Ray Cloud Client: Abort upload",
-			                            tr("This will abort scene upload. Are you sure?"),
-			                            QMessageBox::Cancel|QMessageBox::Yes,
-			                            QMessageBox::Yes);
+			res = QMessageBox::warning(this, "V-Ray Cloud Client: Abort upload",
+			                           tr("This will abort scene upload. Are you sure?"),
+			                           QMessageBox::Cancel | QMessageBox::Yes,
+			                           QMessageBox::Yes);
 		}
 
 		if (res != QMessageBox::Yes) {
