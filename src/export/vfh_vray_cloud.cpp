@@ -47,7 +47,7 @@ static int vrayCloudClientChecked(false);
 static QRegExp cloudNameFilter("[^a-zA-Z\\d\\s\\_\\-.,\\(\\)\\[\\]]");
 
 /// HTML log block format.
-static const QString block("<pre>%1</pre>");
+static const QString preTag("<pre>%1</pre>");
 
 /// URL match to replace with link.
 static const QRegExp urlMatch("((?:https?|ftp)://\\S+)");
@@ -374,7 +374,7 @@ protected:
 
 		text = text.replace(urlMatch, urlMatchReplace);
 
-		editor->insertHtml(block.arg(text));
+		editor->insertHtml(preTag.arg(text));
 
 		// XXX: Ugly; haven't figured out how to add a new via insertHtml();
 		editor->insertPlainText("\n");
