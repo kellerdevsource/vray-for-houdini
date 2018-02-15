@@ -54,10 +54,10 @@ static const QRegExp urlMatch("((?:https?|ftp)://\\S+)");
 static const QString urlMatchReplace("<a href=\"\\1\">\\1</a>");
 
 /// Only letters, digits, spaces and _-.,()[] allowed.
-/// NOTE: QString::remove is non-const.
-static QString filterName(QString value)
+static QString filterName(const QString &value)
 {
-	return value.remove(cloudNameFilter);
+	QString filteredValue(value);
+	return filteredValue.remove(cloudNameFilter);
 }
 
 /// Parses vcloud.json and extracts executable file path.
