@@ -211,7 +211,7 @@ public:
 		, jobFile(jobFile)
 		, cloudWindowInstance(cloudWindowInstance)
 	{
-		setWindowTitle("V-Ray Cloud Client");
+		setWindowTitle(tr("V-Ray Cloud Client: Scene upload"));
 		setAttribute(Qt::WA_DeleteOnClose);
 		setWindowFlags(Qt::Window|Qt::Tool);
 
@@ -352,7 +352,7 @@ protected:
 		if (proc.state() != QProcess::NotRunning ||
 		    !commands.isEmpty())
 		{
-			res = QMessageBox::warning(this, "V-Ray Cloud Client: Abort upload",
+			res = QMessageBox::warning(this, tr("V-Ray Cloud Client: Abort upload"),
 			                           tr("This will abort scene upload. Are you sure?"),
 			                           QMessageBox::Cancel | QMessageBox::Yes,
 			                           QMessageBox::Yes);
