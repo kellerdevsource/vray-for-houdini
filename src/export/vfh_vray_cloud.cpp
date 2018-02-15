@@ -259,7 +259,7 @@ public:
 
 	void connectSlotsUI() const {
 		connect(stopButton, SIGNAL(clicked()),
-		        this, SLOT(onPressTerminate()));
+		        this, SLOT(onPressAbort()));
 	}
 
 	void connectSlotsProcess() const {
@@ -318,8 +318,7 @@ public:
 	}
 
 private Q_SLOTS:
-	void onPressTerminate() {
-		terminateProcess();
+	void onPressAbort() {
 		close();
 	}
 
@@ -363,6 +362,7 @@ protected:
 			ev->ignore();
 		}
 		else {
+			terminateProcess();
 			ev->accept();
 		}
 	}
@@ -393,7 +393,7 @@ protected:
 
 		commands.clear();
 		proc.terminate();
-		proc.waitForFinished(-1);
+		proc.waitForFinished(2000);
 	}
 
 	QTextBrowser *editor = nullptr;
