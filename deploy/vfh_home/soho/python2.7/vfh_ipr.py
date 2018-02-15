@@ -174,16 +174,15 @@ def main():
         #   objlist:deletedfog
         # will list all objects which have been deleted from the scene.
         #
-
         if not _vfh_ipr.isRopValid():
             _vfh_ipr.init(rop=ropPath, port=port, now=now, viewParams=getViewParams(camera, sohoCam, now))
         else:
-            if _vfh_ipr.setTime(now):
-                # Have to handle "time" event manually here.
-                exportObjects("objlist:dirtyinstance")
-                exportObjects("objlist:dirtylight")
+            # Have to handle "time" event manually here.
+            _vfh_ipr.setTime(now)
 
-            # Update view.
+            exportObjects("objlist:dirtyinstance")
+            exportObjects("objlist:dirtylight")
+
             exportView(ropPath, camera, sohoCam, now)
 
 try:
