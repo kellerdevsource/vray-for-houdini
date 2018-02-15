@@ -166,7 +166,7 @@ groupsimple {
             name    "SettingsIrradianceMap_file"
             label   "File"
             type    file
-            default { "$HIP/lightmaps/irradiance_map.vrmap" }
+            default { "${HIP}/lightmaps/irradiance_map.vrmap" }
             help    "Irradiance map file name"
             range   { 0 1 }
             export  none
@@ -209,7 +209,7 @@ groupsimple {
             name    "SettingsIrradianceMap_auto_save_file"
             label   "Auto Save File"
             type    file
-            default { "$HIP/lightmaps/irradiance_map.vrmap" }
+            default { "${HIP}/lightmaps/irradiance_map.vrmap" }
             help    "Irradiance map auto save file"
             range   { 0 1 }
             export  none

@@ -1,6 +1,6 @@
 #define SPACING_HEIGHT	0.1
 
-filepath.val := "$HIP/$HIPNAME.vrmesh";
+filepath.val := "${HIP}/${HIPNAME}.vrmesh";
 overwrite.val := 1;
 mkpath.val := 0;
 

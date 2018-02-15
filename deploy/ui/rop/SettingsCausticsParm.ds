@@ -99,7 +99,7 @@ groupsimple {
         name  "SettingsCaustics_file"
         label "File"
         type  file
-        default { "$HIP/lightmaps/caustics.vrmap" }
+        default { "${HIP}/lightmaps/caustics.vrmap" }
         help  "File to take caustics map from when 'Mode' is 'From File'"
         range { 0 1 }
         export  none
@@ -145,7 +145,7 @@ groupsimple {
         name  "SettingsCaustics_auto_save_file"
         label "Auto Save File"
         type  file
-        default { "$HIP/lightmaps/caustics.vrmap" }
+        default { "${HIP}/lightmaps/caustics.vrmap" }
         help  "Auto save filepath"
         range { 0 1 }
         export  none

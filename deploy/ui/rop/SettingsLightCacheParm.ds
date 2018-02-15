@@ -131,7 +131,7 @@ groupsimple {
             name    "SettingsLightCache_file"
             label   "File"
             type    file
-            default { "$HIP/lightmaps/light_cache.vrmap" }
+            default { "${HIP}/lightmaps/light_cache.vrmap" }
             help    "Light cache file"
             range   { 0 1 }
             export  none
@@ -180,7 +180,7 @@ groupsimple {
             name  "SettingsLightCache_auto_save_file"
             label "Auto Save File"
             type  file
-            default   { "$HIP/lightmaps/light_cache.vrmap" }
+            default   { "${HIP}/lightmaps/light_cache.vrmap" }
             help  "Light cache auto save file name"
             range { 0 1 }
             export    none

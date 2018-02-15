@@ -49,7 +49,7 @@ groupsimple {
         label "Job"
         help "Cloud job name"
         type string
-        default { "$HIPNAME" }
+        default { "${HIPNAME}" }
         VFH_DISABLE_WHEN_PARAM_FALSE("render_in_cloud")
     }
 }
@@ -111,7 +111,7 @@ groupsimple {
         name "render_export_filepath"
         label "Export Filepath"
         type file
-        default { "$HIP/$HIPNAME.vrscene" }
+        default { "${HIP}/${HIPNAME}.vrscene" }
         disablewhen "{ render_export_mode == 0 }"
     }
 
