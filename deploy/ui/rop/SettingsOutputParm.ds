@@ -12,7 +12,7 @@ parm {
     name    "SettingsOutput_img_file_path"
     label   "File Path"
     type    string
-    default { "${HIP}/render/${HIPNAME}.exr" }
+    default { "${HIP}/render/${HIPNAME}_$F4.exr" }
     help    "Render file path. Accepted file extensions are: .png, .jpg, .tiff, .tga, .sgi, .exr, .vrimg. A file without one of these extensions is given .exr extension by default."
     range   { 0 1 }
     export  none
