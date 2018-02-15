@@ -238,17 +238,20 @@ public:
 
 		stopButton = new QPushButton("Abort", this);
 
-		QHBoxLayout *hlayout = new QHBoxLayout;
-		hlayout->addWidget(progress);
-		hlayout->addWidget(stopButton);
+		QHBoxLayout *progressLayout = new QHBoxLayout;
+		progressLayout->setMargin(0);
+		progressLayout->setSpacing(10);
+		progressLayout->addWidget(progress);
+		progressLayout->addWidget(stopButton);
 
-		QVBoxLayout *vlayout = new QVBoxLayout;
-		vlayout->setMargin(5);
-		vlayout->addWidget(editor);
-		vlayout->addLayout(hlayout);
+		QVBoxLayout *mainLayout = new QVBoxLayout;
+		mainLayout->setMargin(10);
+		mainLayout->setSpacing(10);
+		mainLayout->addWidget(editor);
+		mainLayout->addLayout(progressLayout);
 
 		QWidget *centralWidget = new QWidget(this);
-		centralWidget->setLayout(vlayout);
+		centralWidget->setLayout(mainLayout);
 
 		setCentralWidget(centralWidget);
 	}
