@@ -213,6 +213,7 @@ public:
 	{
 		setWindowTitle("V-Ray Cloud Client");
 		setAttribute(Qt::WA_DeleteOnClose);
+		setWindowFlags(Qt::Window|Qt::Tool);
 
 		setupUI();
 
@@ -353,8 +354,8 @@ protected:
 		    !commands.isEmpty())
 		{
 			res = QMessageBox::question(this, "V-Ray Cloud Client: Abort upload",
-			                            tr("This will abort scene upload. Are u sure?"),
-			                            QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+			                            tr("This will abort scene upload. Are you sure?"),
+			                            QMessageBox::Cancel|QMessageBox::Yes,
 			                            QMessageBox::Yes);
 		}
 
