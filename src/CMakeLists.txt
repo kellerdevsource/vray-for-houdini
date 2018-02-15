@@ -346,15 +346,6 @@ if(INSTALL_RELEASE)
 			PATTERN ${EXCLUDE_LIBVRAY} EXCLUDE
 	)
 
-	if (WIN32)
-		set(TOOL_EXE_SUFFIX ".exe")
-	else()
-		set(TOOL_EXE_SUFFIX ".bin")
-	endif()
-
-	install(FILES       ${APPSDK_ROOT}/tools/ply2vrmesh${TOOL_EXE_SUFFIX}
-			DESTINATION ${INSTALL_RELEASE_PATH}/appsdk/tools)
-
 	# Example houdini.env file
 	install(FILES       ${CMAKE_SOURCE_DIR}/deploy/houdini.env
 			DESTINATION ${INSTALL_RELEASE_PATH})

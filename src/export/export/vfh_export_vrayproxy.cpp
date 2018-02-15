@@ -246,7 +246,7 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 	Log::getLog().debug("ply2vrmesh %s", arguments.join(" ").toStdString().c_str());
 
 	QProcess ply2vrmesh;
-	ply2vrmesh.start(appsdkPath + "/tools/" + ply2vrmeshExe, arguments);
+	ply2vrmesh.start(appsdkPath + "/bin/" + ply2vrmeshExe, arguments);
 	const bool started = ply2vrmesh.waitForStarted();
 	const bool finished = ply2vrmesh.waitForFinished(-1);
 
