@@ -2286,12 +2286,17 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	setAnimation(sessionSupportsAnimation(sessionType) &&
 		(m_isAnimation || m_isMotionBlur || m_isVelocityOn));
 
-	if (hasUI && sessionNeedsUI(sessionType)) {
-		if (!getRenderer().getVRay().vfb.isShown()) {
-			restoreVfbState();
+	if (hasUI) {
+		if (!sessionNeedsUI(sessionType)) {
+			getRenderer().showVFB(false);
 		}
-		getRenderer().getVfbSettings(vfbSettings);
-		getRenderer().showVFB(m_workMode != ExpExport, m_rop->getFullPath());
+		else {
+			if (!getRenderer().getVRay().vfb.isShown()) {
+				restoreVfbState();
+			}
+			getRenderer().getVfbSettings(vfbSettings);
+			getRenderer().showVFB(m_workMode != ExpExport, m_rop->getFullPath());
+		}
 	}
 
 	m_renderer.getVRay().setOnProgress(onProgress, this);
