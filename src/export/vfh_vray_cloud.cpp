@@ -375,8 +375,6 @@ protected:
 		text = text.replace(urlMatch, urlMatchReplace);
 
 		editor->insertHtml(preTag.arg(text));
-
-		// XXX: Ugly; haven't figured out how to add a new via insertHtml();
 		editor->insertPlainText("\n");
 	}
 
