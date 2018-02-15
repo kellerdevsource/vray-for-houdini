@@ -540,8 +540,7 @@ if(HDK_FOUND)
 				tbbmalloc
 				pthread
 				openvdb_sesi
-				$<$<CONFIG:Release>:Half>
-				$<$<CONFIG:Debug>:Half_d>
+				Half
 				${SDK_PATH}/hdk/hdf5/lib/libhdf5$<$<CONFIG:Debug>:_debug>.a
 				${SDK_PATH}/hdk/hdf5/lib/libhdf5_cpp$<$<CONFIG:Debug>:_debug>.a
 				"-framework Cocoa"
