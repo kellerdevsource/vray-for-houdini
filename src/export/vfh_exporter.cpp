@@ -10,6 +10,7 @@
 
 #include <QDir>
 #include <QRegExp>
+#include <QRegularExpression>
 
 #include "vfh_defines.h"
 #include "vfh_exporter.h"
@@ -80,7 +81,15 @@ static const VRay::Transform envMatrix(VRay::Matrix(VRay::Vector(1.f, 0.f, 0.f),
                                                     VRay::Vector(0.f, -1.f, 0.f)),
                                        VRay::Vector(0.f));
 
-static QRegExp frameMatch("\\$[.\\d]*F");
+/// Matches frame number like "$F" and "$F4".
+static QRegExp frameMatch("\\$F(\\d+)?");
+static QRegularExpression frameMatchExpr(frameMatch.pattern());
+
+/// Frame match group indexes.
+enum FrameNumberMatchedItem {
+	frameNumberMatchedItemVariable = 0,
+	frameNumberMatchedItemFramePadding = 1,
+};
 
 /// Checks if we're exporting frames into separate *.vrscene files.
 static int isExportFramesToSeparateFiles(OP_Node &rop)
@@ -928,24 +937,42 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		pluginDesc.addAttribute(Attrs::PluginAttr("img_file", Attrs::PluginAttr::AttrTypeIgnore));
 	}
 	else {
-		UT_String filePathRaw;
-		m_rop->evalStringRaw(filePathRaw, "SettingsOutput_img_file_path", 0, t);
-		
+		UT_String _filePathRaw;
+		m_rop->evalStringRaw(_filePathRaw, "SettingsOutput_img_file_path", 0, 0.0);
+
+		// Replace frame number with V-Ray compatible frame pattern.
+		QString filePathRaw(_filePathRaw.buffer());
+		QRegularExpressionMatch frameMatchRes = frameMatchExpr.match(filePathRaw);
+		if (frameMatchRes.hasMatch()) {
+			int numPaddedDigits = 1;
+
+			const int hasPadding = frameMatchRes.lastCapturedIndex() == frameNumberMatchedItemFramePadding;
+			if (hasPadding) {
+				numPaddedDigits = frameMatchRes.captured(frameNumberMatchedItemFramePadding).toInt();
+			}
+
+			const QString paddedDigits(numPaddedDigits, '#');
+
+			filePathRaw = filePathRaw.replace(frameMatch, paddedDigits);
+
+			Log::getLog().debug("Output path: %s", _toChar(filePathRaw));
+
+			pluginDesc.addAttribute(Attrs::PluginAttr("img_file_needFrameNumber", 1));
+		}
+
+
+		UT_String reconstructedPath(_toChar(filePathRaw));
 		UT_String dirPathRaw;
 		UT_String fileNameRaw;
-		filePathRaw.splitPath(dirPathRaw, fileNameRaw);
+		reconstructedPath.splitPath(dirPathRaw, fileNameRaw);
 
 		// Format dirPathRaw.
 		dirPathRaw.append('/');
 
-		// Replace frame number with V-Ray compatible frame pattern.
-		if (fileNameRaw.changeWord("$F", "#")) {
-			pluginDesc.addAttribute(Attrs::PluginAttr("img_file_needFrameNumber", 1));
-		}
-
 		UT_String dirPath;
 		UT_String fileName;
-		// Expand paths.
+
+		// Expand all the other variables.
 		CH_Manager *chanMan = OPgetDirector()->getChannelManager();
 		chanMan->expandString(fileNameRaw.buffer(), fileName, t);
 		chanMan->expandString(dirPathRaw.buffer(), dirPath, t);
@@ -959,7 +986,7 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		}
 
 		// Append default file type if not set.
-		ImageFormat imgFormat = getImgFormat(filePathRaw.buffer());
+		ImageFormat imgFormat = getImgFormat(fileName.buffer());
 		if (imgFormat == imageFormatLast) {
 			imgFormat = imageFormatOpenEXR;
 			fileName.append(imgFormatExt[imageFormatOpenEXR]);
