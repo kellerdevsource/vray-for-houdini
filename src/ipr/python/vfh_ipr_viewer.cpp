@@ -74,7 +74,7 @@ void VRayForHoudini::onProgress(VRay::VRayRenderer& /*renderer*/, const char *ms
 {
 	const QString text(QString(msg).simplified());
 
-	const float percentage = 100.0f * elementNumber / elementsCount;
+	const int percentage = 100.0f * float(elementNumber) / float(elementsCount);
 
 	TileProgressMessage *progMsg = new TileProgressMessage;
 	progMsg->message = text;
