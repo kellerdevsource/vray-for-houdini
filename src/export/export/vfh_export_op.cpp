@@ -69,34 +69,41 @@ static TIL_Raster *getImageFromCop(COP2_Node &copNode, double time, const char *
 	return image;
 }
 
+int VRayExporter::fillCopNodeBitmapBuffer(COP2_Node &copNode, Attrs::PluginDesc &rawBitmapBuffer)
+{
+	QScopedPointer<TIL_Raster> raster(getImageFromCop(copNode, getContext().getTime()));
+	if (!raster)
+		return 0;
+
+	const int numPixels = raster->getNumPixels();
+	if (!numPixels)
+		return 0;
+
+	const int numComponents = 4;
+	const int bytesPerComponent = 4;
+	const int pixelFormat = 1; // Float RGBA
+
+	const int numPixelBytes = numPixels * numComponents * bytesPerComponent;
+	const int numInts = numPixelBytes / sizeof(int);
+
+	VRay::VUtils::IntRefList pixels(numInts);
+	vutils_memcpy(pixels.get(), raster->getPixels(), numPixelBytes);
+
+	rawBitmapBuffer.addAttribute(PluginAttr("pixels", pixels));
+	rawBitmapBuffer.addAttribute(PluginAttr("pixels_type", pixelFormat));
+	rawBitmapBuffer.addAttribute(PluginAttr("width", raster->getXres()));
+	rawBitmapBuffer.addAttribute(PluginAttr("height", raster->getYres()));
+
+	return 1;
+}
+
 VRay::Plugin VRayExporter::exportCopNodeBitmapBuffer(COP2_Node &copNode)
 {
 	VRay::Plugin res;
 
-	TIL_Raster *raster = getImageFromCop(copNode, getContext().getTime());
-	if (raster) {
-		const int numPixels = raster->getNumPixels();
-		if (numPixels) {
-			const int numComponents = 4;
-			const int bytesPerComponent = 4;
-			const int pixelFormat = 1; // Float RGBA
-
-			const int numPixelBytes = numPixels * numComponents * bytesPerComponent;
-			const int numInts = numPixelBytes / sizeof(int);
-
-			VRay::VUtils::IntRefList pixels(numInts);
-			vutils_memcpy(pixels.get(), raster->getPixels(), numPixelBytes);
-
-			Attrs::PluginDesc rawBitmapBuffer(getPluginName(&copNode, "RawBitmapBuffer"), "RawBitmapBuffer");
-			rawBitmapBuffer.addAttribute(PluginAttr("pixels", pixels));
-			rawBitmapBuffer.addAttribute(PluginAttr("pixels_type", pixelFormat));
-			rawBitmapBuffer.addAttribute(PluginAttr("width", raster->getXres()));
-			rawBitmapBuffer.addAttribute(PluginAttr("height", raster->getYres()));
-
-			res = exportPlugin(rawBitmapBuffer);
-		}
-
-		delete raster;
+	Attrs::PluginDesc rawBitmapBuffer(getPluginName(&copNode, "RawBitmapBuffer"), "RawBitmapBuffer");
+	if (fillCopNodeBitmapBuffer(copNode, rawBitmapBuffer)) {
+		res = exportPlugin(rawBitmapBuffer);
 	}
 
 	return res;

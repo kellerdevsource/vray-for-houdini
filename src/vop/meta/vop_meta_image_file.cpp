@@ -11,6 +11,9 @@
 #include "vop_meta_image_file.h"
 #include "vfh_prm_templates.h"
 #include "vfh_tex_utils.h"
+#include "vfh_attr_utils.h"
+
+#include <COP2/COP2_Node.h>
 
 #include <map>
 #include <vector>
@@ -119,6 +122,8 @@ void MetaImageFile::setPluginType()
 
 OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
+	const fpreal t = exporter.getContext().getTime();
+
 	const UVWGenSocketsTable &selectedUVWGen = getUVWGenInputs();
 
 	const UVWGenType current = getUVWGenType();
@@ -126,8 +131,8 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 
 	Attrs::PluginDesc selectedUVPluginDesc(VRayExporter::getPluginName(*this, selectedUVWGenName.c_str()), selectedUVWGenName.c_str());
 
-	for (int i = 0; i < selectedUVWGen.size(); i++) {
-		const std::string inputName(selectedUVWGen[i].label);
+	for (const UVWGenSocket &it : selectedUVWGen) {
+		const std::string &inputName = it.label;
 
 		const int idx = getInputFromName(inputName.c_str());
 
@@ -135,15 +140,35 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 		if (connectedInput) {
 			const VRay::Plugin connectedPlugin = exporter.exportVop(connectedInput, parentContext);
 			if (connectedPlugin) {
-				const Parm::SocketDesc *fromSocketInfo = exporter.getConnectedOutputType(this, inputName);
+				const Parm::SocketDesc *fromSocketInfo = VRayExporter::getConnectedOutputType(this, inputName);
 				selectedUVPluginDesc.addAttribute(Attrs::PluginAttr(inputName, connectedPlugin, fromSocketInfo->attrName.ptr()));
 			}
 		}
 	}
 
-	exporter.setAttrsFromOpNodePrms(selectedUVPluginDesc, this, boost::str(Parm::FmtPrefix % selectedUVWGenName.buffer()).c_str());
+	exporter.setAttrsFromOpNodePrms(selectedUVPluginDesc, this, boost::str(Parm::FmtPrefix % selectedUVWGenName.buffer()));
 
-	Attrs::PluginDesc bitmapBufferDesc(VRayExporter::getPluginName(*this, "BitmapBuffer"), "BitmapBuffer");
+	Attrs::PluginDesc bitmapBufferDesc;
+	bitmapBufferDesc.pluginName = VRayExporter::getPluginName(*this, "BitmapBuffer");
+	bitmapBufferDesc.pluginID = "BitmapBuffer";
+
+	UT_String path;
+	evalString(path, "BitmapBuffer_file", 0, t);
+	if (path.startsWith(OPREF_PREFIX)) {
+		OP_Node *opNode = getOpNodeFromPath(path, t);
+		if (opNode) {
+			COP2_Node *copNode = opNode->castToCOP2Node();
+			if (copNode) {
+				bitmapBufferDesc.pluginID = "RawBitmapBuffer";
+				bitmapBufferDesc.addAttribute(Attrs::PluginAttr("file", Attrs::PluginAttr::AttrTypeIgnore));
+
+				if (!exporter.fillCopNodeBitmapBuffer(*copNode, bitmapBufferDesc)) {
+					Log::getLog().error("Failed to bake texture data from \"%s\"", copNode->getName().buffer());
+				}
+			}
+		}
+	}
+
 	exporter.setAttrsFromOpNodePrms(bitmapBufferDesc, this, "BitmapBuffer_");
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("bitmap", exporter.exportPlugin(bitmapBufferDesc)));

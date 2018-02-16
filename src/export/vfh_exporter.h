@@ -298,6 +298,12 @@ public:
 	/// @param path String value: file or node path.
 	VRay::Plugin exportNodeFromPath(const UT_String &path);
 
+	///	Fill RawBitmapBuffer parameters from COP node.
+	/// @param copNode COP2 node.
+	/// @param pluginDesc Plugin description.
+	/// @returns True on success.
+	int fillCopNodeBitmapBuffer(COP2_Node &copNode, Attrs::PluginDesc &pluginDesc);
+
 	///	Exports COP node as RawBitmapBuffer.
 	/// @param copNode COP2 node.
 	VRay::Plugin exportCopNodeBitmapBuffer(COP2_Node &copNode);
