@@ -233,6 +233,20 @@ std::string VRayExporter::getPluginName(OBJ_Node &objNode)
 	return VRayExporter::getPluginName(&objNode);
 }
 
+VRay::VUtils::CharStringRefList VRayExporter::getSceneName(const OP_Node &opNode)
+{
+	VRay::VUtils::CharStringRefList sceneName(1);
+	sceneName[0].set(opNode.getName().buffer());
+	return sceneName;
+}
+
+VRay::VUtils::CharStringRefList VRayExporter::getSceneName(const tchar *name)
+{
+	VRay::VUtils::CharStringRefList sceneName(1);
+	sceneName[0].set(name);
+	return sceneName;
+}
+
 VRay::Transform VRayExporter::Matrix4ToTransform(const UT_Matrix4D &m, bool flip)
 {
 	VRay::Transform tm;
@@ -249,7 +263,6 @@ VRay::Transform VRayExporter::Matrix4ToTransform(const UT_Matrix4D &m, bool flip
 
 	return tm;
 }
-
 
 VRay::Transform VRayExporter::getObjTransform(OBJ_Node *obj_node, OP_Context &context, bool flip)
 {
@@ -640,9 +653,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 
 			// Set "scene_name" for Cryptomatte.
 			if (vutils_strcmp(conPlugin.getType(), "MtlSingleBRDF") == 0) {
-				VRay::ValueList sceneName(1);
-				sceneName[0] = VRay::Value(vopNode->getName().buffer());
-				conPlugin.setValue("scene_name", sceneName);
+				conPlugin.setValue("scene_name", getSceneName(*vopNode));
 			}
 
 			setPluginValueFromConnectedPluginInfo(pluginDesc, attrName.ptr(), conPluginInfo);
