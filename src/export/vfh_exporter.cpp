@@ -1016,22 +1016,23 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		frames[0].setDouble(getContext().getFloatFrame());
 	}
 	else {
-		const fpreal frameStart = CAST_ROPNODE(m_rop)->FSTART();
-		frames[0].setDouble(frameStart);
+		animInfo.frameStart = CAST_ROPNODE(m_rop)->FSTART();
+		animInfo.frameEnd = CAST_ROPNODE(m_rop)->FEND();
+
+		frames[0].setDouble(animInfo.frameStart);
 
 		if (m_frames > 1) {
-			const fpreal frameEnd = CAST_ROPNODE(m_rop)->FEND();
-
-			if (CAST_ROPNODE(m_rop)->FINC() > 1) {
+			animInfo.frameStep = CAST_ROPNODE(m_rop)->FINC();
+			if (animInfo.frameStep > 1) {
 				frames = VRay::VUtils::ValueRefList(m_frames);
 				for (int i = 0; i < m_frames; ++i) {
-					frames[i].setDouble(frameStart + i * CAST_ROPNODE(m_rop)->FINC());
+					frames[i].setDouble(animInfo.frameStart + i * CAST_ROPNODE(m_rop)->FINC());
 				}
 			}
 			else {
 				VRay::VUtils::ValueRefList frameRange(2);
-				frameRange[0].setDouble(frameStart);
-				frameRange[1].setDouble(frameEnd);
+				frameRange[0].setDouble(animInfo.frameStart);
+				frameRange[1].setDouble(animInfo.frameEnd);
 				frames[0].setList(frameRange);
 			}
 		}
@@ -2566,6 +2567,8 @@ void VRayExporter::exportEnd()
 					job.width = m_viewParams.renderSize.w;
 					job.height = m_viewParams.renderSize.h;
 					job.animation = m_isAnimation;
+					job.frameRange = Cloud::Job::FrameRange(animInfo.frameStart, animInfo.frameStart);
+					job.frameStep = animInfo.frameStep;
 
 					Cloud::submitJob(job);
 				}

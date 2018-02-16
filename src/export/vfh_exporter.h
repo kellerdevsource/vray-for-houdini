@@ -651,6 +651,20 @@ private:
 	fpreal                         m_timeEnd; ///< end time for the export
 	FloatSet                       m_exportedFrames; ///< set of time points at which the scene has already been exported
 
+	struct AnimInfo {
+		/// Start frame.
+		fpreal frameStart = 0;
+
+		/// End frame.
+		fpreal frameEnd = 0;
+
+		/// Frame increment step.
+		int frameStep = 1;
+	};
+
+	/// Animation settings.
+	AnimInfo animInfo;
+
 	/// Object exporter.
 	ObjectExporter objectExporter;
 
