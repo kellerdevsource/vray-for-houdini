@@ -47,13 +47,14 @@ void ImdisplayThread::add(TileQueueMessage *msg)
 	if (msg->type() == TileQueueMessage::TileQueueMessageType::messageTypeImageHeader) {
 		// Clear the queue if new resolution comes.
 		for (TileQueueMessage *message : queue) {
-			delete message;
+			FreePtr(message);
 		}
 		queue.clear();
 	}
 	else {
 		// Remove previous messages of the same type.
-		QList<int> indexesToRemove;
+		typedef QList<int> QIntList;
+		QIntList indexesToRemove;
 		int indexToRemove = 0;
 		for (const TileQueueMessage *queueMsg : queue) {
 			if (queueMsg->type() == msg->type()) {
@@ -63,9 +64,11 @@ void ImdisplayThread::add(TileQueueMessage *msg)
 		}
 
 		for (const int index : indexesToRemove) {
-			TileQueueMessage *queueMsg = queue[index];
-			queue.removeAt(index);
-			delete queueMsg;
+			FreePtr(queue[index]);
+		}
+
+		for (QIntList::reverse_iterator it = indexesToRemove.rbegin(); it != indexesToRemove.rend(); ++it) {
+			queue.removeAt(*it);
 		}
 	}
 
@@ -117,6 +120,10 @@ void ImdisplayThread::run()
 			}
 			case TileQueueMessage::messageTypeImageTiles: {
 				processTileMessage(static_cast<TileImageMessage&>(*msg));
+				break;
+			}
+			case TileQueueMessage::messageTypeProgress: {
+				processProgressMessage(static_cast<TileProgressMessage&>(*msg));
 				break;
 			}
 			default: {
@@ -204,6 +211,22 @@ void ImdisplayThread::processTileMessage(TileImageMessage &msg)
 
 		planeIndex++;
 	}
+}
+
+void ImdisplayThread::processProgressMessage(const TileProgressMessage &msg) const
+{
+	if (!isRunning)
+		return;
+
+	VUtils::Table<const char*, 1> msgData(1, NULL);
+	msgData[0] = _toChar(msg.message);
+
+	Log::getLog().debug("IPR: Received message: \"%s\"", msgData[0]);
+
+	device->writeKnownTag(IMG_TAG_PROGRESS, 1, msgData.elements);
+	//device->writeKnownTag(IMG_TAG_SOURCE_NAME, 1, msgData.elements);
+	//device->writeKnownTag(IMG_TAG_PROGRESS_MSG, 1, msgData.elements);
+	//device->writeKnownTag(IMG_TAG_PROGRESS_ACTION, 1, msgData.elements);
 }
 
 void ImdisplayThread::writeTileBuckets(int planeIndex, const TileImage &image)

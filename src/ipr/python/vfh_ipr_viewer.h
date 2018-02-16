@@ -24,8 +24,9 @@ void initImdisplay(VRay::VRayRenderer &renderer, const char *ropName);
 
 void onRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *image, void *userData);
 void onImageReady(VRay::VRayRenderer &renderer, void *userData);
-void onBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char* host, VRay::VRayImage *img, void *userData);
-void onRenderStart(VRay::VRayRenderer &renderer, void *userData);
+void onBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char* host, VRay::VRayImage *image, void *userData);
+
+void onProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount, void *data);
 
 } // namespace VRayForHoudini
 

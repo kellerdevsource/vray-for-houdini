@@ -64,6 +64,7 @@ struct TileQueueMessage {
 		messageTypeNone = -1,
 		messageTypeImageHeader = 0,
 		messageTypeImageTiles,
+		messageTypeProgress,
 	};
 
 	virtual ~TileQueueMessage() = default;
@@ -108,6 +109,15 @@ struct TileImageMessage
 	PlaneImages images;
 };
 
+struct TileProgressMessage
+	: TileQueueMessage
+{
+	TileQueueMessageType type() const VRAY_OVERRIDE { return messageTypeProgress; }
+
+	QString message;
+	float percentage = 0.0f;
+};
+
 /// A queue of pipe writing tasks.
 typedef QQueue<TileQueueMessage*> TileMessageQueue;
 
@@ -148,6 +158,8 @@ private:
 	/// Writes image tile message to the pipe.
 	/// @param msg TileImageMessage message.
 	void processTileMessage(TileImageMessage &msg);
+
+	void processProgressMessage(const TileProgressMessage &msg) const;
 
 	/// Writes image tile to the pipe splitted into buckets.
 	/// @param planeIndex Image plane index.

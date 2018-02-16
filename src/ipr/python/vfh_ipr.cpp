@@ -416,20 +416,22 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 
 		if (WithExporter lk{}) {
 			VRayExporter &exporter = lk.getExporter();
-			exporter.getRenderer().getVRay().setOnImageReady(onImageReady);
-			exporter.getRenderer().getVRay().setOnRTImageUpdated(onRTImageUpdated);
-			exporter.getRenderer().getVRay().setOnBucketReady(onBucketReady);
+			exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
+
+			setExportTime(exporter, now);
+		}
+
+		if (WithExporter lk{}) {
+			VRayExporter &exporter = WithExporter::getExporter();
 
 			exporter.getRenderer().getVRay().setKeepBucketsInCallback(true);
 			exporter.getRenderer().getVRay().setKeepRTframesInCallback(true);
 			exporter.getRenderer().getVRay().setRTImageUpdateTimeout(1000);
-		}
 
-		if (WithExporter lk{}) {
-			VRayExporter &exporter = lk.getExporter();
-			exporter.initExporter(getFrameBufferType(*ropNode), 1, now, now);
-
-			setExportTime(exporter, now);
+			exporter.getRenderer().getVRay().setOnImageReady(onImageReady);
+			exporter.getRenderer().getVRay().setOnRTImageUpdated(onRTImageUpdated);
+			exporter.getRenderer().getVRay().setOnBucketReady(onBucketReady);
+			exporter.getRenderer().getVRay().setOnProgress(onProgress);
 		}
 
 		if (WithExporter lk{}) {
