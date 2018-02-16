@@ -29,26 +29,22 @@ struct TileImage {
 		, y0(0)
 		, y1(0)
 	{}
+	~TileImage();
 
-	~TileImage() {
-		FreePtr(image);
-	}
-
-	void setRegion(const VRay::ImageRegion &region) {
-		x0 = region.getX();
-		y0 = region.getY();
-
-		// Those are inclusive.
-		x1 = x0 + region.getWidth() - 1;
-		y1 = y0 + region.getHeight() - 1;
-	}
+	/// Sets image tile region.
+	/// @param region Image region.
+	void setRegion(const VRay::ImageRegion &region);
 
 	/// Flips image rows.
 	void flipImage() const;
 
-	mutable VRay::VRayImage *image;
+	/// Image data.
+	mutable VRay::VRayImage *image = nullptr;
+
+	/// Image plane name.
 	QString name;
 
+	/// Image region.
 	int x0;
 	int x1;
 	int y0;
@@ -66,7 +62,6 @@ struct TileQueueMessage {
 		messageTypeImageTiles,
 		messageTypeProgress,
 	};
-
 	virtual ~TileQueueMessage() = default;
 
 	/// Returns message type.
@@ -97,12 +92,7 @@ struct TileImageMessage
 	explicit TileImageMessage(const PlaneImages &images)
 		: images(images)
 	{}
-
-	virtual ~TileImageMessage() {
-		for (const TileImage *image : images) {
-			delete image;
-		}
-	}
+	~TileImageMessage() VRAY_DTOR_OVERRIDE;
 
 	TileQueueMessageType type() const VRAY_OVERRIDE { return messageTypeImageTiles; }
 
@@ -115,7 +105,7 @@ struct TileProgressMessage
 	TileQueueMessageType type() const VRAY_OVERRIDE { return messageTypeProgress; }
 
 	QString message;
-	float percentage = 0.0f;
+	int percentage = 0;
 };
 
 /// A queue of pipe writing tasks.
@@ -159,6 +149,8 @@ private:
 	/// @param msg TileImageMessage message.
 	void processTileMessage(TileImageMessage &msg);
 
+	/// Writes progess tag to pipe.
+	/// @param msg TileProgressMessage message.
 	void processProgressMessage(const TileProgressMessage &msg) const;
 
 	/// Writes image tile to the pipe splitted into buckets.
@@ -170,6 +162,9 @@ private:
 	/// @param planeIndex Image plane index.
 	/// @param image Image data.
 	void writeTile(int planeIndex, const TileImage &image);
+
+	/// Frees all queued messages.
+	void freeQueue();
 
 	/// MPlay Port.
 	int port = 0;
