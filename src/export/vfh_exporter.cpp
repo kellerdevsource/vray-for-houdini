@@ -951,15 +951,13 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 				numPaddedDigits = frameMatchRes.captured(frameNumberMatchedItemFramePadding).toInt();
 			}
 
-			const QString paddedDigits(numPaddedDigits, '#');
-
-			filePathRaw = filePathRaw.replace(frameMatch, paddedDigits);
+			filePathRaw = filePathRaw.replace(frameMatch, "#");
 
 			Log::getLog().debug("Output path: %s", _toChar(filePathRaw));
 
 			pluginDesc.addAttribute(Attrs::PluginAttr("img_file_needFrameNumber", 1));
+			pluginDesc.addAttribute(Attrs::PluginAttr("anim_frame_padding", numPaddedDigits));
 		}
-
 
 		UT_String reconstructedPath(_toChar(filePathRaw));
 		UT_String dirPathRaw;
