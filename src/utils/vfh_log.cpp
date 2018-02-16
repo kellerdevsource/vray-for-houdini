@@ -144,7 +144,7 @@ public:
 	}
 
 	void add(const VfhLogMessage &msg) {
-		if (isConsoleAttached) {
+		if (isConsoleAttached && isWorking) {
 			QMutexLocker lock(&mutex);
 			queue.enqueue(msg);
 		}
@@ -186,7 +186,7 @@ private:
 
 	/// Queue lock.
 	QMutex mutex;
-	QAtomicInt isWorking;
+	QAtomicInt isWorking = false;
 
 	/// Log message queue.
 	VfhLogQueue queue;
