@@ -36,6 +36,9 @@ static int vrayCloudClientChecked(false);
 /// Not allowed characters regular expression.
 static QRegExp cloudNameFilter("[^a-zA-Z\\d\\s\\_\\-.,\\(\\)\\[\\]]");
 
+/// Frame range argument format.
+static const QString frameRangeFmt("%1-%2");
+
 /// Only letters, digits, spaces and _-.,()[] allowed.
 /// NOTE: QString::remove is non-const.
 static QString filterName(QString value)
@@ -168,7 +171,7 @@ void Job::toArguments(const Job &job, QStringList &arguments)
 
 	if (job.animation) {
 		arguments << "--animation";
-		arguments << "--frameRange" << QString::number(job.frameRange.first) << QString::number(job.frameRange.second);
+		arguments << "--frameRange" << frameRangeFmt.arg(job.frameRange.first).arg(job.frameRange.second);
 		arguments << "--frameStep" << QString::number(job.frameStep);
 	}
 
