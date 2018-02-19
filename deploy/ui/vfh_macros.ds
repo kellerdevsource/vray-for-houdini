@@ -3,6 +3,8 @@
 
 #include "$VRAY_UI_DS_PATH/vfh_prefix.ds"
 
+#define VFH_TAG_VRAY parmtag { "vray_parm" "1" }
+
 #define VRAY_UI_PARM(NAME, LABEL, HELP, TYPE, SIZE, DEFAULT) \
     VFH_NAME(NAME) \
     label LABEL \
@@ -11,6 +13,7 @@
     type TYPE \
     default { DEFAULT } \
     parmtag { spare_category "VfhUI" } \
+    VFH_TAG_VRAY \
     parmtag { "cook_dependent" "1" } \
     parmtag { "vray_custom_handling" "1" }
 
@@ -49,6 +52,7 @@ parm { \
     default { DEFAULT } \
     parmtag { spare_category "VfhPluginUI" } \
     parmtag { "cook_dependent" "1" } \
+    VFH_TAG_VRAY \
     parmtag { "vray_plugin" PLUGIN } \
     parmtag { "vray_pluginattr" NAME } \
     parmtag { "vray_type" VRAY_TYPE }

@@ -1,11 +1,12 @@
 #include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 {
-    name VRayRenderer
-    label "V-Ray Renderer"
+    name VRayRendererIPR
+    label "V-Ray IPR Renderer"
 
     parmtag { spare_classtags "render" }
-    parmtag { spare_category "V-Ray Renderer" }
+    parmtag { spare_category "V-Ray Renderer IPR" }
     VFH_TAG_VRAY
 
+#define VRAY_UI_IPR
 #include "$VRAY_UI_DS_PATH/vfh_rop_parms.ds"
 }

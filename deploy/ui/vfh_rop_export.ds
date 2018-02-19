@@ -1,8 +1,10 @@
 #include "$VRAY_UI_DS_PATH/vfh_macros.ds"
+
 /*
 groupsimple {
     name "VrayRendererFolderUIStyle"
     label "UI"
+    VRAY_TAG_PARM
 
     parm {
         name "ui_style"
@@ -13,10 +15,12 @@ groupsimple {
             1 "Advanced"
         }
         default { "1" }
+        VRAY_TAG_PARM
     }
 }
 */
 
+#ifndef VRAY_UI_IPR
 groupsimple {
     name "VRayRendererFolderDriverProduction"
     label "Production"
@@ -31,6 +35,7 @@ groupsimple {
             2 "GPU (OpenCL)"
         }
         default { "0" }
+        VFH_TAG_VRAY
     }
 
     VFH_UI_PARM_TOGGLE("render_in_cloud", "Submit To Cloud", "Submit job to V-Ray Cloud", 0)
@@ -42,6 +47,7 @@ groupsimple {
         type string
         default { "VRayForHoudini" }
         VFH_DISABLE_WHEN_PARAM_FALSE("render_in_cloud")
+        VFH_TAG_VRAY
     }
 
     parm {
@@ -51,8 +57,10 @@ groupsimple {
         type string
         default { "${HIPNAME}" }
         VFH_DISABLE_WHEN_PARAM_FALSE("render_in_cloud")
+        VFH_TAG_VRAY
     }
 }
+#endif
 
 groupsimple {
     name "VRayRendererFolderDriverIPR"
@@ -68,16 +76,20 @@ groupsimple {
             2 "GPU (OpenCL)"
         }
         default { "0" }
+        VFH_TAG_VRAY
     }
 
     VFH_UI_PARM_TOGGLE("vfh_use_camera_settings", "Use Physical Camera Settings for Viewport IPR", "", 1)
 
+#ifndef VRAY_UI_IPR
     parm {
         name "render_rt"
         label "Render RT"
         type button
         hidewhen "{ render_rt_output == "0" } { render_rt_update_mode == "1" }"
+        VFH_TAG_VRAY
     }
+#endif
 }
 
 groupsimple {
@@ -93,8 +105,10 @@ groupsimple {
             "1" "Debug"
         }
         default { "0" }
+        VFH_TAG_VRAY
     }
 
+#ifndef VRAY_UI_IPR
     parm {
         name "render_export_mode"
         label "Export Mode"
@@ -105,6 +119,7 @@ groupsimple {
             2 "Export"
         }
         default { "0" }
+        VFH_TAG_VRAY
     }
 
     parm {
@@ -113,6 +128,7 @@ groupsimple {
         type file
         default { "${HIP}/${HIPNAME}.vrscene" }
         disablewhen "{ render_export_mode == 0 }"
+        VFH_TAG_VRAY
     }
 
     parm {
@@ -121,6 +137,7 @@ groupsimple {
         type    toggle
         default { "1" }
         disablewhen "{ render_export_mode == 0 }"
+        VFH_TAG_VRAY
     }
 
     parm {
@@ -130,5 +147,7 @@ groupsimple {
         default { "1" }
         disablewhen "{ render_export_mode == 0 }"
         hidewhen "{ exp_compressed == 1 }"
+        VFH_TAG_VRAY
     }
+#endif
 }
