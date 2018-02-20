@@ -70,6 +70,19 @@ void VRayForHoudini::onImageReady(VRay::VRayRenderer &renderer, void*)
 	addImages(renderer, renderer.getImage(), 0, 0);
 }
 
+void VRayForHoudini::onProgress(VRay::VRayRenderer& /*renderer*/, const char *msg, int elementNumber, int elementsCount, void *data)
+{
+	const QString text(QString(msg).simplified());
+
+	const int percentage = 100.0f * float(elementNumber) / float(elementsCount);
+
+	TileProgressMessage *progMsg = new TileProgressMessage;
+	progMsg->message = text;
+	progMsg->percentage = percentage;
+
+	imdisplayThread.add(progMsg);
+}
+
 ImdisplayThread & VRayForHoudini::getImdisplay()
 {
 	return imdisplayThread;

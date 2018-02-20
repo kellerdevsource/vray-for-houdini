@@ -14,66 +14,16 @@ import os
 from vfh import vfh_reload
 from vfh import vfh_attrs
 from vfh import vfh_json
+from vfh import vfh_ptg_utils
 
 vfh_reload.reload(vfh_attrs)
 vfh_reload.reload(vfh_json)
-
-UI_FILEPATHS = {}
-
-if not UI_FILEPATHS:
-    dsDirPath = os.environ.get('VRAY_UI_DS_PATH', None)
-    assert dsDirPath
-
-    for root, dirs, files in os.walk(dsDirPath):
-        for f in files:
-            if f.endswith(".ds"):
-                dsFileName = os.path.splitext(f)[0]
-                UI_FILEPATHS[dsFileName] = os.path.join(root, f)
+vfh_reload.reload(vfh_ptg_utils)
 
 VRAY_FOLDER = "V-Ray"
 DISPLACEMENT_FOLDER = (VRAY_FOLDER, "Displacement")
 HAIR_FOLDER = (VRAY_FOLDER, "Hair")
 OBJECT_PROPERTIES_FOLDER = (VRAY_FOLDER, "Object Properties")
-
-def ptgParmTemplatesIt(ptg):
-    for pt in ptg.parmTemplates():
-        yield pt
-
-        if pt.type() == hou.parmTemplateType.Folder and pt.isActualFolder():
-            for _pt in ptgParmTemplatesIt(pt):
-                yield _pt
-
-def _getDsFilePathFromName(fileName):
-    assert fileName in UI_FILEPATHS
-    return UI_FILEPATHS[fileName]
-
-def _getParmTemplatesFromDS(fileName, prefix=None):
-    pluginDs = _getDsFilePathFromName(fileName)
-
-    pluginPtg = hou.ParmTemplateGroup()
-
-    # This will make attribute names prefixed with plugin ID name.
-    pluginPrefixDef = "" if not prefix else "#define PREFIX \"%s_\"\n\n" % (prefix)
-
-    dsContents = pluginPrefixDef + open(pluginDs, 'r').read()
-
-    pluginPtg.setToDialogScript(dsContents)
-
-    return pluginPtg.parmTemplates()
-
-def _removeFolderIfEmpty(ptg, folderName, removeNotEmpty=False):
-    folderParm = ptg.findFolder(folderName)
-    if not folderParm:
-        return
-    if not folderParm.type() == hou.parmTemplateType.Folder:
-        return
-    if not folderParm.isActualFolder():
-        return
-
-    if not removeNotEmpty and len(folderParm.parmTemplates()):
-        return
-
-    ptg.remove(folderParm)
 
 def _addVRayFolder(ptg):
     if ptg.findFolder(VRAY_FOLDER):
@@ -128,7 +78,7 @@ def _addDisplacementControls(ptg, vrayFolder):
     }))
 
     ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_displ_folder_GeomDisplacedMesh", "Displacement", **{
-        'parm_templates' : (_getParmTemplatesFromDS("GeomDisplacedMesh", prefix="GeomDisplacedMesh")),
+        'parm_templates' : (vfh_ptg_utils.getParmTemplatesFromDS("GeomDisplacedMesh", prefix="GeomDisplacedMesh")),
         'folder_type' : hou.folderType.Simple,
         'tags' : {
             'spare_category': 'vray'
@@ -139,7 +89,7 @@ def _addDisplacementControls(ptg, vrayFolder):
     }))
 
     ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_displ_folder_GeomStaticSmoothedMesh", "Subdivision", **{
-        'parm_templates' : (_getParmTemplatesFromDS("GeomStaticSmoothedMesh", prefix ="GeomStaticSmoothedMesh")),
+        'parm_templates' : (vfh_ptg_utils.getParmTemplatesFromDS("GeomStaticSmoothedMesh", prefix ="GeomStaticSmoothedMesh")),
         'folder_type' : hou.folderType.Simple,
         'tags' : {
             'spare_category': 'vray'
@@ -171,7 +121,7 @@ def _addDisplacementControls(ptg, vrayFolder):
 
 def _addVRayHairParmTemplates(ptg, vrayFolder):
     ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_displ_folder_GeomMayaHair", "Hair", **{
-        'parm_templates' : (_getParmTemplatesFromDS("GeomMayaHair", prefix="GeomMayaHair")),
+        'parm_templates' : (vfh_ptg_utils.getParmTemplatesFromDS("GeomMayaHair", prefix="GeomMayaHair")),
         'folder_type' : hou.folderType.Simple,
         'tags' : {
             'spare_category': 'vray'
@@ -180,7 +130,7 @@ def _addVRayHairParmTemplates(ptg, vrayFolder):
 
 def _addVRayObjectPropertiesParmTemplates(ptg, vrayFolder):
     ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_object_properties_folder_main", "Main", **{
-        'parm_templates' : (_getParmTemplatesFromDS("vfh_object_properties")),
+        'parm_templates' : (vfh_ptg_utils.getParmTemplatesFromDS("vfh_object_properties")),
         'folder_type' : hou.folderType.Simple,
         'tags' : {
             'spare_category': 'vray'
@@ -188,7 +138,7 @@ def _addVRayObjectPropertiesParmTemplates(ptg, vrayFolder):
     }))
 
     ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_object_properties_folder_wrapper", "Wrapper", **{
-        'parm_templates' : (_getParmTemplatesFromDS("MtlWrapper", prefix="MtlWrapper")),
+        'parm_templates' : (vfh_ptg_utils.getParmTemplatesFromDS("MtlWrapper", prefix="MtlWrapper")),
         'folder_type' : hou.folderType.Simple,
         'tags' : {
             'spare_category': 'vray'
@@ -198,8 +148,8 @@ def _addVRayObjectPropertiesParmTemplates(ptg, vrayFolder):
 def addVRayDisplamentParams(node):
     ptg = node.parmTemplateGroup()
 
-    _removeFolderIfEmpty(ptg, DISPLACEMENT_FOLDER, removeNotEmpty=True)
-    _removeFolderIfEmpty(ptg, VRAY_FOLDER)
+    vfh_ptg_utils.removeFolderIfEmpty(ptg, DISPLACEMENT_FOLDER, removeNotEmpty=True)
+    vfh_ptg_utils.removeFolderIfEmpty(ptg, VRAY_FOLDER)
 
     _addVRayFolder(ptg)
     _addVRayDisplacementFolder(ptg)
@@ -210,8 +160,8 @@ def addVRayDisplamentParams(node):
 def addVRayHairParams(node):
     ptg = node.parmTemplateGroup()
 
-    _removeFolderIfEmpty(ptg, HAIR_FOLDER, removeNotEmpty=True)
-    _removeFolderIfEmpty(ptg, VRAY_FOLDER)
+    vfh_ptg_utils.removeFolderIfEmpty(ptg, HAIR_FOLDER, removeNotEmpty=True)
+    vfh_ptg_utils.removeFolderIfEmpty(ptg, VRAY_FOLDER)
 
     _addVRayFolder(ptg)
     _addVRayHairFolder(ptg)
@@ -222,8 +172,8 @@ def addVRayHairParams(node):
 def addVRayObjectProperties(node):
     ptg = node.parmTemplateGroup()
 
-    _removeFolderIfEmpty(ptg, OBJECT_PROPERTIES_FOLDER, removeNotEmpty=True)
-    _removeFolderIfEmpty(ptg, VRAY_FOLDER)
+    vfh_ptg_utils.removeFolderIfEmpty(ptg, OBJECT_PROPERTIES_FOLDER, removeNotEmpty=True)
+    vfh_ptg_utils.removeFolderIfEmpty(ptg, VRAY_FOLDER)
 
     _addVRayFolder(ptg)
     _addVRayObjectPropertiesFolder(ptg)

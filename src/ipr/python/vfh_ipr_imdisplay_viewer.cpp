@@ -19,6 +19,13 @@ using namespace VRayForHoudini;
 
 static const int tileSize = 128;
 
+TileImageMessage::~TileImageMessage()
+{
+	for (const TileImage *image : images) {
+		delete image;
+	}
+}
+
 ImdisplayThread::ImdisplayThread()
 {
 	setObjectName("ImdisplayThread");
@@ -44,28 +51,19 @@ void ImdisplayThread::add(TileQueueMessage *msg)
 {
 	QMutexLocker locker(&mutex);
 
-	if (msg->type() == TileQueueMessage::TileQueueMessageType::messageTypeImageHeader) {
+	if (msg->type() == TileQueueMessage::messageTypeImageHeader) {
 		// Clear the queue if new resolution comes.
-		for (TileQueueMessage *message : queue) {
-			delete message;
-		}
-		queue.clear();
+		freeQueue();
 	}
 	else {
 		// Remove previous messages of the same type.
-		QList<int> indexesToRemove;
-		int indexToRemove = 0;
-		for (const TileQueueMessage *queueMsg : queue) {
+		QMutableListIterator<TileQueueMessage*> queueIt(queue);
+		while (queueIt.hasNext()) {
+			const TileQueueMessage *queueMsg = queueIt.next();
 			if (queueMsg->type() == msg->type()) {
-				indexesToRemove.append(indexToRemove);
+				delete queueMsg;
+				queueIt.remove();
 			}
-			indexToRemove++;
-		}
-
-		for (const int index : indexesToRemove) {
-			TileQueueMessage *queueMsg = queue[index];
-			queue.removeAt(index);
-			delete queueMsg;
 		}
 	}
 
@@ -75,6 +73,11 @@ void ImdisplayThread::add(TileQueueMessage *msg)
 void ImdisplayThread::clear()
 {
 	QMutexLocker locker(&mutex);
+	freeQueue();
+}
+
+void ImdisplayThread::freeQueue()
+{
 	for (const TileQueueMessage *msg : queue) {
 		delete msg;
 	}
@@ -119,6 +122,10 @@ void ImdisplayThread::run()
 				processTileMessage(static_cast<TileImageMessage&>(*msg));
 				break;
 			}
+			case TileQueueMessage::messageTypeProgress: {
+				processProgressMessage(static_cast<TileProgressMessage&>(*msg));
+				break;
+			}
 			default: {
 				break;
 			}
@@ -130,6 +137,21 @@ void ImdisplayThread::run()
 	clear();
 
 	FreePtr(device);
+}
+
+TileImage::~TileImage()
+{
+	FreePtr(image);
+}
+
+void TileImage::setRegion(const VRay::ImageRegion &region)
+{
+	x0 = region.getX();
+	y0 = region.getY();
+
+	// Those are inclusive.
+	x1 = x0 + region.getWidth() - 1;
+	y1 = y0 + region.getHeight() - 1;
 }
 
 void TileImage::flipImage() const
@@ -204,6 +226,27 @@ void ImdisplayThread::processTileMessage(TileImageMessage &msg)
 
 		planeIndex++;
 	}
+}
+
+void ImdisplayThread::processProgressMessage(const TileProgressMessage &msg) const
+{
+	if (!isRunning)
+		return;
+#if 0
+	const QString percentage(QString::number(msg.percentage));
+
+	VUtils::Table<const char*, 1> msgData(1, NULL);
+	msgData[0] = _toChar(msg.message);
+
+	VUtils::Table<const char*, 1> percData(1, NULL);
+	percData[0] = _toChar(percentage);
+
+	Log::getLog().debug("IPR: Received message: \"%s\" %s", msgData[0], percData[0]);
+
+	// This locks sometimes...
+	// device->writeKnownTag(IMG_TAG_PROGRESS_MSG, 1, msgData.elements);
+	// device->writeKnownTag(IMG_TAG_PROGRESS, 1, percData.elements);
+#endif
 }
 
 void ImdisplayThread::writeTileBuckets(int planeIndex, const TileImage &image)

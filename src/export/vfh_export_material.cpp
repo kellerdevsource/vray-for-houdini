@@ -53,9 +53,7 @@ VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
 		// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly.
 		Attrs::PluginDesc mtlPluginDesc(getPluginName(vopNode, "MtlSingle"), "MtlSingleBRDF");
 		mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", material));
-		VRay::ValueList sceneName(1);
-		sceneName[0] = VRay::Value(vopNode->getName().buffer());
-		mtlPluginDesc.addAttribute(Attrs::PluginAttr("scene_name", sceneName));
+		mtlPluginDesc.addAttribute(Attrs::PluginAttr("scene_name", getSceneName(*vopNode)));
 		material = exportPlugin(mtlPluginDesc);
 	}
 
@@ -122,9 +120,7 @@ VRay::Plugin VRayExporter::exportDefaultMaterial()
 
 		Attrs::PluginDesc mtlDesc(clayMaterial, "MtlSingleBRDF");
 		mtlDesc.addAttribute(Attrs::PluginAttr("brdf", exportPlugin(brdfDesc)));
-		VRay::ValueList sceneName(1);
-		sceneName[0] = VRay::Value("DEFAULT_MATERIAL");
-		mtlDesc.addAttribute(Attrs::PluginAttr("scene_name", sceneName));
+		mtlDesc.addAttribute(Attrs::PluginAttr("scene_name", getSceneName("DEFAULT_MATERIAL")));
 		material = exportPlugin(mtlDesc);
 
 		objectExporter.addPluginToCache(clayMaterial, material);

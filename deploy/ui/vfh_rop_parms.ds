@@ -1,0 +1,54 @@
+#ifndef VRAY_UI_IPR
+#include "$VRAY_UI_DS_PATH/vfh_rop_camera.ds"
+#endif
+
+parm {
+    name    "render_network_environment"
+    label   "Environment"
+    type    oppath
+    default { "" }
+    VFH_TAG_VRAY
+}
+
+group {
+    name "VRayRendererFolderExport"
+    label "Export"
+#include "$VRAY_UI_DS_PATH/vfh_rop_export.ds"
+    VFH_TAG_VRAY
+}
+
+group {
+    name "VRayRendererFolderOutput"
+    label "Images"
+#include "$VRAY_UI_DS_PATH/rop/SettingsOutputParm.ds"
+    VFH_TAG_VRAY
+}
+
+group {
+    name "VRayRendererFolderRenderer"
+    label "Renderer"
+#include "$VRAY_UI_DS_PATH/vfh_rop_renderer.ds"
+    VFH_TAG_VRAY
+}
+
+group {
+    name "VRayRendererFolderObjects"
+    label "Objects"
+#include "$VRAY_UI_DS_PATH/vfh_rop_objects.ds"
+    VFH_TAG_VRAY
+}
+
+group {
+    name "VRayRendererFolderScripts"
+    label "Scripts"
+#include "$VRAY_UI_DS_PATH/vfh_rop_scripts.ds"
+    VFH_TAG_VRAY
+}
+
+parm {
+    name "_vfb_settings"
+    type string
+    default { "" }
+    VFH_TAG_VRAY
+    invisible
+}

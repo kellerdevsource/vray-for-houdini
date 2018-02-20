@@ -53,6 +53,9 @@ static const QString preTag("<pre>%1</pre>");
 static const QRegExp urlMatch("((?:https?|ftp)://\\S+)");
 static const QString urlMatchReplace("<a href=\"\\1\">\\1</a>");
 
+/// Frame range argument format.
+static const QString frameRangeFmt("%1-%2");
+
 /// Only letters, digits, spaces and _-.,()[] allowed.
 static QString filterName(const QString &value)
 {
@@ -175,7 +178,7 @@ void Job::toArguments(const Job &job, QStringList &arguments)
 
 	if (job.animation) {
 		arguments << "--animation";
-		arguments << "--frameRange" << QString::number(job.frameRange.first) << QString::number(job.frameRange.second);
+		arguments << "--frameRange" << frameRangeFmt.arg(job.frameRange.first).arg(job.frameRange.second);
 		arguments << "--frameStep" << QString::number(job.frameStep);
 	}
 

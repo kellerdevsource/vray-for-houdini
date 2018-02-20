@@ -187,7 +187,7 @@ static VRay::VUtils::CharStringRefList getSceneName(const OP_Node &opNode, int p
 
 	UT_String nodePath;
 	opNode.getFullPath(nodePath);
-	nodePath.prepend("scene"); // getFullPath returns path starting with /
+	nodePath.prepend("scene"); // getFullPath() returns path starting with "/".
 
 	VRay::VUtils::CharStringRefList sceneName(2);
 	sceneName[0] = nodeName.buffer();
@@ -2077,7 +2077,7 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop
 
 	// NOTE [MacOS]: Do not remove namespace here.
 	Attrs::PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
-							   vrayPluginTypeNode.buffer());
+	                           vrayPluginTypeNode.buffer());
 
 	const VRay::Plugin geometry = exportGeometry(objNode, specificSop);
 	// May be NULL if geometry was not re-exported during RT sessions.
@@ -2085,8 +2085,9 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop
 		nodeDesc.add(PluginAttr("geometry", geometry));
 	}
 	nodeDesc.add(PluginAttr("material", pluginExporter.exportDefaultMaterial()));
-	nodeDesc.add(PluginAttr("transform", pluginExporter.getObjTransform(&objNode, ctx)));
+	nodeDesc.add(PluginAttr("transform", VRayExporter::getObjTransform(&objNode, ctx)));
 	nodeDesc.add(PluginAttr("visible", isNodeVisible(objNode)));
+	nodeDesc.add(PluginAttr("scene_name", getSceneName(objNode)));
 
 	return pluginExporter.exportPlugin(nodeDesc);
 }
