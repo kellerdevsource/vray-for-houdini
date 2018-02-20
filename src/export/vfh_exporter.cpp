@@ -2561,15 +2561,16 @@ void VRayExporter::exportEnd()
 
 	if (sessionType == VfhSessionType::cloud) {
 		if (m_error != ROP_ABORT_RENDER) {
-			JobFilePath jobFilePath;
-			if (jobFilePath.isValid()) {
-				const QString jobSceneFilePath = jobFilePath.getFilePath();
-
+			const QString &jobSceneFilePath = JobFilePath::createFilePath();
+			if (!jobSceneFilePath.isEmpty()) {
 				VRay::VRayExportSettings expSettings;
 				expSettings.useHexFormat = true;
 				expSettings.compressed = true;
 
-				if (!exportVrscene(jobSceneFilePath.toStdString(), expSettings)) {
+				if (exportVrscene(jobSceneFilePath.toStdString(), expSettings)) {
+					JobFilePath::removeFilePath(jobSceneFilePath);
+				}
+				else {
 					Cloud::Job job(jobSceneFilePath);
 
 					fillJobSettingsFromROP(*m_rop, job);
