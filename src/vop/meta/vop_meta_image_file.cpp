@@ -146,6 +146,14 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 		}
 	}
 
+	if (current == UVWGenEnvironment) {
+		VRay::Matrix uvwTm(1);
+		VUtils::swap(uvwTm[1], uvwTm[2]);
+		uvwTm[2].y = -uvwTm[2].y;
+
+		selectedUVPluginDesc.addAttribute(Attrs::PluginAttr("uvw_matrix", uvwTm));
+	}
+
 	exporter.setAttrsFromOpNodePrms(selectedUVPluginDesc, this, boost::str(Parm::FmtPrefix % selectedUVWGenName.buffer()));
 
 	Attrs::PluginDesc bitmapBufferDesc;

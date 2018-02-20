@@ -66,3 +66,15 @@ def ptgParmTemplatesIt(ptg):
         if pt.type() == hou.parmTemplateType.Folder and pt.isActualFolder():
             for _pt in ptgParmTemplatesIt(pt):
                 yield _pt
+
+def _getFirstNonTabParmTemplate(ptf):
+    return next((pt for pt in ptf.parmTemplates() if pt.type() != hou.parmTemplateType.Folder or pt.folderType() != hou.folderType.Tabs), None)
+
+def insertInFolderAfterLastTab(ptg, ptf, pt):
+    p = _getFirstNonTabParmTemplate(ptf)
+    if p:
+        ptg.insertBefore(p, pt)
+    elif isinstance(ptf, hou.ParmTemplateGroup):
+        ptg.append(pt)
+    elif isinstance(ptf, hou.FolderParmTemplate):
+        ptg.appendToFolder(ptf, pt)
