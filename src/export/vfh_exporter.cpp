@@ -588,8 +588,8 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 	for (int i = 0; i < pluginInfo->inputs.count(); ++i) {
 		const Parm::SocketDesc &curSockInfo = pluginInfo->inputs[i];
 
-		const VUtils::CharString &attrName = curSockInfo.attrName.ptr();
-		const VUtils::CharString &sockName = curSockInfo.socketLabel.ptr();
+		const VUtils::CharString &attrName = curSockInfo.attrName;
+		const VUtils::CharString &sockName = curSockInfo.socketLabel;
 
 		if (!pluginInfo->hasAttribute(attrName.ptr()) ||
 			pluginDesc.contains(attrName.ptr()))
