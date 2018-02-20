@@ -2577,7 +2577,7 @@ void VRayExporter::exportEnd()
 					job.width = m_viewParams.renderSize.w;
 					job.height = m_viewParams.renderSize.h;
 					job.animation = m_isAnimation;
-					job.frameRange = Cloud::Job::FrameRange(animInfo.frameStart, animInfo.frameStart);
+					job.frameRange = Cloud::Job::FrameRange(animInfo.frameStart, animInfo.frameEnd);
 					job.frameStep = animInfo.frameStep;
 
 					Cloud::submitJob(job);
