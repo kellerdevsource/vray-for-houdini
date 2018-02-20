@@ -105,8 +105,8 @@
             name    "coneAngle"
             label   "Cone Angle"
             type    angle
-            default { "1" }
-            help    "The entire spot cone, in degrees"
+            default { "45" }
+            help    "The entire spot cone"
             range   { 0 180 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -120,7 +120,7 @@
             label   "Penumbra Angle"
             type    angle
             default { "0" }
-            help    "The penumbra region, in radians; positive is outside the spot cone; negative is inside"
+            help    "The penumbra region; positive is outside the spot cone; negative is inside"
             range   { -40 40 }
             export  none
             parmtag { "cook_dependent" "1" }
