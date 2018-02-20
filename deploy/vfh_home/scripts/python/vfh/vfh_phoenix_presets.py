@@ -65,11 +65,11 @@ def _set_phx_presets(preset, shaderNode, cacheNode):
 		vals['emult'] = 0.4
 		vals['etmult'] = 1.0
 		vals['blackbody'] = 0.0
-		vals['fire_opacity_mode'] = 2 # Use Own Opacity
+		vals['fire_opacity_mode'] = '2' # Use Own Opacity
 
 		# smoke
-		vals['darg'] = 6 # Constant Color
-		vals['noscatter'] = 3 # Approximate + Shadows
+		vals['darg'] = '6' # Constant Color
+		vals['noscatter'] = '3' # Approximate + Shadows
 		vals['transfown'] = 0.8
 		vals['transfext'] = 0.5
 		vals['smoketransp'] = 0.5
@@ -78,24 +78,24 @@ def _set_phx_presets(preset, shaderNode, cacheNode):
 		vals['emult'] = 0.1
 		vals['etmult'] = 1.0
 		vals['blackbody'] = 0.0
-		vals['fire_opacity_mode'] = 1 # Fully Visible
+		vals['fire_opacity_mode'] = '1' # Fully Visible
 
 		# smoke
-		vals['noscatter'] = 3 # Approximate + Shadows
+		vals['noscatter'] = '3' # Approximate + Shadows
 		vals['smoketransp'] = 0.2
 	elif preset == 'HoudiniLiquid':
-		vals['renderMode'] = 4 # Mesh
+		vals['renderMode'] = '4' # Mesh
 	elif preset == 'MayaFluids':
 		# fire
 		vals['emult'] = 31.0
 		vals['blackbody'] = 0.0
-		vals['fire_opacity_mode'] = 0 # Use Smoke Opacity
+		vals['fire_opacity_mode'] = '0' # Use Smoke Opacity
 
 		# smoke
-		vals['darg'] = 6 # Constant color
-		vals['noscatter'] = 3 # Approximate + Shadows
+		vals['darg'] = '6' # Constant color
+		vals['noscatter'] = '3' # Approximate + Shadows
 		vals['transfext'] = 0.6
-		vals['targ'] = 2 # Smoke
+		vals['targ'] = '2' # Smoke
 
 	for key in vals:
 		shaderNode.parm(key).set(vals[key])
