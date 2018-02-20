@@ -197,13 +197,19 @@ void Job::toArguments(const Job &job, QStringList &arguments)
 	}
 }
 
+/// Cloud command holder.
 struct CloudCommand {
+	/// Executable.
 	QString command;
+
+	/// Arguments.
 	QStringList arguments;
 };
 
+/// A type for cloud commands queue.
 typedef QQueue<CloudCommand> CloudCommands;
 
+/// Upload progress window.
 class CloudWindow
 	: public QMainWindow
 {
@@ -387,16 +393,24 @@ protected:
 	QProgressBar *progress = nullptr;
 	QPushButton *stopButton = nullptr;
 
+	/// Process.
 	QProcess proc;
+
+	/// Upload command queue.
 	CloudCommands commands;
 
 private:
+	/// Job file to delete temp export file.
 	JobFilePath jobFile;
+
+	/// Window instance.
 	CloudWindow* &cloudWindowInstance;
 };
 
+/// We allow only one window instance.
 static CloudWindow *cloudWindowInstance = nullptr;
 
+/// A blocking call to the V-Ray Cloud Client. Used in batch version.
 static void executeVRayCloudClient(const CloudCommand &cmd)
 {
 	Log::getLog().info("Calling V-Ray Cloud Client: %s", _toChar(cmd.arguments.join(" ")));
