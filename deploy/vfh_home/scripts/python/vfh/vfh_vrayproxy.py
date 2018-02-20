@@ -11,14 +11,12 @@
 import os
 import hou
 
-
 class VRayProxyDialog:
 	def __init__(self):
 		self.__ui = None
 
-
 	def initUI(self):
-		uipath = os.path.join( os.path.dirname(__file__), "VRayProxy_ui.ui" )
+		uipath = os.path.join(os.path.dirname(__file__), "vfh_vrayproxy_export.ui")
 		self.__ui = hou.ui.createDialog( uipath )
 
 		self.__onExportAnimationChange()
@@ -32,7 +30,6 @@ class VRayProxyDialog:
 		self.__ui.addCallback("voxelpermesh.val", self.__onVoxelPerMeshChange)
 		self.__ui.addCallback("createproxy.val", self.__onCreateProxy)
 
-
 	def show(self, val):
 		if not self.__ui:
 			self.initUI()
@@ -43,7 +40,6 @@ class VRayProxyDialog:
 		self.__ui.setValue("objects.val", ", ".join(selected))
 		self.__ui.setValue("show.val", val)
 
-
 	def __onExportAnimationChange(self):
 		exportAnimation = bool( self.__ui.value("exp_animation.val") )
 		self.__ui.enableValue("exp_animation_group.val", exportAnimation)
@@ -51,28 +47,23 @@ class VRayProxyDialog:
 		self.__onExportVelocityChange()
 		self.__onAnimPlaybackRangeChange()
 
-
 	def __onExportVelocityChange(self):
 		exportAnimation = bool( self.__ui.value("exp_animation.val") )
 		exportVelocity = bool( self.__ui.value("exp_velocity.val") )
 		self.__ui.enableValue("exp_velocity_group.val", (exportAnimation and exportVelocity))
-
 
 	def __onAnimPlaybackRangeChange(self):
 		exportAnimation = bool( self.__ui.value("exp_animation.val") )
 		animPlayback = self.__ui.value("animplayback.val")
 		self.__ui.enableValue("animplayback_group.val", exportAnimation and (animPlayback == 2))
 
-
 	def __onExportPCLsChange(self):
 		exportPCL = bool( self.__ui.value("exp_pcls.val") )
 		self.__ui.enableValue("pointsize.val", exportPCL)
 
-
 	def __onVoxelPerMeshChange(self):
 		voxelPerMesh = bool( self.__ui.value("voxelpermesh.val") )
 		self.__ui.enableValue("max_facespervoxel.val", not voxelPerMesh)
-
 
 	def __onCreateProxy(self):
 		# @brief builds cmdline args for vrayproxy cmd based on UI options and calls it
@@ -146,3 +137,24 @@ class VRayProxyDialog:
 		print("\n".join(res))
 
 		self.show(0)
+
+def add_proxy_import_to_selected_sop():
+	nodeToSelect = None
+	enterInNode = False
+
+	for node in hou.selectedNodes():
+		if node.type().name() == 'geo':
+			created = node.createNode('VRayNodeVRayProxy')
+			if not nodeToSelect:
+				nodeToSelect = created
+				enterInNode = True
+			else:
+				# nodeToSelect is assigned
+				enterInNode = False
+
+	if enterInNode:
+		nodeToSelect.setSelected(True)
+
+	if not nodeToSelect:
+		sys.stderr.write('No selected SOP nodes to import proxy into!')
+		sys.stderr.flush()

@@ -82,9 +82,11 @@ vfb.show_vfbs()
 <![CDATA[
 
 import hou
-from vfh import vfh_camera
+from vfh import vfh_object_properties
 
-vfh_camera.add_physical_camera_attributes()
+camList = filter(lambda item: item.type().name() == 'cam', hou.selectedNodes())
+
+map(vfh_object_properties.addVRayCameraPhysical, camList)
 
 ]]>
     </script>
@@ -95,7 +97,7 @@ vfh_camera.add_physical_camera_attributes()
 <![CDATA[
 
 import os
-import vfh.shelftools.vfh_object_properties as vfh_object_properties
+import vfh.vfh_object_properties as vfh_object_properties
 import vfh.vfh_reload as vfh_reload
 
 vfh_reload.reload(vfh_object_properties)
@@ -112,7 +114,7 @@ map(vfh_object_properties.addVRayDisplamentParams, geoList)
 <![CDATA[
 
 import os
-import vfh.shelftools.vfh_object_properties as vfh_object_properties
+import vfh.vfh_object_properties as vfh_object_properties
 import vfh.vfh_reload as vfh_reload
 
 vfh_reload.reload(vfh_object_properties)
@@ -129,7 +131,7 @@ map(vfh_object_properties.addVRayHairParams, geoList)
 <![CDATA[
 
 import os
-import vfh.shelftools.vfh_object_properties as vfh_object_properties
+import vfh.vfh_object_properties as vfh_object_properties
 import vfh.vfh_reload as vfh_reload
 
 vfh_reload.reload(vfh_object_properties)
@@ -145,9 +147,9 @@ map(vfh_object_properties.addVRayObjectProperties, geoList)
     <script scriptType="python">
 <![CDATA[
 
-import vfh.shelftools.vrayproxy as vrayproxy
+import vfh.vfh_vrayproxy as vfh_vrayproxy
 
-dialog = vrayproxy.VRayProxyDialog()
+dialog = vfh_vrayproxy.VRayProxyDialog()
 dialog.show(1)
 
 ]]>
@@ -158,9 +160,9 @@ dialog.show(1)
     <script scriptType="python">
 <![CDATA[
 
-import vfh.vfh_proxy_import as vrayproxy
+import vfh.vfh_vrayproxy as vfh_vrayproxy
 
-dialog = vrayproxy.add_proxy_import_to_selected_sop()
+dialog = vfh_vrayproxy.add_proxy_import_to_selected_sop()
 
 ]]>
     </script>

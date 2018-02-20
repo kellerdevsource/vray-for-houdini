@@ -12,12 +12,10 @@ import hou
 import os
 
 from vfh import vfh_reload
-from vfh import vfh_attrs
 from vfh import vfh_ptg_utils
 
 from pprint import pprint
 
-vfh_reload.reload(vfh_attrs)
 vfh_reload.reload(vfh_ptg_utils)
 
 def _syncUiIPR(nodeDef):
