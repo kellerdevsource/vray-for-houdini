@@ -272,7 +272,7 @@ public:
 	/// the Node plugin if needed.
 	/// @param geometry Geometry plugin instance.
 	/// @returns Node plugin instance.
-	VRay::Plugin getNodeForInstancerGeometry(VRay::Plugin geometry, VRay::Plugin objMaterial);
+	VRay::Plugin getNodeForInstancerGeometry(const PrimitiveItem &primItem);
 
 	/// Export object geometry.
 	/// @returns Geometry plugin.

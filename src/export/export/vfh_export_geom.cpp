@@ -424,38 +424,39 @@ int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 	return bundle->contains(&objNode, false);
 }
 
-VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(VRay::Plugin geometry, VRay::Plugin)
+VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &primItem)
 {
-	if (!geometry) {
+	if (!primItem.geometry) {
 		return VRay::Plugin();
 	}
 
 	// Already a Node plugin.
-	if (vrayPluginTypeNode.equal(geometry.getType())) {
-		return geometry;
+	if (vrayPluginTypeNode.equal(primItem.geometry.getType())) {
+		return primItem.geometry;
 	}
 
-	GeomNodeCache::iterator gnIt = pluginCache.instancerNodeWrapper.find(geometry.getName());
+	GeomNodeCache::iterator gnIt = pluginCache.instancerNodeWrapper.find(primItem.geometry.getName());
 	if (gnIt != pluginCache.instancerNodeWrapper.end()) {
 		return gnIt.data();
 	}
 
 	static boost::format nodeNameFmt("Node@%s");
 
-	VRay::Plugin objMaterial = pluginExporter.exportDefaultMaterial();
+	const VRay::Plugin objMaterial = pluginExporter.exportDefaultMaterial();
 
 	// Wrap into Node plugin.
-	Attrs::PluginDesc nodeDesc(boost::str(nodeNameFmt % geometry.getName()),
+	Attrs::PluginDesc nodeDesc(boost::str(nodeNameFmt % primItem.geometry.getName()),
 							   vrayPluginTypeNode.buffer());
-	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", geometry));
+	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", primItem.geometry));
 	nodeDesc.addAttribute(Attrs::PluginAttr("material", objMaterial));
+	nodeDesc.addAttribute(Attrs::PluginAttr("objectID", primItem.objectID != objectIdUndefined ? primItem.objectID : 0));
 	nodeDesc.addAttribute(Attrs::PluginAttr("transform", VRay::Transform(1)));
 	nodeDesc.addAttribute(Attrs::PluginAttr("visible", false));
 
 	VRay::Plugin node = pluginExporter.exportPlugin(nodeDesc);
 	UT_ASSERT(node);
 
-	pluginCache.instancerNodeWrapper.insert(geometry.getName(), node);
+	pluginCache.instancerNodeWrapper.insert(primItem.geometry.getName(), node);
 
 	return node;
 }
@@ -626,6 +627,11 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	const GA_Size numPoints = gdp.getNumPoints();
 	const GA_Size numPrims = gdp.getNumPrimitives();
 
+	int objectID = objectIdUndefined;
+	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
+		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+	}
+
 	const STY_Styler &geoStyler = getStylerForObject(getStyler(), objNode);
 
 	const GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
@@ -671,14 +677,11 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		item.primID = getDetailID() ^ primOffset;
 		item.tm = getTm();
 		item.vel = getVel();
+		item.objectID = objectIdHndl.isValid() ? objectIdHndl.get(primOffset) : objectID;
 
 		if (pathHndl.isValid()) {
 			const UT_String path(pathHndl.get(primOffset));
 			item.primID = path.hash();
-		}
-
-		if (objectIdHndl.isValid()) {
-			item.objectID = objectIdHndl.get(primOffset);
 		}
 
 		if (animOffsetHndl.isValid()) {
@@ -914,12 +917,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 	const int numParticles = instancerItems.count();
 
 	OP_Node *matNode = objNode.getMaterialNode(ctx.getTime());
-	VRay::Plugin objMaterial = pluginExporter.exportMaterial(matNode);
-
-	int objectID = 0;
-	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
-		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
-	}
+	const VRay::Plugin objMaterial = pluginExporter.exportMaterial(matNode);
 
 	const fpreal instancerTime = ctx.hasMotionBlur ? ctx.mbParams.mb_start : ctx.getFloatFrame();
 
@@ -971,9 +969,12 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		}
 
 		// Instancer works only with Node plugins.
-		VRay::Plugin node = getNodeForInstancerGeometry(primItem.geometry, material);
+		const VRay::Plugin node = getNodeForInstancerGeometry(primItem);
 
-		uint32_t additional_params_flags = VRay::InstancerParamFlags::useObjectID;
+		uint32_t additional_params_flags = 0;
+		if (primItem.objectID != objectIdUndefined) {
+			additional_params_flags |= VRay::InstancerParamFlags::useObjectID;
+		}
 		if (material) {
 			additional_params_flags |= VRay::InstancerParamFlags::useMaterial;
 		}
@@ -1010,7 +1011,9 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		item[indexOffs++].setTransform(tm);
 		item[indexOffs++].setTransform(vel);
 		item[indexOffs++].setDouble(additional_params_flags);
-		item[indexOffs++].setDouble(primItem.objectID != objectIdUndefined ? primItem.objectID : objectID);
+		if (additional_params_flags & VRay::InstancerParamFlags::useObjectID) {
+			item[indexOffs++].setDouble(primItem.objectID);
+		}
 		if (additional_params_flags & VRay::InstancerParamFlags::useUserAttributes) {
 			item[indexOffs++].setString(_toChar(userAttributes));
 		}
@@ -1083,11 +1086,30 @@ void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const G
 	// The top of the stack contains the final tranform.
 	const PrimitiveItem topItem(primContextStack.back().parentItem);
 
+#pragma pack(push, 1)
+	struct HairPrimKey {
+		HairPrimKey(exint parentID, exint detailID, exint keyDataPoly)
+			: parentID(parentID)
+			, detailID(detailID)
+			, keyDataPoly(keyDataPoly)
+		{}
+		exint parentID;
+		exint detailID;
+		exint keyDataPoly;
+	} hairPrimKey(topItem.primID, getDetailID(), keyDataHair);
+#pragma pack(pop)
+
+	Hash::MHash hairKey;
+	Hash::MurmurHash3_x86_32(&hairPrimKey, sizeof(HairPrimKey), 42, &hairKey);
+
 	PrimitiveItem item;
 	getPrimMaterial(item.primMaterial);
 	item.tm = topItem.tm;
 	item.vel = topItem.vel;
-	item.primID = topItem.primID ^ keyDataHair;
+	item.primID = hairKey;
+	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
+		item.objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+	}
 
 	if (doExportGeometry) {
 		if (!getMeshPluginFromCache(item.primID, item.geometry)) {
@@ -1136,6 +1158,9 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	item.tm = topItem.tm;
 	item.vel = topItem.vel;
 	item.primID = meshKey;
+	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
+		item.objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+	}
 
 	polyMeshExporter.setDetailID(meshKey);
 
@@ -2088,6 +2113,11 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop
 	nodeDesc.add(PluginAttr("transform", VRayExporter::getObjTransform(&objNode, ctx)));
 	nodeDesc.add(PluginAttr("visible", isNodeVisible(objNode)));
 	nodeDesc.add(PluginAttr("scene_name", getSceneName(objNode)));
+
+	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
+		const int objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+		nodeDesc.add(PluginAttr("objectID", objectID));
+	}
 
 	return pluginExporter.exportPlugin(nodeDesc);
 }
