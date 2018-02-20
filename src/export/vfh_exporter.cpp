@@ -907,6 +907,42 @@ static void fillSettingsRegionsGenerator(OP_Node &rop, Attrs::PluginDesc &plugin
 
 static void fillSettingsImageSampler(OP_Node &rop, Attrs::PluginDesc &pluginDesc)
 {
+	UT_String _renderMaskObjectIDS;
+	rop.evalString(_renderMaskObjectIDS, "SettingsImageSampler_render_mask_object_ids", 0, 0.0);
+
+	const QString renderMaskObjectIDS(_renderMaskObjectIDS.buffer());
+	if (!renderMaskObjectIDS.isEmpty()) {
+		const QStringList renderMaskObjectIDSList = renderMaskObjectIDS.split(' ');
+
+		VRay::VUtils::IntRefList renderMaskObjectIDs(renderMaskObjectIDSList.size());
+		for (int i = 0; i < renderMaskObjectIDSList.size(); ++i) {
+			const QString &objectID = renderMaskObjectIDSList[i];
+			renderMaskObjectIDs[i] = objectID.toInt();
+		}
+		if (renderMaskObjectIDs.count()) {
+			pluginDesc.add(Attrs::PluginAttr("render_mask_object_ids", renderMaskObjectIDs));
+		}
+	}
+
+	UT_String _renderMaskObjects;
+	rop.evalString(_renderMaskObjects, "SettingsImageSampler_render_mask_objects", 0, 0.0);
+
+	const QString renderMaskObjectNames(_renderMaskObjects.buffer());
+	if (!renderMaskObjectNames.isEmpty()) {
+		const QStringList renderMaskObjectNamesList = renderMaskObjectNames.split(' ');
+
+		VRay::VUtils::ValueRefList renderMaskObjects(renderMaskObjectNamesList.size());
+		for (const QString &opName : renderMaskObjectNamesList) {
+			// TODO:
+			//   [ ] Add object plugins to list
+			//   [ ] Add bundles
+		}
+
+		if (renderMaskObjects.count()) {
+			pluginDesc.add(Attrs::PluginAttr("render_mask_objects", renderMaskObjects));
+		}
+	}
+
 	const int minSubdivs = rop.evalInt("SettingsImageSampler_dmc_minSubdivs", 0, 0.0);
 	int maxSubdivs = minSubdivs;
 
