@@ -589,6 +589,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 		const Parm::SocketDesc &curSockInfo = pluginInfo->inputs[i];
 
 		const VUtils::CharString &attrName = curSockInfo.attrName.ptr();
+		const VUtils::CharString &sockName = curSockInfo.socketLabel.ptr();
 
 		if (!pluginInfo->hasAttribute(attrName.ptr()) ||
 			pluginDesc.contains(attrName.ptr()))
@@ -601,7 +602,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 			continue;
 		}
 
-		VRay::Plugin conPlugin = exportConnectedVop(vopNode, attrName.ptr(), parentContext);
+		VRay::Plugin conPlugin = exportConnectedVop(vopNode, sockName.ptr(), parentContext);
 		if (!conPlugin) {
 			if (!(attrDesc.flags & Parm::attrFlagLinkedOnly) &&
 				vrayNode->getVRayPluginType() == VRayPluginType::TEXTURE  &&
