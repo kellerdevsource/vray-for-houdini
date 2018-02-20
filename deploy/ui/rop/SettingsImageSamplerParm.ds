@@ -49,18 +49,16 @@ parm {
 parm {
     name    "SettingsImageSampler_render_mask_mode"
     label   "Render Mask"
+    help    "Sets the mode for the render mask"
     type    string
     default { "0" }
-    help    "Sets the mode for the render mask"
     menu    {
-      0   "Disable"
-      1   "Objects"
-      2   "Object ID"
+      "0" "Disable"
+      // 1 "Texture"
+      // 2 "Objects"
+      "3" "Object ID"
     }
-    range   { 0 1 }
-    export  none
     parmtag { "cook_dependent" "1" }
-    parmtag { "vray_enumkeys" "0,2,3" }
     parmtag { "vray_plugin" "SettingsImageSampler" }
     parmtag { "vray_pluginattr" "render_mask_mode" }
     parmtag { "vray_type" "enum" }
@@ -75,6 +73,7 @@ parm {
     parmtag { "vray_plugin" "SettingsImageSampler" }
     parmtag { "vray_pluginattr" "render_mask_texture" }
     parmtag { "vray_type" "TextureFloat" }
+    parmtag { "vray_custom_handling" "1" }
     invisible
 }
 
