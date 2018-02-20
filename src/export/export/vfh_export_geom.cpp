@@ -2184,7 +2184,7 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 	OBJ_Light *objLight = objNode.castToOBJLight();
 	if (objLight) {
 		PrimitiveItem rootItem;
-		rootItem.tm = pluginExporter.getObjTransform(&objNode, ctx);
+		rootItem.tm = VRayExporter::getObjTransform(&objNode, ctx);
 
 		pushContext(PrimContext(&objNode, rootItem));
 

@@ -87,8 +87,8 @@ PRM_Template* LightNodeBase< PluginID >::GetPrmTemplate()
 			}
 
 			// adjust visibility
-			UT_StringRef prmName = tmpl->getToken();
-			if ( prmName == "dimmer" ) {
+			const UT_StringRef prmName(tmpl->getToken());
+			if (prmName == "dimmer") {
 				tmpl->setInvisible(true);
 			}
 		}
@@ -107,15 +107,15 @@ PRM_Template* LightNodeBase< PluginID >::GetPrmTemplate()
 template< VRayPluginID PluginID >
 int LightNodeBase< PluginID >::GetMyPrmTemplate(Parm::PRMList &myPrmList)
 {
-	int idx = myPrmList.size();
+	const int idx = myPrmList.size();
 	Parm::addPrmTemplateForPlugin( getVRayPluginIDName(PluginID), myPrmList);
 
 	return myPrmList.size() - idx;
 }
 
 
-template< VRayPluginID PluginID >
-OP::VRayNode::PluginResult LightNodeBase< PluginID >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter& /*exporter*/, ExportContext* /*parentContext*/)
+template<VRayPluginID PluginID>
+OP::VRayNode::PluginResult LightNodeBase<PluginID>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter& /*exporter*/, ExportContext* /*parentContext*/)
 {
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);
@@ -126,7 +126,7 @@ OP::VRayNode::PluginResult LightNodeBase< PluginID >::asPluginDesc(Attrs::Plugin
 
 // explicitly instantiate CustomPrmTemplates for LightDome op node
 template<>
-int LightNodeBase< VRayPluginID::LightDome >::GetMyPrmTemplate(Parm::PRMList &myPrmList)
+int LightNodeBase<VRayPluginID::LightDome>::GetMyPrmTemplate(Parm::PRMList &myPrmList)
 {
 	// filter default params and hide unnecessery ones
 	for (int i = 0; i < myPrmList.size(); ++i) {
@@ -140,7 +140,7 @@ int LightNodeBase< VRayPluginID::LightDome >::GetMyPrmTemplate(Parm::PRMList &my
 			&& folder == 0 )
 		{
 			// hide some parameters from Transform folder
-			UT_StringRef prmName = tmpl->getToken();
+			const UT_StringRef prmName(tmpl->getToken());
 			if (   prmName != "xOrd"
 				&& prmName != "rOrd"
 				&& prmName != "r"
@@ -152,8 +152,8 @@ int LightNodeBase< VRayPluginID::LightDome >::GetMyPrmTemplate(Parm::PRMList &my
 		}
 	}
 
-	int idx = myPrmList.size();
-	Parm::addPrmTemplateForPlugin( getVRayPluginIDName(VRayPluginID::LightDome), myPrmList);
+	const int idx = myPrmList.size();
+	Parm::addPrmTemplateForPlugin(getVRayPluginIDName(VRayPluginID::LightDome), myPrmList);
 
 	return myPrmList.size() - idx;
 }
@@ -182,7 +182,7 @@ int fillPluginDesc(Attrs::PluginDesc &pluginDesc, const PrimitiveItem &item, con
 }
 
 template<>
-OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*)
+OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*)
 {
 	const fpreal t = exporter.getContext().getTime();
 
@@ -237,7 +237,7 @@ OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::LightMesh >::asPluginDes
 
 
 template<>
-OP::VRayNode::PluginResult LightNodeBase< VRayPluginID::SunLight >::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
+OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::SunLight>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
 {
 	pluginDesc.pluginID   = pluginID.c_str();
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);
