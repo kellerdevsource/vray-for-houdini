@@ -12,6 +12,7 @@
 #include "vfh_vray_cloud.h"
 #include "vfh_log.h"
 #include "vfh_defines.h"
+#include "vfh_hou_utils.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -196,19 +197,19 @@ void Job::toArguments(const Job &job, QStringList &arguments)
 	}
 }
 
+struct CloudCommand {
+	QString command;
+	QStringList arguments;
+};
+
+typedef QQueue<CloudCommand> CloudCommands;
+
 class CloudWindow
 	: public QMainWindow
 {
 	Q_OBJECT
 
 public:
-	struct CloudCommand {
-		QString command;
-		QStringList arguments; 
-	};
-
-	typedef QQueue<CloudCommand> CloudCommands;
-
 	CloudWindow(CloudWindow* &cloudWindowInstance, const QString &jobFile, QWidget *parent)
 		: QMainWindow(parent)
 		, jobFile(jobFile)
@@ -279,23 +280,8 @@ public:
 		        this, SLOT(onProcFinished()));
 	}
 
-	void uploadScene(const Job &job) {
-		{
-			CloudCommand cmd;
-			cmd.command = vrayCloudClient;
-			cmd.arguments << "project" << "create" << "--name" << job.getProject();
-
-			commands.enqueue(cmd);
-		}
-		{
-			CloudCommand cmd;
-			cmd.command = vrayCloudClient;
-			cmd.arguments << "job" << "submit";
-
-			Job::toArguments(job, cmd.arguments);
-
-			commands.enqueue(cmd);
-		}
+	void uploadScene(const CloudCommands &job) {
+		commands = job;
 
 		// Busy progress.
 		progress->setMinimum(0);
@@ -411,6 +397,16 @@ private:
 
 static CloudWindow *cloudWindowInstance = nullptr;
 
+static void executeVRayCloudClient(const CloudCommand &cmd)
+{
+	Log::getLog().info("Calling V-Ray Cloud Client: %s", _toChar(cmd.arguments.join(" ")));
+
+	QProcess vrayCloudClientProc;
+	vrayCloudClientProc.setProcessChannelMode(QProcess::ForwardedChannels);
+	vrayCloudClientProc.start(cmd.command, cmd.arguments, QIODevice::ReadOnly);
+	vrayCloudClientProc.waitForFinished(-1);
+}
+
 int VRayForHoudini::Cloud::submitJob(const Job &job)
 {
 	findVRayCloudClient();
@@ -420,10 +416,29 @@ int VRayForHoudini::Cloud::submitJob(const Job &job)
 
 	Log::getLog().info("Using V-Ray Cloud Client: \"%s\"", _toChar(vrayCloudClient));
 
-	if (!cloudWindowInstance) {
+	CloudCommands commands;
+
+	CloudCommand createCmd;
+	createCmd.command = vrayCloudClient;
+	createCmd.arguments << "project" << "create" << "--name" << job.getProject();
+	commands.enqueue(createCmd);
+
+	CloudCommand submitCmd;
+	submitCmd.command = vrayCloudClient;
+	submitCmd.arguments << "job" << "submit";
+	Job::toArguments(job, submitCmd.arguments);
+	commands.enqueue(submitCmd);
+
+	if (!HOU::isUIAvailable()) {
+		JobFilePath jobFile(job.sceneFile);
+		for (const CloudCommand &cmd : commands) {
+			executeVRayCloudClient(cmd);
+		}
+	}
+	else if (!cloudWindowInstance) {
 		cloudWindowInstance = new CloudWindow(cloudWindowInstance, job.sceneFile, RE_Window::mainQtWindow());
 		cloudWindowInstance->show();
-		cloudWindowInstance->uploadScene(job);
+		cloudWindowInstance->uploadScene(commands);
 	}
 
 	return true;
