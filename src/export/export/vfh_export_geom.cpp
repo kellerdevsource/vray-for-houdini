@@ -181,21 +181,6 @@ static void addPluginToCacheImpl(ContainerType &container, const KeyType &key, V
 	container.insert(key, plugin);
 }
 
-static VRay::VUtils::CharStringRefList getSceneName(const OP_Node &opNode, int primID=-1)
-{
-	const UT_String nodeName(opNode.getName());
-
-	UT_String nodePath;
-	opNode.getFullPath(nodePath);
-	nodePath.prepend("scene"); // getFullPath() returns path starting with "/".
-
-	VRay::VUtils::CharStringRefList sceneName(2);
-	sceneName[0] = nodeName.buffer();
-	sceneName[1] = nodePath.buffer();
-
-	return sceneName;
-}
-
 ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
 	: pluginExporter(pluginExporter)
 	, ctx(pluginExporter.getContext())
@@ -890,7 +875,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 /// @param opNode Scene node.
 static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
 {
-	const VRay::VUtils::CharStringRefList &sceneName = getSceneName(opNode);
+	const VRay::VUtils::CharStringRefList &sceneName = VRayExporter::getSceneName(opNode);
 
 	userAttributes.append(vrayUserAttrSceneName);
 	userAttributes.append('=');
@@ -2019,8 +2004,8 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 		pluginDesc.addAttribute(Attrs::PluginAttr("enabled", isLightEnabled(objLight)));
 
 		ExportContext expContext(CT_OBJ, pluginExporter, objLight);
-		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, pluginExporter, &expContext);
-		const int isDomeLight = vrayNode->getVRayPluginID() == getVRayPluginIDName(VRayPluginID::LightDome);
+		const OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, pluginExporter, &expContext);
+		const int isDomeLight = vrayNode->getPluginID() == static_cast<int>(VRayPluginID::LightDome);
 
 		if (res == OP::VRayNode::PluginResultError) {
 			Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
@@ -2050,6 +2035,13 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 		}
 
 		pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
+
+		if (isDomeLight ||
+			vrayNode->getPluginID() == static_cast<int>(VRayPluginID::LightRectangle) ||
+			vrayNode->getPluginID() == static_cast<int>(VRayPluginID::LightSphere))
+		{
+			pluginDesc.addAttribute(Attrs::PluginAttr("scene_name", VRayExporter::getSceneName(objLight)));
+		}
 	}
 	else {
 		const VRayLightType lightType = static_cast<VRayLightType>(objLight.evalInt("light_type", 0, 0.0));
@@ -2083,6 +2075,13 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 		// Sun
 		else if (lightType == VRayLightSun) {
 			pluginDesc.pluginID = "SunLight";
+		}
+
+		if (lightType == VRayLightSphere ||
+			lightType == VRayLightRectangle ||
+			lightType == VRayLightDome)
+		{
+			pluginDesc.addAttribute(Attrs::PluginAttr("scene_name", VRayExporter::getSceneName(objLight)));
 		}
 
 		pluginDesc.addAttribute(Attrs::PluginAttr("intensity", objLight.evalFloat("light_intensity", 0, t)));
@@ -2119,7 +2118,7 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop
 	nodeDesc.add(PluginAttr("material", pluginExporter.exportDefaultMaterial()));
 	nodeDesc.add(PluginAttr("transform", VRayExporter::getObjTransform(&objNode, ctx)));
 	nodeDesc.add(PluginAttr("visible", isNodeVisible(objNode)));
-	nodeDesc.add(PluginAttr("scene_name", getSceneName(objNode)));
+	nodeDesc.add(PluginAttr("scene_name", VRayExporter::getSceneName(objNode)));
 
 	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
 		const int objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());

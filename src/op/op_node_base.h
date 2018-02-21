@@ -30,6 +30,7 @@ public:
 
 	VRayNode()
 		: pluginType(VRayPluginType::UNKNOWN)
+		, pluginIntID(0)
 		, pluginInfo(nullptr)
 	{}
 
@@ -46,6 +47,9 @@ public:
 	/// Get the V-Ray plugin name.
 	std::string getVRayPluginID() const { return pluginID; }
 
+	/// Returns numeric internal plugin ID. Matches enum VRayPluginID.
+	int getPluginID() const { return pluginIntID; }
+
 	/// Get the static meta information about this specific plugin type
 	const Parm::VRayPluginInfo* getVRayPluginInfo() const { return pluginInfo; }
 
@@ -58,7 +62,7 @@ public:
 	}
 
 protected:
-	/// Override this to initilize the concrete plugin category and type
+	/// Override this to initilize the particular plugin category and type.
 	virtual void setPluginType()=0;
 
 	/// The plugin category.
@@ -67,13 +71,12 @@ protected:
 	/// The plugin type.
 	std::string pluginID;
 
+	/// Numeric internal plugin ID. Matches enum VRayPluginID.
+	int pluginIntID;
+
 	/// Provides static meta information about this specific plugin type
 	/// like attributes, their types and default values, which attributes
 	/// correspond to input/output plugs for VOPs, etc.
-	/// TODO: better we should use or wrap around VRay::PluginMeta and
-	/// VRay::PropertyMeta from AppSDK as these meta descriptions change
-	/// often with the specific V-Ray version (which now makes our JSON
-	/// descriptions outdated).
 	const Parm::VRayPluginInfo *pluginInfo;
 
 	VUTILS_DISABLE_COPY(VRayNode)

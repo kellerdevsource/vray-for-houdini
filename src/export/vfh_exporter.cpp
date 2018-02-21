@@ -233,10 +233,22 @@ std::string VRayExporter::getPluginName(OBJ_Node &objNode)
 	return VRayExporter::getPluginName(&objNode);
 }
 
-VRay::VUtils::CharStringRefList VRayExporter::getSceneName(const OP_Node &opNode)
+VRay::VUtils::CharStringRefList VRayExporter::getSceneName(const OP_Node &opNode, int primID)
 {
-	VRay::VUtils::CharStringRefList sceneName(1);
-	sceneName[0].set(opNode.getName().buffer());
+	const UT_String &nodeName = opNode.getName();
+
+	UT_String nodePath;
+	opNode.getFullPath(nodePath);
+	// nodePath already ends with "/".
+	nodePath.prepend("scene");
+	if (primID >= 0) {
+		nodePath.append(_toChar(QString::number(primID)));
+	}
+
+	VRay::VUtils::CharStringRefList sceneName(2);
+	sceneName[0] = nodeName.buffer();
+	sceneName[1] = nodePath.buffer();
+
 	return sceneName;
 }
 

@@ -36,7 +36,6 @@ PRM_Template* OBJ::VRayClipper::GetPrmTemplate()
 	return myPrmList.getPRMTemplate();
 }
 
-
 OP::VRayNode::PluginResult OBJ::VRayClipper::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter& /*exporter*/, ExportContext* /*parentContext*/)
 {
 	pluginDesc.pluginID   = pluginID.c_str();
@@ -45,13 +44,12 @@ OP::VRayNode::PluginResult OBJ::VRayClipper::asPluginDesc(Attrs::PluginDesc &plu
 	return OP::VRayNode::PluginResultContinue;
 }
 
-
 void OBJ::VRayClipper::setPluginType()
 {
 	pluginType = VRayPluginType::GEOMETRY;
 	pluginID = getVRayPluginIDName(VRayPluginID::VRayClipper);
+	pluginIntID = static_cast<int>(VRayPluginID::VRayClipper);
 }
-
 
 namespace VRayForHoudini {
 namespace OBJ {
@@ -103,7 +101,6 @@ PRM_Template* LightNodeBase< PluginID >::GetPrmTemplate()
 	return myPrmList.getPRMTemplate();
 }
 
-
 template< VRayPluginID PluginID >
 int LightNodeBase< PluginID >::GetMyPrmTemplate(Parm::PRMList &myPrmList)
 {
@@ -113,16 +110,22 @@ int LightNodeBase< PluginID >::GetMyPrmTemplate(Parm::PRMList &myPrmList)
 	return myPrmList.size() - idx;
 }
 
-
 template<VRayPluginID PluginID>
 OP::VRayNode::PluginResult LightNodeBase<PluginID>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter& /*exporter*/, ExportContext* /*parentContext*/)
 {
-	pluginDesc.pluginID   = pluginID.c_str();
+	pluginDesc.pluginID   = pluginID;
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);
 
 	return OP::VRayNode::PluginResultContinue;
 }
 
+template <VRayPluginID PluginID>
+void LightNodeBase<PluginID>::setPluginType()
+{
+	pluginType = VRayPluginType::LIGHT;
+	pluginID = getVRayPluginIDName(PluginID);
+	pluginIntID = static_cast<int>(PluginID);
+}
 
 // explicitly instantiate CustomPrmTemplates for LightDome op node
 template<>
@@ -168,7 +171,7 @@ int isMeshLightSupportedGeometryType(const VRay::Plugin &geometry) {
 	return 0; // Isn't a supported type
 }
 
-int fillPluginDesc(Attrs::PluginDesc &pluginDesc, const PrimitiveItem &item, const VRay::Transform &objTm) {
+int fillPluginDesc(Attrs::PluginDesc &pluginDesc, OP_Node &objLight, int primID, const PrimitiveItem &item, const VRay::Transform &objTm) {
 	if (!item.geometry || !isMeshLightSupportedGeometryType(item.geometry)) {
 		Log::getLog().warning("Unsupported geometry type for Mesh Light: %s ! Node name: %s", item.geometry.getType(), pluginDesc.pluginName.c_str());
 		return 0;
@@ -178,6 +181,8 @@ int fillPluginDesc(Attrs::PluginDesc &pluginDesc, const PrimitiveItem &item, con
 	if (item.objectID != objectIdUndefined) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("objectID", item.objectID));
 	}
+	pluginDesc.addAttribute(Attrs::PluginAttr("scene_name", VRayExporter::getSceneName(objLight, primID)));
+
 	return 1;
 }
 
@@ -210,7 +215,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 				
 				if (geomList.count()) {
 					const PrimitiveItem &item = geomList[0];
-					fillPluginDesc(pluginDesc, item, objTm);
+					fillPluginDesc(pluginDesc, *this, 0, item, objTm);
 				}
 
 				for (int i = 1; i < geomList.count(); ++i) {
@@ -220,7 +225,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 						pluginDesc.pluginName + "|" + std::to_string(i) + "|" + item.geometry.getName();
 
 					Attrs::PluginDesc meshLightDesc(meshLightName, pluginID);
-					if (!fillPluginDesc(meshLightDesc, item, objTm)) {
+					if (!fillPluginDesc(meshLightDesc, *this, i, item, objTm)) {
 						continue;
 					}
 
@@ -234,7 +239,6 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 	}
 	return PluginResultError;
 }
-
 
 template<>
 OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::SunLight>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
@@ -382,5 +386,4 @@ template class LightNodeBase<VRayPluginID::LightIES>;
 template class LightNodeBase<VRayPluginID::LightDome>;
 
 } // namespace OBJ
-
 } // namespace VRayForHoudini
