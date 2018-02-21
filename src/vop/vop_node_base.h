@@ -84,6 +84,9 @@ protected:
 	void getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &voptypes) VRAY_OVERRIDE;
 	bool willAutoconvertInputType(int input_idx) VRAY_OVERRIDE;
 
+	/// Storage for dynamically generated socket labels.
+	mutable UT_StringArray socketLabels;
+
 private:
 	bool                      hasPluginInfo() const;
 
