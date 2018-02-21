@@ -772,6 +772,16 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			if (!item.geometry) {
 				pushContext(PrimContext(&objNode, item, primStyler));
 				item.geometry = exportPrimPacked(objNode, primPacked);
+
+				if (item.geometry) {
+					OP_Node *matNode = item.primMaterial.matNode
+						               ? item.primMaterial.matNode
+						               : objNode.getMaterialNode(ctx.getTime());
+
+					const SubdivInfo &subdivInfo = getSubdivInfo(objNode, matNode);
+					item.geometry = pluginExporter.exportDisplacement(objNode, item.geometry, subdivInfo);
+				}
+
 				popContext();
 				if (primKey > 0 && item.geometry) {
 					addPrimPluginToCache(primKey, item.geometry);
@@ -817,13 +827,10 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		}
 		else if (primTypeID == GEO_PRIMPOLY) {
 			const GEO_PrimPoly &primPoly = static_cast<const GEO_PrimPoly&>(*prim);
-
-			// TODO: Hair from open poly detection.
-			const int isHair = true;
 			if (primPoly.isClosed()) {
 				polyPrims.append(prim);
 			}
-			else if (isHair) {
+			else {
 				hairPrims.append(prim);
 			}
 		}
