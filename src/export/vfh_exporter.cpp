@@ -118,10 +118,10 @@ static void setSettingsRTEngineFromRopNode(SettingsRTEngine &self, const OP_Node
 	self.interactive = Parm::getParmInt(ropNode, "SettingsRTEngine_interactive");
 	self.low_gpu_thread_priority = Parm::getParmInt(ropNode, "SettingsRTEngine_low_gpu_thread_priority");
 	self.max_draw_interval = Parm::getParmInt(ropNode, "SettingsRTEngine_max_draw_interval");
-	self.max_render_time = Parm::getParmInt(ropNode, "SettingsRTEngine_max_render_time");
+	self.max_render_time = Parm::getParmFloat(ropNode, "SettingsRTEngine_max_render_time");
 	self.max_sample_level = Parm::getParmInt(ropNode, "SettingsRTEngine_max_sample_level");
 	self.min_draw_interval = Parm::getParmInt(ropNode, "SettingsRTEngine_min_draw_interval");
-	self.noise_threshold = Parm::getParmInt(ropNode, "SettingsRTEngine_noise_threshold");
+	self.noise_threshold = Parm::getParmFloat(ropNode, "SettingsRTEngine_noise_threshold");
 	self.opencl_resizeTextures = Parm::getParmInt(ropNode, "SettingsRTEngine_opencl_resizeTextures");
 	self.opencl_texsize = Parm::getParmInt(ropNode, "SettingsRTEngine_opencl_texsize");
 	self.opencl_textureFormat = Parm::getParmInt(ropNode, "SettingsRTEngine_opencl_textureFormat");
