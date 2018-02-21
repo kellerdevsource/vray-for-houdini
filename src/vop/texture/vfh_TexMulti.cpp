@@ -20,26 +20,13 @@ void VOP::TexMulti::setPluginType()
 
 const char* VOP::TexMulti::inputLabel(unsigned idx) const
 {
-	const int numBaseInputs = NodeBase::orderedInputs();
+	const unsigned numBaseInputs = NodeBase::orderedInputs();
 	if (idx < numBaseInputs)
 		return NodeBase::inputLabel(idx);
 
 	const int socketIndex = idx - numBaseInputs + 1;
 	if (socketIndex >= 0) {
-		if (socketIndex >= socketLabels.size()) {
-			socketLabels.resize(socketIndex+1);
-		}
-
-		UT_StringHolder &label = socketLabels[socketIndex];
-#ifdef HDK_16_5
-		if (label.isEmpty()) {
-#else
-		if (label == "") {
-#endif
-			label.sprintf("Texture %i", socketIndex);
-		}
-
-		return socketLabels[socketIndex].buffer();
+		return getCreateSocketLabel(socketIndex, "Texture %i");
 	}
 
 	return NULL;
@@ -64,15 +51,15 @@ void VOP::TexMulti::getInputNameSubclass(UT_String &in, int idx) const
 
 int VOP::TexMulti::getInputFromNameSubclass(const UT_String &in) const
 {
-	int inIdx;
+	int inIdx = -1;;
 
 	if (in.startsWith("tex_")) {
 		const int numBaseInputs = NodeBase::orderedInputs();
 
 		int idx = -1;
-		sscanf(in.buffer(), "tex_%i", &idx);
-
-		inIdx = numBaseInputs + idx - 1;
+		if (sscanf(in.buffer(), "tex_%i", &idx) == 1) {
+			inIdx = numBaseInputs + idx - 1;
+		}
 	}
 	else {
 		inIdx = NodeBase::getInputFromNameSubclass(in);
@@ -95,7 +82,7 @@ void VOP::TexMulti::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 
 void VOP::TexMulti::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos)
 {
-	const int numBaseInputs = NodeBase::orderedInputs();
+	const unsigned numBaseInputs = NodeBase::orderedInputs();
 
 	if (idx < numBaseInputs) {
 		NodeBase::getAllowedInputTypeInfosSubclass(idx, type_infos);
@@ -156,7 +143,7 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 		}
 	}
 
-	if (!textures.size())
+	if (textures.empty())
 		return PluginResultError;
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("textures_list", textures));

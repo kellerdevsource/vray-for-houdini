@@ -84,10 +84,15 @@ protected:
 	void getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &voptypes) VRAY_OVERRIDE;
 	bool willAutoconvertInputType(int input_idx) VRAY_OVERRIDE;
 
+	/// Returns labed for the soket.
+	/// @param socketIndex 0 based socket index.
+	/// @param nameFormat Label format.
+	const char *getCreateSocketLabel(int socketIndex, const char *nameFormat) const;
+
+private:
 	/// Storage for dynamically generated socket labels.
 	mutable UT_StringArray socketLabels;
 
-private:
 	bool                      hasPluginInfo() const;
 
 }; // NodeBase

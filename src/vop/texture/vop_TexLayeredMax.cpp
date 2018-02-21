@@ -22,16 +22,16 @@ void VOP::TexLayeredMax::setPluginType()
 
 const char* VOP::TexLayeredMax::inputLabel(unsigned idx) const
 {
-	const unsigned numBaseInputs = VOP::NodeBase::orderedInputs();
-
-	if (idx < numBaseInputs) {
-		return VOP::NodeBase::inputLabel(idx);
-	}
+	const unsigned numBaseInputs = NodeBase::orderedInputs();
+	if (idx < numBaseInputs)
+		return NodeBase::inputLabel(idx);
 
 	const int socketIndex = idx - numBaseInputs + 1;
-	const std::string &label =boost::str(boost::format("Texture %i") % socketIndex);
+	if (socketIndex >= 0) {
+		return getCreateSocketLabel(socketIndex, "Texture %i");
+	}
 
-	return label.c_str();
+	return NULL;
 }
 
 int VOP::TexLayeredMax::getInputFromName(const UT_String &in) const
@@ -48,7 +48,7 @@ void VOP::TexLayeredMax::getInputNameSubclass(UT_String &in, int idx) const
 	}
 	else {
 		const int socketIndex = idx - numBaseInputs + 1;
-		in = boost::str(boost::format("tex_%i") % socketIndex);
+		in.sprintf("tex_%i", socketIndex);
 	}
 }
 
@@ -124,18 +124,18 @@ OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &p
 	VRay::FloatList opacities;
 
 	for (int i = 1; i <= tex_count; ++i) {
-		const std::string &texSockName = boost::str(boost::format("tex_%i") % i);
+		QString texSockName(QString("tex_%1").arg(i));
 
-		OP_Node *tex_node = VRayExporter::getConnectedNode(this, texSockName);
+		OP_Node *tex_node = VRayExporter::getConnectedNode(this, _toChar(texSockName));
 		if (!tex_node) { 
 			Log::getLog().warning("Node \"%s\": Texture node is not connected to \"%s\", ignoring...",
-					   getName().buffer(), texSockName.c_str());
+					   getName().buffer(), _toChar(texSockName));
 		}
 		else {
 			const VRay::Plugin tex_plugin = exporter.exportVop(tex_node, parentContext);
 			if (!tex_plugin) {
 				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
-							getName().buffer(), texSockName.c_str());
+							getName().buffer(), _toChar(texSockName));
 			}
 			else {
 				const int blend_mode   = evalIntInst("tex#blend_mode", &i, 0, t);
