@@ -17,17 +17,22 @@
 
 using namespace VRayForHoudini;
 
+static const std::string viewPluginRenderView("vfhRenderView");
+static const std::string viewPluginSettingsCamera("vfhSettingsCamera");
+static const std::string viewPluginSettingsCameraDof("vfhSettingsCameraDof");
+static const std::string viewPluginSettingsMotionBlur("vfhSettingsMotionBlur");
+static const std::string viewPluginStereoSettings("vfhStereoSettings");
+static const std::string viewPluginCameraPhysical("vfhCameraPhysical");
+static const std::string viewPluginCameraDefault("vfhCameraDefault");
+
 float VRayForHoudini::getFov(float aperture, float focal)
 {
 	// From https://www.sidefx.com/docs/houdini13.0/ref/cameralenses
 	return 2.0f * atanf(aperture / 2.0f / focal);
 }
 
-void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data)
+static void onCameraChange(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	if (!csect.tryEnter())
-		return;
-
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	Log::getLog().debug("RtCallbackView: %s from \"%s\"",
@@ -63,14 +68,12 @@ void VRayExporter::RtCallbackView(OP_Node *caller, void *callee, OP_EventType ty
 			break;
 		}
 		case OP_NODE_PREDELETE: {
-			exporter.delOpCallback(caller, VRayExporter::RtCallbackView);
+			exporter.delOpCallback(caller, onCameraChange);
 			break;
 		}
 		default:
 			break;
 	}
-
-	csect.leave();
 }
 
 static float getLensShift(const OBJ_Node &camera, OP_Context &context)
@@ -180,8 +183,6 @@ void VRayExporter::fillViewParamsFromCameraNode(const OBJ_Node &camera, ViewPara
 
 	viewParams.renderView.clip_start = camera.evalFloat("near", 0, t);
 	viewParams.renderView.clip_end   = camera.evalFloat("far", 0, t);
-
-	
 
 	viewParams.renderView.stereoParams.use = Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_use");
 	viewParams.renderView.stereoParams.stereo_eye_distance       = Parm::getParmFloat(*m_rop, "VRayStereoscopicSettings_eye_distance");
@@ -329,10 +330,113 @@ void VRayExporter::fillPhysicalViewParamsFromCameraNode(const OBJ_Node &camera, 
 	}
 }
 
-void VRayExporter::fillDescPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
+static VRay::Plugin exportCameraDefault(VRayExporter &self, const ViewParams &viewParams)
+{
+	Attrs::PluginDesc pluginDesc(viewPluginCameraDefault,
+	                             "CameraDefault");
+
+	pluginDesc.add(Attrs::PluginAttr("orthographic", viewParams.renderView.ortho));
+
+	return self.exportPlugin(pluginDesc);
+}
+
+static void exportSettingsCamera(VRayExporter &self, const ViewParams &viewParams)
+{
+	Attrs::PluginDesc pluginDesc(viewPluginSettingsCamera,
+	                             "SettingsCamera");
+
+	pluginDesc.add(Attrs::PluginAttr("type", viewParams.settingsCamera.type));
+	pluginDesc.add(Attrs::PluginAttr("height", viewParams.settingsCamera.height));
+	pluginDesc.add(Attrs::PluginAttr("dist", viewParams.settingsCamera.dist));
+	pluginDesc.add(Attrs::PluginAttr("fov", -1.0f));
+	pluginDesc.add(Attrs::PluginAttr("auto_fit", viewParams.settingsCamera.auto_fit));
+	pluginDesc.add(Attrs::PluginAttr("curve", viewParams.settingsCamera.curve));
+
+	self.exportPlugin(pluginDesc);
+}
+
+static void exportStereoSettings(VRayExporter &self)
+{
+	Attrs::PluginDesc pluginDesc(viewPluginStereoSettings,
+	                             "VRayStereoscopicSettings");
+
+	self.setAttrsFromOpNodePrms(pluginDesc, self.getRopPtr(), "VRayStereoscopicSettings_");
+
+	self.exportPlugin(pluginDesc);
+}
+
+static void exportSettingsCameraDof(VRayExporter &self, const ViewParams &viewParams)
+{
+	Attrs::PluginDesc pluginDesc(viewPluginSettingsCameraDof,
+	                             "SettingsCameraDof");
+
+	pluginDesc.add(Attrs::PluginAttr("on", viewParams.settingsCameraDof.on));
+	pluginDesc.add(Attrs::PluginAttr("aperture", viewParams.settingsCameraDof.aperture));
+	pluginDesc.add(Attrs::PluginAttr("center_bias", viewParams.settingsCameraDof.center_bias));
+	pluginDesc.add(Attrs::PluginAttr("focal_dist", viewParams.settingsCameraDof.focal_dist));
+	pluginDesc.add(Attrs::PluginAttr("sides_on", viewParams.settingsCameraDof.sides_on));
+	pluginDesc.add(Attrs::PluginAttr("sides_num", viewParams.settingsCameraDof.sides_num));
+	pluginDesc.add(Attrs::PluginAttr("rotation", viewParams.settingsCameraDof.rotation));
+	pluginDesc.add(Attrs::PluginAttr("anisotropy", viewParams.settingsCameraDof.anisotropy));
+	pluginDesc.add(Attrs::PluginAttr("subdivs", viewParams.settingsCameraDof.subdivs));
+
+	self.exportPlugin(pluginDesc);
+}
+
+static void exportSettingsMotionBlur(VRayExporter &self, const ViewParams &viewParams)
+{
+	Attrs::PluginDesc pluginDesc(viewPluginSettingsMotionBlur,
+	                             "SettingsMotionBlur");
+
+	pluginDesc.add(Attrs::PluginAttr("on", viewParams.settingsMotionBlur.on));
+	pluginDesc.add(Attrs::PluginAttr("geom_samples", viewParams.settingsMotionBlur.geom_samples));
+	pluginDesc.add(Attrs::PluginAttr("low_samples", viewParams.settingsMotionBlur.low_samples));
+	pluginDesc.add(Attrs::PluginAttr("duration", viewParams.settingsMotionBlur.duration));
+	pluginDesc.add(Attrs::PluginAttr("subdivs", viewParams.settingsMotionBlur.subdivs));
+	pluginDesc.add(Attrs::PluginAttr("bias", viewParams.settingsMotionBlur.bias));
+	pluginDesc.add(Attrs::PluginAttr("shutter_efficiency", viewParams.settingsMotionBlur.shutter_efficiency));
+	pluginDesc.add(Attrs::PluginAttr("interval_center", viewParams.settingsMotionBlur.interval_center));
+	pluginDesc.add(Attrs::PluginAttr("camera_motion_blur", viewParams.settingsMotionBlur.camera_motion_blur));
+	pluginDesc.add(Attrs::PluginAttr("sampling_type", viewParams.settingsMotionBlur.sampling_type));
+
+	self.exportPlugin(pluginDesc);
+}
+
+static void exportRenderView(VRayExporter &self, const ViewParams &viewParams)
+{
+	Attrs::PluginDesc renderView(viewPluginRenderView,
+	                             "RenderView");
+
+	renderView.add(Attrs::PluginAttr("transform", viewParams.renderView.tm));
+	renderView.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
+	renderView.add(Attrs::PluginAttr("clipping", (viewParams.renderView.use_clip_start || viewParams.renderView.use_clip_end)));
+	renderView.add(Attrs::PluginAttr("clipping_near", viewParams.renderView.clip_start));
+	renderView.add(Attrs::PluginAttr("clipping_far", viewParams.renderView.clip_end));
+	renderView.add(Attrs::PluginAttr("orthographic", viewParams.renderView.ortho));
+	renderView.add(Attrs::PluginAttr("orthographicWidth", viewParams.renderView.ortho_width));
+
+	if (self.isInteractive()) {
+		renderView.add(Attrs::PluginAttr("use_scene_offset", false));
+	}
+
+	if (viewParams.renderView.stereoParams.use && self.isGPU()) {
+		renderView.add(Attrs::PluginAttr("stereo_on",                 viewParams.renderView.stereoParams.use));
+		renderView.add(Attrs::PluginAttr("stereo_eye_distance",       viewParams.renderView.stereoParams.stereo_eye_distance));
+		renderView.add(Attrs::PluginAttr("stereo_interocular_method", viewParams.renderView.stereoParams.stereo_interocular_method));
+		renderView.add(Attrs::PluginAttr("stereo_specify_focus",      viewParams.renderView.stereoParams.stereo_specify_focus));
+		renderView.add(Attrs::PluginAttr("stereo_focus_distance",     viewParams.renderView.stereoParams.stereo_focus_distance));
+		renderView.add(Attrs::PluginAttr("stereo_focus_method",       viewParams.renderView.stereoParams.stereo_focus_method));
+		renderView.add(Attrs::PluginAttr("stereo_view",               viewParams.renderView.stereoParams.stereo_view));
+	}
+
+	self.exportPlugin(renderView);
+}
+
+static VRay::Plugin exportPhysicalCamera(VRayExporter &self, const ViewParams &viewParams)
 {
 	const PhysicalCameraParams &cameraPhysical = viewParams.cameraPhysical;
 
+	Attrs::PluginDesc pluginDesc(viewPluginCameraPhysical, "CameraPhysical");
 	pluginDesc.add(Attrs::PluginAttr("type", cameraPhysical.type));
 	pluginDesc.add(Attrs::PluginAttr("film_width", cameraPhysical.film_width));
 	pluginDesc.add(Attrs::PluginAttr("focal_length", cameraPhysical.focal_length));
@@ -351,9 +455,9 @@ void VRayExporter::fillDescPhysicalCamera(const ViewParams &viewParams, Attrs::P
 	pluginDesc.add(Attrs::PluginAttr("exposure", cameraPhysical.exposure));
 
 	pluginDesc.add(Attrs::PluginAttr("white_balance",
-				   cameraPhysical.white_balance.r,
-				   cameraPhysical.white_balance.g,
-				   cameraPhysical.white_balance.b));
+	                                 cameraPhysical.white_balance.r,
+	                                 cameraPhysical.white_balance.g,
+	                                 cameraPhysical.white_balance.b));
 
 	pluginDesc.add(Attrs::PluginAttr("vignetting", cameraPhysical.vignetting));
 	pluginDesc.add(Attrs::PluginAttr("blades_enable", cameraPhysical.blades_enable));
@@ -384,108 +488,55 @@ void VRayExporter::fillDescPhysicalCamera(const ViewParams &viewParams, Attrs::P
 	pluginDesc.add(Attrs::PluginAttr("distortion_type", cameraPhysical.distortion_type));
 	pluginDesc.add(Attrs::PluginAttr("distortion", cameraPhysical.distortion));
 	pluginDesc.add(Attrs::PluginAttr("distortion_tex",
-				   exportNodeFromPathWithDefaultMapping(cameraPhysical.distortion_tex, defaultMappingChannel)));
+	                                 self.exportNodeFromPathWithDefaultMapping(cameraPhysical.distortion_tex,
+	                                                                           VRayExporter::defaultMappingChannel)));
 
 	pluginDesc.add(Attrs::PluginAttr("bmpaperture_enable", cameraPhysical.bmpaperture_enable));
 	pluginDesc.add(Attrs::PluginAttr("bmpaperture_resolution", cameraPhysical.bmpaperture_resolution));
 
 	pluginDesc.add(Attrs::PluginAttr("bmpaperture_tex",
-				   exportNodeFromPathWithDefaultMapping(cameraPhysical.bmpaperture_tex, defaultMappingChannel)));
+	                                 self.exportNodeFromPathWithDefaultMapping(cameraPhysical.bmpaperture_tex,
+	                                                                           VRayExporter::defaultMappingChannel)));
 
 	pluginDesc.add(Attrs::PluginAttr("optical_vignetting", cameraPhysical.optical_vignetting));
 	pluginDesc.add(Attrs::PluginAttr("bmpaperture_affects_exposure", cameraPhysical.bmpaperture_affects_exposure));
 	pluginDesc.add(Attrs::PluginAttr("enable_thin_lens_equation", cameraPhysical.enable_thin_lens_equation));
+
+	return self.exportPlugin(pluginDesc);
 }
 
-void VRayExporter::fillDescRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc) const
+/// Limits image resolution for animations for Houdin Indie.
+/// @param[in,out] viewParams View parameters.
+static void fixIndieResolution(ViewParams &viewParams)
 {
-	pluginDesc.add(Attrs::PluginAttr("transform", viewParams.renderView.tm));
-	pluginDesc.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
-	pluginDesc.add(Attrs::PluginAttr("clipping", (viewParams.renderView.use_clip_start || viewParams.renderView.use_clip_end)));
-	pluginDesc.add(Attrs::PluginAttr("clipping_near", viewParams.renderView.clip_start));
-	pluginDesc.add(Attrs::PluginAttr("clipping_far", viewParams.renderView.clip_end));
-	pluginDesc.add(Attrs::PluginAttr("orthographic", viewParams.renderView.ortho));
-	pluginDesc.add(Attrs::PluginAttr("orthographicWidth", viewParams.renderView.ortho_width));
+#if defined(HDK_16_5)
+	const int maxIndieW = 4096;
+	const int maxIndieH = 4096;
+#else
+	const int maxIndieW = 1920;
+	const int maxIndieH = 1080;
+#endif
 
-	if (isInteractive()) {
-		pluginDesc.add(Attrs::PluginAttr("use_scene_offset", false));
+	const float aspect = float(maxIndieW) / float(maxIndieH);
+
+	if (viewParams.renderSize.w > maxIndieW ||
+	    viewParams.renderSize.h > maxIndieH)
+	{
+		if (viewParams.renderSize.w > maxIndieW) {
+			viewParams.renderSize.w = maxIndieW;
+			viewParams.renderSize.h = viewParams.renderSize.w / aspect;
+		}
+
+		if (viewParams.renderSize.h > maxIndieH) {
+			viewParams.renderSize.h = maxIndieH;
+			viewParams.renderSize.w = viewParams.renderSize.h * aspect;
+		}
+
+		Log::getLog().warning("Maximum resolution for animations in Houdini Indie is %i x %i",
+		                      maxIndieW, maxIndieH);
+		Log::getLog().warning("Clamping resolution to %i x %i",
+		                      viewParams.renderSize.w, viewParams.renderSize.h);
 	}
-
-	if (isGPU() && viewParams.renderView.stereoParams.use) {
-		pluginDesc.add(Attrs::PluginAttr("stereo_on",                 viewParams.renderView.stereoParams.use));
-		pluginDesc.add(Attrs::PluginAttr("stereo_eye_distance",       viewParams.renderView.stereoParams.stereo_eye_distance));
-		pluginDesc.add(Attrs::PluginAttr("stereo_interocular_method", viewParams.renderView.stereoParams.stereo_interocular_method));
-		pluginDesc.add(Attrs::PluginAttr("stereo_specify_focus",      viewParams.renderView.stereoParams.stereo_specify_focus));
-		pluginDesc.add(Attrs::PluginAttr("stereo_focus_distance",     viewParams.renderView.stereoParams.stereo_focus_distance));
-		pluginDesc.add(Attrs::PluginAttr("stereo_focus_method",       viewParams.renderView.stereoParams.stereo_focus_method));
-		pluginDesc.add(Attrs::PluginAttr("stereo_view",               viewParams.renderView.stereoParams.stereo_view));
-	}
-}
-
-void VRayExporter::fillStereoSettings(const ViewParams& /*viewParams*/, Attrs::PluginDesc &pluginDesc)
-{
-	setAttrsFromOpNodePrms(pluginDesc, m_rop, "VRayStereoscopicSettings_");
-}
-
-static void fillDescCameraDefault(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
-{
-	pluginDesc.add(Attrs::PluginAttr("orthographic", viewParams.renderView.ortho));
-}
-
-static void fillDescSettingsCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
-{
-	pluginDesc.add(Attrs::PluginAttr("type", viewParams.settingsCamera.type));
-	pluginDesc.add(Attrs::PluginAttr("height", viewParams.settingsCamera.height));
-	pluginDesc.add(Attrs::PluginAttr("dist", viewParams.settingsCamera.dist));
-	pluginDesc.add(Attrs::PluginAttr("fov", -1.0f));
-	pluginDesc.add(Attrs::PluginAttr("auto_fit", viewParams.settingsCamera.auto_fit));
-	pluginDesc.add(Attrs::PluginAttr("curve", viewParams.settingsCamera.curve));
-}
-
-static void fillDescSettingsCameraDof(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
-{
-	pluginDesc.add(Attrs::PluginAttr("on", viewParams.settingsCameraDof.on));
-	pluginDesc.add(Attrs::PluginAttr("aperture", viewParams.settingsCameraDof.aperture));
-	pluginDesc.add(Attrs::PluginAttr("center_bias", viewParams.settingsCameraDof.center_bias));
-	pluginDesc.add(Attrs::PluginAttr("focal_dist", viewParams.settingsCameraDof.focal_dist));
-	pluginDesc.add(Attrs::PluginAttr("sides_on", viewParams.settingsCameraDof.sides_on));
-	pluginDesc.add(Attrs::PluginAttr("sides_num", viewParams.settingsCameraDof.sides_num));
-	pluginDesc.add(Attrs::PluginAttr("rotation", viewParams.settingsCameraDof.rotation));
-	pluginDesc.add(Attrs::PluginAttr("anisotropy", viewParams.settingsCameraDof.anisotropy));
-	pluginDesc.add(Attrs::PluginAttr("subdivs", viewParams.settingsCameraDof.subdivs));
-}
-
-static void fillDescSettingsMotionBlur(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc)
-{
-	pluginDesc.add(Attrs::PluginAttr("on", viewParams.settingsMotionBlur.on));
-	pluginDesc.add(Attrs::PluginAttr("geom_samples", viewParams.settingsMotionBlur.geom_samples));
-	pluginDesc.add(Attrs::PluginAttr("low_samples", viewParams.settingsMotionBlur.low_samples));
-	pluginDesc.add(Attrs::PluginAttr("duration", viewParams.settingsMotionBlur.duration));
-	pluginDesc.add(Attrs::PluginAttr("subdivs", viewParams.settingsMotionBlur.subdivs));
-	pluginDesc.add(Attrs::PluginAttr("bias", viewParams.settingsMotionBlur.bias));
-	pluginDesc.add(Attrs::PluginAttr("shutter_efficiency", viewParams.settingsMotionBlur.shutter_efficiency));
-	pluginDesc.add(Attrs::PluginAttr("interval_center", viewParams.settingsMotionBlur.interval_center));
-	pluginDesc.add(Attrs::PluginAttr("camera_motion_blur", viewParams.settingsMotionBlur.camera_motion_blur));
-	pluginDesc.add(Attrs::PluginAttr("sampling_type", viewParams.settingsMotionBlur.sampling_type));
-}
-
-void VRayExporter::exportRenderView(const ViewParams &viewParams)
-{
-	Attrs::PluginDesc renderView("renderView", "RenderView");
-	fillDescRenderView(viewParams, renderView);
-	exportPlugin(renderView);
-}
-
-VRay::Plugin VRayExporter::exportPhysicalCamera(const ViewParams &viewParams, int needRemoval)
-{
-	if (needRemoval) {
-		removePlugin("cameraPhysical", false);
-	}
-
-	Attrs::PluginDesc cameraPhysical("cameraPhysical", "CameraPhysical");
-	fillDescPhysicalCamera(viewParams, cameraPhysical);
-
-	return exportPlugin(cameraPhysical);
 }
 
 ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
@@ -493,103 +544,73 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	ViewParams viewParams(newViewParams);
 
 	if (isAnimation() && HOU::isIndie()) {
-#if defined(HDK_16_5)
-		const int maxIndieW = 4096;
-		const int maxIndieH = 4096;
-#else
-		const int maxIndieW = 1920;
-		const int maxIndieH = 1080;
-#endif
-
-		const float aspect = float(maxIndieW) / float(maxIndieH);
-
-		if (viewParams.renderSize.w > maxIndieW ||
-		    viewParams.renderSize.h > maxIndieH)
-		{
-			if (viewParams.renderSize.w > maxIndieW) {
-				viewParams.renderSize.w = maxIndieW;
-				viewParams.renderSize.h = viewParams.renderSize.w / aspect;
-			}
-
-			if (viewParams.renderSize.h > maxIndieH) {
-				viewParams.renderSize.h = maxIndieH;
-				viewParams.renderSize.w = viewParams.renderSize.h * aspect;
-			}
-
-			Log::getLog().warning("Maximum resolution for animations in Houdini Indie is %i x %i",
-								  maxIndieW, maxIndieH);
-			Log::getLog().warning("Clamping resolution to %i x %i",
-			                      viewParams.renderSize.w, viewParams.renderSize.h);
-		}
+		fixIndieResolution(viewParams);
 	}
 
-	int prevAutoCommit = false;
+	const int isRtSession = isInteractive();
 
-	if (isInteractive()) {
+	int prevAutoCommit = false;
+	if (isRtSession) {
 		prevAutoCommit = getRenderer().getVRay().getAutoCommit();
-		getRenderer().setAutoCommit(false);
+		getRenderer().getVRay().setAutoCommit(false);
 	}
 
 	// NOTE: For animation we need to export keyframes every time
 	// or data will be wiped with "clearKeyFrames()".
-	const bool needReExport = isAnimation() || isInteractive() || m_viewParams.needReset(viewParams);
+	const bool needReExport =
+		isAnimation() ||
+		isRtSession ||
+		m_viewParams.needReset(viewParams);
+
 	if (needReExport) {
 		Log::getLog().debug("VRayExporter::exportView: Resetting view...");
 
 		// Need to remove plugins only for RT session.
-		if (isInteractive()) {
-			removePlugin("renderView", false);
-			removePlugin("settingsCamera", false);
-			removePlugin("settingsCameraDof", false);
-			removePlugin("settingsMotionBlur", false);
-			removePlugin("stereoSettings", false);
-			removePlugin("cameraPhysical", false);
-			removePlugin("cameraDefault", false);
+		if (isRtSession) {
+			removePlugin(viewPluginRenderView);
+			removePlugin(viewPluginSettingsCamera);
+			removePlugin(viewPluginSettingsCameraDof);
+			removePlugin(viewPluginSettingsMotionBlur);
+			removePlugin(viewPluginStereoSettings);
+			removePlugin(viewPluginCameraPhysical);
+			removePlugin(viewPluginCameraDefault);
 		}
 
 		if (viewParams.useCameraPhysical != PhysicalCameraMode::modeNone) {
-			getRenderer().setCamera(exportPhysicalCamera(viewParams, false));
+			getRenderer().setCamera(exportPhysicalCamera(*this, viewParams));
 		}
 		else {
-			Attrs::PluginDesc settingsMotionBlur("settingsMotionBlur", "SettingsMotionBlur");
-			fillDescSettingsMotionBlur(viewParams, settingsMotionBlur);
-			exportPlugin(settingsMotionBlur);
+			exportSettingsMotionBlur(*this, viewParams);
 
 			if (!viewParams.renderView.ortho) {
-				Attrs::PluginDesc settingsCameraDof("settingsCameraDof", "SettingsCameraDof");
-				fillDescSettingsCameraDof(viewParams, settingsCameraDof);
-				exportPlugin(settingsCameraDof);
+				exportSettingsCameraDof(*this, viewParams);
 			}
 
-			Attrs::PluginDesc cameraDefault("cameraDefault", "CameraDefault");
-			fillDescCameraDefault(viewParams, cameraDefault);
-			getRenderer().setCamera(exportPlugin(cameraDefault));
+			getRenderer().setCamera(exportCameraDefault(*this, viewParams));
 		}
 
-		Attrs::PluginDesc settingsCamera("settingsCamera", "SettingsCamera");
-		fillDescSettingsCamera(viewParams, settingsCamera);
-		exportPlugin(settingsCamera);
+		exportSettingsCamera(*this, viewParams);
 
 		if (viewParams.renderView.stereoParams.use && !isGPU()) {
-			Attrs::PluginDesc stereoSettings("stereoSettings", "VRayStereoscopicSettings");
-			fillStereoSettings(viewParams, stereoSettings);
-			exportPlugin(stereoSettings);
+			exportStereoSettings(*this);
 		}
 
-		exportRenderView(viewParams);
+		exportRenderView(*this, viewParams);
 	}
-	else if (isInteractive()) {
+	else if (isRtSession) {
 		if (m_viewParams.changedParams(viewParams)) {
-			exportRenderView(viewParams);
+			exportRenderView(*this, viewParams);
 		}
 		if (m_viewParams.changedPhysCam(viewParams)) {
-			getRenderer().setCamera(exportPhysicalCamera(viewParams, true));
+			removePlugin(viewPluginCameraPhysical);
+
+			getRenderer().setCamera(exportPhysicalCamera(*this, viewParams));
 		}
 	}
 
-	if (isInteractive()) {
-		getRenderer().commit();
-		getRenderer().setAutoCommit(prevAutoCommit);
+	if (isRtSession) {
+		getRenderer().getVRay().commit(true);
+		getRenderer().getVRay().setAutoCommit(prevAutoCommit);
 	}
 
 	if (m_viewParams.changedSize(viewParams)) {
@@ -610,23 +631,22 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 	return ReturnValue::Success;
 }
 
-int VRayExporter::exportView()
+void VRayExporter::exportView()
 {
+	VUtils::FastCriticalSectionRAII lock(csect);
+
 	// We should not use this for IPR.
 	vassert(sessionType != VfhSessionType::ipr);
 
-	Log::getLog().debug("VRayExporter::exportView()");
-
-	static VUtils::FastCriticalSection viewCsect;
-	if (!viewCsect.tryEnter())
-		return 1;
-
 	OBJ_Node *camera = getCamera(m_rop);
 	if (!camera)
-		return 1;
+		return;
 
-	addOpCallback(camera, RtCallbackView);
-	addOpCallback(m_rop, RtCallbackView);
+	Log::getLog().debug("VRayExporter::exportView(\"%s\")",
+	                    camera->getName().buffer());
+
+	addOpCallback(camera, onCameraChange);
+	addOpCallback(m_rop, onCameraChange);
 
 	ViewParams viewParams;
 	fillViewParamsFromCameraNode(*camera, viewParams);
@@ -642,10 +662,6 @@ int VRayExporter::exportView()
 	}
 
 	exportView(viewParams);
-
-	viewCsect.leave();
-
-	return 0;
 }
 
 int ViewParams::changedParams(const ViewParams &other) const

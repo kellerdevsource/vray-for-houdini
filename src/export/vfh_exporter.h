@@ -175,9 +175,8 @@ public:
 	ReturnValue fillSettingsOutput(Attrs::PluginDesc &pluginDesc);
 
 	/// Export camera related settings - camera, dof, motion blur, etc.
-	/// This is called once for each frame we want to render
-	/// @retval 0 on success
-	int exportView();
+	/// This is called once for each frame we want to render.
+	void exportView();
 
 	/// Export view from the specified view parameters.
 	/// Used in SOHO IPR.
