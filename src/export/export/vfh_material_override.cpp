@@ -26,12 +26,6 @@
 #include <GSTY/GSTY_BundleMap.h>
 #include <OP/OP_StyleManager.h>
 #include <OP/OP_Director.h>
-#include <OP/OP_Bundle.h>
-#include <OP/OP_BundleList.h>
-
-#include <QStringList>
-#include <QVector>
-#include <QFile>
 
 using namespace VRayForHoudini;
 
@@ -390,32 +384,9 @@ STY_Styler VRayForHoudini::getStylerForPrimitive(const STY_Styler &geoStyler, co
 	return geoStyler.cloneWithSubject(primSubject);
 }
 
-STY_Styler VRayForHoudini::getStylerForObject(const STY_Styler &topStyler, const OP_Node &opNode)
+STY_Styler VRayForHoudini::getStylerForObject(const STY_Styler &topStyler, const GSTY_BundleMap &bundles, const OP_Node &opNode)
 {
 	const UT_TagListPtr tags;
-
-	GSTY_BundleMap bundles;
-	OP_BundleList *opBundles = OPgetDirector()->getBundles();
-	if (opBundles) {
-		for (int bundleIdx = 0; bundleIdx < opBundles->entries(); ++bundleIdx) {
-			OP_Bundle &opBundle = *opBundles->getBundle(bundleIdx);
-
-			UT_ValArray<OP_Node*> opList;
-			opBundle.getMembers(opList);
-
-			const int numBundleOps = opList.entries();
-			if (numBundleOps) {
-				VUtils::Table<const char*, 1> bundleOpNames(numBundleOps, NULL);
-
-				for (int opIdx = 0; opIdx < numBundleOps; ++opIdx) {
-					OP_Node &bundleNode = *opList(opIdx);
-					bundleOpNames[opIdx] = bundleNode.getFullPath().buffer();
-				}
-
-				bundles.add(opBundle.getName(), bundleOpNames.elements, numBundleOps);
-			}
-		}
-	}
 
 	UT_StringHolder stylesheet;
 	if (Parm::isParmExist(opNode, VFH_ATTR_SHOP_MATERIAL_STYLESHEET)) {

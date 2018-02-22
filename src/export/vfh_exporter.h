@@ -24,6 +24,7 @@
 #include <OP/OP_Node.h>
 #include <OBJ/OBJ_Node.h>
 #include <ROP/ROP_Node.h>
+#include <GSTY/GSTY_BundleMap.h>
 
 namespace VRayForHoudini {
 
@@ -164,30 +165,6 @@ public:
 	/// @param ropNode V-Ray ROP node.
 	/// @param viewParams ViewParams to fill.
 	void fillViewParamsFromRopNode(const OP_Node &ropNode, ViewParams &viewParams);
-
-	/// Fills CameraPhysical plugin attributes..
-	/// @param viewParams[in] - holds data for camera settings
-	/// @param pluginDesc[out] - physical camera plugin description
-	void fillDescPhysicalCamera(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
-
-	/// Recreates physical camera
-	/// @param viewParams View settings.
-	/// @param needRemoval If plugin has to be removed.
-	VRay::Plugin exportPhysicalCamera(const ViewParams &viewParams);
-
-	/// Exports RenderView plugin.
-	/// @param viewParams View settings.
-	void exportRenderView(const ViewParams &viewParams);
-
-	/// Fill in render view settings
-	/// @param viewParams[in] - holds data for camera settings
-	/// @param pluginDesc[out] - render view settings plugin description
-	void fillDescRenderView(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc) const;
-
-	/// Fill in stereoscopic settings
-	/// @param viewParams[in] - holds data for camera settings
-	/// @param pluginDesc[out] - stereoscopic settings plugin description
-	void fillStereoSettings(const ViewParams &viewParams, Attrs::PluginDesc &pluginDesc);
 
 	/// Fill in motion blur settings
 	/// @param pluginDesc[out] - motion blur settings plugin description
@@ -626,6 +603,8 @@ public:
 	/// Executed when user presses "Render" button in the VFB.
 	void renderLast();
 
+	const GSTY_BundleMap &getBundleMap() const { return bundleMap.getBundleMap(); }
+
 private:
 	/// Export V-Ray material from VOP node.
 	/// @param node VOP node.
@@ -683,6 +662,40 @@ private:
 	/// Export each frame into a separate file.
 	int exportFilePerFrame{0};
 
+	struct VfhBundleMap {
+		~VfhBundleMap();
+
+		/// Initialize bundle OP names from OP_BundleList.
+		void init();
+
+		/// Frees allocated memory for names.
+		void freeMem();
+
+		/// Returns preprocessed GSTY_BundleMap.
+		const GSTY_BundleMap &getBundleMap() const { return bundleMap; }
+
+	private:
+		struct MyBundle {
+			/// Frees allocated memory for names.
+			void freeMem();
+
+			/// Bundle name.
+			UT_StringHolder name;
+
+			/// Number of OPs in a bundle.
+			int opNamesCount = 0;
+
+			/// OP names array.
+			char* *opNames = nullptr;
+		};
+
+		/// Preprocessed bundles map.
+		GSTY_BundleMap bundleMap;
+
+		/// Bundles data.
+		QList<MyBundle> bundles;
+	} bundleMap;
+
 public:
 	/// Register event callback for a given node. This callback will be invoked when
 	/// change on the node occurs. The event type will be passed as parameter to the callback
@@ -709,7 +722,6 @@ public:
 	static void RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventType type, void *data);
-	static void RtCallbackView(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_EventType type, void *data);

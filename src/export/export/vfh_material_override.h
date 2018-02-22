@@ -34,6 +34,8 @@
 #include <STY/STY_StylerGroup.h>
 #include <GSTY/GSTY_SubjectPrimGroup.h>
 
+class GSTY_BundleMap;
+
 #ifdef HDK_16_5
 typedef STY_OverrideScript STY_OverrideScriptEntry;
 typedef STY_Override STY_OverrideEntry;
@@ -191,7 +193,7 @@ STY_Styler getStylerForPrimitive(const STY_Styler &topStyler, const GEO_Primitiv
 /// Get styler for the object.
 /// @param topStyler Current top level styler.
 /// @param opNode Object node.
-STY_Styler getStylerForObject(const STY_Styler &topStyler, const OP_Node &opNode);
+STY_Styler getStylerForObject(const STY_Styler &topStyler, const GSTY_BundleMap &bundles, const OP_Node &opNode);
 
 /// Fills style sheet material overrides for a primitive.
 /// @param topStyler Current top level styler.

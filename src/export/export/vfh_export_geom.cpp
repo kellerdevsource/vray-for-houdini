@@ -617,7 +617,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
 	}
 
-	const STY_Styler &objStyler = getStylerForObject(getStyler(), objNode);
+	const STY_Styler &objStyler = getStylerForObject(getStyler(), pluginExporter.getBundleMap(), objNode);
 	PrimitiveItem objItem;
 	appendOverrideValues(objStyler, objItem.primMaterial, overrideMerge);
 	pushContext(PrimContext(&objNode, objItem, objStyler));

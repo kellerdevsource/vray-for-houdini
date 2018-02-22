@@ -46,6 +46,8 @@
 #include <OBJ/OBJ_Light.h>
 #include <OBJ/OBJ_SubNet.h>
 #include <OP/OP_Director.h>
+#include <OP/OP_Bundle.h>
+#include <OP/OP_BundleList.h>
 
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
@@ -1956,6 +1958,8 @@ void VRayExporter::exportScene()
 		exportView();
 	}
 
+	bundleMap.init();
+
 	// Clear plugin caches.
 	objectExporter.clearOpPluginCache();
 	objectExporter.clearOpDepPluginCache();
@@ -2042,6 +2046,8 @@ void VRayExporter::exportScene()
 
 		exportPlugin(phxSims);
 	}
+
+	bundleMap.freeMem();
 }
 
 
@@ -2748,4 +2754,67 @@ void VRayExporter::renderLast()
 
 	initExporter(true, m_frames, m_timeStart, m_timeEnd);
 	exportFrame(m_context.getTime());
+}
+
+void VRayExporter::VfhBundleMap::MyBundle::freeMem()
+{
+	for (int i = 0; i < opNamesCount; ++i) {
+		FreePtrArr(opNames[i]);
+	}
+	FreePtrArr(opNames);
+}
+
+VRayExporter::VfhBundleMap::~VfhBundleMap()
+{
+	freeMem();
+}
+
+void VRayExporter::VfhBundleMap::init()
+{
+	freeMem();
+
+	OP_BundleList *opBundles = OPgetDirector()->getBundles();
+	if (!opBundles)
+		return;
+
+	for (int bundleIdx = 0; bundleIdx < opBundles->entries(); ++bundleIdx) {
+		OP_Bundle &opBundle = *opBundles->getBundle(bundleIdx);
+
+		UT_ValArray<OP_Node*> opList;
+		opBundle.getMembers(opList);
+
+		const int numBundleOps = opList.entries();
+		if (numBundleOps) {
+			MyBundle bundle;
+			bundle.name = opBundle.getName();
+			bundle.opNamesCount = numBundleOps;
+			bundle.opNames = new char * [numBundleOps];
+
+			for (int opIdx = 0; opIdx < numBundleOps; ++opIdx) {
+				const OP_Node &bundleNode = *opList(opIdx);
+
+				const int pathLen = bundleNode.getFullPath().length()+1;
+				bundle.opNames[opIdx] = new char[pathLen];
+
+				vutils_strcpy_n(bundle.opNames[opIdx], bundleNode.getFullPath().buffer(), pathLen);
+			}
+
+			bundles.append(bundle);
+		}
+	}
+
+	for (const MyBundle &bundle : bundles) {
+		bundleMap.add(bundle.name, bundle.opNames, bundle.opNamesCount);
+	}
+}
+
+void VRayExporter::VfhBundleMap::freeMem()
+{
+	bundleMap = GSTY_BundleMap();
+
+	for (MyBundle &bundle : bundles) {
+		bundle.freeMem();
+	}
+
+	bundles.clear();
 }
