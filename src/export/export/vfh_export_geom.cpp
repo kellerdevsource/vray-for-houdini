@@ -617,7 +617,10 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
 	}
 
-	const STY_Styler &geoStyler = getStylerForObject(getStyler(), objNode);
+	const STY_Styler &objStyler = getStylerForObject(getStyler(), objNode);
+	PrimitiveItem objItem;
+	appendOverrideValues(objStyler, objItem.primMaterial, overrideMerge);
+	pushContext(PrimContext(&objNode, objItem, objStyler));
 
 	const GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
 	const GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
@@ -655,7 +658,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 								  primTypeID == GEO_PRIMVOLUME ||
 								  primTypeID == GEO_PRIMVDB;
 
-		const STY_Styler &primStyler = getStylerForPrimitive(geoStyler, *prim);
+		const STY_Styler &primStyler = getStylerForPrimitive(objStyler, *prim);
 
 		PrimitiveItem item;
 		item.prim = prim;
@@ -674,7 +677,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		}
 
 		// Style sheet overrides.
-		getOverridesForPrimitive(geoStyler, *prim, item.primMaterial);
+		getOverridesForPrimitive(objStyler, *prim, item.primMaterial);
 
 		// Primitive attributes
 		if (isPackedPrim) {
@@ -832,7 +835,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		const GSTY_SubjectPrimGroup gdpStyler(gdp, polyPrims);
 
 		STY_StylerGroup gdpStylers;
-		gdpStylers.append(geoStyler, gdpStyler);
+		gdpStylers.append(objStyler, gdpStyler);
 
 		const STY_OverrideValuesFilter filter(NULL);
 		UT_Array<STY_OverrideValues> results;
@@ -868,6 +871,8 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	if (hairPrims.size()) {
 		exportHair(objNode, gdp, hairPrims);
 	}
+
+	popContext();
 }
 
 /// Add object's scene name as user attribute.
