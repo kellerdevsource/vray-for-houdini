@@ -193,3 +193,21 @@ void VOP::NodeBase::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 		return;
 	type_info.setType(pluginInfo->outputs[idx].socketType);
 }
+
+const char *VOP::NodeBase::getCreateSocketLabel(int socketIndex, const char *nameFormat) const
+{
+	if (socketIndex >= socketLabels.size())
+		socketLabels.resize(socketIndex + 1);
+
+	UT_StringHolder &label = socketLabels[socketIndex];
+#ifdef HDK_16_5
+	if (label.isEmpty())
+#else
+	if (label == "")
+#endif
+	{
+		label.sprintf(nameFormat, socketIndex);
+	}
+
+	return label.buffer();
+}

@@ -13,55 +13,57 @@
 
 #include "op/op_node_base.h"
 
+#include "vfh_prm_templates.h"
+
 #include <OBJ/OBJ_Light.h>
 #include <OBJ/OBJ_Geometry.h>
 
-#include "vfh_prm_templates.h"
+namespace VRayForHoudini{
+namespace OBJ{
 
-
-namespace VRayForHoudini {
-namespace OBJ {
-
-class VRayClipper:
-		public OP::VRayNode,
-		public OBJ_Geometry
+class VRayClipper
+	: public OP::VRayNode
+	, public OBJ_Geometry
 {
 public:
-	static PRM_Template*       GetPrmTemplate();
+	static PRM_Template *GetPrmTemplate();
 
-public:
-	VRayClipper(OP_Network *parent, const char *name, OP_Operator *entry):OBJ_Geometry(parent, name, entry) { }
-	virtual                    ~VRayClipper() { }
+	VRayClipper(OP_Network *parent, const char *name, OP_Operator *entry)
+		: OBJ_Geometry(parent, name, entry)
+	{}
 
-	virtual PluginResult        asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
+	~VRayClipper() VRAY_DTOR_OVERRIDE
+	{}
+
+	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter,
+	                                  ExportContext *parentContext = nullptr) VRAY_OVERRIDE;
 
 protected:
-	virtual void                setPluginType() VRAY_OVERRIDE;
+	void setPluginType() VRAY_OVERRIDE;
 };
 
-
-template< VRayPluginID PluginID >
-class LightNodeBase:
-		public OP::VRayNode,
-		public OBJ_Light
+template <VRayPluginID PluginID>
+class LightNodeBase
+	: public OP::VRayNode
+	, public OBJ_Light
 {
 public:
-	static PRM_Template*       GetPrmTemplate();
-	static int                 GetMyPrmTemplate(Parm::PRMList &myPrmList);
+	static PRM_Template *GetPrmTemplate();
+	static int GetMyPrmTemplate(Parm::PRMList &myPrmList);
 
-public:
-	LightNodeBase(OP_Network *parent, const char *name, OP_Operator *entry):OBJ_Light(parent, name, entry) { }
-	virtual                    ~LightNodeBase() { }
+	LightNodeBase(OP_Network *parent, const char *name, OP_Operator *entry)
+		: OBJ_Light(parent, name, entry)
+	{}
 
-	virtual PluginResult        asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
+	~LightNodeBase() VRAY_DTOR_OVERRIDE
+	{}
+
+	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter,
+	                                  ExportContext *parentContext = nullptr) VRAY_OVERRIDE;
 
 protected:
-	void setPluginType() VRAY_OVERRIDE {
-		pluginType = VRayPluginType::LIGHT;
-		pluginID = getVRayPluginIDName(PluginID);
-	}
+	void setPluginType() VRAY_OVERRIDE;
 };
-
 
 } // namespace OBJ
 } // namespace VRayForHoudini

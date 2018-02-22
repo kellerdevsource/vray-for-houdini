@@ -118,10 +118,10 @@ static void setSettingsRTEngineFromRopNode(SettingsRTEngine &self, const OP_Node
 	self.interactive = Parm::getParmInt(ropNode, "SettingsRTEngine_interactive");
 	self.low_gpu_thread_priority = Parm::getParmInt(ropNode, "SettingsRTEngine_low_gpu_thread_priority");
 	self.max_draw_interval = Parm::getParmInt(ropNode, "SettingsRTEngine_max_draw_interval");
-	self.max_render_time = Parm::getParmInt(ropNode, "SettingsRTEngine_max_render_time");
+	self.max_render_time = Parm::getParmFloat(ropNode, "SettingsRTEngine_max_render_time");
 	self.max_sample_level = Parm::getParmInt(ropNode, "SettingsRTEngine_max_sample_level");
 	self.min_draw_interval = Parm::getParmInt(ropNode, "SettingsRTEngine_min_draw_interval");
-	self.noise_threshold = Parm::getParmInt(ropNode, "SettingsRTEngine_noise_threshold");
+	self.noise_threshold = Parm::getParmFloat(ropNode, "SettingsRTEngine_noise_threshold");
 	self.opencl_resizeTextures = Parm::getParmInt(ropNode, "SettingsRTEngine_opencl_resizeTextures");
 	self.opencl_texsize = Parm::getParmInt(ropNode, "SettingsRTEngine_opencl_texsize");
 	self.opencl_textureFormat = Parm::getParmInt(ropNode, "SettingsRTEngine_opencl_textureFormat");
@@ -233,10 +233,22 @@ std::string VRayExporter::getPluginName(OBJ_Node &objNode)
 	return VRayExporter::getPluginName(&objNode);
 }
 
-VRay::VUtils::CharStringRefList VRayExporter::getSceneName(const OP_Node &opNode)
+VRay::VUtils::CharStringRefList VRayExporter::getSceneName(const OP_Node &opNode, int primID)
 {
-	VRay::VUtils::CharStringRefList sceneName(1);
-	sceneName[0].set(opNode.getName().buffer());
+	const UT_String &nodeName = opNode.getName();
+
+	UT_String nodePath;
+	opNode.getFullPath(nodePath);
+	// nodePath already ends with "/".
+	nodePath.prepend("scene");
+	if (primID >= 0) {
+		nodePath.append(_toChar(QString::number(primID)));
+	}
+
+	VRay::VUtils::CharStringRefList sceneName(2);
+	sceneName[0] = nodeName.buffer();
+	sceneName[1] = nodePath.buffer();
+
 	return sceneName;
 }
 
@@ -907,6 +919,42 @@ static void fillSettingsRegionsGenerator(OP_Node &rop, Attrs::PluginDesc &plugin
 
 static void fillSettingsImageSampler(OP_Node &rop, Attrs::PluginDesc &pluginDesc)
 {
+	UT_String _renderMaskObjectIDS;
+	rop.evalString(_renderMaskObjectIDS, "SettingsImageSampler_render_mask_object_ids", 0, 0.0);
+
+	const QString renderMaskObjectIDS(_renderMaskObjectIDS.buffer());
+	if (!renderMaskObjectIDS.isEmpty()) {
+		const QStringList renderMaskObjectIDSList = renderMaskObjectIDS.split(' ');
+
+		VRay::VUtils::IntRefList renderMaskObjectIDs(renderMaskObjectIDSList.size());
+		for (int i = 0; i < renderMaskObjectIDSList.size(); ++i) {
+			const QString &objectID = renderMaskObjectIDSList[i];
+			renderMaskObjectIDs[i] = objectID.toInt();
+		}
+		if (renderMaskObjectIDs.count()) {
+			pluginDesc.add(Attrs::PluginAttr("render_mask_object_ids", renderMaskObjectIDs));
+		}
+	}
+
+	UT_String _renderMaskObjects;
+	rop.evalString(_renderMaskObjects, "SettingsImageSampler_render_mask_objects", 0, 0.0);
+
+	const QString renderMaskObjectNames(_renderMaskObjects.buffer());
+	if (!renderMaskObjectNames.isEmpty()) {
+		const QStringList renderMaskObjectNamesList = renderMaskObjectNames.split(' ');
+
+		VRay::VUtils::ValueRefList renderMaskObjects(renderMaskObjectNamesList.size());
+		for (const QString &opName : renderMaskObjectNamesList) {
+			// TODO:
+			//   [ ] Add object plugins to list
+			//   [ ] Add bundles
+		}
+
+		if (renderMaskObjects.count()) {
+			pluginDesc.add(Attrs::PluginAttr("render_mask_objects", renderMaskObjects));
+		}
+	}
+
 	const int minSubdivs = rop.evalInt("SettingsImageSampler_dmc_minSubdivs", 0, 0.0);
 	int maxSubdivs = minSubdivs;
 

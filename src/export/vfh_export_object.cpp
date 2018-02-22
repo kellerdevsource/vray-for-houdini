@@ -264,7 +264,7 @@ VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
 	}
 #endif
 
-	if (!renderOp) {
+	if (!objLight && !renderOp) {
 		Log::getLog().error("OBJ \"%s\": Render OP is not found!",
 							opNode->getName().buffer());
 	}

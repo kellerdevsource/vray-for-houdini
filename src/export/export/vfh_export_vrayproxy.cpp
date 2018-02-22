@@ -191,7 +191,7 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 
 	VRay::VRayExportSettings settings;
 	settings.compressed = true;
-	settings.framesInSeparateFiles = false;
+	settings.currentFrameOnly = false;
 	settings.renderElementsSeparateFolders = false;
 	if (exporter.exportVrscene(vrscenePath, settings) != 0) {
 		err.setError(__FUNCTION__,

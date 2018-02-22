@@ -50,8 +50,6 @@ protected:
 
 private:
 	int customInputsCount() const;
-
-	mutable UT_StringArray socketLabels;
 };
 
 } // namespace VOP

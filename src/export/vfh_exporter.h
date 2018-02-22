@@ -504,7 +504,7 @@ public:
 	static std::string getPluginName(OBJ_Node *obj_node);
 	static std::string getPluginName(OBJ_Node &obj_node);
 
-	static VRay::VUtils::CharStringRefList getSceneName(const OP_Node &opNode);
+	static VRay::VUtils::CharStringRefList getSceneName(const OP_Node &opNode, int primID=-1);
 	static VRay::VUtils::CharStringRefList getSceneName(const tchar *name);
 
 	/// Helper function to get the active camera from a given ROP node

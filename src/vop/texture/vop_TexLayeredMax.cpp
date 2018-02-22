@@ -22,16 +22,16 @@ void VOP::TexLayeredMax::setPluginType()
 
 const char* VOP::TexLayeredMax::inputLabel(unsigned idx) const
 {
-	const int numBaseInputs = VOP::NodeBase::orderedInputs();
-
-	if (idx < numBaseInputs) {
-		return VOP::NodeBase::inputLabel(idx);
-	}
+	const unsigned numBaseInputs = NodeBase::orderedInputs();
+	if (idx < numBaseInputs)
+		return NodeBase::inputLabel(idx);
 
 	const int socketIndex = idx - numBaseInputs + 1;
-	const std::string &label =boost::str(boost::format("Texture %i") % socketIndex);
+	if (socketIndex >= 0) {
+		return getCreateSocketLabel(socketIndex, "Texture %i");
+	}
 
-	return label.c_str();
+	return NULL;
 }
 
 int VOP::TexLayeredMax::getInputFromName(const UT_String &in) const
@@ -48,7 +48,7 @@ void VOP::TexLayeredMax::getInputNameSubclass(UT_String &in, int idx) const
 	}
 	else {
 		const int socketIndex = idx - numBaseInputs + 1;
-		in = boost::str(boost::format("tex_%i") % socketIndex);
+		in.sprintf("tex_%i", socketIndex);
 	}
 }
 
@@ -60,9 +60,9 @@ int VOP::TexLayeredMax::getInputFromNameSubclass(const UT_String &in) const
 		const int numBaseInputs = VOP::NodeBase::orderedInputs();
 
 		int idx = -1;
-		sscanf(in.buffer(), "tex_%i", &idx);
-
-		inIdx = numBaseInputs + idx - 1;
+		if (sscanf(in.buffer(), "tex_%i", &idx) == 1) {
+			inIdx = numBaseInputs + idx - 1;
+		}
 	}
 	else {
 		inIdx = VOP::NodeBase::getInputFromNameSubclass(in);
@@ -85,14 +85,13 @@ void VOP::TexLayeredMax::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int i
 
 void VOP::TexLayeredMax::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos)
 {
-	const int numBaseInputs = VOP::NodeBase::orderedInputs();
+	const unsigned numBaseInputs = VOP::NodeBase::orderedInputs();
 
 	if (idx < numBaseInputs) {
 		VOP::NodeBase::getAllowedInputTypeInfosSubclass(idx, type_infos);
 	}
 	else {
-		VOP_TypeInfo type_info(VOP_TYPE_COLOR);
-		type_infos.append(type_info);
+		type_infos.append(VOP_TypeInfo(VOP_TYPE_COLOR));
 	}
 }
 
@@ -116,7 +115,7 @@ unsigned VOP::TexLayeredMax::orderedInputs() const
 
 OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	const fpreal &t = exporter.getContext().getTime();
+	const fpreal t = exporter.getContext().getTime();
 
 	const int tex_count = evalInt("textures_count", 0, 0.0);
 
@@ -125,18 +124,18 @@ OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &p
 	VRay::FloatList opacities;
 
 	for (int i = 1; i <= tex_count; ++i) {
-		const std::string &texSockName = boost::str(boost::format("tex_%i") % i);
+		QString texSockName(QString("tex_%1").arg(i));
 
-		OP_Node *tex_node = VRayExporter::getConnectedNode(this, texSockName);
+		OP_Node *tex_node = VRayExporter::getConnectedNode(this, _toChar(texSockName));
 		if (!tex_node) { 
 			Log::getLog().warning("Node \"%s\": Texture node is not connected to \"%s\", ignoring...",
-					   getName().buffer(), texSockName.c_str());
+					   getName().buffer(), _toChar(texSockName));
 		}
 		else {
-			VRay::Plugin tex_plugin = exporter.exportVop(tex_node, parentContext);
+			const VRay::Plugin tex_plugin = exporter.exportVop(tex_node, parentContext);
 			if (!tex_plugin) {
 				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
-							getName().buffer(), texSockName.c_str());
+							getName().buffer(), _toChar(texSockName));
 			}
 			else {
 				const int blend_mode   = evalIntInst("tex#blend_mode", &i, 0, t);
@@ -149,9 +148,8 @@ OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &p
 		}
 	}
 
-	if (!textures.size()) {
+	if (textures.empty())
 		return PluginResultError;
-	}
 
 	std::reverse(textures.begin(), textures.end());
 	std::reverse(blend_modes.begin(), blend_modes.end());
