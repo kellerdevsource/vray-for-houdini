@@ -2095,32 +2095,29 @@ void VRayExporter::exportPluginProperties(VRay::Plugin &plugin, const Attrs::Plu
 }
 
 
-void VRayExporter::removePlugin(OBJ_Node *node, int checkExisting)
+void VRayExporter::removePlugin(OBJ_Node *node)
 {
-	removePlugin(Attrs::PluginDesc(VRayExporter::getPluginName(node), ""), checkExisting);
+	m_renderer.removePlugin(getPluginName(node));
 }
 
 
-void VRayExporter::removePlugin(const std::string &pluginName, int checkExisting)
+void VRayExporter::removePlugin(const std::string &pluginName)
 {
-	removePlugin(Attrs::PluginDesc(pluginName, ""), checkExisting);
+	m_renderer.removePlugin(pluginName);
 }
 
-
-void VRayExporter::removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting)
-{
-	m_renderer.removePlugin(pluginDesc, checkExisting);
-}
 
 void VRayExporter::removePlugin(VRay::Plugin plugin)
 {
 	m_renderer.removePlugin(plugin);
 }
 
+
 void VRayExporter::setSessionType(VfhSessionType value)
 {
 	sessionType = value;
 }
+
 
 void VRayExporter::setDRSettings()
 {

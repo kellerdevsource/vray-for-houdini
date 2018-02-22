@@ -173,7 +173,7 @@ public:
 	/// Recreates physical camera
 	/// @param viewParams View settings.
 	/// @param needRemoval If plugin has to be removed.
-	VRay::Plugin exportPhysicalCamera(const ViewParams &viewParams, int needRemoval=true);
+	VRay::Plugin exportPhysicalCamera(const ViewParams &viewParams);
 
 	/// Exports RenderView plugin.
 	/// @param viewParams View settings.
@@ -360,13 +360,10 @@ public:
 	int exportVrscene(const std::string &filepath, VRay::VRayExportSettings &settings);
 
 	/// Delete plugins created for the given OBJ node.
-	void removePlugin(OBJ_Node *node, int checkExisting=true);
+	void removePlugin(OBJ_Node *node);
 
 	/// Delete plugin with the given name
-	void removePlugin(const std::string &pluginName, int checkExisting=true);
-
-	/// Delete plugin for the plugin description
-	void removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting=true);
+	void removePlugin(const std::string &pluginName);
 
 	/// Delete plugin.
 	/// @param plugin V-Ray plugin instance.
@@ -446,7 +443,7 @@ public:
 	int isGPU() const { return m_isGPU; }
 
 	/// Test if we are rendering in IPR mode
-	bool isInteractive() const { return sessionType != VfhSessionType::production; }
+	bool isInteractive() const { return sessionType == VfhSessionType::ipr || sessionType == VfhSessionType::rt; }
 
 	/// Test if we need to abort the rendering
 	int isAborted() const { return m_isAborted; }
@@ -495,14 +492,14 @@ public:
 	static const Parm::SocketDesc* getConnectedOutputType(OP_Node *op_node, const std::string &inputName);
 
 	/// Helper functions to generate a plugin name for a given node
-	/// @param op_node[in] - the node
+	/// @param opNode[in] - the node
 	/// @param prefix[in] - name prefix
 	/// @param suffix[in] - name suffix
-	/// @retval plugin name
+	/// @returns Plugin name.
+	static std::string getPluginName(OP_Node *opNode, const std::string &prefix="", const std::string &suffix="");
 	static std::string getPluginName(const OP_Node &opNode, const char *prefix);
-	static std::string getPluginName(OP_Node *op_node, const std::string &prefix="", const std::string &suffix="");
-	static std::string getPluginName(OBJ_Node *obj_node);
-	static std::string getPluginName(OBJ_Node &obj_node);
+	static std::string getPluginName(OBJ_Node *objNode);
+	static std::string getPluginName(OBJ_Node &objNode);
 
 	static VRay::VUtils::CharStringRefList getSceneName(const OP_Node &opNode, int primID=-1);
 	static VRay::VUtils::CharStringRefList getSceneName(const tchar *name);
