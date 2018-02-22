@@ -64,7 +64,7 @@ vfh_rop.render_cloud()
 </tool>
 
 
-<tool name="vray_show_vfb" label="VFB" icon="ROP_vray">
+<tool name="vray_show_vfb" label="Show VFB" icon="ROP_vray">
     <script scriptType="python">
 <![CDATA[
 
@@ -92,7 +92,7 @@ map(vfh_object_properties.addVRayCameraPhysical, camList)
     </script>
 </tool>
 
-<tool name="vray_displacement" label="Displacement" icon="ROP_vray">
+<tool name="vray_displacement" label="Displacement Properties" icon="ROP_vray">
     <script scriptType="python">
 <![CDATA[
 
@@ -109,7 +109,7 @@ map(vfh_object_properties.addVRayDisplamentParams, geoList)
     </script>
 </tool>
 
-<tool name="vray_hair" label="Hair" icon="ROP_vray">
+<tool name="vray_hair" label="Hair Properties" icon="ROP_vray">
     <script scriptType="python">
 <![CDATA[
 
@@ -143,7 +143,7 @@ map(vfh_object_properties.addVRayObjectProperties, geoList)
     </script>
 </tool>
 
-<tool name="vray_proxy_export" label="Proxy Export" icon="ROP_vray">
+<tool name="vray_proxy_export" label="Export VRayProxy" icon="ROP_vray">
     <script scriptType="python">
 <![CDATA[
 
@@ -156,7 +156,7 @@ dialog.show(1)
     </script>
 </tool>
 
-<tool name="vray_proxy_import" label="Proxy Import" icon="ROP_vray">
+<tool name="vray_proxy_import" label="Import VRayProxy" icon="ROP_vray">
     <script scriptType="python">
 <![CDATA[
 
