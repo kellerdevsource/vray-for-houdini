@@ -170,17 +170,13 @@ public:
 	/// @param pluginDesc - plugin description with relevant properties set
 	void exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc);
 
-	/// Delete plugin for a given plugin description
-	/// @param pluginDesc - plugin description with plugin name set
-	void removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting=true);
-
 	/// Delete plugin with the given name
 	/// @param pluginName - plugin name
-	void removePlugin(const std::string &pluginName, int checkExisting=true);
+	void removePlugin(const std::string &pluginName) const;
 
 	/// Delete plugin.
 	/// @param plugin V-Ray plugin instance.
-	void removePlugin(VRay::Plugin plugin);
+	void removePlugin(VRay::Plugin plugin) const;
 
 	/// Commits any accumulated scene changes. This is necessary if
 	/// the autoCommit is set to false on the renderer instance.

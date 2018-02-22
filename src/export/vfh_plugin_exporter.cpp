@@ -390,39 +390,28 @@ void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngin
 }
 
 
-void VRayPluginRenderer::removePlugin(const Attrs::PluginDesc &pluginDesc, int checkExisting)
-{
-	removePlugin(pluginDesc.pluginName, checkExisting);
-}
-
-
-void VRayPluginRenderer::removePlugin(VRay::Plugin plugin)
+void VRayPluginRenderer::removePlugin(VRay::Plugin plugin) const
 {
 	vassert(m_vray);
 
 	m_vray->removePlugin(plugin);
+
+	const VRay::Error err = m_vray->getLastError();
+	if (err.getCode() != VRay::SUCCESS) {
+		Log::getLog().debug("Error removing plugin: %s", err.toString());
+	}
 }
 
 
-void VRayPluginRenderer::removePlugin(const std::string &pluginName, int checkExisting)
+void VRayPluginRenderer::removePlugin(const std::string &pluginName) const
 {
-	if (m_vray) {
-		VRay::Plugin plugin = m_vray->getPlugin(pluginName);
-		if (!plugin) {
-			if (checkExisting) {
-				Log::getLog().warning("VRayPluginRenderer::removePlugin: Plugin \"%s\" is not found!",
-									  pluginName.c_str());
-			}
-		}
-		else {
-			m_vray->removePlugin(plugin);
+	vassert(m_vray);
 
-			VRay::Error err = m_vray->getLastError();
-			if (err != VRay::SUCCESS) {
-				Log::getLog().error("Error removing plugin: %s",
-									err.toString());
-			}
-		}
+	m_vray->removePlugin(pluginName);
+
+	const VRay::Error err = m_vray->getLastError();
+	if (err.getCode() != VRay::SUCCESS) {
+		Log::getLog().debug("Error removing plugin: %s", err.toString());
 	}
 }
 
