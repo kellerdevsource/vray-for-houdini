@@ -219,7 +219,7 @@
         }
 
         VFH_UI_PARM_TOGGLE(
-            "CameraPhysical_use_vignetting",
+            "use_vignetting",
             "Use Vignetting",
             "Use vignetting effect",
             0
