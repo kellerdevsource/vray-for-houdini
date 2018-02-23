@@ -10,23 +10,19 @@
 
 #include "vfh_rop.h"
 #include "vfh_exporter.h"
-#include "vfh_prm_globals.h"
 #include "vfh_prm_def.h"
 #include "vfh_prm_templates.h"
 #include "vfh_hou_utils.h"
+#include "vfh_gpu_device_select.h"
 
-#include <ROP/ROP_Templates.h>
 #include <ROP/ROP_Error.h>
 #include <OBJ/OBJ_Geometry.h>
-#include <OBJ/OBJ_Light.h>
 #include <OP/OP_Director.h>
 #include <OP/OP_BundleList.h>
 #include <OP/OP_Bundle.h>
 
 #include <TAKE/TAKE_Manager.h>
-
 #include <UT/UT_Interrupt.h>
-#include "../vop/brdf/vop_BRDFVRayMtl.h"
 
 using namespace VRayForHoudini;
 
@@ -53,6 +49,14 @@ static int RendererShowVFB(void *data, int /*index*/, fpreal /*t*/, const PRM_Te
 	return 1;
 }
 
+/// Callback for the "GPU Devices" button on the ROP node.
+/// Shows GPU device select UI.
+static int rendererGpuDeviceSelect(void* /*data*/, int /*index*/, fpreal /*t*/, const PRM_Template* /*tplate*/)
+{
+	showGpuDeviceSelectUI();
+	return 1;
+}
+
 OP_TemplatePair* VRayRendererNode::getTemplatePair()
 {
 	static OP_TemplatePair *ropPair = nullptr;
@@ -69,6 +73,9 @@ OP_TemplatePair* VRayRendererNode::getTemplatePair()
 				}
 				else if (vutils_strcmp(param.getToken(), "render_rt") == 0) {
 					param.setCallback(RtStartSession);
+				}
+				else if (vutils_strcmp(param.getToken(), "gpu_device_select") == 0) {
+					param.setCallback(rendererGpuDeviceSelect);
 				}
 			}
 		}

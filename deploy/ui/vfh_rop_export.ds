@@ -38,26 +38,11 @@ groupsimple {
         VFH_TAG_VRAY
     }
 
-    VFH_UI_PARM_TOGGLE("render_in_cloud", "Submit To Cloud", "Submit job to V-Ray Cloud", 0)
-
     parm {
-        name "cloud_project_name"
-        label "Project"
-        help "Cloud project name"
-        type string
-        default { "VRayForHoudini" }
-        VFH_DISABLE_WHEN_PARAM_FALSE("render_in_cloud")
-        VFH_TAG_VRAY
-    }
-
-    parm {
-        name "cloud_job_name"
-        label "Job"
-        help "Cloud job name"
-        type string
-        default { "${HIPNAME}" }
-        VFH_DISABLE_WHEN_PARAM_FALSE("render_in_cloud")
-        VFH_TAG_VRAY
+        name "gpu_device_select"
+        label "GPU Devices"
+        type button
+        hidewhen "{ render_render_mode == 0 }"
     }
 }
 #endif
@@ -91,6 +76,35 @@ groupsimple {
     }
 #endif
 }
+
+#ifndef VRAY_UI_IPR
+groupsimple {
+    name "VRayRendererFolderDriverProductionCloud"
+    label "Cloud"
+
+    VFH_UI_PARM_TOGGLE("render_in_cloud", "Submit To Cloud", "Submit job to V-Ray Cloud", 0)
+
+    parm {
+        name "cloud_project_name"
+        label "Project"
+        help "Cloud project name"
+        type string
+        default { "VRayForHoudini" }
+        VFH_DISABLE_WHEN_PARAM_FALSE("render_in_cloud")
+        VFH_TAG_VRAY
+    }
+
+    parm {
+        name "cloud_job_name"
+        label "Job"
+        help "Cloud job name"
+        type string
+        default { "${HIPNAME}" }
+        VFH_DISABLE_WHEN_PARAM_FALSE("render_in_cloud")
+        VFH_TAG_VRAY
+    }
+}
+#endif
 
 groupsimple {
     name "VRayRendererFolderDriverExport"

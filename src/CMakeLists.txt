@@ -56,6 +56,7 @@ set(EXPORTER_SOURCES
 	export/vfh_plugin_attrs.cpp
 	export/vfh_plugin_exporter.cpp
 	export/vfh_vray_cloud.cpp
+	utils/vfh_gpu_device_select.cpp
 	utils/vfh_error.cpp
 	utils/vfh_hashes.cpp
 	utils/vfh_hou_utils.cpp
@@ -97,6 +98,7 @@ set(EXPORTER_HEADERS
 	gu/gu_geomplaneref.h
 	gu/gu_pgyeti.h
 	gu/vfh_gu_cache.h
+	utils/vfh_gpu_device_select.h
 	utils/vfh_attr_utils.h
 	utils/vfh_error.h
 	utils/vfh_hashes.h
@@ -231,6 +233,11 @@ houdini_library(vray_for_houdini_exporter "${EXPORTER_SOURCES};${EXPORTER_HEADER
 vfh_make_moc(TARGET vray_for_houdini_exporter
 	FILE_IN       ${CMAKE_CURRENT_SOURCE_DIR}/export/vfh_vray_cloud.cpp
 	FILE_OUT_NAME vfh_vray_cloud.cpp.moc
+)
+
+vfh_make_moc(TARGET vray_for_houdini_exporter
+	FILE_IN       ${CMAKE_CURRENT_SOURCE_DIR}/utils/vfh_gpu_device_select.cpp
+	FILE_OUT_NAME vfh_gpu_device_select.cpp.moc
 )
 
 houdini_plugin(${PROJECT_NAME} "${SOURCES};${HEADERS}")
