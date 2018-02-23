@@ -202,6 +202,7 @@
             }
             default { "0" }
             parmtag { "cook_dependent" "1" }
+            hidewhen "{ use_rect_tex == 0 }"
         }
         parm {
             hidewhen "{ use_rect_tex == 0 }"

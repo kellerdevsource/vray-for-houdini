@@ -120,6 +120,7 @@
             }
             default { "0" }
             parmtag { "cook_dependent" "1" }
+            hidewhen "{ use_dome_tex == 0 }"
         }
 
         parm {
