@@ -208,10 +208,6 @@ struct SettingsMotionBlur {
 };
 
 struct ViewParams {
-	ViewParams()
-		: useCameraPhysical(PhysicalCameraMode::modeNone)
-	{}
-
 	int needReset(const ViewParams &other) const;
 
 	int changedParams(const ViewParams &other) const;
@@ -223,12 +219,14 @@ struct ViewParams {
 	RenderViewParams renderView;
 	RenderCropRegionParams cropRegion;
 
-	PhysicalCameraMode useCameraPhysical;
+	PhysicalCameraMode useCameraPhysical{PhysicalCameraMode::modeNone};
 	PhysicalCameraParams cameraPhysical;
 
 	SettingsCamera settingsCamera;
 	SettingsCameraDof settingsCameraDof;
 	SettingsMotionBlur settingsMotionBlur;
+
+	int firstExport{false};
 };
 
 /// Returns FOV value based on aperture and focal.

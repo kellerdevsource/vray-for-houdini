@@ -182,11 +182,6 @@ public:
 	/// the autoCommit is set to false on the renderer instance.
 	void commit();
 
-	/// Change the autoCommit state of the renderer. When true, every parameter
-	/// change is applied immediately. Otherwise you have to call commit() yourself
-	/// to apply changes. This allows you to batch changes together for efficiency.
-	void setAutoCommit(const bool enable);
-
 	/// When enabled, setting parameter values will add keyframe values for animation.
 	/// Otherwise the old value is just overwritten. The default state is off.
 	void setAnimation(bool on);

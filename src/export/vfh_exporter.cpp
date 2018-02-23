@@ -2335,6 +2335,8 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	resetOpCallbacks();
 
 	m_viewParams = ViewParams();
+	m_viewParams.firstExport = true;
+
 	m_exportedFrames.clear();
 	m_phxSimulations.clear();
 	m_frames    = nframes;

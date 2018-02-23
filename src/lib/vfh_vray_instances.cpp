@@ -255,6 +255,8 @@ VRay::VRayRenderer* VRayForHoudini::newVRayRenderer(const VRay::RendererOptions 
 		}
 
 		if (instance) {
+			instance->setAutoCommit(true);
+
 			for (int i = 0; i < maxInstances; ++i) {
 				VRay::VRayRenderer* &vrayInstance = is->vrayInstances[i];
 				if (vrayInstance == nullptr) {

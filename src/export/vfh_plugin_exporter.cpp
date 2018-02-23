@@ -521,13 +521,6 @@ void VRayPluginRenderer::clearFrames(double toTime) const
 }
 
 
-void VRayPluginRenderer::setAutoCommit(const bool enable)
-{
-	if (m_vray) {
-		m_vray->setAutoCommit(enable);
-	}
-}
-
 void VRayPluginRenderer::reset()
 {
 	if (!m_vray)

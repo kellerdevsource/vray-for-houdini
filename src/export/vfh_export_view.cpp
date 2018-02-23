@@ -13,8 +13,6 @@
 #include "vfh_hou_utils.h"
 #include "vfh_rop.h"
 
-#include <boost/algorithm/string.hpp>
-
 using namespace VRayForHoudini;
 
 static const std::string viewPluginRenderView("vfhRenderView");
@@ -35,8 +33,7 @@ static void onCameraChange(OP_Node *caller, void *callee, OP_EventType type, voi
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
-	Log::getLog().debug("RtCallbackView: %s from \"%s\"",
-			   OPeventToString(type), caller->getName().buffer());
+	Log::getLog().debug("onCameraChange: %s", OPeventToString(type));
 
 	switch (type) {
 		case OP_PARM_CHANGED: {
@@ -47,16 +44,22 @@ static void onCameraChange(OP_Node *caller, void *callee, OP_EventType type, voi
 		case OP_INPUT_CHANGED: {
 			bool procceedEvent = false;
 
+			const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<uintptr_t>(data));
+			if (param) {
+				Log::getLog().debug("  From %s \"%s\"",
+				                    caller->getName().buffer(), param->getToken());
+			}
+
 			if (caller->castToOBJNode()) {
 				procceedEvent = true;
 			}
 			else if (caller->castToROPNode()) {
-				const PRM_Parm *param = Parm::getParm(*caller, reinterpret_cast<uintptr_t>(data));
 				if (param) {
-					procceedEvent = boost::starts_with(param->getToken(), "SettingsCamera") ||
-									boost::starts_with(param->getToken(), "SettingsCameraDof") ||
-									boost::starts_with(param->getToken(), "SettingsMotionBlur") ||
-									boost::starts_with(param->getToken(), "VRayStereoscopic");
+					const QString parmName(param->getToken());
+					procceedEvent = parmName.startsWith("SettingsCamera") ||
+									parmName.startsWith("SettingsCameraDof") ||
+									parmName.startsWith("SettingsMotionBlur") ||
+									parmName.startsWith("VRayStereoscopic");
 				}
 			}
 
@@ -409,7 +412,7 @@ static void exportRenderView(VRayExporter &self, const ViewParams &viewParams)
 
 	renderView.add(Attrs::PluginAttr("transform", viewParams.renderView.tm));
 	renderView.add(Attrs::PluginAttr("fov", viewParams.renderView.fov));
-	renderView.add(Attrs::PluginAttr("clipping", (viewParams.renderView.use_clip_start || viewParams.renderView.use_clip_end)));
+	renderView.add(Attrs::PluginAttr("clipping", viewParams.renderView.use_clip_start || viewParams.renderView.use_clip_end));
 	renderView.add(Attrs::PluginAttr("clipping_near", viewParams.renderView.clip_start));
 	renderView.add(Attrs::PluginAttr("clipping_far", viewParams.renderView.clip_end));
 	renderView.add(Attrs::PluginAttr("orthographic", viewParams.renderView.ortho));
@@ -519,19 +522,19 @@ static void fixIndieResolution(ViewParams &viewParams)
 	const int maxIndieH = 1080;
 #endif
 
-	const float aspect = float(maxIndieW) / float(maxIndieH);
+	const float aspect = float(viewParams.renderSize.w) / float(viewParams.renderSize.h);
 
 	if (viewParams.renderSize.w > maxIndieW ||
 	    viewParams.renderSize.h > maxIndieH)
 	{
 		if (viewParams.renderSize.w > maxIndieW) {
 			viewParams.renderSize.w = maxIndieW;
-			viewParams.renderSize.h = viewParams.renderSize.w / aspect;
+			viewParams.renderSize.h = maxIndieW / aspect;
 		}
 
 		if (viewParams.renderSize.h > maxIndieH) {
 			viewParams.renderSize.h = maxIndieH;
-			viewParams.renderSize.w = viewParams.renderSize.h * aspect;
+			viewParams.renderSize.w = maxIndieH * aspect;
 		}
 
 		Log::getLog().warning("Maximum resolution for animations in Houdini Indie is %i x %i",
@@ -545,41 +548,44 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 {
 	ViewParams viewParams(newViewParams);
 
-	if (isAnimation() && HOU::isIndie()) {
+	const int isRtSession = isInteractive();
+	const int isAnimSession = isAnimation();
+
+	if (isAnimSession && HOU::isIndie()) {
 		fixIndieResolution(viewParams);
 	}
 
-	const int isRtSession = isInteractive();
+	VRay::VRayRenderer &vray = getRenderer().getVRay();
 
-	int prevAutoCommit = false;
 	if (isRtSession) {
-		prevAutoCommit = getRenderer().getVRay().getAutoCommit();
-		getRenderer().getVRay().setAutoCommit(false);
+		vray.setAutoCommit(false);
 	}
 
 	// NOTE: For animation we need to export keyframes every time
 	// or data will be wiped with "clearKeyFrames()".
-	const bool needReExport =
-		isAnimation() ||
-		isRtSession ||
-		m_viewParams.needReset(viewParams);
+	const int needRtReExport = isRtSession && m_viewParams.needReset(viewParams);
+
+	const int needReExport =
+		isAnimSession ||
+		m_viewParams.firstExport ||
+		needRtReExport;
 
 	if (needReExport) {
 		Log::getLog().debug("VRayExporter::exportView: Resetting view...");
 
 		// Need to remove plugins only for RT session.
-		if (isRtSession) {
-			removePlugin(viewPluginRenderView);
-			removePlugin(viewPluginSettingsCamera);
-			removePlugin(viewPluginSettingsCameraDof);
-			removePlugin(viewPluginSettingsMotionBlur);
-			removePlugin(viewPluginStereoSettings);
-			removePlugin(viewPluginCameraPhysical);
-			removePlugin(viewPluginCameraDefault);
+		if (isRtSession && !m_viewParams.firstExport) {
+			vray.removePlugin(viewPluginRenderView);
+			vray.removePlugin(viewPluginSettingsCamera);
+			vray.removePlugin(viewPluginSettingsCameraDof);
+			vray.removePlugin(viewPluginSettingsMotionBlur);
+			vray.removePlugin(viewPluginStereoSettings);
+			vray.removePlugin(viewPluginCameraPhysical);
+			vray.removePlugin(viewPluginCameraDefault);
 		}
 
 		if (viewParams.useCameraPhysical != PhysicalCameraMode::modeNone) {
-			getRenderer().setCamera(exportPhysicalCamera(*this, viewParams));
+			vray.setCamera(exportPhysicalCamera(*this, viewParams));
 		}
 		else {
 			exportSettingsMotionBlur(*this, viewParams);
@@ -588,7 +594,7 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 				exportSettingsCameraDof(*this, viewParams);
 			}
 
-			getRenderer().setCamera(exportCameraDefault(*this, viewParams));
+			vray.setCamera(exportCameraDefault(*this, viewParams));
 		}
 
 		exportSettingsCamera(*this, viewParams);
@@ -600,35 +606,48 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		exportRenderView(*this, viewParams);
 	}
 	else if (isRtSession) {
-		if (m_viewParams.changedParams(viewParams)) {
-			exportRenderView(*this, viewParams);
-		}
-		if (m_viewParams.changedPhysCam(viewParams)) {
-			removePlugin(viewPluginCameraPhysical);
+		const int physCamChanged = m_viewParams.changedPhysCam(viewParams);
+		if (physCamChanged) {
+			Log::getLog().debug("VRayExporter::exportView: Updating PhysicalCamera...");
 
-			getRenderer().setCamera(exportPhysicalCamera(*this, viewParams));
+			vray.removePlugin(viewPluginCameraPhysical);
+			vray.removePlugin(viewPluginRenderView);
+
+			vray.setCamera(exportPhysicalCamera(*this, viewParams));
+		}
+
+		if (physCamChanged || m_viewParams.changedParams(viewParams)) {
+			Log::getLog().debug("VRayExporter::exportView: Updating RenderView...");
+
+			exportRenderView(*this, viewParams);
 		}
 	}
 
 	if (isRtSession) {
-		getRenderer().getVRay().commit(true);
-		getRenderer().getVRay().setAutoCommit(prevAutoCommit);
+		vray.commit();
+		vray.setAutoCommit(true);
 	}
 
 	if (m_viewParams.changedSize(viewParams)) {
-		setRenderSize(viewParams.renderSize.w, viewParams.renderSize.h);
+		vray.setImageSize(viewParams.renderSize.w, viewParams.renderSize.h);
 	}
 
 	if (m_viewParams.changedCropRegion(viewParams)) {
-		getRenderer().getVRay().setRenderRegion(
-			viewParams.cropRegion.x,
-			viewParams.cropRegion.y,
-			viewParams.cropRegion.width,
-			viewParams.cropRegion.height);
+		if (!(viewParams.cropRegion.x == 0 &&
+		      viewParams.cropRegion.y == 0 &&
+		      viewParams.cropRegion.width == viewParams.renderSize.w &&
+		      viewParams.cropRegion.height == viewParams.renderSize.h))
+		{
+			vray.setRenderRegion(viewParams.cropRegion.x,
+								 viewParams.cropRegion.y,
+								 viewParams.cropRegion.width,
+								 viewParams.cropRegion.height);
+		}
 	}
 
 	// Store new params
 	m_viewParams = viewParams;
+	m_viewParams.firstExport = false;
 
 	return ReturnValue::Success;
 }
@@ -779,9 +798,11 @@ bool RenderViewParams::operator == (const RenderViewParams &other) const
 
 int RenderViewParams::needReset(const RenderViewParams &other) const
 {
-	return
-		!MemberEq(stereoParams.use) ||
-		other.stereoParams.use && !MemberEq(stereoParams);
+	if (MemberNotEq(stereoParams.use))
+		return true;
+	if (other.stereoParams.use)
+		return MemberNotEq(stereoParams);
+	return false;
 }
 
 bool SettingsCamera::operator == (const SettingsCamera &other) const
