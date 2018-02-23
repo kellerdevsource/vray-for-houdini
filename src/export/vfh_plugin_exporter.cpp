@@ -382,8 +382,12 @@ void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngin
 		options.keepRTRunning = false;
 		options.rtNoiseThreshold = settingsRTEngine.noise_threshold;
 		options.rtSampleLevel = settingsRTEngine.max_sample_level;
-		options.rtTimeout = settingsRTEngine.max_render_time;
+		options.rtTimeout = settingsRTEngine.max_render_time * 60 * 1000;
 	}
+
+	const VRay::RendererState renderState = m_vray->getState();
+
+	vassert(renderState >= VRay::IDLE_INITIALIZED && renderState <= VRay::IDLE_DONE);
 
 	m_vray->setOptions(options);
 	m_vray->setRenderMode(mode);
