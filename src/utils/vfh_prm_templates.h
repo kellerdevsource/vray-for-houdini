@@ -334,6 +334,13 @@ const PRM_Parm *getParm(const OP_Node &node, const std::string &attrName);
 /// @return the value of the param
 int getParmInt(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
 
+/// Returns enum value from the parameter if set.
+/// @param opNode Node instance.
+/// @param name Parameter name.
+/// @param defaultValue Default value if parameter is not set.
+/// @param t Evaluation time.
+int getParmEnum(const OP_Node &opNode, const char *name, int defaultValue, fpreal t = 0.0);
+
 /// Find and eval node's param as float
 /// @node - the node which will be used for eval
 /// @attrName - the name of the param

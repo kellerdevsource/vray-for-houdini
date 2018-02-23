@@ -192,6 +192,19 @@ int VRayForHoudini::Parm::getParmInt(const OP_Node &node, const std::string &att
 	return value;
 }
 
+int Parm::getParmEnum(const OP_Node &opNode, const char *name, int defaultValue, fpreal t)
+{
+	int value = defaultValue;
+
+	UT_String enumValue;
+	opNode.evalString(enumValue, name, 0, t);
+
+	if (enumValue.isInteger()) {
+		value = enumValue.toInt();
+	}
+
+	return value;
+}
 
 float VRayForHoudini::Parm::getParmFloat(const OP_Node &node, const std::string &attrName, fpreal t)
 {
