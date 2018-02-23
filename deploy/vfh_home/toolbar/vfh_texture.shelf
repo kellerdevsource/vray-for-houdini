@@ -21,7 +21,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexOSL', nodename="vrayTexOSL")
 </tool>
 
 
-<tool name="vop_VRayNodeTexAColor" label="Color" icon="ROP_vray">
+<tool name="vop_VRayNodeTexAColor" label="V-Ray Color" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -41,7 +41,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexAColor', nodename="color")
 </tool>
 
 
-<tool name="vop_VRayNodeTexAColorOp" label="Color Operations" icon="ROP_vray">
+<tool name="vop_VRayNodeTexAColorOp" label="V-Ray Color Operations" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -61,7 +61,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexAColorOp', nodename="coloroperation
 </tool>
 
 
-<tool name="vop_VRayNodeTexBerconWood" label="Bercon Wood" icon="ROP_vray">
+<tool name="vop_VRayNodeTexBerconWood" label="V-Ray Bercon Wood" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -141,7 +141,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexBitmap', nodename="bitmaptexture")
 </tool>
 
 
-<tool name="vop_VRayNodeTexBlend" label="Blend" icon="ROP_vray">
+<tool name="vop_VRayNodeTexBlend" label="V-Ray Blend" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -161,7 +161,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexBlend', nodename="blend")
 </tool>
 
 
-<tool name="vop_VRayNodeTexBulge" label="Bulge" icon="ROP_vray">
+<tool name="vop_VRayNodeTexBulge" label="V-Ray Bulge" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -181,7 +181,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexBulge', nodename="bulge")
 </tool>
 
 
-<tool name="vop_VRayNodeTexCellular" label="Cellular" icon="ROP_vray">
+<tool name="vop_VRayNodeTexCellular" label="V-Ray Cellular" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -201,7 +201,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexCellular', nodename="cellular")
 </tool>
 
 
-<tool name="vop_VRayNodeTexChecker" label="Checker" icon="ROP_vray">
+<tool name="vop_VRayNodeTexChecker" label="V-Ray Checker" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -221,7 +221,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexChecker', nodename="checker")
 </tool>
 
 
-<tool name="vop_VRayNodeTexCloth" label="Cloth" icon="ROP_vray">
+<tool name="vop_VRayNodeTexCloth" label="V-Ray Cloth" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -241,7 +241,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexCloth', nodename="cloth")
 </tool>
 
 
-<tool name="vop_VRayNodeTexColorExponential" label="Color Exponential" icon="ROP_vray">
+<tool name="vop_VRayNodeTexColorExponential" label="V-Ray Color Exponential" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -261,7 +261,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexColorExponential', nodename="colore
 </tool>
 
 
-<tool name="vop_VRayNodeTexColorToFloat" label="Color To Float" icon="ROP_vray">
+<tool name="vop_VRayNodeTexColorToFloat" label="V-Ray Color To Float" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -281,7 +281,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexColorToFloat', nodename="colortoflo
 </tool>
 
 
-<tool name="vop_VRayNodeTexCombineColor" label="Combine Color" icon="ROP_vray">
+<tool name="vop_VRayNodeTexCombineColor" label="V-Ray Combine Color" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -301,7 +301,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexCombineColor', nodename="combinecol
 </tool>
 
 
-<tool name="vop_VRayNodeTexCombineFloat" label="Combine Float" icon="ROP_vray">
+<tool name="vop_VRayNodeTexCombineFloat" label="V-Ray Combine Float" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -321,7 +321,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexCombineFloat', nodename="combineflo
 </tool>
 
 
-<tool name="vop_VRayNodeTexCompMax" label="Comp Max" icon="ROP_vray">
+<tool name="vop_VRayNodeTexCompMax" label="V-Ray Comp Max" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -341,7 +341,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexCompMax', nodename="compmax")
 </tool>
 
 
-<tool name="vop_VRayNodeTexCurvature" label="Curvature" icon="ROP_vray">
+<tool name="vop_VRayNodeTexCurvature" label="V-Ray Curvature" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -361,7 +361,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexCurvature', nodename="curvature")
 </tool>
 
 
-<tool name="vop_VRayNodeTexDirt" label="Dirt" icon="ROP_vray">
+<tool name="vop_VRayNodeTexDirt" label="V-Ray Dirt" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -381,7 +381,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexDirt', nodename="dirt")
 </tool>
 
 
-<tool name="vop_VRayNodeTexDistance" label="Distance" icon="ROP_vray">
+<tool name="vop_VRayNodeTexDistance" label="V-Ray Distance" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -401,7 +401,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexDistance', nodename="distance")
 </tool>
 
 
-<tool name="vop_VRayNodeTexEdges" label="Edges" icon="ROP_vray">
+<tool name="vop_VRayNodeTexEdges" label="V-Ray Edges" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -421,7 +421,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexEdges', nodename="edges")
 </tool>
 
 
-<tool name="vop_VRayNodeTexFalloff" label="Falloff" icon="ROP_vray">
+<tool name="vop_VRayNodeTexFalloff" label="V-Ray Falloff" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -441,7 +441,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexFalloff', nodename="falloff")
 </tool>
 
 
-<tool name="vop_VRayNodeTexFloatOp" label="Float Operations" icon="ROP_vray">
+<tool name="vop_VRayNodeTexFloatOp" label="V-Ray Float Operations" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -461,7 +461,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexFloatOp', nodename="floatoperations
 </tool>
 
 
-<tool name="vop_VRayNodeTexFloatToColor" label="Float To Color" icon="ROP_vray">
+<tool name="vop_VRayNodeTexFloatToColor" label="V-Ray Float To Color" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -481,7 +481,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexFloatToColor', nodename="floattocol
 </tool>
 
 
-<tool name="vop_VRayNodeTexFresnel" label="Fresnel" icon="ROP_vray">
+<tool name="vop_VRayNodeTexFresnel" label="V-Ray Fresnel" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -501,7 +501,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexFresnel', nodename="fresnel")
 </tool>
 
 
-<tool name="vop_VRayNodeTexGradRamp" label="Gradient Ramp" icon="ROP_vray">
+<tool name="vop_VRayNodeTexGradRamp" label="V-Ray Gradient Ramp" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -521,7 +521,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexGradRamp', nodename="gradientramp")
 </tool>
 
 
-<tool name="vop_VRayNodeTexGradient" label="Gradient" icon="ROP_vray">
+<tool name="vop_VRayNodeTexGradient" label="V-Ray Gradient" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -541,7 +541,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexGradient', nodename="gradient")
 </tool>
 
 
-<tool name="vop_VRayNodeTexGranite" label="Granite" icon="ROP_vray">
+<tool name="vop_VRayNodeTexGranite" label="V-Ray Granite" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -561,7 +561,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexGranite', nodename="granite")
 </tool>
 
 
-<tool name="vop_VRayNodeTexGrid" label="Grid" icon="ROP_vray">
+<tool name="vop_VRayNodeTexGrid" label="V-Ray Grid" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -581,7 +581,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexGrid', nodename="grid")
 </tool>
 
 
-<tool name="vop_VRayNodeTexHairSampler" label="Hair Sampler" icon="ROP_vray">
+<tool name="vop_VRayNodeTexHairSampler" label="V-Ray Hair Sampler" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -601,7 +601,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexHairSampler', nodename="hairsampler
 </tool>
 
 
-<tool name="vop_VRayNodeTexInvert" label="Invert" icon="ROP_vray">
+<tool name="vop_VRayNodeTexInvert" label="V-Ray Invert" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -621,7 +621,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexInvert', nodename="invert")
 </tool>
 
 
-<tool name="vop_VRayNodeTexLayeredMax" label="Layered Texture" icon="ROP_vray">
+<tool name="vop_VRayNodeTexLayeredMax" label="V-Ray Layered Texture" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -641,7 +641,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexLayeredMax', nodename="layered")
 </tool>
 
 
-<tool name="vop_VRayNodeTexMarbleMax" label="MarbleMax" icon="ROP_vray">
+<tool name="vop_VRayNodeTexMarbleMax" label="V-Ray MarbleMax" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -661,7 +661,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexMarbleMax', nodename="marblemax")
 </tool>
 
 
-<tool name="vop_VRayNodeTexMaskMax" label="MaskMax" icon="ROP_vray">
+<tool name="vop_VRayNodeTexMaskMax" label="V-Ray MaskMax" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -681,7 +681,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexMaskMax', nodename="maskmax")
 </tool>
 
 
-<tool name="vop_VRayNodeTexMayaContrast" label="MayaContrast" icon="ROP_vray">
+<tool name="vop_VRayNodeTexMayaContrast" label="V-Ray MayaContrast" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -701,7 +701,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexMayaContrast', nodename="mayacontra
 </tool>
 
 
-<tool name="vop_VRayNodeTexMeshVertexColorChannel" label="Mesh Vertex Channel" icon="ROP_vray">
+<tool name="vop_VRayNodeTexMeshVertexColorChannel" label="V-Ray Mesh Vertex Channel" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -721,7 +721,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexMeshVertexColorChannel', nodename="
 </tool>
 
 
-<tool name="vop_VRayNodeTexMix" label="Mix" icon="ROP_vray">
+<tool name="vop_VRayNodeTexMix" label="V-Ray Mix" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -741,7 +741,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexMix', nodename="mix")
 </tool>
 
 
-<tool name="vop_VRayNodeTexNoise" label="Noise" icon="ROP_vray">
+<tool name="vop_VRayNodeTexNoise" label="V-Ray Noise" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -761,7 +761,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexNoise', nodename="noise")
 </tool>
 
 
-<tool name="vop_VRayNodeTexOutput" label="Output" icon="ROP_vray">
+<tool name="vop_VRayNodeTexOutput" label="V-Ray Output" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -781,7 +781,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexOutput', nodename="output")
 </tool>
 
 
-<tool name="vop_VRayNodeTexParticleId" label="Particle ID" icon="ROP_vray">
+<tool name="vop_VRayNodeTexParticleId" label="V-Ray Particle ID" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -801,7 +801,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexParticleId', nodename="particleid")
 </tool>
 
 
-<tool name="vop_VRayNodeTexPtex" label="Ptex" icon="ROP_vray">
+<tool name="vop_VRayNodeTexPtex" label="V-Ray Ptex" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -821,7 +821,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexPtex', nodename="ptex")
 </tool>
 
 
-<tool name="vop_VRayNodeTexRemap" label="Remap" icon="ROP_vray">
+<tool name="vop_VRayNodeTexRemap" label="V-Ray Remap" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -841,7 +841,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexRemap', nodename="remap")
 </tool>
 
 
-<tool name="vop_VRayNodeTexRemapFloat" label="Remap Float" icon="ROP_vray">
+<tool name="vop_VRayNodeTexRemapFloat" label="V-Ray Remap Float" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -861,7 +861,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexRemapFloat', nodename="remapfloat")
 </tool>
 
 
-<tool name="vop_VRayNodeTexRgbaCombine" label="RGBA Combine" icon="ROP_vray">
+<tool name="vop_VRayNodeTexRgbaCombine" label="V-Ray RGBA Combine" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -881,7 +881,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexRgbaCombine', nodename="rgbacombine
 </tool>
 
 
-<tool name="vop_VRayNodeTexRock" label="Rock" icon="ROP_vray">
+<tool name="vop_VRayNodeTexRock" label="V-Ray Rock" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -901,7 +901,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexRock', nodename="rock")
 </tool>
 
 
-<tool name="vop_VRayNodeTexSampler" label="Sampler" icon="ROP_vray">
+<tool name="vop_VRayNodeTexSampler" label="V-Ray Sampler" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -921,7 +921,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexSampler', nodename="sampler")
 </tool>
 
 
-<tool name="vop_VRayNodeTexSky" label="Sky" icon="ROP_vray">
+<tool name="vop_VRayNodeTexSky" label="V-Ray Sky" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -941,7 +941,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexSky', nodename="sky")
 </tool>
 
 
-<tool name="vop_VRayNodeTexSmoke" label="Smoke" icon="ROP_vray">
+<tool name="vop_VRayNodeTexSmoke" label="V-Ray Smoke" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -961,7 +961,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexSmoke', nodename="smoke")
 </tool>
 
 
-<tool name="vop_VRayNodeTexSnow" label="Snow" icon="ROP_vray">
+<tool name="vop_VRayNodeTexSnow" label="V-Ray Snow" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -981,7 +981,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexSnow', nodename="snow")
 </tool>
 
 
-<tool name="vop_VRayNodeTexSoftbox" label="Soft Box" icon="ROP_vray">
+<tool name="vop_VRayNodeTexSoftbox" label="V-Ray Soft Box" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1001,7 +1001,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexSoftbox', nodename="softbox")
 </tool>
 
 
-<tool name="vop_VRayNodeTexSpeckle" label="Speckle" icon="ROP_vray">
+<tool name="vop_VRayNodeTexSpeckle" label="V-Ray Speckle" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1021,7 +1021,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexSpeckle', nodename="speckle")
 </tool>
 
 
-<tool name="vop_VRayNodeTexSplat" label="Splat" icon="ROP_vray">
+<tool name="vop_VRayNodeTexSplat" label="V-Ray Splat" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1041,7 +1041,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexSplat', nodename="splat")
 </tool>
 
 
-<tool name="vop_VRayNodeTexStencil" label="Stencil" icon="ROP_vray">
+<tool name="vop_VRayNodeTexStencil" label="V-Ray Stencil" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1061,7 +1061,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexStencil', nodename="stencil")
 </tool>
 
 
-<tool name="vop_VRayNodeTexStucco" label="Stucco" icon="ROP_vray">
+<tool name="vop_VRayNodeTexStucco" label="V-Ray Stucco" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1081,7 +1081,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexStucco', nodename="stucco")
 </tool>
 
 
-<tool name="vop_VRayNodeTexSwirl" label="Swirl" icon="ROP_vray">
+<tool name="vop_VRayNodeTexSwirl" label="V-Ray Swirl" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1101,7 +1101,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexSwirl', nodename="swirl")
 </tool>
 
 
-<tool name="vop_VRayNodeTexTemperature" label="Temperature" icon="ROP_vray">
+<tool name="vop_VRayNodeTexTemperature" label="V-Ray Temperature" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1121,7 +1121,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexTemperature', nodename="temperature
 </tool>
 
 
-<tool name="vop_VRayNodeTexTemperatureToColor" label="Temperature To Color" icon="ROP_vray">
+<tool name="vop_VRayNodeTexTemperatureToColor" label="V-Ray Temperature To Color" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1141,7 +1141,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexTemperatureToColor', nodename="temp
 </tool>
 
 
-<tool name="vop_VRayNodeTexTiles" label="Tiles" icon="ROP_vray">
+<tool name="vop_VRayNodeTexTiles" label="V-Ray Tiles" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1161,7 +1161,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexTiles', nodename="tiles")
 </tool>
 
 
-<tool name="vop_VRayNodeTexUserColor" label="User Color" icon="ROP_vray">
+<tool name="vop_VRayNodeTexUserColor" label="V-Ray User Color" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1174,14 +1174,14 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexTiles', nodename="tiles")
 <![CDATA[
 
 import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeTexUserColor', nodename="usercolor")
+voptoolutils.genericTool(kwargs, 'VRayNodeTexUserColor', nodename="userColor")
 
 ]]>
     </script>
 </tool>
 
 
-<tool name="vop_VRayNodeTexUserScalar" label="User Scalar" icon="ROP_vray">
+<tool name="vop_VRayNodeTexUserScalar" label="V-Ray User Float" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1194,14 +1194,34 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexUserColor', nodename="usercolor")
 <![CDATA[
 
 import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeTexUserScalar', nodename="userscalar")
+voptoolutils.genericTool(kwargs, 'VRayNodeTexUserScalar', nodename="userFloat")
 
 ]]>
     </script>
 </tool>
 
 
-<tool name="vop_VRayNodeTexVector" label="Vector To Texture" icon="ROP_vray">
+<tool name="vop_VRayNodeTexUserInteger" label="V-Ray User Integer" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeTexUserInteger</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Texture</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeTexUserInteger', nodename="userInteger")
+
+]]>
+    </script>
+</tool>
+
+
+<tool name="vop_VRayNodeTexVector" label="V-Ray Vector To Texture" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1221,7 +1241,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexVector', nodename="vectortotexture"
 </tool>
 
 
-<tool name="vop_VRayNodeTexVectorOp" label="Vector Operations" icon="ROP_vray">
+<tool name="vop_VRayNodeTexVectorOp" label="V-Ray Vector Operations" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1241,7 +1261,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexVectorOp', nodename="vectoroperatio
 </tool>
 
 
-<tool name="vop_VRayNodeTexVectorProduct" label="Vector Product" icon="ROP_vray">
+<tool name="vop_VRayNodeTexVectorProduct" label="V-Ray Vector Product" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1261,7 +1281,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexVectorProduct', nodename="vectorpro
 </tool>
 
 
-<tool name="vop_VRayNodeTexVectorToColor" label="Vector To Color" icon="ROP_vray">
+<tool name="vop_VRayNodeTexVectorToColor" label="V-Ray Vector To Color" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1281,7 +1301,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexVectorToColor', nodename="vectortoc
 </tool>
 
 
-<tool name="vop_VRayNodeTexVoxelData" label="Voxel Data" icon="ROP_vray">
+<tool name="vop_VRayNodeTexVoxelData" label="V-Ray Voxel Data" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1301,7 +1321,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexVoxelData', nodename="voxeldata")
 </tool>
 
 
-<tool name="vop_VRayNodeTexWater" label="Water" icon="ROP_vray">
+<tool name="vop_VRayNodeTexWater" label="V-Ray Water" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -1321,7 +1341,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexWater', nodename="water")
 </tool>
 
 
-<tool name="vop_VRayNodeTexWood" label="Wood" icon="ROP_vray">
+<tool name="vop_VRayNodeTexWood" label="V-Ray Wood" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
