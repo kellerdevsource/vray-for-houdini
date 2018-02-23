@@ -249,21 +249,13 @@ def addVRayCameraPhysical(node):
     node.setParmTemplateGroup(ptg)
 
     for parm in node.parms():
-        attrName = parm.name()
-
-        if attrName in {"CameraPhysical_f_number"}:
-            parm.setExpression("ch(\"./fstop\")")
-        if attrName in {"CameraPhysical_focus_distance"}:
-            parm.setExpression("ch(\"./focus\")")
-        if attrName in {"CameraPhysical_horizontal_offset"}:
-            parm.setExpression("-ch(\"./winx\")")
-        if attrName in {"CameraPhysical_vertical_offset"}:
-            parm.setExpression("-ch(\"./winy\")")
-        if attrName in {"CameraPhysical_focal_length"}:
-            parm.setExpression("ch(\"./focal\")")
-        if attrName in {"CameraPhysical_film_width"}:
-            parm.setExpression("ch(\"./aperture\")")
-
-        parmValue = currentSettings.get(attrName, None)
+        parmValue = currentSettings.get(parm.name(), None)
         if parmValue is not None:
             parm.set(parmValue)
+
+    node.parm("CameraPhysical_f_number").setExpression("ch(\"./fstop\")")
+    node.parm("CameraPhysical_film_width").setExpression("ch(\"./aperture\")")
+    node.parm("CameraPhysical_focal_length").setExpression("ch(\"./focal\")")
+    node.parm("CameraPhysical_focus_distance").setExpression("ch(\"./focus\")")
+    node.parm("CameraPhysical_horizontal_offset").setExpression("-ch(\"./winx\")")
+    node.parm("CameraPhysical_vertical_offset").setExpression("-ch(\"./winy\")")
