@@ -62,7 +62,7 @@
     parm {
 	name	"mbSamples"
 	label	"Mbsamples"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"Number of samples for motion blur. 0 - Use global settings"
 	range	{ 0 10 }
@@ -97,7 +97,7 @@
     parm {
 	name	"smoothingBumps"
 	label	"Smoothingbumps"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"If true - smoothing of the field bump will be performed"
 	range	{ 0 10 }
@@ -136,7 +136,7 @@
     parm {
 	name	"useTexture"
 	label	"Usetexture"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"If true - texture will be applied on field"
 	range	{ 0 10 }
@@ -193,7 +193,7 @@
     parm {
 	name	"clampField"
 	label	"Clampfield"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"If true - the field will be clamped before texturing"
 	range	{ 0 10 }
@@ -219,7 +219,7 @@
     parm {
 	name	"useCache"
 	label	"Usecache"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"If true - voxel cache will be used for intersection speed-up"
 	range	{ 0 10 }
@@ -232,7 +232,7 @@
     parm {
 	name	"cacheRecursiveBuild"
 	label	"Cacherecursivebuild"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"If true - voxel cache will be build recursively"
 	range	{ 0 10 }
@@ -245,7 +245,7 @@
     parm {
 	name	"cacheSize"
 	label	"Cachesize"
-	type	integer
+	type	int
 	default	{ "3" }
 	help	"Cache size: from 1 to 5"
 	range	{ 0 10 }
@@ -258,7 +258,7 @@
     parm {
 	name	"cacheBlockSize"
 	label	"Cacheblocksize"
-	type	integer
+	type	int
 	default	{ "4" }
 	help	"Cache consolidation block size: from 1 to 8"
 	range	{ 0 10 }

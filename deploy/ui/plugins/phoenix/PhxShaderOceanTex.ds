@@ -48,7 +48,7 @@
         parm {
             name    "lod"
             label   "Lod"
-            type    integer
+            type    int
             default { "10" }
             range   { 0 10 }
             export  none
@@ -139,7 +139,7 @@
         parm {
             name    "up_vector"
             label   "Up Vector"
-            type    integer
+            type    int
             default { "1" }
             range   { 0 10 }
             export  none
@@ -152,7 +152,7 @@
         parm {
             name    "seed"
             label   "Seed"
-            type    integer
+            type    int
             default { "1.23457e+08" }
             range   { 0 10 }
             export  none

@@ -46,7 +46,7 @@
     parm {
         name    "environment_priority"
         label   "Environment Priority"
-        type    integer
+        type    int
         default { "0" }
         help    "Environment override priority (used when several materials override it along a ray path)"
         disablewhen "{ use != 1 }"

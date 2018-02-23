@@ -43,7 +43,7 @@ parm {
 parm {
     name    "SettingsDefaultDisplacement_maxSubdivs"
     label   "Max Subdivs"
-    type    integer
+    type    int
     default { "4" }
     help    "Determines the maximum subdivisions for a triangle of the original mesh"
     range   { 1 16 }

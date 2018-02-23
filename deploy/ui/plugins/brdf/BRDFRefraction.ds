@@ -170,7 +170,7 @@
     parm {
     name    "trace_depth"
     label   "Trace Depth"
-    type    integer
+    type    int
     default { "-1" }
     help    "The maximum refraction bounces (-1 is controlled by the global options)"
     range   { 0 10 }
@@ -313,7 +313,7 @@
     parm {
     name    "subdivs"
     label   "Subdivs"
-    type    integer
+    type    int
     default { "8" }
     range   { 0 10 }
     export  none
@@ -351,7 +351,7 @@
     parm {
     name    "interpolation_on"
     label   "Interpolation On"
-    type    integer
+    type    int
     default { "0" }
     range   { 0 10 }
     export  none
@@ -363,7 +363,7 @@
     parm {
     name    "imap_min_rate"
     label   "Imap Min Rate"
-    type    integer
+    type    int
     default { "-1" }
     range   { 0 10 }
     export  none
@@ -375,7 +375,7 @@
     parm {
     name    "imap_max_rate"
     label   "Imap Max Rate"
-    type    integer
+    type    int
     default { "1" }
     range   { 0 10 }
     export  none
@@ -411,7 +411,7 @@
     parm {
     name    "imap_samples"
     label   "Imap Samples"
-    type    integer
+    type    int
     default { "20" }
     range   { 0 10 }
     export  none

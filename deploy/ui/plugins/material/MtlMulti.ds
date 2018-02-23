@@ -28,9 +28,9 @@
     parm {
         name    "mtlid_gen"
         label   "Int Material ID Gen"
-        type    integer
+        type    int
         default { "1" }
-        help    "An integer texture that generates material ids; if not present, neither mtlid_gen_float is present then surface material id will be used"
+        help    "An int texture that generates material ids; if not present, neither mtlid_gen_float is present then surface material id will be used"
         range   { 0 1 }
         export  none
         parmtag { "cook_dependent" "1" }

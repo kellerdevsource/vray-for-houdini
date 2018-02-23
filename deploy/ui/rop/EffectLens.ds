@@ -121,7 +121,7 @@
     parm {
 	name	"bloomMaskObjID"
 	label	"Bloommaskobjid"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
@@ -145,7 +145,7 @@
     parm {
 	name	"bloomMaskMtlID"
 	label	"Bloommaskmtlid"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
@@ -259,7 +259,7 @@
     parm {
 	name	"glareNumSides"
 	label	"Glarenumsides"
-	type	integer
+	type	int
 	default	{ "6" }
 	range	{ 0 10 }
 	export	none
@@ -351,7 +351,7 @@
     parm {
 	name	"glareMaskObjID"
 	label	"Glaremaskobjid"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
@@ -375,7 +375,7 @@
     parm {
 	name	"glareMaskMtlID"
 	label	"Glaremaskmtlid"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none

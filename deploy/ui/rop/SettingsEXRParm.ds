@@ -70,7 +70,7 @@
 	label	"Write Integer Ids"
 	type	toggle
 	default	{ "0" }
-	help	"true to write integer elemnt ids when using Image Format exr"
+	help	"true to write int elemnt ids when using Image Format exr"
 	range	{ 0 1 }
 	export	none
 	parmtag	{ "cook_dependent" "1" }

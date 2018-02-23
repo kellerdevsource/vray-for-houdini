@@ -19,7 +19,7 @@
     parm {
 	name	"lifespan_mode"
 	label	"Lifespan Mode"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"lifespan mode: 0-default, 1-constant, 2-random"
 	range	{ 0 10 }
@@ -32,7 +32,7 @@
     parm {
 	name	"lifespan_seed"
 	label	"Lifespan Seed"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"lifespan randomization seed"
 	range	{ 0 10 }

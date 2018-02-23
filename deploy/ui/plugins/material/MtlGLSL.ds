@@ -96,7 +96,7 @@
     parm {
 	name	"max_ray_depth"
 	label	"Max Ray Depth"
-	type	integer
+	type	int
 	default	{ "-1" }
 	range	{ 0 64 }
 	export	none

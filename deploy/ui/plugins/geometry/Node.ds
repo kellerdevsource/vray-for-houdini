@@ -6,7 +6,7 @@
     parm {
 	name	"nsamples"
 	label	"Nsamples"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"Number of transform samples"
 	range	{ 0 10 }
@@ -45,7 +45,7 @@
     parm {
 	name	"objectID"
 	label	"Objectid"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"Object ID for the rendering"
 	range	{ 0 10 }

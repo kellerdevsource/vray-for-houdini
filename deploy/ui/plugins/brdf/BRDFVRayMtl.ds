@@ -257,7 +257,7 @@
         parm {
             name  "reflect_subdivs"
             label "Subdivs"
-            type  integer
+            type  int
             default { "8" }
             help  "Subdivs for glossy reflectons"
             range { 0 32 }
@@ -364,7 +364,7 @@
             parm {
                 name  "reflect_depth"
                 label "Max Depth"
-                type  integer
+                type  int
                 default { "5" }
                 help  "The maximum depth for reflections"
                 range { 0 10 }
@@ -493,7 +493,7 @@
         parm {
             name  "refract_subdivs"
             label "Subdivs"
-            type  integer
+            type  int
             default { "8" }
             help  "Subdivs for glossy refractions"
             range { 0 32 }
@@ -654,7 +654,7 @@
             parm {
                 name  "refract_depth"
                 label "Max Depth"
-                type  integer
+                type  int
                 default { "5" }
                 help  "The maximum depth for refractions"
                 range { 0 8 }
@@ -927,7 +927,7 @@
         parm {
             name  "environment_priority"
             label "Environment Priority"
-            type  integer
+            type  int
             default { "0" }
             help  "Environment override priority (used when several materials override it along a ray path)"
             range { 0 2 }

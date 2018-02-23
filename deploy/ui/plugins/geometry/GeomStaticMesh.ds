@@ -84,7 +84,7 @@
     parm {
 	name	"osd_subdiv_level"
 	label	"Subdivision Level"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"Level of OpenSubdiv subdivision"
 	disablewhen	"{ osd_subdiv_enable != 1 }"

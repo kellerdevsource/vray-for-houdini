@@ -9,7 +9,7 @@ groupsimple {
     parm {
         name    "SettingsIrradianceMap_min_rate"
         label   "Min Rate"
-        type    integer
+        type    int
         default { "-3" }
         help    "This value determines the resolution for the first GI pass"
         range   { -5 5 }
@@ -22,7 +22,7 @@ groupsimple {
     parm {
         name    "SettingsIrradianceMap_max_rate"
         label   "Max Rate"
-        type    integer
+        type    int
         default { "0" }
         help    "This value determines the resolution of the last GI pass"
         range   { -5 5 }
@@ -35,7 +35,7 @@ groupsimple {
     parm {
         name    "SettingsIrradianceMap_subdivs"
         label   "Subdivs"
-        type    integer
+        type    int
         default { "50" }
         help    "This controls the quality of individual GI samples"
         range   { 1 100 }
@@ -48,7 +48,7 @@ groupsimple {
     parm {
         name    "SettingsIrradianceMap_interp_samples"
         label   "Interpolation Samples"
-        type    integer
+        type    int
         default { "20" }
         help    "The number of GI samples that will be used to interpolate the indirect illumination at a given point"
         range   { 0 60 }
@@ -61,7 +61,7 @@ groupsimple {
     parm {
         name    "SettingsIrradianceMap_calc_interp_samples"
         label   "Calc. Interp. Samples"
-        type    integer
+        type    int
         default { "15" }
         help    "The number of already computed samples that will be used to guide the sampling algorithm"
         range   { 0 60 }
@@ -151,7 +151,7 @@ groupsimple {
         parm {
             name    "SettingsIrradianceMap_interp_frames"
             label   "Interp. Frames"
-            type    integer
+            type    int
             default { "2" }
             help    "The number of frames that will be used to interpolate GI when the \"Mode\" is set to \"Animation (rendering)\""
             range   { 0 10 }

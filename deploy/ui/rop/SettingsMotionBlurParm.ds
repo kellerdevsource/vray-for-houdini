@@ -85,7 +85,7 @@ groupsimple {
     parm {
         name    "SettingsMotionBlur_subdivs"
         label   "Subdivs"
-        type    integer
+        type    int
         default { "6" }
         help    "Determines the quality of the motion blur"
         range   { 0 64 }
@@ -118,7 +118,7 @@ groupsimple {
 parm {
     name    "SettingsMotionBlur_low_samples"
     label   "Prepass Samples"
-    type    integer
+    type    int
     default { "1" }
     help    "This controls how many samples in time will be computed during irradiance map calculations"
     range   { 0 1000 }
@@ -131,7 +131,7 @@ parm {
 parm {
     name    "SettingsMotionBlur_geom_samples"
     label   "Geometry Samples"
-    type    integer
+    type    int
     default { "2" }
     help    "This determines the number of geometry segments used to approximate motion blur"
     range   { 2 10 }

@@ -19,7 +19,7 @@
     parm {
         name    "uv_index"
         label   "UV Index"
-        type    integer
+        type    int
         default { "0" }
         help    "The index of the uv channel that should be used in case there is no uv set name"
         range   { 0 10 }

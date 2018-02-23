@@ -152,7 +152,7 @@ groupsimple {
     parm {
         VFH_NAME("max_subdivs")
         label "Max Subdivisions"
-        type integer
+        type int
         default { "256" }
         help "If use_globals is false, this determines the maximum subdivisions for a triangle of the original mesh"
         range { 0 64 }
@@ -179,7 +179,7 @@ groupsimple {
     parm {
         VFH_NAME("map_channel")
         label "Map Channel"
-        type integer
+        type int
         default { "0" }
         help "The mapping channel to use for vector and 2d displacement"
         range { 0 64 }
@@ -249,7 +249,7 @@ groupsimple {
     parm {
         VFH_NAME("resolution")
         label "Resolution"
-        type integer
+        type int
         default { "256" }
         help "Resolution at which to sample the displacement map for 2d displacement"
         range { 0 1024 }
@@ -263,7 +263,7 @@ groupsimple {
     parm {
         VFH_NAME("precision")
         label "Precision"
-        type integer
+        type int
         default { "8" }
         help "Increase for curved surfaces to avoid artifacts"
         range { 0 32 }
@@ -345,7 +345,7 @@ groupsimple {
     parm {
         VFH_NAME("image_width")
         label "Image Width"
-        type integer
+        type int
         default { "0" }
         help "This parameter overrides the imgWidth paramter from VRayFrameData during the calculation of the subdivision depth"
         range { 0 1024 }

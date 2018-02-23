@@ -169,7 +169,7 @@
         parm {
             name    "octaves"
             label   "Octaves"
-            type    integer
+            type    int
             default { "3" }
             parmtag { "vray_pluginattr" "octaves" }
             parmtag { "vray_type" "int" }

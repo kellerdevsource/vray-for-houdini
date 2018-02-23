@@ -6,7 +6,7 @@
     parm {
 	name	"compression"
 	label	"Compression"
-	type	integer
+	type	int
 	default	{ "9" }
 	help	"Compression for PNG output (0-9)"
 	range	{ 0 9 }

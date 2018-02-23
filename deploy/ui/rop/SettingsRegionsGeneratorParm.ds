@@ -11,7 +11,7 @@ parm {
     name    "SettingsRegionsGenerator_xc"
     label   "W"
     help    "Determines the maximum region width in pixels (Bucket W/H is selected) or the number of regions in the horizontal direction (when Region Count is selected)"
-    type    integer
+    type    int
     default { "64" }
     range   { 1 256 }
     parmtag { "vray_plugin" "SettingsRegionsGenerator" }
@@ -23,7 +23,7 @@ parm {
     name    "SettingsRegionsGenerator_yc"
     label   "H"
     help    "Determines the maximum region height in pixels (Bucket W/H is selected) or the number of regions in the vertical direction (when Region Count is selected)"
-    type    integer
+    type    int
     default { "64" }
     range   { 1 256 }
     parmtag { "vray_plugin" "SettingsRegionsGenerator" }

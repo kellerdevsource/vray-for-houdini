@@ -19,7 +19,7 @@
     parm {
 	name	"subdivs"
 	label	"Subdivs"
-	type	integer
+	type	int
 	default	{ "8" }
 	help	"Number of subdivisions when generating sphere triangle mesh"
 	range	{ 0 10 }

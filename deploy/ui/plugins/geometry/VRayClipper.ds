@@ -82,7 +82,7 @@
     parm {
 	name	"material_id"
 	label	"Material Id"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
@@ -123,7 +123,7 @@
     parm {
 	name	"object_id"
 	label	"Object Id"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none

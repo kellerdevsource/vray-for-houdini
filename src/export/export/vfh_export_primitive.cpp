@@ -369,11 +369,15 @@ VRay::Plugin VolumeExporter::exportVRayVolumeGridRef(OBJ_Node &objNode, const GU
 	UT_Options opts;
 	prim.saveOptions(opts, GA_SaveMap(prim.getDetail(), nullptr));
 
+	const char* usrchmap = opts.getOptionS("usrchmap").c_str();
+
 	const VRayVolumeGridRef *vrayVolumeGridRef = UTverify_cast<const VRayVolumeGridRef*>(prim.implementation());
 	const int primID = vrayVolumeGridRef->getOptions().hash();
 
 	Attrs::PluginDesc phxCache(boost::str(phxCacheNameFmt % primID % objNode.getName().buffer()),
 							   "PhxShaderCache");
+
+	bool b = phxCache.contains("usrchmap");
 	pluginExporter.setAttrsFromUTOptions(phxCache, opts);
 
 	return pluginExporter.exportPlugin(phxCache);

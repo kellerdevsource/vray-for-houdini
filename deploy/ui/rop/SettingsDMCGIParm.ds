@@ -6,7 +6,7 @@ groupsimple {
     parm {
         name    "SettingsDMCGI_subdivs"
         label   "Subdivs"
-        type    integer
+        type    int
         default { "8" }
         help    "The number of samples used to approximate GI"
         range   { 1 16 }
@@ -20,7 +20,7 @@ groupsimple {
     parm {
         name    "SettingsDMCGI_depth"
         label   "Depth"
-        type    integer
+        type    int
         default { "3" }
         help    "The number of light bounces that will be computed"
         range   { 1 24 }

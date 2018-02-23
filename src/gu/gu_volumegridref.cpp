@@ -305,6 +305,8 @@ int VRayVolumeGridRef::detailRebuild()
 }
 
 UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
+	bool b = getOptions().hasOption("phx_channel_map");
+
 	UT_StringArray channels;
 	if (!m_channelDirty) {
 		getPhxChannelMap(channels);
@@ -323,6 +325,9 @@ UT_StringArray VRayVolumeGridRef::getCacheChannels() const {
 
 	SYSconst_cast(this)->m_channelDirty = false;
 	SYSconst_cast(this)->setPhxChannelMap(channels);
+
+	b = getOptions().hasOption("phx_channel_map");
+
 	return channels;
 }
 
@@ -377,6 +382,8 @@ void VRayVolumeGridRef::buildMapping()
 			chanMap = getDefaultMapping(_toChar(loadPath));
 		}
 	}
+
+	bool b = getOptions().hasOption("usrchmap");
 
 	setUsrchmap(chanMap.buffer());
 }

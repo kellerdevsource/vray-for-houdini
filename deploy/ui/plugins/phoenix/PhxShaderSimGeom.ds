@@ -6,7 +6,7 @@
     parm {
 	name	"gpu_di_mode"
 	label	"Gpu Di Mode"
-	type	integer
+	type	int
 	default	{ "2" }
 	help	"Mode for DI computations on the GPU"
 	range	{ 0 10 }
@@ -19,7 +19,7 @@
     parm {
 	name	"gpu_gi_mode"
 	label	"Gpu Gi Mode"
-	type	integer
+	type	int
 	default	{ "2" }
 	help	"Mode for GI computations on the GPU"
 	range	{ 0 10 }
@@ -32,7 +32,7 @@
     parm {
 	name	"gpu_samples_count"
 	label	"Gpu Samples Count"
-	type	integer
+	type	int
 	default	{ "1" }
 	help	"Samples count for cache computation on the GPU"
 	range	{ 0 10 }

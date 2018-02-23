@@ -88,7 +88,7 @@
         parm {
             name    "rendstep"
             label   "Step (%)"
-            type    integer
+            type    int
             default { "80" }
             range   { 1 500 }
             export  none
@@ -101,7 +101,7 @@
         parm {
             name    "rendshadstep"
             label   "Shadow Step (%)"
-            type    integer
+            type    int
             default { "200" }
             range   { 1 1000 }
             export  none
@@ -284,7 +284,7 @@
             parm {
                 name    "smoothmesh"
                 label   "Mesh Smoothing"
-                type    integer
+                type    int
                 default { "5" }
                 range   { 0 20 }
                 export  none
@@ -540,7 +540,7 @@
             parm {
                 name    "lights"
                 label   "Lights count"
-                type    integer
+                type    int
                 default { "200" }
                 range   { 0 1 }
                 export  none
@@ -647,7 +647,7 @@
             parm {
                 name    "al_placing"
                 label   "Lights Placing"
-                type    integer
+                type    int
                 default { "2" }
                 range   { 0 1 }
                 export  none
@@ -661,7 +661,7 @@
             parm {
                 name    "al_subdivs"
                 label   "Subdivs"
-                type    integer
+                type    int
                 default { "8" }
                 range   { 0 64 }
                 export  none
@@ -848,7 +848,7 @@
                 parm {
                     name    "bounces"
                     label   "GI Scatter Depth"
-                    type    integer
+                    type    int
                     default { "10" }
                     range   { 0 50 }
                     export  none
@@ -982,7 +982,7 @@
             parm {
                 name    "transpmode"
                 label   "transpmode"
-                type    integer
+                type    int
                 default { "1" }
                 range   { 0! 1! }
                 export  none

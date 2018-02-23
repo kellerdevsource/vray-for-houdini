@@ -39,7 +39,7 @@
         parm {
             name    "mapping_channel"
             label   "Mapping Channel"
-            type    integer
+            type    int
             default { "0" }
             help    "The mapping channel when the mapping_type is 0"
             hidewhen    "{ mapping_type != 0 }"
@@ -127,7 +127,7 @@
         parm {
             name    "flake_map_size"
             label   "Map Size"
-            type    integer
+            type    int
             default { "1024" }
             help    "The size of the internal flakes map"
             range   { 256 2048 }
@@ -155,7 +155,7 @@
         parm {
             name    "flake_seed"
             label   "Seed"
-            type    integer
+            type    int
             default { "1" }
             help    "The random seed for the flakes"
             range   { 0 1000 }
@@ -183,7 +183,7 @@
         parm {
             name    "trace_depth"
             label   "Trace Depth"
-            type    integer
+            type    int
             default { "-1" }
             help    "The maximum reflection depth (-1 is controlled by the global options)"
             range   { -1 10 }
@@ -208,7 +208,7 @@
         parm {
             name    "subdivs"
             label   "Subdivs"
-            type    integer
+            type    int
             default { "8" }
             range   { 0 16 }
             export  none
@@ -248,7 +248,7 @@
         parm {
             name    "environment_priority"
             label   "Environment Priority"
-            type    integer
+            type    int
             default { "0" }
             help    "Environment override priority (used when several materials override it along a ray path)"
             hidewhen    "{ use_environment_override != 1 }"

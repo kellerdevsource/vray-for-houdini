@@ -6,7 +6,7 @@
     parm {
 	name	"rnd_by"
 	label	"Rnd By"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"Type of randomization"
 	range	{ 0 10 }
@@ -19,7 +19,7 @@
     parm {
 	name	"rnd_seed"
 	label	"Rnd Seed"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"Seed for the randomization"
 	range	{ 0 10 }
@@ -32,7 +32,7 @@
     parm {
 	name	"use_color"
 	label	"Use Color"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"Whether to use textures list or the flat color"
 	range	{ 0 10 }

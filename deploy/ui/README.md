@@ -97,7 +97,7 @@ Example:
 
 * Use `type string`.
 * Use `parmtag { "vray_type" "enum" }` for enums, otherwise the exported value will be incorrect.
-* Use integer keys with the exact values as specified in V-Ray plugin.
+* Use int keys with the exact values as specified in V-Ray plugin.
 
 ### Sockets
 

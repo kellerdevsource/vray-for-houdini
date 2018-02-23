@@ -633,7 +633,7 @@
             parm {
                 name    "noise_levels"
                 label   "Fractal Levels"
-                type    integer
+                type    int
                 default { "3" }
                 help    "Frame noise levels"
                 disablewhen "{ frame_on != 1 } { frame_noise_enable != 1} { noise_fractal != 1 }"

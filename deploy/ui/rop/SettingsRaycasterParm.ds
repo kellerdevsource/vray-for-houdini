@@ -5,7 +5,7 @@ groupsimple {
     parm {
         name    "SettingsRaycaster_maxLevels"
         label   "Max Tree Depth"
-        type    integer
+        type    int
         default { "80" }
         help    "Max. tree depth"
         range   { 1 100 }
@@ -116,7 +116,7 @@ groupsimple {
     parm {
         name    "SettingsRaycaster_dynMemLimit"
         label   "Dyn. Memory Limit(mbs)"
-        type    integer
+        type    int
         default { "5000" }
         help    "Limit for dynamic geometry, in megabytes"
         range   { 0 16000 }
@@ -129,7 +129,7 @@ groupsimple {
     parm {
         name    "SettingsRaycaster_optLevel"
         label   "Tree Build Quality"
-        type    integer
+        type    int
         default { "0" }
         help    "Optimization level (must be 0)"
         parmtag { "vray_plugin" "SettingsRaycaster" }

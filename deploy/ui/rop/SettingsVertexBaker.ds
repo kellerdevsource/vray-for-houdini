@@ -18,7 +18,7 @@
     parm {
 	name	"bake_rgb_color"
 	label	"Bake Rgb Color"
-	type	integer
+	type	int
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none
@@ -30,7 +30,7 @@
     parm {
 	name	"bake_alpha"
 	label	"Bake Alpha"
-	type	integer
+	type	int
 	default	{ "1" }
 	range	{ 0 64 }
 	export	none

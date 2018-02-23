@@ -6,9 +6,9 @@
     parm {
         name    "input"
         label   "Int"
-        type    integer
+        type    int
         default { "0" }
-        help    "The integer value"
+        help    "The int value"
         range   { -1 1 }
         export  none
         parmtag { "cook_dependent" "1" }

@@ -19,7 +19,7 @@
     parm {
 	name	"geommode"
 	label	"Geommode"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
@@ -45,7 +45,7 @@
     parm {
 	name	"bounces"
 	label	"Bounces"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"max bounces"
 	range	{ 0 10 }
@@ -201,7 +201,7 @@
     parm {
 	name	"scattering"
 	label	"Scattering"
-	type	integer
+	type	int
 	default	{ "2" }
 	help	"scattering method - 0:enabled, 1:disabled, 2:analytic, 3:analytic+shadows"
 	range	{ 0 10 }
@@ -214,7 +214,7 @@
     parm {
 	name	"mode"
 	label	"Mode"
-	type	integer
+	type	int
 	default	{ "1" }
 	help	"rendering mode - 0:bubble, 1:cellular, 2:splashes"
 	range	{ 0 10 }
@@ -240,7 +240,7 @@
     parm {
 	name	"moblur"
 	label	"Moblur"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"motion blur - 0:from V-Ray, 1:force on, 2:force off"
 	range	{ 0 10 }
@@ -266,7 +266,7 @@
     parm {
 	name	"mblimit"
 	label	"Mblimit"
-	type	integer
+	type	int
 	default	{ "100" }
 	help	"maximum point expansion with motion blur"
 	range	{ 0 10 }
@@ -292,7 +292,7 @@
     parm {
 	name	"subgroup"
 	label	"Subgroup"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"render subgroup - 0:all, 1:under water, 2:above water, 3:above the size limit, 4:below the size limit"
 	range	{ 0 10 }
@@ -370,7 +370,7 @@
     parm {
 	name	"rendstep"
 	label	"Rendstep"
-	type	integer
+	type	int
 	default	{ "80" }
 	range	{ 0 10 }
 	export	none
@@ -382,7 +382,7 @@
     parm {
 	name	"rendshadstep"
 	label	"Rendshadstep"
-	type	integer
+	type	int
 	default	{ "200" }
 	range	{ 0 10 }
 	export	none
@@ -448,7 +448,7 @@
     parm {
 	name	"usegizmo"
 	label	"Usegizmo"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"enable using of gizmos"
 	range	{ 0 10 }
@@ -461,7 +461,7 @@
     parm {
 	name	"invgizmo"
 	label	"Invgizmo"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"invert meaning of gizmos"
 	range	{ 0 10 }
@@ -474,7 +474,7 @@
     parm {
 	name	"useliquid"
 	label	"Useliquid"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"enable the liquid_sim"
 	range	{ 0 10 }
@@ -487,7 +487,7 @@
     parm {
 	name	"useglass"
 	label	"Useglass"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"enable using of glass geometry"
 	range	{ 0 10 }
@@ -500,7 +500,7 @@
     parm {
 	name	"lightcache"
 	label	"Lightcache"
-	type	integer
+	type	int
 	default	{ "1" }
 	help	"if true, a light cache will be used for diffuse lighting"
 	range	{ 0 10 }
@@ -539,7 +539,7 @@
     parm {
 	name	"generate_gi"
 	label	"Generate Gi"
-	type	integer
+	type	int
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
@@ -551,7 +551,7 @@
     parm {
 	name	"receive_gi"
 	label	"Receive Gi"
-	type	integer
+	type	int
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
@@ -587,7 +587,7 @@
     parm {
 	name	"generate_caust"
 	label	"Generate Caust"
-	type	integer
+	type	int
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
@@ -599,7 +599,7 @@
     parm {
 	name	"receive_caust"
 	label	"Receive Caust"
-	type	integer
+	type	int
 	default	{ "1" }
 	range	{ 0 10 }
 	export	none
@@ -683,7 +683,7 @@
     parm {
 	name	"probabilistic"
 	label	"Probabilistic"
-	type	integer
+	type	int
 	default	{ "1" }
 	help	"Use probabilistic sampling {0: disabled; 1:Only RT; 2:Always}"
 	range	{ 0 10 }
@@ -710,7 +710,7 @@
     parm {
 	name	"volzdepth"
 	label	"Volzdepth"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"if true, write to the z-depth render element"
 	range	{ 0 10 }
@@ -723,7 +723,7 @@
     parm {
 	name	"part_age"
 	label	"Part Age"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"if true, write to the particle age render element"
 	range	{ 0 10 }

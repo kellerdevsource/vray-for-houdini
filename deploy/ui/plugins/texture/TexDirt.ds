@@ -283,7 +283,7 @@
         parm {
             name    "subdivs"
             label   "Subdivs"
-            type    integer
+            type    int
             default { "3" }
             help "Controls the number of samples that V-Ray takes to calculate the dirt effect. Lower values render faster but produce a more noisy result."
             range   { 0 8 }

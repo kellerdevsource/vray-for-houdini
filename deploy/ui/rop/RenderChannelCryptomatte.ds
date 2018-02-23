@@ -6,7 +6,7 @@
     parm {
         name    "alias"
         label   "Alias"
-        type    integer
+        type    int
         default { "157" }
         parmtag { "vray_pluginattr" "alias" }
         parmtag { "vray_type" "int" }

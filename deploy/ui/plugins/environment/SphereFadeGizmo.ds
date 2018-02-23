@@ -30,7 +30,7 @@
     parm {
 	name	"shape"
 	label	"Shape"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none

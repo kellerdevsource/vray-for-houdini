@@ -175,7 +175,7 @@ groupcollapsible {
     parm {
         NAMEM("frame_number")
         label   "Frame Number"
-        type    integer
+        type    int
         default { "0" }
         help    "When working with image sequences, this parameter specifies which image out of the sequence should be used.  If parameter is omitted or defaulted, the frame number depends on the current frame time value."
         range   { 0 10 }
@@ -189,7 +189,7 @@ groupcollapsible {
     parm {
         NAMEM("frame_offset")
         label   "Frame Offset"
-        type    integer
+        type    int
         default { "0" }
         help    "Start frame offset for image sequences"
         range   { 0 10 }
@@ -208,7 +208,7 @@ groupcollapsible {
     parm {
         NAMEM("ifl_start_frame")
         label   "Start Frame"
-        type    integer
+        type    int
         default { "0" }
         range   { 0 10 }
         export  none

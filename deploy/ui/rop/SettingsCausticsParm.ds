@@ -68,7 +68,7 @@ groupsimple {
     parm {
         name  "SettingsCaustics_max_photons"
         label "Max Photons"
-        type  integer
+        type  int
         default { "60" }
         help  "Max. number of photons to look for; if 0, all photons within the search distance will be considered."
         range { 0 100 }

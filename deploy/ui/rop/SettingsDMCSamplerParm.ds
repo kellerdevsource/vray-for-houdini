@@ -72,7 +72,7 @@
       parm {
         name    "SettingsDMCSampler_adaptive_min_samples"
         label   "Min Samples"
-        type    integer
+        type    int
         default { "16" }
         help    "The minimum number of samples that must be made before the early termination algorithm is used"
         range   { 2 64 }
@@ -86,7 +86,7 @@
       parm {
         name    "SettingsDMCSampler_random_seed"
         label   "Random Seed"
-        type    integer
+        type    int
         default { "0" }
         help    "If non-zero, a random seed for the DMC sampler"
         range   { 0 10 }

@@ -76,7 +76,7 @@
         parm {
             name    "constant_detail"
             label   "Constant Detail"
-            type    integer
+            type    int
             default { "4" }
             help    "Constant Detail"
             range   { 0 5 }

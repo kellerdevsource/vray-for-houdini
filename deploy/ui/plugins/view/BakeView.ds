@@ -178,7 +178,7 @@
     parm {
 	name	"uv_channel"
 	label	"Uv Channel"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"UV channel to use"
 	range	{ 0 10 }

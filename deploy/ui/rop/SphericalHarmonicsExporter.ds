@@ -37,7 +37,7 @@
     parm {
 	name	"bands"
 	label	"Bands"
-	type	integer
+	type	int
 	default	{ "4" }
 	range	{ 0 64 }
 	export	none
@@ -49,7 +49,7 @@
     parm {
 	name	"subdivs"
 	label	"Subdivs"
-	type	integer
+	type	int
 	default	{ "50" }
 	help	"Controls the number of samples taken in order to create the spherical harmonics. Higher values produce better results but take longer to render"
 	range	{ 0 64 }
@@ -62,7 +62,7 @@
     parm {
 	name	"bounces"
 	label	"Bounces"
-	type	integer
+	type	int
 	default	{ "1" }
 	help	"This option is only available when one of the interreflection methods is selected. It controls the number of secondary bounces that are going to be traced"
 	range	{ 0 64 }
@@ -150,7 +150,7 @@
     parm {
 	name	"max_mem_usage"
 	label	"Max Mem Usage"
-	type	integer
+	type	int
 	default	{ "2000" }
 	range	{ 0 64 }
 	export	none
@@ -203,7 +203,7 @@
     parm {
 	name	"adaptive_depth"
 	label	"Adaptive Depth"
-	type	integer
+	type	int
 	default	{ "3" }
 	range	{ 0 64 }
 	export	none

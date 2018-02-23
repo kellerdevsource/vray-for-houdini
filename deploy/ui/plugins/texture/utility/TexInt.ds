@@ -6,7 +6,7 @@
     parm {
         name    "input"
         label   "Int"
-        type    integer
+        type    int
         default { "0" }
         help    "input"
         range   { -1 1 }

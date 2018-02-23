@@ -6,7 +6,7 @@
     parm {
 	name	"render_type"
 	label	"Render Type"
-	type	integer
+	type	int
 	default	{ "7" }
 	help	"3 - multipoints; 4 - multistreak; 6 - points; 7 - Spheres; 8 - Sprites; 9 - Streak.Everything else gives a warning and renders as spheres"
 	range	{ 0 10 }
@@ -71,7 +71,7 @@
     parm {
 	name	"sprite_orientation"
 	label	"Sprite Orientation"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"0 - orient sprites towards the camera center, 1 - orient sprites parallel to the camera plane"
 	range	{ 0 10 }
@@ -123,7 +123,7 @@
     parm {
 	name	"multi_count"
 	label	"Multi Count"
-	type	integer
+	type	int
 	default	{ "1" }
 	help	"The number of particles generated for each input particle, when the render type is multipoints or multistreaks"
 	range	{ 0 10 }

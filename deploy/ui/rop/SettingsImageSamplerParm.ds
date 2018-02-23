@@ -21,7 +21,7 @@ parm {
 parm {
     name    "SettingsImageSampler_min_shade_rate"
     label   "Min. Shading Rate"
-    type    integer
+    type    int
     default { "6" }
     help    "Control the number of rays shot for AA versus rays for other effects like glossy reflections, GI, area shadows etc. Higher values mean that less time will be spent on AA, and more effort will be put in the sampling of shading effects"
     range   { 1 32 }
@@ -151,7 +151,7 @@ groupsimple {
     parm {
         name    "SettingsImageSampler_fixed_subdivs"
         label   "Subdivs"
-        type    integer
+        type    int
         default { "1" }
         help    "Subdivs value for the fixed sampler"
         range   { 0 16 }
@@ -180,7 +180,7 @@ groupsimple {
         name    "SettingsImageSampler_dmc_minSubdivs"
         label   "Min Subdivs"
         help    "Min. subdivs value for the adaptive DMC image sampler"
-        type    integer
+        type    int
         default { "1" }
         range   { 1 64 }
         parmtag { "vray_plugin" "SettingsImageSampler" }
@@ -192,7 +192,7 @@ groupsimple {
         name    "SettingsImageSampler_dmc_maxSubdivs"
         label   "Max Subdivs"
         help    "Max. subdivs value for the adaptive DMC image sampler"
-        type    integer
+        type    int
         default { "24" }
         range   { 1 64 }
         parmtag { "vray_plugin" "SettingsImageSampler" }
@@ -238,7 +238,7 @@ groupsimple {
     parm {
         name    "SettingsImageSampler_subdivision_minRate"
         label   "Min Rate"
-        type    integer
+        type    int
         default { "-1" }
         help    "Determines the minimum sampling rate for the adaptive subdivision sampler. A value of 0 means that samples will be one pixel apart. Positive values will put samples inside the pixels, while negative values will space the samples over several pixels."
         range   { -1 10 }
@@ -252,7 +252,7 @@ groupsimple {
     parm {
         name    "SettingsImageSampler_subdivision_maxRate"
         label   "Max Rate"
-        type    integer
+        type    int
         default { "2" }
         help    "Determines the maximum sampling rate for the adaptive subdivision sampler. A value of 0 means that samples will be one pixel apart. Positive values will put samples inside the pixels, while negative values will space the samples over several pixels."
         range   { 0 48 }
@@ -339,7 +339,7 @@ groupsimple {
     parm {
         name    "SettingsImageSampler_progressive_minSubdivs"
         label   "Min Subdivs"
-        type    integer
+        type    int
         default { "1" }
         help    "Min. subdivs value for the progressive image sampler"
         range   { 0 10 }
@@ -353,7 +353,7 @@ groupsimple {
     parm {
         name    "SettingsImageSampler_progressive_maxSubdivs"
         label   "Max Subdivs"
-        type    integer
+        type    int
         default { "100" }
         help    "Max. subdivs value for the progressive image sampler"
         range   { 0 200 }
@@ -395,7 +395,7 @@ groupsimple {
     parm {
         name    "SettingsImageSampler_progressive_bundleSize"
         label   "Ray Bundle Size"
-        type    integer
+        type    int
         default { "128" }
         help    "Bundle size for the progressive image sampler"
         range   { 1 2048 }
@@ -425,7 +425,7 @@ groupsimple {
     parm {
         name    "SettingsImageSampler_progressive_progNoiseThreshold"
         label   "Progressive Noise Threshold"
-        type    integer
+        type    int
         default { "30" }
         help    "Progressive noise threshold active pixels percent at which the threshold is reduced"
         range   { 0 100 }

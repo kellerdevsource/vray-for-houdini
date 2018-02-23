@@ -350,7 +350,7 @@
     parm {
 	name	"channel"
 	label	"Channel"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"0-emissive, 1-diffuse, 2-alpha, 3-velocity, 4-uvw, 5-temp, 6-smoke, 7-fuel"
 	range	{ 0 10 }
@@ -363,7 +363,7 @@
     parm {
 	name	"tiling"
 	label	"Tiling"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"0-single, 1-wrap, 2-mirror"
 	range	{ 0 10 }
@@ -388,7 +388,7 @@
     parm {
 	name	"up_vector"
 	label	"Up Vector"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"0-z, 1-y"
 	range	{ 0 10 }

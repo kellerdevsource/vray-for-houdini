@@ -83,7 +83,7 @@
     parm {
         name    "subdivs"
         label   "Subdivs"
-        type    integer
+        type    int
         default { "4" }
         help    "Number of samples to take when sampling normals around intersection (subdivs*subdivs)"
         range   { 1 32 }

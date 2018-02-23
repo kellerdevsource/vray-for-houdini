@@ -9,7 +9,7 @@
 parm {
     NAMEM("uvw_channel")
     label   "Channel Index"
-    type    integer
+    type    int
     default { "0" }
     range   { 0 5 }
     export  none
@@ -22,7 +22,7 @@ parm {
 parm {
     NAMEM("nsamples")
     label   "Samples"
-    type    integer
+    type    int
     default { "0" }
     help    "Number of uvw transform samples"
     range   { 0 10 }

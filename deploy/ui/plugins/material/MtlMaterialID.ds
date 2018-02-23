@@ -32,7 +32,7 @@
     parm {
         name    "material_id_number"
         label   "ID Number"
-        type    integer
+        type    int
         default { "0" }
         range   { 0 10 }
         export  none
