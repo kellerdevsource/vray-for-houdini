@@ -50,7 +50,7 @@ groupsimple {
         name    "SettingsRTEngine_max_sample_level"
         label   "Max. Paths Per Pixel"
         type    integer
-        default { "0" }
+        default { "10000" }
         help    "Max sample level (0 = inf)"
         range   { 0 20000 }
         parmtag { "cook_dependent" "1" }
