@@ -489,14 +489,16 @@ static VRay::Plugin exportPhysicalCamera(VRayExporter &self, const ViewParams &v
 	pluginDesc.add(Attrs::PluginAttr("distortion", cameraPhysical.distortion));
 	pluginDesc.add(Attrs::PluginAttr("distortion_tex",
 	                                 self.exportNodeFromPathWithDefaultMapping(cameraPhysical.distortion_tex,
-	                                                                           VRayExporter::defaultMappingChannel)));
+	                                                                           VRayExporter::defaultMappingChannel,
+	                                                                           bitmapBufferColorSpaceLinear)));
 
 	pluginDesc.add(Attrs::PluginAttr("bmpaperture_enable", cameraPhysical.bmpaperture_enable));
 	pluginDesc.add(Attrs::PluginAttr("bmpaperture_resolution", cameraPhysical.bmpaperture_resolution));
 
 	pluginDesc.add(Attrs::PluginAttr("bmpaperture_tex",
 	                                 self.exportNodeFromPathWithDefaultMapping(cameraPhysical.bmpaperture_tex,
-	                                                                           VRayExporter::defaultMappingChannel)));
+	                                                                           VRayExporter::defaultMappingChannel,
+	                                                                           bitmapBufferColorSpaceLinear)));
 
 	pluginDesc.add(Attrs::PluginAttr("optical_vignetting", cameraPhysical.optical_vignetting));
 	pluginDesc.add(Attrs::PluginAttr("bmpaperture_affects_exposure", cameraPhysical.bmpaperture_affects_exposure));

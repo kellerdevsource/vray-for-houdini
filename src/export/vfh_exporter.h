@@ -51,6 +51,12 @@ enum class ReturnValue {
 	Success
 };
 
+enum BitmapBufferColorSpace {
+	bitmapBufferColorSpaceLinear = 0,
+	bitmapBufferColorGammaCorrected = 1,
+	bitmapBufferColorSRGB = 2,
+};
+
 enum class VRayPluginID {
 	SunLight = 0,
 	LightDirect,
@@ -298,7 +304,7 @@ public:
 	/// Exports image texture from "op:" or file path.
 	/// @param path String value: file or node path.
 	/// @param mappingType Default mapping type.
-	VRay::Plugin exportNodeFromPathWithDefaultMapping(const UT_String &path, DefaultMappingType mappingType);
+	VRay::Plugin exportNodeFromPathWithDefaultMapping(const UT_String &path, DefaultMappingType mappingType, BitmapBufferColorSpace colorSpace);
 
 	///	Exports COP node as TexBitmap.
 	/// @param copNode COP2 node.
@@ -307,11 +313,15 @@ public:
 
 	///	Exports file path as RawBitmapBuffer.
 	/// @param filePath File path.
-	VRay::Plugin exportFileTextureBitmapBuffer(const UT_String &filePath);
+	VRay::Plugin exportFileTextureBitmapBuffer(const UT_String &filePath, BitmapBufferColorSpace colorSpace);
 
 	/// Exports file path as TexBitmap with default mapping.
 	/// @param filePath File path.
-	VRay::Plugin exportFileTextureWithDefaultMapping(const UT_String &filePath, DefaultMappingType mappingType);
+	/// @param mappingType Mapping type.
+	/// @param colorSpace Color space.
+	VRay::Plugin exportFileTextureWithDefaultMapping(const UT_String &filePath,
+	                                                 DefaultMappingType mappingType,
+	                                                 BitmapBufferColorSpace colorSpace);
 
 #ifdef CGR_HAS_VRAYSCENE
 	VRay::Plugin exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node);

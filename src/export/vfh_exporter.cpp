@@ -1527,7 +1527,9 @@ int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &
 		UT_String texPath;
 		opNode.evalString(texPath, parm, 0, t);
 		if (texPath.isstring()) {
-			VRay::Plugin texture = exportNodeFromPathWithDefaultMapping(texPath, defaultMappingChannelName);
+			VRay::Plugin texture = exportNodeFromPathWithDefaultMapping(texPath,
+			                                                            defaultMappingChannelName,
+			                                                            bitmapBufferColorSpaceLinear);
 			if (!texture) {
 				return false;
 			}

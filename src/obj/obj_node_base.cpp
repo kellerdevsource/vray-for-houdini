@@ -38,7 +38,7 @@ PRM_Template* OBJ::VRayClipper::GetPrmTemplate()
 
 OP::VRayNode::PluginResult OBJ::VRayClipper::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter& /*exporter*/, ExportContext* /*parentContext*/)
 {
-	pluginDesc.pluginID   = pluginID.c_str();
+	pluginDesc.pluginID   = pluginID;
 	pluginDesc.pluginName = VRayExporter::getPluginName(this, "");
 
 	return OP::VRayNode::PluginResultContinue;
@@ -243,7 +243,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 template<>
 OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::SunLight>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
 {
-	pluginDesc.pluginID   = pluginID.c_str();
+	pluginDesc.pluginID   = pluginID;
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("up_vector", VRay::Vector(0.f,1.f,0.f)));
@@ -255,7 +255,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::SunLight>::asPluginDesc(A
 	if (opNode) {
 		OBJ_Node *targetNode = CAST_OBJNODE(opNode);
 		if (targetNode) {
-			const VRay::Transform &tm = exporter.getObjTransform(targetNode, exporter.getContext());
+			const VRay::Transform &tm = VRayExporter::getObjTransform(targetNode, exporter.getContext());
 			pluginDesc.addAttribute(Attrs::PluginAttr("target_transform", tm));
 		}
 	}
@@ -263,17 +263,19 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::SunLight>::asPluginDesc(A
 	return OP::VRayNode::PluginResultContinue;
 }
 
+static boost::format fmtToggle("use_%s_tex");
+static boost::format fmtTex("%s_tex");
+static boost::format fmtTexColorSpace("%s_tex_color_space");
+
 static VRay::Plugin exportAttributeFromPathAuto(VRayExporter &exporter,
                                                 const OP_Node &node,
                                                 const char *attrName,
                                                 VRayExporter::DefaultMappingType mappingType,
                                                 Attrs::PluginDesc &pluginDesc)
 {
-	static boost::format fmtToggle("use_%s_tex");
-	static boost::format fmtTex("%s_tex");
-
 	const std::string toggleAttrName(str(fmtToggle % attrName));
 	const std::string texAttrName(str(fmtTex % attrName));
+	const std::string texColorSpaceAttrName(str(fmtTexColorSpace % attrName));
 
 	const OP_Context &ctx = exporter.getContext();
 	const fpreal t = ctx.getTime();
@@ -284,7 +286,10 @@ static VRay::Plugin exportAttributeFromPathAuto(VRayExporter &exporter,
 	UT_String texPath;
 	node.evalString(texPath, texAttrName.c_str(), 0, t);
 
-	const VRay::Plugin texPlugin = exporter.exportNodeFromPathWithDefaultMapping(texPath, mappingType);
+	const BitmapBufferColorSpace colorSpace =
+		static_cast<BitmapBufferColorSpace>(Parm::getParmEnum(node, texColorSpaceAttrName.c_str(), bitmapBufferColorSpaceLinear, 0.0));
+
+	const VRay::Plugin texPlugin = exporter.exportNodeFromPathWithDefaultMapping(texPath, mappingType, colorSpace);
 	if (texPlugin) {
 		pluginDesc.addAttribute(Attrs::PluginAttr(texAttrName, texPlugin));
 	}
@@ -295,7 +300,7 @@ static VRay::Plugin exportAttributeFromPathAuto(VRayExporter &exporter,
 template<>
 OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightDome>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
 {
-	pluginDesc.pluginID = pluginID.c_str();
+	pluginDesc.pluginID = pluginID;
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);
 	
 	const VRayExporter::DefaultMappingType domeMapping = VRayExporter::defaultMappingSpherical;
@@ -317,7 +322,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightRectangle>::asPlugin
 {
 	const fpreal t = exporter.getContext().getTime();
 
-	pluginDesc.pluginID = pluginID.c_str();
+	pluginDesc.pluginID = pluginID;
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);
 
 	const VRayExporter::DefaultMappingType rectMapping = VRayExporter::defaultMappingChannel;

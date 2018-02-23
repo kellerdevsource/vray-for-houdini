@@ -390,7 +390,7 @@ void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngin
 }
 
 
-void VRayPluginRenderer::removePlugin(VRay::Plugin plugin) const
+void VRayPluginRenderer::removePlugin(const VRay::Plugin &plugin) const
 {
 	vassert(m_vray);
 
@@ -411,7 +411,7 @@ void VRayPluginRenderer::removePlugin(const std::string &pluginName) const
 
 	const VRay::Error err = m_vray->getLastError();
 	if (err.getCode() != VRay::SUCCESS) {
-		Log::getLog().debug("Error removing plugin: %s", err.toString());
+		Log::getLog().debug("Error removing plugin \"%s\": %s", pluginName.c_str(), err.toString());
 	}
 }
 

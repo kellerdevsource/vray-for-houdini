@@ -195,21 +195,22 @@ VRay::Plugin VRayExporter::exportCopNodeWithDefaultMapping(COP2_Node &copNode, D
 	return res;
 }
 
-VRay::Plugin VRayExporter::exportFileTextureBitmapBuffer(const UT_String &filePath)
+VRay::Plugin VRayExporter::exportFileTextureBitmapBuffer(const UT_String &filePath, BitmapBufferColorSpace colorSpace)
 {
 	Attrs::PluginDesc bitmapBufferDesc(str(fmtHash % VUtils::hashlittle(filePath.buffer(), filePath.length())),
 									   "BitmapBuffer");
-	bitmapBufferDesc.addAttribute(PluginAttr("color_space", 2));// 0 - linear, 1 - gamma corrected, 2 - sRGB
+
+	bitmapBufferDesc.addAttribute(PluginAttr("color_space", colorSpace));
 	bitmapBufferDesc.addAttribute(PluginAttr("file", filePath.toStdString()));
 
 	return exportPlugin(bitmapBufferDesc);
 }
 
-VRay::Plugin VRayExporter::exportFileTextureWithDefaultMapping(const UT_String &filePath, DefaultMappingType mappingType)
+VRay::Plugin VRayExporter::exportFileTextureWithDefaultMapping(const UT_String &filePath, DefaultMappingType mappingType, BitmapBufferColorSpace colorSpace)
 {
 	VRay::Plugin res;
 
-	const VRay::Plugin bitmapBuffer = exportFileTextureBitmapBuffer(filePath);
+	const VRay::Plugin bitmapBuffer = exportFileTextureBitmapBuffer(filePath, colorSpace);
 	if (bitmapBuffer) {
 		Attrs::PluginDesc uvwgenDesc;
 		uvwgenDesc.pluginName = str(fmtPrefix % "DefaultMapping" % bitmapBuffer.getName()),
@@ -229,7 +230,7 @@ VRay::Plugin VRayExporter::exportFileTextureWithDefaultMapping(const UT_String &
 	return res;
 }
 
-VRay::Plugin VRayExporter::exportNodeFromPathWithDefaultMapping(const UT_String &path, DefaultMappingType mappingType)
+VRay::Plugin VRayExporter::exportNodeFromPathWithDefaultMapping(const UT_String &path, DefaultMappingType mappingType, BitmapBufferColorSpace colorSpace)
 {
 	VRay::Plugin res;
 
@@ -249,7 +250,7 @@ VRay::Plugin VRayExporter::exportNodeFromPathWithDefaultMapping(const UT_String 
 	else {
 		QFile fileChecker(path.buffer());
 		if (fileChecker.exists()) {
-			res = exportFileTextureWithDefaultMapping(path, mappingType);
+			res = exportFileTextureWithDefaultMapping(path, mappingType, colorSpace);
 		}
 	}
 
@@ -258,5 +259,5 @@ VRay::Plugin VRayExporter::exportNodeFromPathWithDefaultMapping(const UT_String 
 
 VRay::Plugin VRayExporter::exportNodeFromPath(const UT_String &path)
 {
-	return exportNodeFromPathWithDefaultMapping(path, defaultMappingTriPlanar);
+	return exportNodeFromPathWithDefaultMapping(path, defaultMappingTriPlanar, bitmapBufferColorSpaceLinear);
 }

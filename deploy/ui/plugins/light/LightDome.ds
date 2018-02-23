@@ -108,6 +108,20 @@
             parmtag { "vray_pluginattr" "dome_tex" }
             parmtag { "vray_type" "Texture" }
         }
+
+        parm {
+            name  "dome_tex_color_space"
+            label "Color Space"
+            help  "Image color space"
+            type string
+            menu {
+                "0" "Linear"
+                "2" "sRGB"
+            }
+            default { "0" }
+            parmtag { "cook_dependent" "1" }
+        }
+
         parm {
             hidewhen "{ use_dome_tex == 0 }"
             name  "tex_resolution"

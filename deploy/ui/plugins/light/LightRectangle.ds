@@ -192,6 +192,18 @@
             parmtag { "vray_type" "Texture" }
         }
         parm {
+            name  "rect_tex_color_space"
+            label "Color Space"
+            help  "Image color space"
+            type string
+            menu {
+                "0" "Linear"
+                "2" "sRGB"
+            }
+            default { "0" }
+            parmtag { "cook_dependent" "1" }
+        }
+        parm {
             hidewhen "{ use_rect_tex == 0 }"
             name  "tex_resolution"
             label "Resolution"
