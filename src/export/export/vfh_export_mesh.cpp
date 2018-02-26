@@ -97,15 +97,25 @@ static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorR
 	return aifTuple->getRange(attr, GA_Range(attr->getIndexMap()), &(data.get()->x));
 }
 
+/// Pair of min and max value for some range of values
 typedef std::pair<int, int> MinMaxPair;
 
+/// Update min and max value with given param
+/// @param pair - the min max pair
+/// @param value - the value to update the pair if needed
 void updateMinMaxPair(MinMaxPair & pair, int value)
 {
 	pair.first = std::min(pair.first, value);
 	pair.second = std::max(pair.second, value);
 }
 
-
+/// Get all faces and edge visibility for a poly soup primitive
+/// @param polySoup - pointer to the primitive
+/// @param faces - int ref list that will be destination for faces
+/// @param edge_visibility - int ref list, destination for edge visibility
+/// @param faceVertIndex - offset in faces array to start writing
+/// @param faceEdgeVisIndex - offset in edge _visibility to start writing
+/// @return - the min and max value for face index (used for separate poly soup export)
 static MinMaxPair getPolySoupFaces(const GU_PrimPolySoup *polySoup, VRay::VUtils::IntRefList &faces, VRay::VUtils::IntRefList &edge_visibility, int &faceVertIndex, int &faceEdgeVisIndex)
 {
 	std::pair<int, int> minMax = {INT_MAX, -1};
@@ -144,6 +154,9 @@ static MinMaxPair getPolySoupFaces(const GU_PrimPolySoup *polySoup, VRay::VUtils
 	return minMax;
 }
 
+/// Count number of faces for a poly soup primitive
+/// @param polySoup - pointer to the primitive
+/// @return - the number of valid faces
 static int getPolySopuFaceCount(const GU_PrimPolySoup *polySoup)
 {
 	int numFaces = 0;
@@ -154,6 +167,11 @@ static int getPolySopuFaceCount(const GU_PrimPolySoup *polySoup)
 	return numFaces;
 }
 
+/// Get face normals for a poly soup primitive (optionally offset the indices)
+/// @param polySoup - pointer to the primitive
+/// @param faceNormals - int ref list, destination for the normal indices
+/// @param faceVertIndex - offset in faceNormals to start writing from
+/// @param baseIndex - optional offset that will be substracted from each faceNormal index (used for separate poly soup export)
 static void getPolySoupNormals(const GU_PrimPolySoup *polySoup, VRay::VUtils::IntRefList &faceNormals, int &faceVertIndex, int baseIndex = 0)
 {
 	for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
