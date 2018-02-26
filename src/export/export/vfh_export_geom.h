@@ -162,6 +162,10 @@ public:
 	/// Returns export geometry flag.
 	int getExportGeometry() const { return doExportGeometry; }
 
+	const UT_String &getPartitionAttribute() const { return partitionAttribute; }
+	
+	void setPartitionAttribute(const UT_String &value) { partitionAttribute = value; }
+
 	/// Test if the current geometry node is visible i.e.
 	/// its display flag is on or it is forced to render regardless
 	/// of its display state (when set as forced geometry on the V-Ray ROP)
@@ -352,6 +356,8 @@ private:
 
 	/// Exporting context.
 	VRayOpContext &ctx;
+
+	UT_String partitionAttribute;
 
 	/// A flag if we should export the actual geometry from the render
 	/// detail or only update corresponding Nodes' properties. This is

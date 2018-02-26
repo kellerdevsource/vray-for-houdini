@@ -84,6 +84,8 @@ int VRayProxyROP::startRender(int nframes, fpreal tstart, fpreal tend)
 	m_options.m_animEnd            = tend;
 	m_options.m_animFrames         = nframes;
 
+	evalString(m_options.m_partitionAttribute, "partition_attribute", 0, tstart);
+
 	UT_String prefix;
 	UT_String frame;
 	UT_String suffix;
@@ -319,6 +321,7 @@ PRM_Template *VRayProxyROP::getMyPrmTemplate()
 									.setSpareData(&PRM_SpareData::objGeometryPath)
 									.addConditional("{ use_soppath == 1 }", PRM_CONDTYPE_DISABLE)
 					 );
+	myPrmList.addPrm(Parm::PRMFactory(PRM_STRING, "partition_attribute", "Partition attribute").setDefault(""));
 	myPrmList.addPrm(Parm::PRMFactory(PRM_TOGGLE_E, "save_hidden", "Save Hidden And Templated Geometry")
 									.setDefault(PRMzeroDefaults)
 									.addConditional("{ use_soppath == 1 }", PRM_CONDTYPE_DISABLE)

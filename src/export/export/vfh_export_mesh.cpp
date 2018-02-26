@@ -97,6 +97,78 @@ static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorR
 	return aifTuple->getRange(attr, GA_Range(attr->getIndexMap()), &(data.get()->x));
 }
 
+typedef std::pair<int, int> MinMaxPair;
+
+void updateMinMaxPair(MinMaxPair & pair, int value)
+{
+	pair.first = std::min(pair.first, value);
+	pair.second = std::max(pair.second, value);
+}
+
+
+static MinMaxPair getPolySoupFaces(const GU_PrimPolySoup *polySoup, VRay::VUtils::IntRefList &faces, VRay::VUtils::IntRefList &edge_visibility, int &faceVertIndex, int &faceEdgeVisIndex)
+{
+	std::pair<int, int> minMax = {INT_MAX, -1};
+	for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+		const GA_Size vCnt = pst.getVertexCount();
+		// face is valid only if the vertex count is >= 3
+		if (vCnt > 2) {
+			for (GA_Size i = 1; i < vCnt - 1; ++i) {
+				// polygon orientation seems to be clockwise in Houdini
+				faces[faceVertIndex++] = pst.getPointIndex(i + 1);
+				faces[faceVertIndex++] = pst.getPointIndex(i);
+				faces[faceVertIndex++] = pst.getPointIndex(0);
+
+				updateMinMaxPair(minMax, faces[faceVertIndex - 1]);
+				updateMinMaxPair(minMax, faces[faceVertIndex - 2]);
+				updateMinMaxPair(minMax, faces[faceVertIndex - 3]);
+
+				// v0 = i+1
+				// v1 = i
+				// v2 = 0
+				// here the diagonal is invisible edge
+				// v(1)___v(2)
+				//    |  /|
+				//    | / |
+				//    |/__|
+				// v(0)   v(3)
+				// first edge v(i+1)->v(i) is always visible
+				// second edge v(i)->v(0) is visible only when i == 1
+				// third edge v(0)->v(i+1) is visible only when i+1 == vCnt-1
+				const uint8 edgeMask = 1 | ((i == 1) << 1) | ((i == (vCnt - 2)) << 2);
+				edge_visibility[faceEdgeVisIndex / 10] |= (edgeMask << ((faceEdgeVisIndex % 10) * 3));
+				++faceEdgeVisIndex;
+			}
+		}
+	}
+	return minMax;
+}
+
+static int getPolySopuFaceCount(const GU_PrimPolySoup *polySoup)
+{
+	int numFaces = 0;
+	for (GA_Size i = 0; i < polySoup->getPolygonCount(); ++i) {
+		// face is valid only if the vertex count is >= 3
+		numFaces += std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
+	}
+	return numFaces;
+}
+
+static void getPolySoupNormals(const GU_PrimPolySoup *polySoup, VRay::VUtils::IntRefList &faceNormals, int &faceVertIndex, int baseIndex = 0)
+{
+	for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+		// face is valid only if the vertex count is >= 3
+		const GA_Size vCnt = pst.getVertexCount();
+		if (vCnt > 2) {
+			for (GA_Size i = 1; i < vCnt - 1; ++i) {
+				// polygon orientation seems to be clockwise in Houdini
+				faceNormals[faceVertIndex++] = pst.getVertexIndex(i + 1) - baseIndex;
+				faceNormals[faceVertIndex++] = pst.getVertexIndex(i) - baseIndex;
+				faceNormals[faceVertIndex++] = pst.getVertexIndex(0) - baseIndex;
+			}
+		}
+	}
+}
 
 MeshExporter::MeshExporter(OBJ_Node &obj, const GU_Detail &gdp, OP_Context &ctx, VRayExporter &exp, ObjectExporter &objectExporter, const GEOPrimList &primList)
 	: PrimitiveExporter(obj, ctx, exp)
@@ -117,6 +189,100 @@ void MeshExporter::reset()
 	m_faceNormals = VRay::VUtils::IntRefList();
 	velocities = VRay::VUtils::VectorRefList();
 	map_channels_data.clear();
+}
+
+bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, PrimitiveItems &instancerItems, const PrimitiveItem &topItem, VRayExporter &exporter)
+{
+	using namespace VRay::VUtils;
+	const VectorRefList & allVertices = getVertices();
+	if (allVertices.count() == 0) {
+		return false;
+	}
+
+	const VectorRefList & allNormals = getNormals();
+	const bool hasNormals = allNormals.count() != 0;
+	m_faceNormals.freeMem();
+
+	int primOffset = -1;
+	int normalsOffset = 0;
+
+	for (auto & prim : primList) {
+		primOffset++;
+		if (prim->getTypeId() == GEO_PRIMPOLY) {
+			const GA_Attribute *nattr = gdp.findNormalAttribute(GA_ATTRIB_POINT);
+			if (!nattr) {
+				// second check for vertex attribute
+				nattr = gdp.findNormalAttribute(GA_ATTRIB_VERTEX);
+			}
+
+			normalsOffset += GA_Range(nattr->getIndexMap()).getEntries();
+		}
+
+		if (prim->getTypeId() != GEO_PRIMPOLYSOUP) {
+			continue;
+		}
+		const GU_PrimPolySoup *soup = static_cast<const GU_PrimPolySoup *>(prim);
+		const int faceCount = getPolySopuFaceCount(soup);
+
+		IntRefList faces(faceCount * 3);
+		IntRefList edge_visibility(faceCount / 10 + (((faceCount % 10) > 0) ? 1 : 0));
+		int faceIdx = 0, edgeIdx = 0;
+		const MinMaxPair &vertexRange = getPolySoupFaces(soup, faces, edge_visibility, faceIdx, edgeIdx);
+
+		// we need exactly those vertices from all to get
+		// NOTE: we can't use point count, since it will count points which point to same vertex multiple times
+		const int vertexCount = vertexRange.second - vertexRange.first + 1;
+
+		for (int c = 0; c < faceCount * 3; c++) {
+			faces[c] -= vertexRange.first;
+		}
+
+		VectorRefList vertices(vertexCount);
+		memcpy(vertices.get(), allVertices.get() + vertexRange.first, vertexCount * sizeof(vertices[0]));
+
+		PrimitiveItem item;
+		item.primID = primOffset;
+		item.prim = soup;
+		item.tm = topItem.tm;
+		item.vel = topItem.vel;
+		item.material = topItem.material;
+
+		char geomName[512];
+		snprintf(geomName, 512, "GeomStaticMesh|%lld@%s", item.primID, objNode.getName().buffer());
+
+		Attrs::PluginDesc geomDesc(geomName, "GeomStaticMesh");
+		geomDesc.addAttribute(Attrs::PluginAttr("faces", faces));
+		geomDesc.addAttribute(Attrs::PluginAttr("vertices", vertices));
+		geomDesc.addAttribute(Attrs::PluginAttr("edge_visibility", edge_visibility));
+
+		if (hasNormals) {
+			GA_Range nrange = soup->getPointRange();
+			if (!gdp.findNormalAttribute(GA_ATTRIB_POINT)) {
+				// second check for vertex attribute
+				nrange = soup->getVertexRange();
+			}
+
+			const int normalsCount = GA_Range(nrange).getEntries();
+
+			VectorRefList normals(normalsCount);
+			memcpy(normals.get(), allNormals.get() + normalsOffset, normalsCount * sizeof(normals[0]));
+			geomDesc.addAttribute(Attrs::PluginAttr("normals", normals));
+
+			IntRefList faceNormals(faceCount * 3);
+			int faceNormalIdx = 0;
+			getPolySoupNormals(soup, faceNormals, faceNormalIdx, normalsOffset);
+			geomDesc.addAttribute(Attrs::PluginAttr("faceNormals", faceNormals));
+
+			normalsOffset += normalsCount;
+		}
+
+		item.geometry = exporter.exportPlugin(geomDesc);
+		if (item.geometry) {
+			instancerItems += item;
+		}
+	}
+
+	return true;
 }
 
 bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc)
@@ -221,18 +387,7 @@ VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 					case GEO_PRIMPOLYSOUP:
 					{
 						const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-						for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
-							// face is valid only if the vertex count is >= 3
-							const GA_Size vCnt = pst.getVertexCount();
-							if (vCnt > 2) {
-								for (GA_Size i = 1; i < vCnt - 1; ++i) {
-									// polygon orientation seems to be clockwise in Houdini
-									m_faceNormals[faceVertIndex++] = pst.getVertexIndex(i + 1);
-									m_faceNormals[faceVertIndex++] = pst.getVertexIndex(i);
-									m_faceNormals[faceVertIndex++] = pst.getVertexIndex(0);
-								}
-							}
-						}
+						getPolySoupNormals(polySoup, m_faceNormals, faceVertIndex);
 						break;
 					}
 					case GEO_PRIMPOLY:
@@ -294,10 +449,7 @@ int MeshExporter::getNumFaces()
 			case GEO_PRIMPOLYSOUP:
 			{
 				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-				for (GA_Size i = 0; i < polySoup->getPolygonCount(); ++i) {
-					// face is valid only if the vertex count is >= 3
-					numFaces += std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
-				}
+				numFaces += getPolySopuFaceCount(polySoup);
 				break;
 			}
 			case GEO_PRIMPOLY:
@@ -336,34 +488,7 @@ VRay::VUtils::IntRefList& MeshExporter::getFaces()
 				case GEO_PRIMPOLYSOUP:
 				{
 					const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-					for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
-						const GA_Size vCnt = pst.getVertexCount();
-						// face is valid only if the vertex count is >= 3
-						if (vCnt > 2) {
-							for (GA_Size i = 1; i < vCnt - 1; ++i) {
-								// polygon orientation seems to be clockwise in Houdini
-								faces[faceVertIndex++] = pst.getPointIndex(i + 1);
-								faces[faceVertIndex++] = pst.getPointIndex(i);
-								faces[faceVertIndex++] = pst.getPointIndex(0);
-
-								// v0 = i+1
-								// v1 = i
-								// v2 = 0
-								// here the diagonal is invisible edge
-								// v(1)___v(2)
-								//    |  /|
-								//    | / |
-								//    |/__|
-								// v(0)   v(3)
-								// first edge v(i+1)->v(i) is always visible
-								// second edge v(i)->v(0) is visible only when i == 1
-								// third edge v(0)->v(i+1) is visible only when i+1 == vCnt-1
-								const uint8 edgeMask = 1 | ((i == 1) << 1) | ((i == (vCnt - 2)) << 2);
-								edge_visibility[faceEdgeVisIndex / 10] |= (edgeMask << ((faceEdgeVisIndex % 10) * 3));
-								++faceEdgeVisIndex;
-							}
-						}
-					}
+					getPolySoupFaces(polySoup, faces, edge_visibility, faceVertIndex, faceEdgeVisIndex);
 					break;
 				}
 				case GEO_PRIMPOLY:

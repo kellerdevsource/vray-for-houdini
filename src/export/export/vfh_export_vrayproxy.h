@@ -46,6 +46,8 @@ struct VRayProxyExportOptions {
 	/// cmd arg: -n "path/to/filename.vrmesh" (mandatory)
 	UT_String m_filepath;
 
+	UT_String m_partitionAttribute;
+
 	/// (bool) if true, non-existing dirs in the filepath will be created
 	/// default value: true
 	/// cmd arg: -c (optional)

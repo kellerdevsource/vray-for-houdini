@@ -185,6 +185,7 @@ ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
 	: pluginExporter(pluginExporter)
 	, ctx(pluginExporter.getContext())
 	, doExportGeometry(true)
+	, partitionAttribute("")
 {}
 
 VRay::Transform ObjectExporter::getTm() const
@@ -917,6 +918,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 	const VRay::Plugin objMaterial = pluginExporter.exportMaterial(matNode);
 
 	const fpreal instancerTime = ctx.hasMotionBlur ? ctx.mbParams.mb_start : ctx.getFloatFrame();
+	const bool addParitionAttr = partitionAttribute.isstring();
 
 	// +1 because first value is time.
 	VRay::VUtils::ValueRefList instances(numParticles + 1);
@@ -931,6 +933,19 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		overrideItemsToUserAttributes(primItem.primMaterial.overrides, userAttributes);
 		appendSceneName(userAttributes, objNode);
 		appendObjUniqueID(userAttributes, objNode);
+
+		if (addParitionAttr && primItem.prim) {
+			const auto & gdp = primItem.prim->getDetail();
+			GA_ROHandleS separateAttrHandle(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, partitionAttribute.buffer()));
+			if (separateAttrHandle.isValid()) {
+				// TODO: is there a better way for primitive offset
+				const GA_Offset offset = gdp.primitiveOffset(primItem.primID);
+				const char *attrValue = separateAttrHandle.get(offset);
+				if (attrValue) {
+					userAttributes += QString().sprintf("vrayPrimPartition=%s;", attrValue);
+				}
+			}
+		}
 
 		VRay::Plugin material = objMaterial;
 		if (primItem.material) {
@@ -1187,8 +1202,15 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 		addPluginToCacheImpl(pluginCache.polyMapChannels, styleKey, item.mapChannels);
 	}
 
+	bool hasPolySoup = true;
+	for (const auto *prim : primList) {
+		hasPolySoup = hasPolySoup && prim->getTypeId() == GEO_PRIMPOLYSOUP;
+	}
+
 	if (doExportGeometry) {
-		if (!getMeshPluginFromCache(item.primID, item.geometry)) {
+		if (hasPolySoup && partitionAttribute.isstring()) {
+			polyMeshExporter.asPolySoupPrimitives(gdp, instancerItems, topItem,  pluginExporter);		
+		} else if (!getMeshPluginFromCache(item.primID, item.geometry)) {
 			OP_Node *matNode = item.primMaterial.matNode
 				? item.primMaterial.matNode
 				: objNode.getMaterialNode(ctx.getTime());

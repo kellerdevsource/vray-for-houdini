@@ -129,6 +129,8 @@ public:
 	///         and pluginDesc is modified
 	bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) VRAY_OVERRIDE;
 
+	bool asPolySoupPrimitives(const GU_Detail &gdp, PrimitiveItems &instancerItems, const PrimitiveItem &topItem, VRayExporter &exporter);
+
 	/// Build material taking overrides into account.
 	VRay::Plugin getMaterial();
 	VRay::Plugin getExtMapChannels();
