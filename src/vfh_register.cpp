@@ -180,6 +180,8 @@ void newSopOperator(OP_OperatorTable *table)
 								vfhPhoenixLoaderDir);
 		}
 	}
+
+	VFH_ADD_SOP_GENERATOR(table, PhxShaderCache);
 #endif
 
 #ifdef CGR_HAS_VRAYSCENE

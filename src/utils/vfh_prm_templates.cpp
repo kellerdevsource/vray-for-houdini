@@ -227,7 +227,7 @@ bool Parm::addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &p
 }
 
 
-Parm::PRMList* Parm::generatePrmTemplate(const std::string &pluginID, bool setCookDependent)
+Parm::PRMList* Parm::generatePrmTemplate(const std::string &pluginID)
 {
 	typedef std::unordered_map<std::string, PRMList> PRMListMap;
 	static PRMListMap prmListMap;
@@ -239,17 +239,13 @@ Parm::PRMList* Parm::generatePrmTemplate(const std::string &pluginID, bool setCo
 
 	PRMList &prmList = prmListMap.at(pluginID);
 
-	if (setCookDependent) {
-		PRMList::setCookDependent(prmList.getPRMTemplate(), true);
-	}
-
 	return &prmList;
 }
 
 
-PRM_Template* Parm::getPrmTemplate(const std::string &pluginID, bool setCookDependent)
+PRM_Template* Parm::getPrmTemplate(const std::string &pluginID)
 {
-	Parm::PRMList *prmList = generatePrmTemplate(pluginID, setCookDependent);
+	Parm::PRMList *prmList = generatePrmTemplate(pluginID);
 	if (!prmList) {
 		Log::getLog().warning("No parameter template generated for plugin %s.", pluginID.c_str());
 	}

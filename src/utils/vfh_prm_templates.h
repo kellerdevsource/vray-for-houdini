@@ -44,8 +44,8 @@ std::string expandUiPath(const char *relPath);
 /// @return true - arguments were valid
 ///         false - otherwise
 bool addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &prmList);
-PRMList* generatePrmTemplate(const std::string &pluginID, bool setCookDependent = false);
-PRM_Template* getPrmTemplate(const std::string &pluginID, bool setCookDependent = false);
+PRMList* generatePrmTemplate(const std::string &pluginID);
+PRM_Template* getPrmTemplate(const std::string &pluginID);
 
 /// List of PRM_Templates which is always terminated
 class PRMList
