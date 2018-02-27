@@ -938,8 +938,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 			const GA_Detail & gdp = primItem.prim->getDetail();
 			GA_ROHandleS separateAttrHandle(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, partitionAttribute.buffer()));
 			if (separateAttrHandle.isValid()) {
-				// TODO: is there a better way for primitive offset
-				const GA_Offset offset = gdp.primitiveOffset(primItem.primID);
+				const GA_Offset offset = gdp.primitiveOffset(primItem.prim->getMapOffset());
 				const char *attrValue = separateAttrHandle.get(offset);
 				if (attrValue) {
 					userAttributes += QString().sprintf("vrayPrimPartition=%s;", attrValue);
