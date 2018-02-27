@@ -51,8 +51,9 @@ static int RendererShowVFB(void *data, int /*index*/, fpreal /*t*/, const PRM_Te
 
 /// Callback for the "GPU Devices" button on the ROP node.
 /// Shows GPU device select UI.
-static int rendererGpuDeviceSelect(void* /*data*/, int /*index*/, fpreal /*t*/, const PRM_Template* /*tplate*/)
+static int rendererGpuDeviceSelect(void *data, int /*index*/, fpreal /*t*/, const PRM_Template* /*tplate*/)
 {
+	VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
 	showGpuDeviceSelectUI();
 	return 1;
 }

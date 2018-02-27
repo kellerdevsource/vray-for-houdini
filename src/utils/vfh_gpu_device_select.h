@@ -14,6 +14,10 @@
 
 namespace VRayForHoudini {
 
+typedef std::vector<int> ComputeDeviceIdList;
+
+void getGpuDeviceIdList(int isCUDA, ComputeDeviceIdList &list);
+
 void showGpuDeviceSelectUI();
 
 } // namespace VRayForHoudini

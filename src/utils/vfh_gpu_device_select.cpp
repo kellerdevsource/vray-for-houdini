@@ -16,6 +16,7 @@
 #include "vfh_hou_utils.h"
 
 #include <HOM/HOM_qt.h>
+#include <HOM/HOM_ui.h>
 #include <HOM/HOM_Module.h>
 #include <OP/OP_Director.h>
 #include <RE/RE_Window.h>
@@ -23,76 +24,23 @@
 #include <QDebug>
 #include <QMainWindow>
 #include <QListWidget>
-#include <QStringList>
 #include <QCheckBox>
-#include <QDirIterator>
-#include <QVBoxLayout>
+#include <QPainter>
+#include <QGroupBox>
+#include <QPushButton>
+#include <QHBoxLayout>
 
 using namespace VRayForHoudini;
 
 typedef std::vector<VRay::ComputeDeviceInfo> ComputeDeviceInfoList;
 
-static char vfhGpuDevices[] = "VFH_GPU_DEVICES";
-
-static const QString vfhCheckBox(
-"QCheckBox, QRadioButton {"
-"	color: #AFBDC4;"
-"}"
-""
-"QCheckBox::indicator::unchecked  {"
-"	background-color: #263238;"
-"	border: 1px solid #536D79;"
-"}"
-""
-"QCheckBox::indicator::checked, QTreeView::indicator::checked {"
-"	background-color: qradialgradient(cx:0.5, cy:0.5, fx:0.25, fy:0.15, radius:0.3, stop:0 #80CBC4, stop:1 #263238);"
-"	border: 1px solid #536D79;"
-"}"
-""
-"QCheckBox::indicator:disabled, QTreeView::indicator:disabled {"
-"	background-color: #444444;"
-"}"
-""
-"QCheckBox::indicator::checked:disabled, QTreeView::indicator::checked:disabled {  "
-"	background-color: qradialgradient(cx:0.5, cy:0.5, fx:0.25, fy:0.15, radius:0.3, stop:0 #BBBBBB, stop:1 #444444);"
-"}");
+static char vfhGpuCudaDevices[]   = "VFH_GPU_CUDA_DEVICES";
+static char vfhGpuOpenClDevices[] = "VFH_GPU_OPENCL_DEVICES";
 
 /// Available device list.
-static QStringList availableDeviceList;
-static QString hdkStyleSheet;
-static QStyle *hdkStyle = nullptr;
-
-static void dumpStyleSheet(QWidget *object)
-{
-#if 0
-	QDirIterator it(":", QDirIterator::Subdirectories);
-	while (it.hasNext()) {
-		qDebug() << it.next();
-	}
-#endif
-	for (QObject *child : object->children()) {
-		QWidget *widget = qobject_cast<QWidget*>(child);
-		if (widget) {
-			hdkStyleSheet.append(widget->styleSheet());
-
-			if (qobject_cast<QCheckBox*>(widget)) {
-				Log::getLog().error("%p", widget->style());
-			}
-
-			dumpStyleSheet(widget);
-		}
-	}
-}
-
-static void findHdkCheckbox()
-{
-	QWidget *mainWindow = RE_Window::mainQtWindow();
-	vassert(mainWindow);
-
-	hdkStyle = mainWindow->style();
-
-	dumpStyleSheet(mainWindow);
-}
+static int availableDeviceListInitialized = false;
+static QStringList availableCudaDeviceList;
+static QStringList availableOpenClDeviceList;
 
 static void appendDeviceToList(const ComputeDeviceInfoList &deviceInfoList, QStringList &devicesList)
 {
@@ -101,95 +49,316 @@ static void appendDeviceToList(const ComputeDeviceInfoList &deviceInfoList, QStr
 	}
 }
 
-static void getAvailableDeviceList(QStringList &devicesList)
+static void initAvailableDeviceList()
 {
-	if (availableDeviceList.empty()) {
-		if (newVRayInit()) {
-			const VRay::RendererOptions &options = getDefaultOptions(HOU::isUIAvailable());
-			VRay::VRayRenderer *renderer = newVRayRenderer(options);
-			if (renderer) {
-				try {
-					appendDeviceToList(renderer->getComputeDevicesCUDA(), availableDeviceList);
-				}
-				catch (...) {
-					VRay::Error err = renderer->getLastError();
-					if (err != VRay::SUCCESS) {
-						Log::getLog().error("Last error: %s", err.toString());
-					}
-				}
+	if (availableDeviceListInitialized)
+		return;
 
-				try {
-					appendDeviceToList(renderer->getComputeDevicesOpenCL(), availableDeviceList);
-				}
-				catch (...) {
-					VRay::Error err = renderer->getLastError();
-					if (err != VRay::SUCCESS) {
-						Log::getLog().error("Last error: %s", err.toString());
-					}
-				}
-
-				deleteVRayRenderer(renderer);
+	if (newVRayInit()) {
+		const VRay::RendererOptions &options = getDefaultOptions(HOU::isUIAvailable());
+		VRay::VRayRenderer *renderer = newVRayRenderer(options);
+		if (renderer) {
+			try {
+				appendDeviceToList(renderer->getComputeDevicesCUDA(), availableCudaDeviceList);
 			}
+			catch (...) {
+				VRay::Error err = renderer->getLastError();
+				if (err != VRay::SUCCESS) {
+					Log::getLog().error("Last error: %s", err.toString());
+				}
+			}
+
+			try {
+				appendDeviceToList(renderer->getComputeDevicesOpenCL(), availableOpenClDeviceList);
+			}
+			catch (...) {
+				VRay::Error err = renderer->getLastError();
+				if (err != VRay::SUCCESS) {
+					Log::getLog().error("Last error: %s", err.toString());
+				}
+			}
+
+			deleteVRayRenderer(renderer);
 		}
 	}
 
-	devicesList = availableDeviceList;
+	availableDeviceListInitialized = true;
 }
 
-static void setStoredDeviceList(const QStringList &devicesList)
+static void setStoredDeviceList(const char *deviceVarName, const QStringList &devicesList)
 {
 	OP_CommandManager &cmdMan = *OPgetDirector()->getCommandManager();
 
-	cmdMan.setVariable(vfhGpuDevices, _toChar(devicesList.join(';')), false);
+	cmdMan.setVariable(deviceVarName, _toChar(devicesList.join(';')), false);
 }
 
-static void getStoredDeviceList(QStringList &devicesList)
+static void getStoredDeviceList(const char *deviceVarName, QStringList &devicesList)
 {
 	OP_CommandManager &cmdMan = *OPgetDirector()->getCommandManager();
 
 	UT_String envGpuDevices;
-	if (!cmdMan.getVariable(vfhGpuDevices, envGpuDevices))
+	if (!cmdMan.getVariable(deviceVarName, envGpuDevices))
 		return;
 
 	const QString gpuDevices(envGpuDevices.buffer());
 	devicesList = gpuDevices.split(';');
 }
 
-struct VfhGpuDeviceSelect
+struct HouPalette
+{
+	HouPalette() = default;
+
+	static QColor getHouColor(const char *name) {
+		const void *ptr = HOM().qt()._getColor(name);
+		if (!ptr)
+			return {};
+		return *reinterpret_cast<const QColor*>(ptr);
+	}
+
+	void init() {
+		if (initialized)
+			return;
+
+		{
+			const int _iconSize = HOM().ui().scaledSize(14);
+			iconSize = QSize(_iconSize, _iconSize);
+		}
+
+		buttonText = getHouColor("ButtonText");
+		disabledTextColor = getHouColor("DisabledTextColor");
+		border = getHouColor("TextboxBorderPrimary");
+		disabledBorder = getHouColor("TextboxBorderHighlight");
+		textboxBG = getHouColor("TextboxBG");
+		textboxBorderPrimary = getHouColor("TextboxBorderPrimary");
+		textboxBorderHighlight = getHouColor("TextboxBorderHighlight");
+		checkLocated = getHouColor("CheckLocated");
+		checkColor = getHouColor("CheckColor");
+
+		initialized = true;
+	}
+
+	QColor buttonText;
+	QColor disabledTextColor;
+	QColor border;
+	QColor disabledBorder;
+	QColor textboxBG;
+	QColor textboxBorderPrimary;
+	QColor textboxBorderHighlight;
+	QColor checkLocated;
+	QColor checkColor;
+
+	QSize iconSize;
+
+	int initialized = false;
+
+	Q_DISABLE_COPY(HouPalette)
+};
+
+static HouPalette houPalette;
+
+/// Based on $HFS/houdini/python2.7libs/houpythonportion.py
+struct HouCheckBox
+	: QCheckBox
+{
+	Q_OBJECT
+
+public:
+	explicit HouCheckBox(QWidget *parent=nullptr)
+		: QCheckBox(parent)
+	{
+		setAttribute(Qt::WA_Hover, true);
+		setIconSize(houPalette.iconSize);
+	}
+
+	QSize sizeHint() const Q_DECL_OVERRIDE {
+		QSize _sizeHint = houPalette.iconSize;
+		_sizeHint.setWidth(_sizeHint.width() + 10);
+		return _sizeHint;
+	}
+
+protected:
+	void paintEvent(QPaintEvent*) Q_DECL_OVERRIDE {
+		QPainter painter(this);
+
+		const int box_width = iconSize().width() - 1;
+		const int box_height = iconSize().height() - 1;
+		_drawBox(painter, 0, 0, box_width, box_height);
+
+		const int text_x = box_width + 8;
+		const int text_y = 0;
+		const int text_w = width() - text_x;
+		const int text_h = height() - 4;
+		_drawText(painter, text_x, text_y, text_w, text_h);
+
+		if (isChecked()) {
+			const int check_x = 3;
+			const int check_y = 2;
+			const int check_width = box_width - 2;
+			const int check_height = box_height - 2;
+			_drawCheckMark(painter, check_x, check_y, check_width, check_height);
+		}
+	}
+
+private:
+	void _drawText(QPainter &painter, int x, int y, int w, int h) const {
+		const int textAlign = Qt::AlignVCenter | Qt::AlignLeft | Qt::TextShowMnemonic;
+		const QColor textPen = isEnabled() ? houPalette.buttonText : houPalette.disabledTextColor;
+
+		painter.setPen(textPen);
+		painter.drawText(x, y, w, h, textAlign, text());
+	}
+
+	static void _drawBox(QPainter &painter, int x, int y, int w, int h) {
+		painter.setPen(houPalette.textboxBorderPrimary);
+		painter.drawRect(x, y, w, h);
+
+		painter.setPen(houPalette.textboxBorderHighlight);
+		painter.drawLine(x + 1, y + 1, x + w - 1, y + 1);
+		painter.drawLine(x + 1, y + 1, x + 1, y + h - 1);
+
+		painter.fillRect(x + 2, y + 2, x + w - 2, y + h - 2,
+		                 houPalette.textboxBG);
+	}
+
+	void _drawCheckMark(QPainter &painter, int x, int y, int w, int h) const {
+		painter.setRenderHints(QPainter::Antialiasing);
+
+		const QColor check_mark_color = underMouse() ? houPalette.checkLocated : houPalette.checkColor;
+
+		painter.setPen(check_mark_color);
+		painter.setBrush(check_mark_color);
+
+		static QPointF point_percentages[] = {
+			{ 0.00, 0.50 },
+			{ 0.20, 0.30 },
+			{ 0.35, 0.50 },
+			{ 0.50, 0.25 },
+			{ 0.75, 0.10 },
+			{ 1.00, 0.00 },
+			{ 0.80, 0.20 },
+			{ 0.55, 0.50 },
+			{ 0.35, 1.00 },
+			{ 0.20, 0.60 },
+		};
+
+		QVector<QPointF> points(COUNT_OF(point_percentages));
+		int i = 0;
+		for (const QPointF &point_pct : point_percentages) {
+			const QPointF point(x + point_pct.x() * w,
+			                    y + point_pct.y() * h);
+			points[i++] = point;
+		}
+
+		const QPolygonF polygon(points);
+		painter.drawPolygon(polygon);
+	}
+};
+
+struct VfhGpuDeviceListWidget
+	: QGroupBox
+{
+	Q_OBJECT
+
+public:
+	VfhGpuDeviceListWidget(const QString &title, const char *deviceVarName, const QStringList &deviceList, QWidget *parent)
+		: QGroupBox(parent)
+		, deviceVarName(deviceVarName)
+		, deviceList(deviceList)
+	{
+		setTitle(title);
+
+		fillWidgetList();
+
+		widgetButtonApply = new QPushButton("Apply", this);
+
+		connect(
+			widgetButtonApply, SIGNAL(clicked()),
+			this, SLOT(storeVariable())
+		);
+
+		QVBoxLayout *mainLayout = new QVBoxLayout;
+		for (QWidget *widget : widgetList) {
+			mainLayout->addWidget(widget);
+		}
+		mainLayout->addStretch();
+		mainLayout->addWidget(widgetButtonApply);
+
+		setLayout(mainLayout);
+	}
+
+	void fillWidgetList() {
+		widgetList.clear();
+
+		QStringList storedDeviceList;
+		getStoredDeviceList(deviceVarName, storedDeviceList);
+
+		for (const QString &devName : deviceList) {
+			HouCheckBox *item = new HouCheckBox(this);
+			item->setText(devName);
+
+			if (!storedDeviceList.empty() && storedDeviceList.contains(devName)) {
+				item->setCheckState(Qt::Checked);
+			}
+
+			widgetList.append(item);
+		}
+	}
+
+private Q_SLOTS:
+	void storeVariable() {
+		QStringList storeDeviceList;
+
+		for (int i = 0; i < widgetList.count(); ++i) {
+			const HouCheckBox *item = static_cast<HouCheckBox*>(widgetList[i]);
+			vassert(item);
+			if (item->isChecked()) {
+				storeDeviceList.append(item->text());
+			}
+		}
+
+		setStoredDeviceList(deviceVarName, storeDeviceList);
+
+		close();
+	}
+
+private:
+	QPushButton *widgetButtonApply = nullptr;
+	QWidgetList widgetList;
+	const char *deviceVarName;
+	const QStringList &deviceList;
+};
+
+struct VfhGpuDeviceSelectWindow
 	: QMainWindow
 {
 	Q_OBJECT
 
 public:
-	VfhGpuDeviceSelect(VfhGpuDeviceSelect* &windowInstance, QWidget *parent)
+	VfhGpuDeviceSelectWindow(VfhGpuDeviceSelectWindow* &windowInstance, QWidget *parent)
 		: QMainWindow(parent)
 		, windowInstance(windowInstance)
 	{
 		setWindowTitle(tr("V-Ray GPU Device Select"));
 		setAttribute(Qt::WA_DeleteOnClose);
 		setWindowFlags(Qt::Window|Qt::Tool);
-		setStyle(hdkStyle);
+		setWindowModality(Qt::ApplicationModal);
 
 		initUI();
-		fillDeviceList();
 
 		resize(1024, 768);
 	}
 
-	~VfhGpuDeviceSelect() VRAY_DTOR_OVERRIDE {
+	~VfhGpuDeviceSelectWindow() VRAY_DTOR_OVERRIDE {
 		windowInstance = nullptr;
 	}
 
 	void initUI() {
-		listWidget = new QListWidget(this);
+		listCuda = new VfhGpuDeviceListWidget("CUDA", vfhGpuCudaDevices, availableCudaDeviceList, this);
+		listOpenCl = new VfhGpuDeviceListWidget("OpenCL", vfhGpuOpenClDevices, availableOpenClDeviceList, this);
 
-		QCheckBox *box = new QCheckBox(this);
-		box->setStyle(hdkStyle);
-		box->setMaximumSize(QSize(32,32));
-
-		QVBoxLayout *mainLayout = new QVBoxLayout;
-		mainLayout->addWidget(box);
-		mainLayout->addWidget(listWidget);
+		QHBoxLayout *mainLayout = new QHBoxLayout;
+		mainLayout->addWidget(listCuda);
+		mainLayout->addWidget(listOpenCl);
 
 		QWidget *centralWidget = new QWidget(this);
 		centralWidget->setLayout(mainLayout);
@@ -197,49 +366,49 @@ public:
 		setCentralWidget(centralWidget);
 	}
 
-	void fillDeviceList() const {
-		QStringList availDeviceList;
-		getAvailableDeviceList(availDeviceList);
-
-		QStringList selectedDeviceList;
-		getStoredDeviceList(selectedDeviceList);
-
-		listWidget->clear();
-		listWidget->setStyleSheet(vfhCheckBox);
-
-		for (const QString &devName : availDeviceList) {
-			Log::getLog().debug("GPU: %s", _toChar(devName));
-
-			QListWidgetItem *item = new QListWidgetItem(devName, listWidget);
-			item->setFlags(item->flags()|Qt::ItemIsUserCheckable);
-
-			if (selectedDeviceList.contains(devName)) {
-				item->setCheckState(Qt::Checked);
-			}
-			else {
-				item->setCheckState(Qt::Unchecked);
-			}
-
-			listWidget->addItem(item);
-		}
-	}
-
 protected:
-	QListWidget *listWidget = nullptr;
+	VfhGpuDeviceListWidget *listCuda = nullptr;
+	VfhGpuDeviceListWidget *listOpenCl = nullptr;
 
 private:
-	VfhGpuDeviceSelect* &windowInstance;
+	VfhGpuDeviceSelectWindow* &windowInstance;
 };
 
 /// We allow only one window instance.
-static VfhGpuDeviceSelect *windowInstance = nullptr;
+static VfhGpuDeviceSelectWindow *windowInstance = nullptr;
+
+void VRayForHoudini::getGpuDeviceIdList(int isCUDA, ComputeDeviceIdList &list)
+{
+	initAvailableDeviceList();
+
+	const QStringList &availableDeviceList =
+		isCUDA ? availableCudaDeviceList : availableOpenClDeviceList;
+
+	const char *deviceVarName =
+		isCUDA ? vfhGpuCudaDevices : vfhGpuOpenClDevices;
+
+	QStringList storedDeviceList;
+	getStoredDeviceList(deviceVarName, storedDeviceList);
+
+	for (int i = 0; i < availableDeviceList.count(); ++i) {
+		const QString &availableDeviceName = availableDeviceList[i];
+		if (storedDeviceList.contains(availableDeviceName)) {
+			list.push_back(i);
+		}
+	}
+}
 
 void VRayForHoudini::showGpuDeviceSelectUI()
 {
-	if (!windowInstance) {
-		findHdkCheckbox();
+	initAvailableDeviceList();
 
-		windowInstance = new VfhGpuDeviceSelect(windowInstance, RE_Window::mainQtWindow());
+	if (!HOU::isUIAvailable())
+		return;
+
+	houPalette.init();
+
+	if (!windowInstance) {
+		windowInstance = new VfhGpuDeviceSelectWindow(windowInstance, RE_Window::mainQtWindow());
 		windowInstance->show();
 	}
 }

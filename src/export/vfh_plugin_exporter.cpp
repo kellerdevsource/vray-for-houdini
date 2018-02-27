@@ -12,6 +12,7 @@
 #include "vfh_hou_utils.h"
 #include "vfh_plugin_exporter.h"
 #include "vfh_vray_instances.h"
+#include "vfh_gpu_device_select.h"
 #include "vfh_log.h"
 
 #include <QWidget>
@@ -391,6 +392,21 @@ void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngin
 
 	m_vray->setOptions(options);
 	m_vray->setRenderMode(mode);
+
+	const int isCPU =
+		mode == VRay::RendererOptions::RENDER_MODE_PRODUCTION ||
+		mode == VRay::RendererOptions::RENDER_MODE_RT_CPU;
+
+	if (!isCPU) {
+		const int isCUDA =
+			mode == VRay::RendererOptions::RENDER_MODE_RT_GPU_CUDA ||
+			mode == VRay::RendererOptions::RENDER_MODE_PRODUCTION_CUDA;
+
+		ComputeDeviceIdList deviceList;
+		getGpuDeviceIdList(isCUDA, deviceList);
+
+		m_vray->setComputeDevicesCurrentEngine(deviceList);
+	}
 }
 
 
