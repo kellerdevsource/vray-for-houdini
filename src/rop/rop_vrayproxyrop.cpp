@@ -321,7 +321,7 @@ PRM_Template *VRayProxyROP::getMyPrmTemplate()
 									.setSpareData(&PRM_SpareData::objGeometryPath)
 									.addConditional("{ use_soppath == 1 }", PRM_CONDTYPE_DISABLE)
 					 );
-	myPrmList.addPrm(Parm::PRMFactory(PRM_STRING, "partition_attribute", "Partition attribute").setDefault(""));
+	myPrmList.addPrm(Parm::PRMFactory(PRM_STRING, "partition_attribute", "Partition Attribute").setDefault(""));
 	myPrmList.addPrm(Parm::PRMFactory(PRM_TOGGLE_E, "save_hidden", "Save Hidden And Templated Geometry")
 									.setDefault(PRMzeroDefaults)
 									.addConditional("{ use_soppath == 1 }", PRM_CONDTYPE_DISABLE)
