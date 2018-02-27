@@ -50,7 +50,7 @@
             default { "0" }
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "BRDFVRayMtl" }
-            parmtag { "vray_pluginattr" "brdf_type" }
+            parmtag { "vray_pluginattr" "roughness_model" }
             parmtag { "vray_type" "enum" }
         }
         parm {
