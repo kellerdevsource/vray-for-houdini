@@ -179,7 +179,7 @@ void TileImage::flipImage() const
 		vutils_memcpy(fromRow, rowBuf,  rowBytes);
 	}
 
-	FreePtr(rowBuf);
+	FreePtrArr(rowBuf);
 }
 
 void ImdisplayThread::processImageHeaderMessage(ImageHeaderMessage &msg) const
