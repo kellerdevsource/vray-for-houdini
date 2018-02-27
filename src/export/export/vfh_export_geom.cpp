@@ -935,7 +935,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		appendObjUniqueID(userAttributes, objNode);
 
 		if (addParitionAttr && primItem.prim) {
-			const auto & gdp = primItem.prim->getDetail();
+			const GA_Detail & gdp = primItem.prim->getDetail();
 			GA_ROHandleS separateAttrHandle(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, partitionAttribute.buffer()));
 			if (separateAttrHandle.isValid()) {
 				// TODO: is there a better way for primitive offset
