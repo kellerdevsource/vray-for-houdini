@@ -94,7 +94,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexBerconWood', nodename="berconwood")
 <![CDATA[
 
 import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeMetaImageFile', nodename="imagefile")
+voptoolutils.genericTool(kwargs, 'VRayNodeMetaImageFile', nodename="imageFile")
 
 ]]>
     </script>

@@ -306,14 +306,12 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, VRayPluginType::GEOMETRY, GeomDisplacedMesh);
 	VFH_VOP_ADD_OPERATOR(table, VRayPluginType::GEOMETRY, GeomStaticSmoothedMesh);
 
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", BitmapBuffer);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", ColorTextureToMono);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", FloatToTex);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexAColor);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexAColorChannel);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexAColorOp);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBezierCurve);
-	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBitmap);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBlend);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBlendBumpNormal);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexBulge);

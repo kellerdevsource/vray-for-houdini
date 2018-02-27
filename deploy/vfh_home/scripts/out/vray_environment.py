@@ -15,18 +15,14 @@ import hou
 node = kwargs['node']
 
 envNode = node.createNode("VRayNodeSettingsEnvironment")
+envNode.setName("envSettings")
 
-imageTexNode = envNode.createInputNode(0, "VRayNodeTexBitmap")	# bg_tex
-envNode.setInput(1, imageTexNode, 0)							# gi_tex
-envNode.setInput(2, imageTexNode, 0)							# reflect_tex
-envNode.setInput(3, imageTexNode, 0)							# refract_tex
+imageFileNode = envNode.createInputNode(0, "VRayNodeMetaImageFile")
+imageFileNode.setName("envImageFile")
+imageFileNode.parm("meta_image_uv_generator").set("1")
 
-uvwGenEnvNode = imageTexNode.createInputNode(5, "VRayNodeUVWGenEnvironment")
-imageFileNode = imageTexNode.createInputNode(6, "VRayNodeBitmapBuffer")
-
-envNode.setName("environment_settings")
-uvwGenEnvNode.setName("environment_mapping")
-imageTexNode.setName("imagetexture")
-imageFileNode.setName("imagefile")
+envNode.setInput(1, imageFileNode, 0)
+envNode.setInput(2, imageFileNode, 0)
+envNode.setInput(3, imageFileNode, 0)
 
 node.layoutChildren()
