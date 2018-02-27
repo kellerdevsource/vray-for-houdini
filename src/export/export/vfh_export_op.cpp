@@ -230,28 +230,21 @@ VRay::Plugin VRayExporter::exportCopNodeWithDefaultMapping(COP2_Node &copNode, D
 		uvwgenDesc.pluginName = str(fmtPrefix % "DefaultMapping" % bitmapBuffer.getName()),
 		fillDefaultMappingDesc(mappingType, uvwgenDesc);
 
-		// Bitmap data needs flipping for some reason.
-		VRay::Matrix uvwTm(1);
-		uvwTm.v1.set(0.0f, -1.0f, 0.0f);
-
 		VRay::Plugin uvwgen;
 
 		switch (mappingType) {
 			case defaultMappingChannel: {
 				uvwgenDesc.pluginName = getPluginName(&copNode, "UVWGenChannel");
-				uvwgenDesc.addAttribute(PluginAttr("uvw_transform", VRay::Transform(uvwTm, VRay::Vector(0.0f, 0.0f, 0.0f))));
 				uvwgen = exportPlugin(uvwgenDesc);
 				break;
 			}
 			case defaultMappingChannelName: {
 				uvwgenDesc.pluginName = getPluginName(&copNode, "UVWGenMayaPlace2dTexture");
-				uvwgenDesc.addAttribute(PluginAttr("mirror_v", true));
 				uvwgen = exportPlugin(uvwgenDesc);
 				break;
 			}
 			case defaultMappingSpherical: {
 				uvwgenDesc.pluginName = getPluginName(&copNode, "UVWGenEnvironment");
-				uvwgenDesc.addAttribute(PluginAttr("uvw_matrix", uvwTm));
 				uvwgen = exportPlugin(uvwgenDesc);
 				break;
 			}
