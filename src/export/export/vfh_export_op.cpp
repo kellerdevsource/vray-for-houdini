@@ -69,6 +69,40 @@ static TIL_Raster *getImageFromCop(COP2_Node &copNode, double time, const char *
 	return image;
 }
 
+/// Flips raster in V.
+/// @param raster Raster raw pixel data.
+/// @param w Image width in pixels.
+/// @param h Image height in pixels.
+static void flipRasterU(void *raster, int w, int h)
+{
+	struct MyPixel {
+		float r;
+		float g;
+		float b;
+		float a;
+	};
+
+	MyPixel *pixels = reinterpret_cast<MyPixel*>(raster);
+
+	const int halfH = VUtils::fast_ceil(float(h) / 2.0f);
+
+	const int rowItems = w;
+	const int rowBytes = rowItems * sizeof(MyPixel);
+
+	MyPixel *rowBuf = new MyPixel[rowItems];
+
+	for (int i = 0; i < halfH; ++i) {
+		MyPixel *toRow   = pixels + i       * rowItems;
+		MyPixel *fromRow = pixels + (h-i-1) * rowItems;
+
+		vutils_memcpy(rowBuf,  toRow,   rowBytes);
+		vutils_memcpy(toRow,   fromRow, rowBytes);
+		vutils_memcpy(fromRow, rowBuf,  rowBytes);
+	}
+
+	FreePtrArr(rowBuf);
+}
+
 int VRayExporter::fillCopNodeBitmapBuffer(COP2_Node &copNode, Attrs::PluginDesc &rawBitmapBuffer)
 {
 	QScopedPointer<TIL_Raster> raster(getImageFromCop(copNode, getContext().getTime()));
@@ -86,13 +120,56 @@ int VRayExporter::fillCopNodeBitmapBuffer(COP2_Node &copNode, Attrs::PluginDesc 
 	const int numPixelBytes = numPixels * numComponents * bytesPerComponent;
 	const int numInts = numPixelBytes / sizeof(int);
 
+	const int w = raster->getXres();
+	const int h = raster->getYres();
+
+	// Flip image V in-place.
+	flipRasterU(raster->getPixels(), w, h);
+
 	VRay::VUtils::IntRefList pixels(numInts);
 	vutils_memcpy(pixels.get(), raster->getPixels(), numPixelBytes);
 
+	const PXL_ColorSpace rasterColorSpace = raster->getColorSpace();
+
+	// Only valid for PXL_CS_LINEAR, PXL_CS_GAMMA2_2, and PXL_CS_CUSTOM_GAMMA.
+	const fpreal rasterGamma = raster->getColorSpaceGamma();
+
+	BitmapBufferColorSpace bitmapBufferColorSpace;
+	fpreal bitmapBufferGamma;
+
+	switch (rasterColorSpace) {
+		case PXL_CS_LINEAR: {
+			bitmapBufferColorSpace = bitmapBufferColorSpaceLinear;
+			bitmapBufferGamma = rasterGamma;
+			break;
+		}
+		case PXL_CS_GAMMA2_2:
+		case PXL_CS_CUSTOM_GAMMA: {
+			bitmapBufferColorSpace = bitmapBufferColorGammaCorrected;
+			bitmapBufferGamma = rasterGamma;
+			break;
+		}
+		case PXL_CS_SRGB: {
+			bitmapBufferColorSpace = bitmapBufferColorSRGB;
+			bitmapBufferGamma = 1.0;
+			break;
+		}
+		case PXL_CS_UNKNOWN:
+		case PXL_CS_OCIO:
+		case PXL_CS_REC709:
+		default: {
+			bitmapBufferColorSpace = bitmapBufferColorSpaceLinear;
+			bitmapBufferGamma = 1.0;
+			break;
+		}
+	}
+
 	rawBitmapBuffer.addAttribute(PluginAttr("pixels", pixels));
 	rawBitmapBuffer.addAttribute(PluginAttr("pixels_type", pixelFormat));
-	rawBitmapBuffer.addAttribute(PluginAttr("width", raster->getXres()));
-	rawBitmapBuffer.addAttribute(PluginAttr("height", raster->getYres()));
+	rawBitmapBuffer.addAttribute(PluginAttr("width", w));
+	rawBitmapBuffer.addAttribute(PluginAttr("height", h));
+	rawBitmapBuffer.addAttribute(PluginAttr("color_space", bitmapBufferColorSpace));
+	rawBitmapBuffer.addAttribute(PluginAttr("gamma", bitmapBufferGamma));
 
 	return 1;
 }
