@@ -1,0 +1,8 @@
+{
+    name RawBitmapBuffer
+    label "RawBitmapBuffer"
+    parmtag { spare_category "RawBitmapBuffer" }
+    parmtag { vray_plugin "RawBitmapBuffer" }
+
+#include "BitmapBufferParms.ds"
+}
