@@ -120,8 +120,8 @@ struct HouPalette
 			return;
 
 		{
-			const int _iconSize = HOM().ui().scaledSize(14);
-			iconSize = QSize(_iconSize, _iconSize);
+			// const int _iconSize = HOM().ui().scaledSize(14);
+			iconSize = QSize(14, 14);
 		}
 
 		buttonText = getHouColor("ButtonText");
