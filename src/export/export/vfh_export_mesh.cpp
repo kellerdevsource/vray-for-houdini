@@ -221,11 +221,9 @@ bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, PrimitiveItems &in
 	const bool hasNormals = allNormals.count() != 0;
 	m_faceNormals.freeMem();
 
-	int primOffset = -1;
 	int normalsOffset = 0;
 
 	for (auto & prim : primList) {
-		primOffset++;
 		if (prim->getTypeId() == GEO_PRIMPOLY) {
 			const GA_Attribute *nattr = gdp.findNormalAttribute(GA_ATTRIB_POINT);
 			if (!nattr) {
@@ -259,7 +257,7 @@ bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, PrimitiveItems &in
 		memcpy(vertices.get(), allVertices.get() + vertexRange.first, vertexCount * sizeof(vertices[0]));
 
 		PrimitiveItem item;
-		item.primID = primOffset;
+		item.primID = soup->getMapIndex();
 		item.prim = soup;
 		item.tm = topItem.tm;
 		item.vel = topItem.vel;

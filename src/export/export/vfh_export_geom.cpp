@@ -938,8 +938,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 			const GA_Detail & gdp = primItem.prim->getDetail();
 			GA_ROHandleS separateAttrHandle(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, partitionAttribute.buffer()));
 			if (separateAttrHandle.isValid()) {
-				const GA_Offset offset = gdp.primitiveOffset(primItem.prim->getMapOffset());
-				const char *attrValue = separateAttrHandle.get(offset);
+				const char *attrValue = separateAttrHandle.get(primItem.prim->getMapOffset());
 				if (attrValue) {
 					userAttributes += QString().sprintf("vrayPrimPartition=%s;", attrValue);
 				}
@@ -1158,11 +1157,16 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 		exint parentID;
 		exint detailID;
 		exint keyDataPoly;
+
+		Hash::MHash getHash() const {
+			Hash::MHash meshKey;
+			Hash::MurmurHash3_x86_32(this, sizeof(MeshPrimKey), 42, &meshKey);
+			return meshKey;
+		}
 	} meshPrimKey(topItem.primID, getDetailID(), keyDataPoly);
 #pragma pack(pop)
 
-	Hash::MHash meshKey;
-	Hash::MurmurHash3_x86_32(&meshPrimKey, sizeof(MeshPrimKey), 42, &meshKey);
+	const Hash::MHash meshKey = meshPrimKey.getHash();
 
 	PrimitiveItem item;
 	getPrimMaterial(item.primMaterial);
@@ -1208,7 +1212,46 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 
 	if (doExportGeometry) {
 		if (hasPolySoup && partitionAttribute.isstring()) {
-			polyMeshExporter.asPolySoupPrimitives(gdp, instancerItems, topItem,  pluginExporter);		
+			bool allCached = false;
+
+			PrimitiveItems soupItems;
+			const exint keyDetailID = getDetailID();
+			// check what we have in cache
+			for (const auto *prim : primList) {
+				if (prim->getTypeId() != GEO_PRIMPOLYSOUP) {
+					continue;
+				}
+				MeshPrimKey key(prim->getMapIndex(), keyDetailID, keyDataPoly);
+				VRay::Plugin polySoupGeom;
+
+				if (!getMeshPluginFromCache(key.getHash(), polySoupGeom)) {
+					allCached = false;
+					break;
+				}
+				PrimitiveItem soupItem;
+				soupItem.primID = prim->getMapIndex();
+				soupItem.prim = prim;
+				soupItem.tm = topItem.tm;
+				soupItem.vel = topItem.vel;
+				soupItem.material = topItem.material;
+				soupItem.geometry = polySoupGeom;
+
+				soupItems += soupItem;
+			}
+
+			if (!allCached) {
+				// something changed - re-export primitives
+				soupItems.freeMem();
+				polyMeshExporter.asPolySoupPrimitives(gdp, soupItems, topItem, pluginExporter);
+
+				// re-add to cache
+				for (const PrimitiveItem & primSoup : soupItems) {
+					MeshPrimKey key(primSoup.primID, keyDetailID, keyDataPoly);
+					addMeshPluginToCache(key.getHash(), item.geometry);
+				}
+			}
+
+			instancerItems += soupItems;
 		} else if (!getMeshPluginFromCache(item.primID, item.geometry)) {
 			OP_Node *matNode = item.primMaterial.matNode
 				? item.primMaterial.matNode
