@@ -8,7 +8,7 @@ groupsimple {
     parm {
         name    "SettingsLightCache_subdivs"
         label   "Subdivs"
-        type    integer
+        type    int
         default { "1000" }
         help    "This determines how many paths are traced from the camera. The actual number of paths is the square of the subdivs"
         range   { 1 3000 }
@@ -236,7 +236,7 @@ groupsimple {
         parm {
             name  "SettingsLightCache_prefilter_samples"
             label "Prefilter Samples"
-            type  integer
+            type  int
             default   { "20" }
             help  "Number of prefilter samples"
             range { 2 20 }
@@ -250,7 +250,7 @@ groupsimple {
         parm {
             name  "SettingsLightCache_depth"
             label "Depth"
-            type  integer
+            type  int
             default   { "100" }
             help  "Light cache trace depth"
             range { 0 100 }
@@ -263,7 +263,7 @@ groupsimple {
         parm {
             name  "SettingsLightCache_filter_samples"
             label "Filter Samples"
-            type  integer
+            type  int
             default   { "5" }
             help  "How many of the nearest samples to look up from the light cache"
             range { 1 5 }
@@ -373,7 +373,7 @@ groupsimple {
         parm {
             name    "SettingsLightCache_num_passes"
             label   "Number Of Passes"
-            type    integer
+            type    int
             hidewhen " { SettingsLightCache_num_passes_auto == 1 } "
             default { "64" }
             help    "The light cache is computed in several passes, which are then combined into the final light cache"

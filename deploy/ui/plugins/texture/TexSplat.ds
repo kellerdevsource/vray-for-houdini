@@ -50,7 +50,7 @@
         parm {
             name    "iterations"
             label   "Iterations"
-            type    integer
+            type    int
             default { "4" }
             help    "Number of iterations for the fractal generator"
             range   { 0 12 }

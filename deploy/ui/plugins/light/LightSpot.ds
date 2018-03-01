@@ -500,7 +500,7 @@
             disablewhen "{ shadows == 0 }"
             name    "shadowSubdivs"
             label   "Subdivs"
-            type    integer
+            type    int
             default { "8" }
             range   { 0 10 }
             export  none
@@ -585,7 +585,7 @@
         parm {
             name    "nsamples"
             label   "MoBlur Nsamples"
-            type    integer
+            type    int
             default { "0" }
             help    "Number of parameter samples for motion blur"
             range   { 0 10 }
@@ -669,7 +669,7 @@
         parm {
             name    "photonSubdivs"
             label   "Photon Subdivs"
-            type    integer
+            type    int
             default { "500" }
             help    "Determines the number of photons emitted by this light when calculating the Global Photon Map. 1000 subdivs equal 1 million photons."
             range   { 0 2000 }
@@ -682,7 +682,7 @@
         parm {
             name    "causticSubdivs"
             label   "Caustics Subdivs"
-            type    integer
+            type    int
             default { "1000" }
             help    "Determines the number of photons emitted by this light when calculating the Caustics Photon Map. 1000 subdivs equal 1 million photons."
             range   { 0 2000 }

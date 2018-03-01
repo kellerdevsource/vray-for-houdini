@@ -278,7 +278,7 @@
             parm {
                 name    "primary_reflection_subdivs"
                 label   "Subdivs"
-                type    integer
+                type    int
                 default { "8" }
                 range   { 0 16 }
                 export  none
@@ -360,7 +360,7 @@
             parm {
                 name    "secondary_reflection_subdivs"
                 label   "Subdivs"
-                type    integer
+                type    int
                 default { "8" }
                 range   { 0 16 }
                 export  none
@@ -488,7 +488,7 @@
         parm {
             name    "raytraced_subdivs"
             label   "Subdivs"
-            type    integer
+            type    int
             default { "8" }
             hidewhen    "{ scatter_gi != 1 } { multiple_scattering != 2 }"
             range   { 0 16 }
@@ -501,7 +501,7 @@
         parm {
             name    "prepass_rate"
             label   "Rate"
-            type    integer
+            type    int
             default { "-1" }
             help    "Sampling density for the illumination map"
             hidewhen    "{ scatter_gi != 1 } { multiple_scattering != 0 }"
@@ -515,7 +515,7 @@
         parm {
             name    "prepass_id"
             label   "Prepass ID"
-            type    integer
+            type    int
             default { "0" }
             help    "0 to calculate a separate illuminataion map for this shader; otherwise all shaders with the same prepass ID will share the same illumination map"
             hidewhen    "{ scatter_gi != 1 } { multiple_scattering != 0 }"
@@ -613,7 +613,7 @@
         parm {
             name    "option_reflections_maxDepth"
             label   "Reflection Max Depth"
-            type    integer
+            type    int
             default { "5" }
             hidewhen    "{ option_reflections_trace != 1 }"
             range   { 0 64 }

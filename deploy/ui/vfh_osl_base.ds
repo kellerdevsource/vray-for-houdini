@@ -96,7 +96,7 @@ multiparm {
     parm {
         name        "osl#int_param"
         label       "Integer"
-        type        integer
+        type        int
         default     { "0" }
         range       { 0 10 }
     }

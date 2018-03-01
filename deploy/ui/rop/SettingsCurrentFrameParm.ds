@@ -1,7 +1,7 @@
 parm {
     name    "SettingsCurrentFrame_current_frame"
     label   "Current Frame"
-    type    integer
+    type    int
     default { "0" }
     help    "current frame"
     range   { 0 64 }

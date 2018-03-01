@@ -100,7 +100,7 @@
             name    "anim_start"
             label   "Anim Start"
             help    "Specifies the first frame of the animation sequence"
-            type    integer
+            type    int
             default { "0" }
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "VRayScene" }
@@ -113,7 +113,7 @@
             name    "anim_length"
             label   "Anim Length"
             help    "Specifies the length of the animation sequence"
-            type    integer
+            type    int
             default { "100" }
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "VRayScene" }

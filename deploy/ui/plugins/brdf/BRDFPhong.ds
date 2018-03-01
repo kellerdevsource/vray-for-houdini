@@ -232,7 +232,7 @@
             parm {
                 name    "trace_depth"
                 label   "Max Depth"
-                type    integer
+                type    int
                 default { "-1" }
                 help    "The maximum reflection depth (-1 is controlled by the global options)"
                 disablewhen "{ trace_reflections != 1 }"
@@ -304,7 +304,7 @@
             parm {
                 name    "imap_min_rate"
                 label   "Imap Min Rate"
-                type    integer
+                type    int
                 default { "-1" }
                 disablewhen "{ interpolation_on != 1 }"
                 range   { -1 1 }
@@ -317,7 +317,7 @@
             parm {
                 name    "imap_max_rate"
                 label   "Imap Max Rate"
-                type    integer
+                type    int
                 default { "1" }
                 disablewhen "{ interpolation_on != 1 }"
                 range   { 0 5 }
@@ -330,7 +330,7 @@
             parm {
                 name    "imap_samples"
                 label   "Imap Samples"
-                type    integer
+                type    int
                 default { "20" }
                 disablewhen "{ interpolation_on != 1 }"
                 range   { 0 32 }
@@ -374,7 +374,7 @@
         parm {
             name    "subdivs"
             label   "Subdivs"
-            type    integer
+            type    int
             default { "8" }
             range   { 0 64 }
             export  none

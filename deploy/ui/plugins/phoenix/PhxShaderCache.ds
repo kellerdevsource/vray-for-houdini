@@ -17,15 +17,15 @@
             parmtag { "cook_dependent" "1" }
             parmtag { "filechooser_mode" "read" }
             parmtag { "filechooser_pattern" "*.vdb,*.f3d,*.aur" }
-            parmtag { "vray_plugin" "PhxShaderCache" }
+            parmtag { "vray_plugin"     "PhxShaderCache" }
             parmtag { "vray_pluginattr" "cache_path" }
-            parmtag { "vray_type" "string" }
+            parmtag { "vray_type"       "string" }
         }
 
         parm {
             name "cache_load"
             label "Do load cache"
-            type integer
+            type int
             default { "1" }
             invisible
         }
@@ -45,7 +45,7 @@
         parm {
             name    "preview_res"
             label   "Preview Resolution"
-            type    integer
+            type    int
             default { "255" }
             range   { 1 255 }
             disablewhen "{ res_mode != 1 }"
@@ -96,6 +96,9 @@
                 "2" "Loop"
             }
             parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin"     "PhxShaderCache" }
+            parmtag { "vray_pluginattr" "anim_mode" }
+            parmtag { "vray_type"       "int" }
         }
         parm {
             name    "t2f"
@@ -106,46 +109,61 @@
             range   { 0! 1e+006! }
             export  none
             parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin"     "PhxShaderCache" }
+            parmtag { "vray_pluginattr" "t2f" }
+            parmtag { "vray_type"       "float" }
         }
         parm {
             name    "loop_overlap"
             label   "Loop Overlap"
-            type    integer
+            type    int
             default { "0" }
             disablewhen "{ anim_mode != 2 }"
             range   { 0! 1e+006! }
             export  none
             parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin"     "PhxShaderCache" }
+            parmtag { "vray_pluginattr" "loop_overlap" }
+            parmtag { "vray_type"       "int" }
         }
         parm {
             name    "read_offset"
             label   "Cache Start"
-            type    integer
+            type    int
             default { "1" }
             disablewhen "{ anim_mode == 1 }"
             range   { 0! 1e+006! }
             export  none
             parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin"     "PhxShaderCache" }
+            parmtag { "vray_pluginattr" "read_offset" }
+            parmtag { "vray_type"       "int" }
         }
         parm {
             name    "play_at"
             label   "Play Start"
-            type    integer
+            type    int
             default { "1" }
             disablewhen "{ anim_mode == 1 }"
             range   { 0! 1e+006! }
             export  none
             parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin"     "PhxShaderCache" }
+            parmtag { "vray_pluginattr" "play_at" }
+            parmtag { "vray_type"       "int" }
         }
         parm {
             name    "max_length"
             label   "Play Length"
-            type    integer
+            type    int
             default { "0" }
             disablewhen "{ anim_mode == 1 }"
             range   { 0! 1e+006! }
             export  none
             parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin"     "PhxShaderCache" }
+            parmtag { "vray_pluginattr" "max_length" }
+            parmtag { "vray_type"       "int" }
         }
         parm {
             name    "play_speed"
@@ -156,6 +174,9 @@
             range   { -10! 10! }
             export  none
             parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin"     "PhxShaderCache" }
+            parmtag { "vray_pluginattr" "play_speed" }
+            parmtag { "vray_type"       "float" }
         }
         parm {
             name    "blend_method"
@@ -168,6 +189,9 @@
             }
             range   { 0 1 }
             export  none
+            parmtag { "vray_plugin"     "PhxShaderCache" }
+            parmtag { "vray_pluginattr" "loop_overlap" }
+            parmtag { "vray_type"       "int" }
         }
         parm {
             name    "load_nearest"
@@ -176,6 +200,9 @@
             default { "0" }
             range   { 0 1 }
             export  none
+            parmtag { "vray_plugin"     "PhxShaderCache" }
+            parmtag { "vray_pluginattr" "load_nearest" }
+            parmtag { "vray_type"       "boolean" }
         }
         parm {
             name    "flip_yz"
@@ -185,6 +212,18 @@
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin"     "PhxShaderCache" }
+            parmtag { "vray_pluginattr" "flip_yz" }
+            parmtag { "vray_type"       "boolean" }
+        }
+        parm {
+            name    "usrchmap"
+            label   "User Channels Mapping"
+            type    string
+            default { "" }
+            parmtag { "vray_plugin"     "PhxShaderCache" }
+            parmtag { "vray_pluginattr" "usrchmap" }
+            parmtag { "vray_type"       "string" }
         }
     }
 

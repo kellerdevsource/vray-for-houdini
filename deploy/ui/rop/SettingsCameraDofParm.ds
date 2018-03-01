@@ -85,7 +85,7 @@ groupsimple {
     parm {
         name    "SettingsCameraDof_sides_num"
         label   "Number Of Sides"
-        type    integer
+        type    int
         default { "5" }
         help    "Number of sides"
         range   { 3 12 }
@@ -126,7 +126,7 @@ groupsimple {
     parm {
         name    "SettingsCameraDof_subdivs"
         label   "Subdivs"
-        type    integer
+        type    int
         default { "8" }
         help    "Controls the quality of the DOF effect"
         range   { 0 64 }

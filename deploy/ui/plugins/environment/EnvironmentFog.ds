@@ -218,7 +218,7 @@
         parm {
             name    "subdivs"
             label   "Subdivs"
-            type    integer
+            type    int
             default { "8" }
             help    "Fog subdivision"
             range   { 0 32 }
@@ -319,7 +319,7 @@
         parm {
             name    "scatter_bounces"
             label   "Scatter Bounces"
-            type    integer
+            type    int
             default { "8" }
             help    "Number of GI bounces calculated inside the fog"
             range   { 0 64 }
@@ -350,7 +350,7 @@
         parm {
             name    "max_steps"
             label   "Max Steps"
-            type    integer
+            type    int
             default { "1000" }
             help    "Maximum number of steps through the volume"
             range   { 1 1000 }
@@ -363,7 +363,7 @@
         parm {
             name    "tex_samples"
             label   "Texture Samples"
-            type    integer
+            type    int
             default { "4" }
             help    "Number of texture samples for each step through the volume"
             range   { 1 1000 }

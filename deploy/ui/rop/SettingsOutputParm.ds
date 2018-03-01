@@ -223,7 +223,7 @@ groupcollapsible {
     parm {
         name    "SettingsOutput_anim_frame_padding"
         label   "Frame Padding"
-        type    integer
+        type    int
         default { "4" }
         help    "Animation Frame Name Padding"
         range   { 0 64 }
@@ -288,7 +288,7 @@ groupcollapsible {
     parm {
         name    "SettingsOutput_frame_start"
         label   "Frame Start"
-        type    integer
+        type    int
         default { "0" }
         help    "The frame number at the start of the animation range"
         range   { 0 64 }
@@ -314,7 +314,7 @@ groupcollapsible {
     parm {
         name    "SettingsOutput_img_width"
         label   "Image Width"
-        type    integer
+        type    int
         default { "640" }
         help    "Output image width"
         range   { 0 64 }
@@ -327,7 +327,7 @@ groupcollapsible {
     parm {
         name    "SettingsOutput_img_height"
         label   "Image Height"
-        type    integer
+        type    int
         default { "480" }
         help    "Output image height"
         range   { 0 64 }
@@ -392,7 +392,7 @@ groupcollapsible {
     parm {
         name    "SettingsOutput_bmp_width"
         label   "Bitmap Width"
-        type    integer
+        type    int
         default { "640" }
         help    "Output bitmap width"
         range   { 0 64 }
@@ -405,7 +405,7 @@ groupcollapsible {
     parm {
         name    "SettingsOutput_bmp_height"
         label   "Bitmap Height"
-        type    integer
+        type    int
         default { "480" }
         help    "Output bitmap height"
         range   { 0 64 }
@@ -418,7 +418,7 @@ groupcollapsible {
     parm {
         name    "SettingsOutput_r_left"
         label   "Bitmap Output Region Left Coord"
-        type    integer
+        type    int
         default { "0" }
         help    "Bitmap output region left coord"
         range   { 0 64 }
@@ -431,7 +431,7 @@ groupcollapsible {
     parm {
         name    "SettingsOutput_r_width"
         label   "Bitmap Output Region Width"
-        type    integer
+        type    int
         default { "640" }
         help    "Bitmap output region width"
         range   { 0 64 }
@@ -444,7 +444,7 @@ groupcollapsible {
     parm {
         name    "SettingsOutput_r_top"
         label   "Bitmap Output Region Top Coord"
-        type    integer
+        type    int
         default { "0" }
         help    "Bitmap output region top coord"
         range   { 0 64 }
@@ -457,7 +457,7 @@ groupcollapsible {
     parm {
         name    "SettingsOutput_r_height"
         label   "Bitmap Output Region Height"
-        type    integer
+        type    int
         default { "480" }
         help    "Bitmap output region height"
         range   { 0 64 }

@@ -152,7 +152,7 @@
         parm {
             name    "progressive_update"
             label   "Progressive Rendering Update Frequency"
-            type    integer
+            type    int
             default { "0" }
             help    "Frequency of update during progressive rendering (0 - never; 100 - update as often as possible)"
             range   { 0 100 }

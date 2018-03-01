@@ -18,7 +18,7 @@
     parm {
         name    "alias"
         label   "Alias"
-        type    integer
+        type    int
         default { "1000" }
         range   { 0 64 }
         export  none

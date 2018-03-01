@@ -132,7 +132,7 @@
         parm {
             name    "trace_depth"
             label   "Trace Depth"
-            type    integer
+            type    int
             default { "-1" }
             help    "The maximum reflection depth (-1 is controlled by the global options)"
             hidewhen "{ trace_reflections != 1 }"

@@ -121,7 +121,7 @@
     parm {
 	name	"bloom_mask_objid"
 	label	"Bloom Mask Objid"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
@@ -145,7 +145,7 @@
     parm {
 	name	"bloom_mask_mtlid"
 	label	"Bloom Mask Mtlid"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
@@ -303,7 +303,7 @@
     parm {
 	name	"glare_cam_num_blades"
 	label	"Glare Cam Num Blades"
-	type	integer
+	type	int
 	default	{ "6" }
 	range	{ 0 64 }
 	export	none
@@ -376,7 +376,7 @@
     parm {
 	name	"glare_mask_objid"
 	label	"Glare Mask Objid"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none
@@ -400,7 +400,7 @@
     parm {
 	name	"glare_mask_mtlid"
 	label	"Glare Mask Mtlid"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 64 }
 	export	none

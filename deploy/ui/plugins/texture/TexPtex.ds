@@ -109,7 +109,7 @@
         parm {
             name    "r_channel"
             label   "R Channel"
-            type    integer
+            type    int
             default { "0" }
             help    "The index of the channel which will be used as a red channel"
             hidewhen "{ auto_color != 0 }"
@@ -123,7 +123,7 @@
         parm {
             name    "g_channel"
             label   "G Channel"
-            type    integer
+            type    int
             default { "1" }
             help    "The index of the channel which will be used as a green channel"
             hidewhen "{ auto_color != 0 }"
@@ -137,7 +137,7 @@
         parm {
             name    "b_channel"
             label   "B Channel"
-            type    integer
+            type    int
             default { "2" }
             help    "The index of the channel which will be used as a blue channel"
             hidewhen "{ auto_color != 0 }"
@@ -151,7 +151,7 @@
         parm {
             name    "a_channel"
             label   "A Channel"
-            type    integer
+            type    int
             default { "-1" }
             help    "The index of the channel which will be used as a alpha channel"
             hidewhen "{ auto_alpha != 0 }"
@@ -202,7 +202,7 @@
         parm {
             name    "image_number"
             label   "Image Number"
-            type    integer
+            type    int
             default { "0" }
             range   { 0 5 }
             export  none
@@ -214,7 +214,7 @@
         parm {
             name    "image_offset"
             label   "Image Offset"
-            type    integer
+            type    int
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -237,7 +237,7 @@
         parm {
             name    "ifl_start_frame"
             label   "Ifl Start Frame"
-            type    integer
+            type    int
             default { "0" }
             hidewhen "{ use_image_sequence != 1 }"
             range   { 0 5 }
@@ -377,7 +377,7 @@
         parm {
             name    "cache_size"
             label   "Cache Size(mbs)"
-            type    integer
+            type    int
             default { "50" }
             help    "The size of the texture cache(in MB)"
             range   { 0 200 }

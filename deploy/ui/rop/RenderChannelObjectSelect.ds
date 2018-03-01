@@ -36,7 +36,7 @@
 		parm {
 			name	"id"
 			label	"Id"
-			type	integer
+			type	int
 			default	{ "0" }
 			help	"The object/material ID that will be extracted"
 			range	{ 0 10 }

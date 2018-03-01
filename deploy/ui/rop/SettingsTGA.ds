@@ -6,7 +6,7 @@
     parm {
 	name	"compression"
 	label	"Compression"
-	type	integer
+	type	int
 	default	{ "2" }
 	help	"Compression type for TGA output"
 	range	{ 0 64 }

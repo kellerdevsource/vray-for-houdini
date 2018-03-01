@@ -9,7 +9,7 @@
 parm {
     NAMEM("nsamples")
     label   "Samples"
-    type    integer
+    type    int
     default { "0" }
     help    "Number of uvw transform samples"
     range   { 0 64 }

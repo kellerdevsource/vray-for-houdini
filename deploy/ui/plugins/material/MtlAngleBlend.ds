@@ -55,7 +55,7 @@
     parm {
 	name	"blend_function"
 	label	"Blend Function"
-	type	integer
+	type	int
 	default	{ "0" }
 	help	"The function to use to blend the materials. 0:Linear 1:Normal Distribution 2:Sigmoid 3:Gompertz 4:Cube Root 5:Cubic 6: Cubic Polynomial"
 	range	{ 0 10 }

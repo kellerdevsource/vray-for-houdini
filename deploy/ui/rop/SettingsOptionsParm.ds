@@ -145,7 +145,7 @@ groupsimple {
     parm {
         name    "SettingsOptions_num_probabilistic_lights"
         label   "Number Of Lights"
-        type    integer
+        type    int
         default { "8" }
         help    "The number of probabilistic lights to use when probabilistic_lights_on is true"
         range   { 1 100 }
@@ -216,7 +216,7 @@ groupsimple {
     parm {
         name    "SettingsOptions_mtl_maxDepth"
         label   "Global Max Depth"
-        type    integer
+        type    int
         default { "5" }
         help    "Max. ray depth for reflections and refractions"
         range   { 0 1000 }
@@ -230,7 +230,7 @@ groupsimple {
     parm {
         name    "SettingsOptions_mtl_transpMaxLevels"
         label   "Max. Transparency Levels"
-        type    integer
+        type    int
         default { "50" }
         help    "Max. transparency levels"
         range   { 0 1000 }
@@ -361,7 +361,7 @@ groupsimple {
     parm {
         name    "SettingsOptions_probabilistic_vol_samples"
         label   "Num. Samples"
-        type    integer
+        type    int
         default { "20" }
         help    "The number of probabilistic samples to shade for primary/shadow rays when probabilistic_vol_on is true"
         range   { 1 100 }
@@ -375,7 +375,7 @@ groupsimple {
     parm {
         name    "SettingsOptions_probabilistic_vol_gi_samples"
         label   "Num. GI Samples"
-        type    integer
+        type    int
         default { "3" }
         help    "The number of probabilistic samples to shade for gi/glossy when probabilistic_vol_on is true"
         range   { 1 100 }

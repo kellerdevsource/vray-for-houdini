@@ -23,7 +23,7 @@ parm {
 parm {
     NAMEM("uvw_channel")
     label   "UV Index"
-    type    integer
+    type    int
     default { "0" }
     help    "Optional channel index, if uv_set_name is not found"
     range   { 0 5 }
@@ -38,7 +38,7 @@ parm {
 parm {
     NAMEM("uvw_channel_tex")
     label   "UV Channel"
-    type    integer
+    type    int
     default { "0" }
     help    "Used when more than one mesh has UV linking specified for this 2d placement. If present will override uvw_channel"
     range   { 0 10 }
@@ -211,7 +211,7 @@ parm {
 parm {
     NAMEM("nsamples")
     label   "Samples"
-    type    integer
+    type    int
     default { "1" }
     help    "The number of parameter samples to take for motion blur: 0 - means the global value; 1 - means motion blur should be disabled for this plugin"
     range   { 0 64 }

@@ -139,7 +139,7 @@
         parm {
             name    "holes"
             label   "Holes %"
-            type    integer
+            type    int
             default { "0" }
             help    "Holes"
             range   { 0 20 }
@@ -165,7 +165,7 @@
         parm {
             name    "random_seed"
             label   "Random Seed"
-            type    integer
+            type    int
             default { "0" }
             help    "Random seed"
             range   { 0 10 }
@@ -234,7 +234,7 @@
             parm {
                 name    "per_row"
                 label   "Per Row"
-                type    integer
+                type    int
                 default { "1" }
                 help    "every per_row row is modified by corresponding change value"
                 hidewhen "{ row_modify != 1 }"
@@ -262,7 +262,7 @@
             parm {
                 name    "per_column"
                 label   "Per Column"
-                type    integer
+                type    int
                 default { "1" }
                 help    "every per_column column is modified by corresponding change value"
                 hidewhen "{ column_modify != 1 }"

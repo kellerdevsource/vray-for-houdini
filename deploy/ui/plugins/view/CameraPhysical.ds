@@ -326,7 +326,7 @@
             name    "CameraPhysical_subdivs"
             label   "Subdivs"
             help    "The number of samples for calculating depth of field and/or motion blur"
-            type    integer
+            type    int
             default { "4" }
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "CameraPhysical" }
@@ -485,7 +485,7 @@
                 name    "CameraPhysical_blades_num"
                 label   "Number of Blades"
                 help    "Number of blades (0 means its disabled)"
-                type    integer
+                type    int
                 default { "5" }
                 range   { 2 20 }
                 parmtag { "cook_dependent" "1" }
@@ -580,7 +580,7 @@
             name    "CameraPhysical_bmpaperture_resolution"
             label   "Resolution"
             help    "Texture sampling resolution for the importance sampling"
-            type    integer
+            type    int
             default { "512" }
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "CameraPhysical" }

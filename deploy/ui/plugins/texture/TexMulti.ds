@@ -38,7 +38,7 @@
     parm {
         name "id_gen_tex"
         label "ID Generator"
-        help "ID generator texture. Supports integer textures."
+        help "ID generator texture. Supports int textures."
         type float
         default { "0" }
         parmtag { "cook_dependent" "1" }

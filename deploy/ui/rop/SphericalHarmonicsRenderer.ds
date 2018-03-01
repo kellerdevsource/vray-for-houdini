@@ -71,7 +71,7 @@
     parm {
 	name	"subdivs"
 	label	"Subdivs"
-	type	integer
+	type	int
 	default	{ "30" }
 	help	"The square of this parameter is proportional to the number of rays, sampled in the environment"
 	range	{ 1 10 }

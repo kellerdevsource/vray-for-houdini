@@ -6,7 +6,7 @@
     parm {
 	name	"degree"
 	label	"Degree"
-	type	integer
+	type	int
 	default	{ "3" }
 	help	"Degree of the curve"
 	range	{ 0 10 }

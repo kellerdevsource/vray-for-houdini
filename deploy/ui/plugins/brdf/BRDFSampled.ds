@@ -102,7 +102,7 @@
     parm {
         name    "brdf_nsamples_d_theta"
         label   "Brdf Nsamples D Theta"
-        type    integer
+        type    int
         default { "0" }
         help    "Number of d_theta samples"
         range   { 0 5 }
@@ -115,7 +115,7 @@
     parm {
         name    "brdf_nsamples_d_phi"
         label   "Brdf Nsamples D Phi"
-        type    integer
+        type    int
         default { "1" }
         help    "Number of d_phi samples (1 means isotropic BRDF)"
         range   { 0 5 }
@@ -141,7 +141,7 @@
     parm {
         name    "brdf_importance_sampling_resolution"
         label   "Resolution"
-        type    integer
+        type    int
         default { "32" }
         help    "Resolution for the resampling of the BRDF used for importance sampling of reflections"
         disablewhen "{ brdf_importance_sampling_on != 1 }"
@@ -155,7 +155,7 @@
     parm {
         name    "brdf_importance_sampling_view_terms"
         label   "View Terms"
-        type    integer
+        type    int
         default { "4" }
         help    "Number of terms to decompose the view-dependent portion of the resampling matrix"
         disablewhen "{ brdf_importance_sampling_on != 1 }"
@@ -169,7 +169,7 @@
     parm {
         name    "brdf_importance_sampling_half_terms"
         label   "Half Terms"
-        type    integer
+        type    int
         default { "2" }
         help    "Number of terms to decompose the half-angle portion of the resampling matrix"
         disablewhen "{ brdf_importance_sampling_on != 1 }"
@@ -183,7 +183,7 @@
     parm {
         name    "subdivs"
         label   "Subdivs"
-        type    integer
+        type    int
         default { "8" }
         range   { 0 16 }
         export  none

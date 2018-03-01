@@ -18,7 +18,7 @@
     parm {
         name    "red_id"
         label   "Red ID:"
-        type    integer
+        type    int
         default { "1" }
         help    "The object ID that will be written as the red channel (0 to disable the red channel)"
         range   { 0 5 }
@@ -31,7 +31,7 @@
     parm {
         name    "green_id"
         label   "Green ID:"
-        type    integer
+        type    int
         default { "2" }
         help    "The object ID that will be written as the green channel (0 to disable the green channel)"
         range   { 0 5 }
@@ -44,7 +44,7 @@
     parm {
         name    "blue_id"
         label   "Blue ID:"
-        type    integer
+        type    int
         default { "3" }
         help    "The object ID that will be written as the blue channel (0 to disable the blue channel)"
         range   { 0 5 }

@@ -6,7 +6,7 @@
     parm {
 	name	"maxSubdivDepth"
 	label	"Maxsubdivdepth"
-	type	integer
+	type	int
 	default	{ "5" }
 	range	{ 0 10 }
 	export	none
@@ -42,7 +42,7 @@
     parm {
 	name	"regularUSteps"
 	label	"Regularusteps"
-	type	integer
+	type	int
 	default	{ "20" }
 	range	{ 0 10 }
 	export	none
@@ -54,7 +54,7 @@
     parm {
 	name	"regularVSteps"
 	label	"Regularvsteps"
-	type	integer
+	type	int
 	default	{ "20" }
 	range	{ 0 10 }
 	export	none
@@ -66,7 +66,7 @@
     parm {
 	name	"uDirectionType"
 	label	"Udirectiontype"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
@@ -78,7 +78,7 @@
     parm {
 	name	"vDirectionType"
 	label	"Vdirectiontype"
-	type	integer
+	type	int
 	default	{ "0" }
 	range	{ 0 10 }
 	export	none
@@ -90,7 +90,7 @@
     parm {
 	name	"uDegree"
 	label	"Udegree"
-	type	integer
+	type	int
 	default	{ "3" }
 	range	{ 0 10 }
 	export	none
@@ -102,7 +102,7 @@
     parm {
 	name	"vDegree"
 	label	"Vdegree"
-	type	integer
+	type	int
 	default	{ "3" }
 	range	{ 0 10 }
 	export	none

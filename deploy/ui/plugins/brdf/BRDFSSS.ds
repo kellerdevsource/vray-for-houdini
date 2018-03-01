@@ -164,7 +164,7 @@
     parm {
         name    "subdivs"
         label   "Subdivs"
-        type    integer
+        type    int
         default { "8" }
         range   { 0 16 }
         export  none

@@ -54,7 +54,7 @@
     parm {
 	name	"frame_samples"
 	label	"Frame Samples"
-	type	integer
+	type	int
 	default	{ "2" }
 	help	"Number of samples per frame for the transformation"
 	range	{ 0 64 }

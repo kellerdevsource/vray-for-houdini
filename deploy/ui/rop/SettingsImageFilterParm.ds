@@ -14,7 +14,7 @@ parm {
 parm {
     name    "type"
     label   "Type"
-    type    integer
+    type    int
     default { "0" }
     menu  {
         0 "Sinc"

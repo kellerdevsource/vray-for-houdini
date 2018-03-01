@@ -110,7 +110,7 @@ int VRayBaseRef::updateFrom(const UT_Options &options)
 	if (m_options == options)
 		return false;
 
-	m_options = options;
+	m_options.merge(options);
 
 	detailClear();
 

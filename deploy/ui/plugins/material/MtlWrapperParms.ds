@@ -320,7 +320,7 @@ groupsimple {
     parm {
         VFH_NAME(    "gi_surface_id")
         label   "GI Surface ID"
-        type    integer
+        type    int
         default { "0" }
         help    "If two objects have different GI surface IDs, the light cache samples of the two objects will not be blended"
         range   { 0 5 }
@@ -333,7 +333,7 @@ groupsimple {
     parm {
         VFH_NAME(    "trace_depth")
         label   "Trace Depth"
-        type    integer
+        type    int
         default { "-1" }
         help    "The maximum reflection depth (-1 is controlled by the global options)"
         range   { 0 10 }

@@ -140,7 +140,7 @@ parm {
 parm {
     NAMEM("ground_on")
     label   "Ground On"
-    type    integer
+    type    int
     default { "0" }
     range   { -10 10 }
     export  none

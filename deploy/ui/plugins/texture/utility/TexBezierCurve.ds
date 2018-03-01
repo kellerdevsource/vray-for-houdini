@@ -33,7 +33,7 @@
     parm {
         name    "num_bezier_points"
         label   "Num Bezier Points"
-        type    integer
+        type    int
         default { "256" }
         help    "The number of precisely calculated points from bezier curves: default 256"
         range   { 0 10 }

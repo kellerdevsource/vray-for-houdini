@@ -251,6 +251,7 @@ Parm::PRMList* Parm::generatePrmTemplate(const std::string &pluginID)
 	}
 
 	PRMList &prmList = prmListMap.at(pluginID);
+
 	return &prmList;
 }
 

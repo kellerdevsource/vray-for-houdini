@@ -131,7 +131,7 @@
     parm {
         name    "anim_start"
         label   "Sequence Start"
-        type    integer
+        type    int
         default { "0" }
         help    "Specifies the first frame of the animation sequence"
         disablewhen "{ anim_override != 1 } { anim_override == 0 }"
@@ -146,7 +146,7 @@
     parm {
         name    "anim_length"
         label   "Sequence Length"
-        type    integer
+        type    int
         default { "100" }
         help    "Specifies the length of the animation sequence"
         disablewhen "{ anim_override != 1 } { anim_override == 0 }"
@@ -273,7 +273,7 @@
     parm {
         name    "num_preview_faces"
         label   "Preview Faces"
-        type    integer
+        type    int
         default { "10000" }
         help    "number of faces in preview"
         range   { 0 64 }
@@ -436,7 +436,7 @@
     parm {
         name    "sort_voxels"
         label   "Sort Voxels"
-        type    integer
+        type    int
         default { "0" }
         help    "Sort Alembic voxels after reading by their names. 0 - skip sorting; 1 - sort"
         range   { 0 10 }
@@ -450,7 +450,7 @@
     parm {
         name    "first_map_channel"
         label   "First Map Channel"
-        type    integer
+        type    int
         default { "-1" }
         help    "Specifies how to remap the mapping channels: -1 - no remapping; 0 - channel 0, 1 - channel 1"
         range   { 0 10 }
@@ -538,7 +538,7 @@
     parm {
         name    "subdiv_type"
         label   "Subdiv Type"
-        type    integer
+        type    int
         default { "0" }
         help    "0 for Catmull-Clark subdivision and 1 for Loop subdivision"
         range   { 0 10 }
@@ -552,7 +552,7 @@
     parm {
         name    "subdiv_level"
         label   "Subdivision Level"
-        type    integer
+        type    int
         default { "1" }
         help    "The subdivision level"
         range   { 0 10 }
