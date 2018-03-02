@@ -14,6 +14,7 @@
 #include "vfh_log.h"
 #include "vfh_vray_instances.h"
 #include "vfh_hou_utils.h"
+#include "vfh_includes.h"
 
 #include <HOM/HOM_qt.h>
 #include <HOM/HOM_ui.h>
@@ -120,7 +121,11 @@ struct HouPalette
 			return;
 
 		{
+#if defined(HDK_16_5)
 			const int _iconSize = HOM().ui().scaledSize(14);
+#else
+			const int _iconSize = 14;
+#endif
 			iconSize = QSize(_iconSize, _iconSize);
 		}
 
