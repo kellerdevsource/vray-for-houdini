@@ -204,7 +204,16 @@ VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 			nattr = gdp.findInternalNormalAttribute();
 		}
 
-		if (getDataFromAttribute(nattr, normals)) {
+		if (!nattr) {
+			// we don't have pre-computed normals so now we compute them
+			UT_Vector3Array houNormals;
+			gdp.normal(houNormals, false);
+			const int count = houNormals.size();
+			normals = VRay::VUtils::VectorRefList(count);
+			memcpy(&normals[0], houNormals.getArray(), sizeof(normals[0]) * count);
+			// same as if we had N and GA_ATTRIB_POINT
+			m_faceNormals = getFaces();
+		} else if (getDataFromAttribute(nattr, normals)) {
 			// calculate normals and m_faceNormals simultaneously
 			// valid normals attr found and copied into normals
 			// deal with face normals now
