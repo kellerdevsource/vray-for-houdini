@@ -17,6 +17,7 @@
 #include <GU/GU_PrimPoly.h>
 #include <GA/GA_PageHandle.h>
 #include <GA/GA_Names.h>
+#include <GEO/GEO_Normal.h> // for GEOcomputeNormals
 
 #include <GSTY/GSTY_SubjectPrimGroup.h>
 #include <STY/STY_StylerGroup.h>
@@ -191,6 +192,9 @@ VRay::VUtils::IntRefList MeshExporter::getFaceNormals()
 VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 {
 	if (normals.size() <= 0) {
+		bool removeAttr = false;
+		const GA_AttributeOwner cumputedAttrOwnder = GA_ATTRIB_VERTEX;
+
 		// if we don't have normals cached, grab them from N attribute
 		// first check for point attribute
 		const GA_Attribute *nattr = gdp.findNormalAttribute(GA_ATTRIB_POINT);
@@ -204,16 +208,18 @@ VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 			nattr = gdp.findInternalNormalAttribute();
 		}
 
+		// there is no normal attribute, so we will compute one now
 		if (!nattr) {
-			// we don't have pre-computed normals so now we compute them
-			UT_Vector3Array houNormals;
-			gdp.normal(houNormals, false);
-			const int count = houNormals.size();
-			normals = VRay::VUtils::VectorRefList(count);
-			memcpy(&normals[0], houNormals.getArray(), sizeof(normals[0]) * count);
-			// same as if we had N and GA_ATTRIB_POINT
-			m_faceNormals = getFaces();
-		} else if (getDataFromAttribute(nattr, normals)) {
+			nattr = SYSconst_cast(gdp).addNormalAttribute(cumputedAttrOwnder);
+			if (nattr) {
+				// now we compute the normals with the default params (60.06 cusp angle)
+				// the same as attaching default Normal node
+				GEOcomputeNormals(gdp, GA_RWHandleV3(SYSconst_cast(nattr)));
+				removeAttr = true;
+			}
+		}
+
+		if (getDataFromAttribute(nattr, normals)) {
 			// calculate normals and m_faceNormals simultaneously
 			// valid normals attr found and copied into normals
 			// deal with face normals now
@@ -272,6 +278,11 @@ VRay::VUtils::VectorRefList& MeshExporter::getNormals()
 				m_faceNormals = getFaces();
 				break;
 			}
+			}
+
+			// remove coputed normal attribute so we don't modify the scene on export
+			if (removeAttr) {
+					SYSconst_cast(gdp).destroyNormalAttribute(cumputedAttrOwnder);
 			}
 		}
 	}
