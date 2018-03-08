@@ -327,6 +327,13 @@ function(vfh_install_common _location)
 			PATTERN "*.pyc" EXCLUDE
 	)
 
+	if (WITH_SOHO)
+		install(DIRECTORY ${CMAKE_SOURCE_DIR}/deploy/vfh_home/otls
+				DESTINATION ${_location}/vfh_home
+				PATTERN "backup/*" EXCLUDE
+				PATTERN "backup" EXCLUDE
+		)
+	endif()
 endfunction(vfh_install_common)
 
 if(INSTALL_RELEASE)
