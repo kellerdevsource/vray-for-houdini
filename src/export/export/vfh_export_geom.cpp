@@ -618,7 +618,9 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	}
 
 	const STY_Styler &objStyler = getStylerForObject(getStyler(), pluginExporter.getBundleMap(), objNode);
-	PrimitiveItem objItem = primContextStack.back().parentItem;
+	PrimitiveItem objItem;
+	objItem.tm = getTm();
+	objItem.vel = getVel();
 	appendOverrideValues(objStyler, objItem.primMaterial, overrideMerge);
 	pushContext(PrimContext(&objNode, objItem, objStyler));
 
@@ -660,11 +662,9 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 		const STY_Styler &primStyler = getStylerForPrimitive(objStyler, *prim);
 
-		PrimitiveItem item;
+		PrimitiveItem item(objItem);
 		item.prim = prim;
 		item.primID = getDetailID() ^ primOffset;
-		item.tm = getTm();
-		item.vel = getVel();
 		item.objectID = objectIdHndl.isValid() ? objectIdHndl.get(primOffset) : objectID;
 
 		if (pathHndl.isValid()) {
