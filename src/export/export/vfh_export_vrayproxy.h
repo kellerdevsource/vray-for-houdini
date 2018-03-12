@@ -46,6 +46,9 @@ struct VRayProxyExportOptions {
 	/// cmd arg: -n "path/to/filename.vrmesh" (mandatory)
 	UT_String m_filepath;
 
+	/// optional name for a prim attribute that will separate poly soup primitives into different meshes
+	UT_String m_partitionAttribute;
+
 	/// (bool) if true, non-existing dirs in the filepath will be created
 	/// default value: true
 	/// cmd arg: -c (optional)

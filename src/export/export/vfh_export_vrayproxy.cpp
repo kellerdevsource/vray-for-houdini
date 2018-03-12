@@ -87,6 +87,7 @@ VRayProxyExporter::VRayProxyExporter(const VRayProxyExportOptions &options, cons
 VUtils::ErrorCode VRayProxyExporter::init()
 {
 	exporter.getRenderer().initRenderer(false, true);
+	exporter.getObjectExporter().setPartitionAttribute(m_options.m_partitionAttribute);
 	return VUtils::ErrorCode();
 }
 

@@ -185,6 +185,7 @@ ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
 	: pluginExporter(pluginExporter)
 	, ctx(pluginExporter.getContext())
 	, doExportGeometry(true)
+	, partitionAttribute("")
 {}
 
 VRay::Transform ObjectExporter::getTm() const
@@ -917,6 +918,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 	const VRay::Plugin objMaterial = pluginExporter.exportMaterial(matNode);
 
 	const fpreal instancerTime = ctx.hasMotionBlur ? ctx.mbParams.mb_start : ctx.getFloatFrame();
+	const bool addParitionAttr = partitionAttribute.isstring();
 
 	// +1 because first value is time.
 	VRay::VUtils::ValueRefList instances(numParticles + 1);
@@ -931,6 +933,17 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		overrideItemsToUserAttributes(primItem.primMaterial.overrides, userAttributes);
 		appendSceneName(userAttributes, objNode);
 		appendObjUniqueID(userAttributes, objNode);
+
+		if (addParitionAttr && primItem.prim) {
+			const GA_Detail & gdp = primItem.prim->getDetail();
+			GA_ROHandleS separateAttrHandle(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, partitionAttribute.buffer()));
+			if (separateAttrHandle.isValid()) {
+				const char *attrValue = separateAttrHandle.get(primItem.prim->getMapOffset());
+				if (attrValue) {
+					userAttributes += QString().sprintf("vrayPrimPartition=%s;", attrValue);
+				}
+			}
+		}
 
 		VRay::Plugin material = objMaterial;
 		if (primItem.material) {
@@ -1144,11 +1157,16 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 		exint parentID;
 		exint detailID;
 		exint keyDataPoly;
+
+		Hash::MHash getHash() const {
+			Hash::MHash meshKey;
+			Hash::MurmurHash3_x86_32(this, sizeof(MeshPrimKey), 42, &meshKey);
+			return meshKey;
+		}
 	} meshPrimKey(topItem.primID, getDetailID(), keyDataPoly);
 #pragma pack(pop)
 
-	Hash::MHash meshKey;
-	Hash::MurmurHash3_x86_32(&meshPrimKey, sizeof(MeshPrimKey), 42, &meshKey);
+	const Hash::MHash meshKey = meshPrimKey.getHash();
 
 	PrimitiveItem item;
 	getPrimMaterial(item.primMaterial);
@@ -1187,8 +1205,54 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 		addPluginToCacheImpl(pluginCache.polyMapChannels, styleKey, item.mapChannels);
 	}
 
+	bool hasPolySoup = true;
+	for (const auto *prim : primList) {
+		hasPolySoup = hasPolySoup && prim->getTypeId() == GEO_PRIMPOLYSOUP;
+	}
+
 	if (doExportGeometry) {
-		if (!getMeshPluginFromCache(item.primID, item.geometry)) {
+		if (hasPolySoup && partitionAttribute.isstring()) {
+			bool allCached = false;
+
+			PrimitiveItems soupItems;
+			const exint keyDetailID = getDetailID();
+			// check what we have in cache
+			for (const auto *prim : primList) {
+				if (prim->getTypeId() != GEO_PRIMPOLYSOUP) {
+					continue;
+				}
+				MeshPrimKey key(prim->getMapIndex(), keyDetailID, keyDataPoly);
+				VRay::Plugin polySoupGeom;
+
+				if (!getMeshPluginFromCache(key.getHash(), polySoupGeom)) {
+					allCached = false;
+					break;
+				}
+				PrimitiveItem soupItem;
+				soupItem.primID = prim->getMapIndex();
+				soupItem.prim = prim;
+				soupItem.tm = topItem.tm;
+				soupItem.vel = topItem.vel;
+				soupItem.material = topItem.material;
+				soupItem.geometry = polySoupGeom;
+
+				soupItems += soupItem;
+			}
+
+			if (!allCached) {
+				// something changed - re-export primitives
+				soupItems.freeMem();
+				polyMeshExporter.asPolySoupPrimitives(gdp, soupItems, topItem, pluginExporter);
+
+				// re-add to cache
+				for (const PrimitiveItem & primSoup : soupItems) {
+					MeshPrimKey key(primSoup.primID, keyDetailID, keyDataPoly);
+					addMeshPluginToCache(key.getHash(), item.geometry);
+				}
+			}
+
+			instancerItems += soupItems;
+		} else if (!getMeshPluginFromCache(item.primID, item.geometry)) {
 			OP_Node *matNode = item.primMaterial.matNode
 				? item.primMaterial.matNode
 				: objNode.getMaterialNode(ctx.getTime());
