@@ -160,6 +160,8 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 	bitmapBufferDesc.pluginName = VRayExporter::getPluginName(*this, "BitmapBuffer");
 	bitmapBufferDesc.pluginID = "BitmapBuffer";
 
+	exporter.setAttrsFromOpNodePrms(bitmapBufferDesc, this, "BitmapBuffer_");
+
 	UT_String path;
 	evalString(path, "BitmapBuffer_file", 0, t);
 	if (path.startsWith(OPREF_PREFIX)) {
@@ -176,8 +178,6 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 			}
 		}
 	}
-
-	exporter.setAttrsFromOpNodePrms(bitmapBufferDesc, this, "BitmapBuffer_");
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("bitmap", exporter.exportPlugin(bitmapBufferDesc)));
 	pluginDesc.addAttribute(Attrs::PluginAttr("uvwgen", exporter.exportPlugin(selectedUVPluginDesc)));
