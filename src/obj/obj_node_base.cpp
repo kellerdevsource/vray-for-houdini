@@ -171,17 +171,19 @@ int isMeshLightSupportedGeometryType(const VRay::Plugin &geometry) {
 	return 0; // Isn't a supported type
 }
 
-int fillPluginDesc(Attrs::PluginDesc &pluginDesc, OP_Node &objLight, int primID, const PrimitiveItem &item, const VRay::Transform &objTm) {
+static int fillLightPluginDesc(Attrs::PluginDesc &pluginDesc, OP_Node &objLight, const PrimitiveItem &item, const VRay::Transform &objTm) {
 	if (!item.geometry || !isMeshLightSupportedGeometryType(item.geometry)) {
-		Log::getLog().warning("Unsupported geometry type for Mesh Light: %s ! Node name: %s", item.geometry.getType(), pluginDesc.pluginName.c_str());
+		Log::getLog().warning("Unsupported geometry type for Mesh Light: %s ! Node name: %s",
+		                      item.geometry.getType(), pluginDesc.pluginName.c_str());
 		return 0;
 	}
+
 	pluginDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
 	pluginDesc.addAttribute(Attrs::PluginAttr("transform", objTm * item.tm));
 	if (item.objectID != objectIdUndefined) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("objectID", item.objectID));
 	}
-	pluginDesc.addAttribute(Attrs::PluginAttr("scene_name", VRayExporter::getSceneName(objLight, primID)));
+	pluginDesc.addAttribute(Attrs::PluginAttr("scene_name", VRayExporter::getSceneName(objLight)));
 
 	return 1;
 }
@@ -215,7 +217,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 				
 				if (geomList.count()) {
 					const PrimitiveItem &item = geomList[0];
-					fillPluginDesc(pluginDesc, *this, 0, item, objTm);
+					fillLightPluginDesc(pluginDesc, *this, item, objTm);
 				}
 
 				for (int i = 1; i < geomList.count(); ++i) {
@@ -225,7 +227,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 						pluginDesc.pluginName + "|" + std::to_string(i) + "|" + item.geometry.getName();
 
 					Attrs::PluginDesc meshLightDesc(meshLightName, pluginID);
-					if (!fillPluginDesc(meshLightDesc, *this, i, item, objTm)) {
+					if (!fillLightPluginDesc(meshLightDesc, *this, item, objTm)) {
 						continue;
 					}
 
