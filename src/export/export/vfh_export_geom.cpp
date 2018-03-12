@@ -619,6 +619,8 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 	const STY_Styler &objStyler = getStylerForObject(getStyler(), pluginExporter.getBundleMap(), objNode);
 	PrimitiveItem objItem;
+	objItem.tm = getTm();
+	objItem.vel = getVel();
 	appendOverrideValues(objStyler, objItem.primMaterial, overrideMerge);
 	pushContext(PrimContext(&objNode, objItem, objStyler));
 
@@ -660,11 +662,9 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 		const STY_Styler &primStyler = getStylerForPrimitive(objStyler, *prim);
 
-		PrimitiveItem item;
+		PrimitiveItem item(objItem);
 		item.prim = prim;
 		item.primID = getDetailID() ^ primOffset;
-		item.tm = getTm();
-		item.vel = getVel();
 		item.objectID = objectIdHndl.isValid() ? objectIdHndl.get(primOffset) : objectID;
 
 		if (pathHndl.isValid()) {
@@ -987,7 +987,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		}
 
 		// Index + TM + VEL_TM + AdditionalParams + Node + AdditionalParamsMembers
-		const int itemSize = 5 + VUtils::__popcnt(additional_params_flags);
+		const int itemSize = 5 + VUtils::popcnt_u32(additional_params_flags);
 
 		VRay::Transform vel = primItem.vel;
 		vel.matrix.makeZero();
