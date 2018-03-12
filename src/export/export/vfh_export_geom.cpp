@@ -987,7 +987,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		}
 
 		// Index + TM + VEL_TM + AdditionalParams + Node + AdditionalParamsMembers
-		const int itemSize = 5 + VUtils::__popcnt(additional_params_flags);
+		const int itemSize = 5 + VUtils::popcnt_u32(additional_params_flags);
 
 		VRay::Transform vel = primItem.vel;
 		vel.matrix.makeZero();
