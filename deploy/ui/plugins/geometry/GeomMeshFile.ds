@@ -27,21 +27,6 @@
     }
 
     parm {
-        name "viewportlod"
-        label "Display As"
-        type ordinal
-        menu {
-            "GEO_VIEWPORT_FULL" "Full"
-            "GEO_VIEWPORT_POINTS" "Points"
-            "GEO_VIEWPORT_BOX" "Box"
-            "GEO_VIEWPORT_CENTROID" "Centroid"
-            "GEO_VIEWPORT_HIDDEN" "Hidden"
-        }
-        default { "0" }
-        parmtag { "cook_dependent" "1" }
-    }
-
-    parm {
         name "loadtype"
         label "Load"
         type ordinal
