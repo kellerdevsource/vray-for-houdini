@@ -45,6 +45,14 @@ group {
     VFH_TAG_VRAY
 }
 
+// group {
+//     name "VRayRendererFolderSoho"
+//     label "SOHO"
+// #include "$VRAY_UI_DS_PATH/vfh_rop_soho.ds"
+//     VFH_TAG_VRAY
+//     invisible
+// }
+
 parm {
     name "_vfb_settings"
     type string
