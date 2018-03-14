@@ -78,10 +78,44 @@ static MHash getMapChannelsHash(VRay::VUtils::ValueRefList &mapChannels)
 	return hash;
 }
 
+static GA_AttributeFilter& supportedAttrFilter()
+{
+	static GA_AttributeFilter filterVector(GA_AttributeFilter::selectAnd(GA_AttributeFilter::selectFloatTuple(false),
+	                                                                     GA_AttributeFilter::selectByTupleSize(3)));
+	static GA_AttributeFilter filterFloat(GA_AttributeFilter::selectFloatNumeric(false));
+
+	static GA_AttributeFilter filterAttr(GA_AttributeFilter::selectOr(filterVector,
+	                                                                  filterFloat));
+	return filterAttr;
+}
+
+/// Converts numeric list to vector list.
+/// @tparam T Numeric list type.
+/// @param attr Attribute.
+/// @param aifTuple Attribute value access helper.
+/// @param vectorList Pre-allocated vector list.
+/// @returns True on success, false otherwise.
+template <typename T>
+static int numericAttrToVectorRefList(const GA_Attribute &attr, const GA_AIFTuple &aifTuple, VRay::VUtils::VectorRefList &vectorList)
+{
+	T numericList(vectorList.size());
+
+	if (!aifTuple.getRange(&attr, GA_Range(attr.getIndexMap()), numericList.get()))
+		return false;
+
+	for (int i = 0; i < vectorList.size(); ++i) {
+		const float value = numericList[i];
+
+		vectorList[i].set(value, value, value);
+	}
+
+	return true;
+}
+
 /// Helper funtion to copy data from Float3Tuple attribute into a vector list
 /// @param attr[in] - the attribute to copy
 /// @param data[out] - destination vector list
-/// @retval true on success
+/// @returns true on success
 static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorRefList &data)
 {
 	GA_ROAttributeRef attrRef(attr);
@@ -95,7 +129,26 @@ static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorR
 	}
 
 	data = VRay::VUtils::VectorRefList(attr->getIndexMap().indexSize());
-	return aifTuple->getRange(attr, GA_Range(attr->getIndexMap()), &(data.get()->x));
+
+	int res = 0;
+
+	if (attr->getTupleSize() == 3) {
+		res = aifTuple->getRange(attr, GA_Range(attr->getIndexMap()), &data.get()->x);
+	}
+	else if (attr->getTupleSize() == 1) {
+		if (attrRef.isFloat()) {
+			res = numericAttrToVectorRefList<VRay::VUtils::FloatRefList>(*attr, *aifTuple, data);
+		}
+		else if (attrRef.isInt()) {
+			res = numericAttrToVectorRefList<VRay::VUtils::IntRefList>(*attr, *aifTuple, data);
+		}
+	}
+
+	if (!res) {
+		data.freeMem();
+	}
+
+	return res;
 }
 
 /// Pair of min and max value for some range of values
@@ -974,6 +1027,13 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 			allocateOverrideMapChannel(mapChannel, primList);
 			setMapChannelOverrideData(mapChannel, overrideItem, v0, v1, v2);
 		}
+		else if (overrideItem.getType() == MtlOverrideItem::itemTypeDouble ||
+		         overrideItem.getType() == MtlOverrideItem::itemTypeInt)
+		{
+			MapChannel &mapChannel = mapChannels[paramName];
+			allocateOverrideMapChannel(mapChannel, primList);
+			setMapChannelOverrideData(mapChannel, overrideItem, v0, v1, v2);
+		}
 #if EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT
 		else if (overrideItem.getType() == MtlOverrideItem::itemTypeString) {
 			MapChannel &mapChannel = mapChannels[paramName];
@@ -1091,7 +1151,7 @@ int MeshExporter::getPointAttrs(MapChannels &mapChannels, SkipMapChannel skipCha
 	int nMapChannels = 0;
 
 	GEOAttribList attrList;
-	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_POINT, attrList);
+	gdp.getAttributes().matchAttributes(supportedAttrFilter(), GA_ATTRIB_POINT, attrList);
 
 	for (const GA_Attribute *attr : attrList) {
 		if (skipMapChannel(attr, skipChannels))
@@ -1121,7 +1181,7 @@ int MeshExporter::getVertexAttrs(MapChannels &mapChannels, SkipMapChannel skipCh
 	int nMapChannels = 0;
 
 	GEOAttribList attrList;
-	gdp.getAttributes().matchAttributes(GEOgetV3AttribFilter(), GA_ATTRIB_VERTEX, attrList);
+	gdp.getAttributes().matchAttributes(supportedAttrFilter(), GA_ATTRIB_VERTEX, attrList);
 
 	for (const GA_Attribute *attr : attrList) {
 		if (skipMapChannel(attr, skipChannels))
