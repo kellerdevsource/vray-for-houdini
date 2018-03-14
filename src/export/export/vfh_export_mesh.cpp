@@ -78,6 +78,7 @@ static MHash getMapChannelsHash(VRay::VUtils::ValueRefList &mapChannels)
 	return hash;
 }
 
+/// Build supported attribute type filter.
 static GA_AttributeFilter& supportedAttrFilter()
 {
 	static GA_AttributeFilter filterVector(GA_AttributeFilter::selectAnd(GA_AttributeFilter::selectFloatTuple(false),
