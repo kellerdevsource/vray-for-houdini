@@ -386,7 +386,12 @@ STY_Styler VRayForHoudini::getStylerForPrimitive(const STY_Styler &geoStyler, co
 
 STY_Styler VRayForHoudini::getStylerForObject(const STY_Styler &topStyler, const GSTY_BundleMap &bundles, const OP_Node &opNode)
 {
-	const UT_TagListPtr tags;
+	UT_TagManager theSohoTags;
+	UT_String categories;
+	opNode.evalString(categories, "categories", 0, 0.0);
+
+	UT_String errors;
+	const UT_TagListPtr tags = theSohoTags.createList(categories, errors);
 
 	UT_StringHolder stylesheet;
 	if (Parm::isParmExist(opNode, VFH_ATTR_SHOP_MATERIAL_STYLESHEET)) {
