@@ -619,11 +619,9 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	}
 
 	const STY_Styler &objStyler = getStylerForObject(getStyler(), pluginExporter.getBundleMap(), objNode);
-	PrimitiveItem objItem;
-	objItem.tm = getTm();
-	objItem.vel = getVel();
-	appendOverrideValues(objStyler, objItem.primMaterial, overrideMerge);
-	pushContext(PrimContext(&objNode, objItem, objStyler));
+
+	PrimMaterial objMaterialOverride;
+	appendOverrideValues(objStyler, objMaterialOverride, overrideMerge);
 
 	const GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
 	const GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
@@ -663,7 +661,10 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 		const STY_Styler &primStyler = getStylerForPrimitive(objStyler, *prim);
 
-		PrimitiveItem item(objItem);
+		PrimitiveItem item;
+		item.primMaterial = objMaterialOverride;
+		item.tm = getTm();
+		item.vel = getVel();
 		item.prim = prim;
 		item.primID = getDetailID() ^ primOffset;
 		item.objectID = objectIdHndl.isValid() ? objectIdHndl.get(primOffset) : objectID;
@@ -830,6 +831,10 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		}
 	}
 
+	PrimitiveItem objContext(primContextStack.back().parentItem);
+	objContext.primMaterial = objMaterialOverride;
+	pushContext(PrimContext(&objNode, objContext, objStyler));
+
 	if (polyPrims.size()) {
 		Hash::MHash meshStylerHash = 0;
 
@@ -848,9 +853,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 		int numStylerHashes = 0;
 		for (const STY_OverrideValues &result : results) {
-			for (const auto &res : result) {
-				numStylerHashes++;
-			}
+			numStylerHashes += result.size();
 		}
 
 		if (numStylerHashes) {
