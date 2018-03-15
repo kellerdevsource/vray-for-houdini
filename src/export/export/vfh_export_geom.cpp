@@ -147,7 +147,7 @@ static GA_Size fillFreePointMap(const GU_Detail &detail, DynamicBitset &map)
 
 /// Returns full OP_Node path for using as a hash key.
 /// @param opNode OP_Node instance.
-static UT_StringHolder getKeyFromOpNode(OP_Node &opNode)
+static UT_StringHolder getKeyFromOpNode(const OP_Node &opNode)
 {
 	return opNode.getFullPath();
 }
@@ -533,7 +533,7 @@ int ObjectExporter::getPluginFromCache(const char *key, VRay::Plugin &plugin) co
 	return getPluginFromCacheImpl(pluginCache.op, key, plugin);
 }
 
-int ObjectExporter::getPluginFromCache(OP_Node &opNode, VRay::Plugin &plugin) const
+int ObjectExporter::getPluginFromCache(const OP_Node &opNode, VRay::Plugin &plugin) const
 {
 	const UT_StringHolder &opKey = getKeyFromOpNode(opNode);
 	return getPluginFromCache(opKey.buffer(), plugin);
@@ -2267,6 +2267,8 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 		pushContext(PrimContext(&objNode, rootItem));
 
 		plugin = exportLight(*objLight);
+
+		addPluginToCache(objNode, plugin);
 
 		OP_Node *objGen = getGenerator();
 		if (objGen) {

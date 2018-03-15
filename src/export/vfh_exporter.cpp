@@ -1333,6 +1333,10 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 		pluginDesc.pluginName = VRayExporter::getPluginName(vop_node);
 		pluginDesc.pluginID   = vrayNode->getVRayPluginID();
 
+		if (opType.equal("VRayNodeTexSky")) {
+			fillNodeTexSky(*opNode, pluginDesc);
+		}
+
 		//TODO: need consistent naming for surface/displacement/other vops and their overrides
 		OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, parentContext);
 		if (res == OP::VRayNode::PluginResultError) {

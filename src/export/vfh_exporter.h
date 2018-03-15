@@ -579,6 +579,8 @@ public:
 
 	VRay::Plugin exportPrincipledShader(OP_Node &opNode, ExportContext *parentContext=nullptr);
 
+	void fillNodeTexSky(const OP_Node &opNode, Attrs::PluginDesc &pluginDesc);
+
 	/// Export input parameter VOPs for a given VOP node as V-Ray user textures.
 	/// Default values for the textures will be queried from the corresponding
 	/// SHOP parameter. Exported user textures are added as attibutes to the plugin

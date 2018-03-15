@@ -213,7 +213,7 @@ public:
 	int getPluginFromCache(const char *key, VRay::Plugin &plugin) const;
 	void addPluginToCache(const char *key, VRay::Plugin &plugin);
 
-	int getPluginFromCache(OP_Node &opNode, VRay::Plugin &plugin) const;
+	int getPluginFromCache(const OP_Node &opNode, VRay::Plugin &plugin) const;
 	void addPluginToCache(OP_Node &opNode, VRay::Plugin &plugin);
 
 	/// Helper function to generate unique id for the packed primitive
