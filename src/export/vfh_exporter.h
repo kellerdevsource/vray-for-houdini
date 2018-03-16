@@ -197,6 +197,11 @@ public:
 	/// want to render
 	void exportScene();
 
+	/// Export light linker plugin
+	/// @param pluginMap[in] A String Hash Map of Light node names and plugins that relate to them
+	/// @return VRay::Plugin for the Light Linker
+	VRay::Plugin exportLightLinker(VUtils::StringHashMap<std::vector<VRay::VUtils::Value>> pluginMap);
+
 	/// Export global renderer settings - color mapping, gi, irradiance cache, etc.
 	/// This is called once when a render session is initililzed.
 	ReturnValue exportSettings();
