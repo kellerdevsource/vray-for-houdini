@@ -125,6 +125,12 @@ void unregister(void *)
 /// @param gafactory[out] - primitive factory for DSO defined primitives
 void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 {
+	// In batch render this function is called multiple times, so we manually check
+	// to make sure we register only once
+	static bool registered = false;
+	if (registered) {
+		return;
+	}
 #ifdef CGR_HAS_VRAYSCENE
 	VRaySceneRef::install(gafactory);
 #endif
@@ -134,6 +140,7 @@ void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 	VRayVolumeGridRef::install(gafactory);
 #endif
 	VRayPgYetiRef::install(gafactory);
+	registered = true;
 }
 
 
