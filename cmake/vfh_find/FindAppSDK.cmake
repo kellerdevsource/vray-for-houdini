@@ -8,27 +8,33 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-set(APPSDK_PATH "" CACHE PATH "V-Ray AppSDK root location")
-set(APPSDK_VERSION "20170315" CACHE STRING "V-Ray AppSDK version")
+if(USE_CONAN)
+	vfh_install_xpak(PAK VRayForHoudiniAppSDK VERSION latest)
 
-if(APPSDK_PATH)
-	# if APPSDK_PATH is specified then just take it as root location for AppSDK
-	set(_appsdk_root ${APPSDK_PATH})
+	set(_appsdk_root ${X_PAK}/VRayForHoudiniAppSDK)
 else()
-	if(NOT APPSDK_VERSION)
-		message(WARNING "V-Ray AppSDK version NOT specified")
-		set(_appsdk_root "")
-	else()
-		# no V-Ray AppSDK root path is passed to cmake
-		if(SDK_PATH)
-			# if vfh sdk path is given use it to deduce AppSDK root path based on version
-			set(_appsdk_root "${SDK_PATH}/appsdk")
-		else()
-			# otherwise search in default location for AppSDK
-			string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
-			set(_appsdk_root "$ENV{HOME}/src/appsdk_releases/${APPSDK_VERSION}/${_HOST_SYSTEM_NAME}")
+	set(APPSDK_PATH "" CACHE PATH "V-Ray AppSDK root location")
+	set(APPSDK_VERSION "20170315" CACHE STRING "V-Ray AppSDK version")
 
-			message(STATUS "No path specified for V-Ray AppSDK. Fall back to default search path: ${_appsdk_root}.")
+	if(APPSDK_PATH)
+		# if APPSDK_PATH is specified then just take it as root location for AppSDK
+		set(_appsdk_root ${APPSDK_PATH})
+	else()
+		if(NOT APPSDK_VERSION)
+			message(WARNING "V-Ray AppSDK version NOT specified")
+			set(_appsdk_root "")
+		else()
+			# no V-Ray AppSDK root path is passed to cmake
+			if(SDK_PATH)
+				# if vfh sdk path is given use it to deduce AppSDK root path based on version
+				set(_appsdk_root "${SDK_PATH}/appsdk")
+			else()
+				# otherwise search in default location for AppSDK
+				string(TOLOWER "${CMAKE_HOST_SYSTEM_NAME}" _HOST_SYSTEM_NAME)
+				set(_appsdk_root "$ENV{HOME}/src/appsdk_releases/${APPSDK_VERSION}/${_HOST_SYSTEM_NAME}")
+
+				message(STATUS "No path specified for V-Ray AppSDK. Fall back to default search path: ${_appsdk_root}.")
+			endif()
 		endif()
 	endif()
 endif()

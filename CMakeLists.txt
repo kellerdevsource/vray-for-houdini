@@ -28,6 +28,8 @@ option(WITH_TEST_APP         "Build AppSDK test applications" OFF)
 
 option(WITH_LAUNCHER         "Build development launcher"     OFF)
 
+option(USE_CONAN "Use internal Conan server for SDK" OFF)
+
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
 if(INSTALL_RELEASE AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
 	message(WARNING "INSTALL_RELEASE is ON, but CMAKE_BUILD_TYPE is not \"Release\" (${CMAKE_BUILD_TYPE})!")
@@ -53,6 +55,10 @@ endif()
 
 # Set install path
 set(INSTALL_RELEASE_PATH ${INSTALL_RELEASE_ROOT}/${INSTALL_RELEASE_SUBDIR})
+
+if(USE_CONAN)
+	include(vfh_xpak)
+endif()
 
 include(vfh_compiler)
 
