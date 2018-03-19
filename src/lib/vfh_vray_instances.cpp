@@ -166,7 +166,9 @@ int VRayForHoudini::newVRayInit()
 			vrayInitExist = true;
 		}
 		else {
-			initVFBTheme();
+			if (HOU::isUIAvailable()) {
+				initVFBTheme();
+			}
 
 			try {
 				is->vrayInit = new VRay::VRayInit(true);
