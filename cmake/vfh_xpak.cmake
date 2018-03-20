@@ -18,10 +18,6 @@ if(NOT X_PAK)
 	message(FATAL_ERROR "X_PAK is not set!")
 endif()
 
-if(WIN32)
-	set(ENV{HOME} $ENV{USERPROFILE})
-endif()
-
 if(APPLE)
 	set(X_XPAKTOOL_EXECUTABLE ${CGREPO}/bintools/mavericks_x64/xpaktool)
 elseif(WIN32)
@@ -42,6 +38,7 @@ function(vfh_install_xpak)
 		message(FATAL_ERROR "VERSION is a required argument")
 	endif()
 
+	set(ENV{HOME} $ENV{USERPROFILE})
 	set(CMD ${X_XPAKTOOL_EXECUTABLE} xinstall -pak ${ARG_PAK}/${ARG_VERSION} -workdir ${X_PAK})
 
 	execute_process(COMMAND ${CMD} RESULT_VARIABLE errCode)
