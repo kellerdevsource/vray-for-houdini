@@ -360,16 +360,9 @@ if(INSTALL_RELEASE)
 			PATTERN ${EXCLUDE_LIBVRAY} EXCLUDE
 	)
 
-	if (WIN32)
-		set(HOUDINI_INSTALL_DIR "C:/Program Files/Side Effects Software/Houdini ${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
-	elseif (APPLE)
-		set(HOUDINI_INSTALL_DIR "/Applications/Houdini/Houdini${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
-	else()
-		set(HOUDINI_INSTALL_DIR "/opt/hfs${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
-	endif()
-
-	# houdini.env file - we need correct QT_QPA_PLATFORM_PLUGIN_PATH so we must know where is houdini installed
-	configure_file(${CMAKE_SOURCE_DIR}/deploy/houdini.env ${INSTALL_RELEASE_PATH}/houdini.env @ONLY)
+	# Example houdini.env file
+	install(FILES       ${CMAKE_SOURCE_DIR}/deploy/houdini.env
+			DESTINATION ${INSTALL_RELEASE_PATH})
 
 	# Default libvray.dll is Qt5
 	if(HOUDINI_QT_VERSION VERSION_EQUAL 4)
