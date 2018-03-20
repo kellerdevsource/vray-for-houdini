@@ -160,18 +160,20 @@ int VRayForHoudini::newVRayInit()
 	int addDummyRenderer = false;
 	int vrayInitExist = false;
 
+	const bool hasUI = HOU::isUIAvailable();
+
 	if (vrayInstances.lock()) {
 		InstancesStorage *is = reinterpret_cast<InstancesStorage*>(vrayInstances.data());
 		if (is->vrayInit) {
 			vrayInitExist = true;
 		}
 		else {
-			if (HOU::isUIAvailable()) {
+			if (hasUI) {
 				initVFBTheme();
 			}
 
 			try {
-				is->vrayInit = new VRay::VRayInit(true);
+				is->vrayInit = new VRay::VRayInit(hasUI);
 			}
 			catch (VRay::VRayException &e) {
 				Log::getLog().error("Error initializing V-Ray AppSDK library:\n%s",
