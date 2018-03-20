@@ -1956,28 +1956,6 @@ static void onRendererClosed(VRay::VRayRenderer& /*renderer*/, void *data)
 	Log::getLog().debug("onRendererClosed");
 }
 
-VRay::VUtils::ValueRefList getNodes(VRay::Plugin &plugin) {
-
-	VRay::ValueList valueList = plugin.getValueList("instances");
-	VRay::VUtils::ValueRefList list(valueList.size()-1);// -1 because first element is always time
-	int i = 0;
-	for (VRay::Value val : valueList) {
-		if (val.getType() == VRay::Type::TYPE_LIST) {
-			VRay::ValueList valueList2 = val.getValueList();
-			VRay::Value test = valueList2.at(valueList2.size() - 1);
-			VRay::Plugin tempPlugin = test.getPlugin();
-			if (!!tempPlugin) {
-				if (!std::strncmp(tempPlugin.getName(), "Node@", 5)) {
-					list[i++].setPlugin(tempPlugin);
-					Log::getLog().debug("We've got one! %s", tempPlugin.getName());
-				}
-			}
-		}
-	}
-
-	return list;
-}
-
 void VRayExporter::exportScene()
 {
 	Log::getLog().debug("VRayExporter::exportScene()");
@@ -1993,7 +1971,7 @@ void VRayExporter::exportScene()
 	objectExporter.clearOpDepPluginCache();
 	objectExporter.clearPrimPluginCache();
 
-	VUtils::StringHashMap<std::vector<VRay::VUtils::Value>> pluginMap;// change to what?
+	StringValueHashMap pluginMap;
 
 	// export geometry nodes
 	OP_Bundle *activeGeo = getActiveGeometryBundle(*m_rop, m_context.getTime());
@@ -2001,25 +1979,9 @@ void VRayExporter::exportScene()
 		for (int i = 0; i < activeGeo->entries(); ++i) {
 			OP_Node *node = activeGeo->getNode(i);
 			if (node) {
-				VRay::Plugin temp = exportObject(node);
-				if (!!temp) {
-					OP_NodeList list;
-					VRay::Plugin instancer = temp.getPlugin("geometry");
-					node->castToOBJNode()->castToOBJGeometry()->getLightMaskObjects(list, getContext().getTime());
-					for (OP_Node *node : list) {
-						VRay::VUtils::Value val;
-						if (!!instancer) {
-							VRay::VUtils::ValueRefList plugins = getNodes(instancer);
-
-							for (int i = 0; i < plugins.count(); ++i) {
-								pluginMap[node->getName().c_str()].push_back(plugins[i]);
-							}
-						}
-						else {
-							val.setPlugin(temp);
-							pluginMap[node->getName().c_str()].push_back(val);
-						}
-					}
+				VRay::Plugin exportedNode = exportObject(node);
+				if (exportedNode) {
+					fillLightLinkerGeomMap(exportedNode, node, pluginMap);
 				}
 			}
 		}
@@ -2033,17 +1995,19 @@ void VRayExporter::exportScene()
 		for (int i = 0; i < activeLights->entries(); ++i) {
 			OBJ_Node *objNode = CAST_OBJNODE(activeLights->getNode(i));
 			if (objNode) {
-				VRay::Plugin temp = exportObject(objNode);
-				if (!!temp) {
+				VRay::Plugin exportedLight = exportObject(objNode);
+				if (exportedLight) {
 					VRay::VUtils::Value val;
-					val.setPlugin(temp);
+					val.setPlugin(exportedLight);
 					pluginMap[objNode->getName()].push_back(val);
 				}
 			}
 		}
 	}
 
-	exportLightLinker(pluginMap);
+	if (pluginMap.size()) {
+		exportLightLinker(pluginMap);
+	}
 
 	UT_String env_network_path;
 	m_rop->evalString(env_network_path, "render_network_environment", 0, 0.0f);
@@ -2877,44 +2841,55 @@ void VRayExporter::VfhBundleMap::freeMem()
 	bundles.clear();
 }
 
-VRay::Plugin VRayExporter::exportLightLinker(VUtils::StringHashMap<std::vector<VRay::VUtils::Value>> pluginMap)
+void VRayExporter::exportLightLinker(const StringValueHashMap &pluginMap)
 {
 	if (pluginMap.empty())
-		return VRay::Plugin();
+		return;
 
 	// Fill the list for the lights by reversing the received vector and translating it into a VRay::VUtils::ValueRefList
 	VRay::VUtils::ValueRefList lightLists(pluginMap.size());
 	VRay::VUtils::ValueRefList shadowLists;
 	int at = 0;
-	for (VUtils::StringHashMap<std::vector<VRay::VUtils::Value>>::iterator tempList = pluginMap.begin();
-		tempList != pluginMap.end();
-		tempList++)
+	for (StringValueHashMap::const_iterator::DereferenceType tempList : pluginMap)
 	{
-		std::reverse(tempList.data().begin(), tempList.data().end());
 		VRay::VUtils::ValueRefList lightList(tempList.data().size());
-		int i = 0;
-		for (auto temp : tempList.data()) {
-			lightList[i++] = temp;
+		lightList[0] = tempList.data().at(tempList.data().size() - 1);
+		for (int i = 0; i < tempList.data().size() - 1; ++i) {
+			lightList[i+1] = tempList.data()[i];
 		}
 
 		lightLists[at++].setList(lightList);
 	}
 
-	//make the plugin description
 	Attrs::PluginDesc lightLinkerDesc("settingsLightLinker1", "SettingsLightLinker");
 
 	lightLinkerDesc.addAttribute(Attrs::PluginAttr("ignored_lights", lightLists));
 	lightLinkerDesc.addAttribute(Attrs::PluginAttr("ignored_shadow_lights", shadowLists));
-	//lightLinkerDesc.addAttribute(Attrs::PluginAttr("include_exclude_light_flags", /*list of ints for each light or empty*/));
-	// 0 - the list is an exclude list (default).
-	// 1 - the list is an include list.
-	// 2 - ignored_lights is ignored and the light illuminates all objects in the scene, useful for animating the light linking.
-	//lightLinkerDesc.addAttribute(Attrs::PluginAttr("include_exclude_shadow_flags", 1));
-	// 0 - the list is an exclude list (default).
-	// 1 - the list is an include list.
-	// 2 - ignored_shadow_lights is ignored and the light casts shadows from all objects in the scene,
-	// useful for animating the light linking.
 
-	//export the plugin
-	return exportPlugin(lightLinkerDesc);
+	exportPlugin(lightLinkerDesc);
+}
+
+void VRayExporter::fillLightLinkerGeomMap(const VRay::Plugin &exportedNode, const OP_Node *node, StringValueHashMap &map)
+{
+	OP_NodeList list;
+	VRay::Plugin geomPlugin = exportedNode.getPlugin("geometry");
+	if (node &&
+		node->castToOBJNode() &&
+		node->castToOBJNode()->castToOBJGeometry())
+		node->castToOBJNode()->castToOBJGeometry()->getLightMaskObjects(list, getContext().getTime());
+
+	if (!std::strncmp(exportedNode.getType(), "Node", 4) && std::strncmp(geomPlugin.getType(), "Instancer", 9)) {
+		VRay::VUtils::Value val;
+		val.setPlugin(exportedNode);
+		map[node->getName().c_str()].push_back(val);
+	}
+	else {
+		ValueTable &testTable = objectExporter.getExportedNodes();
+		for (OP_Node *node : list) {
+			for (int i = 0; i < testTable.count(); i++) {
+				map[node->getName().c_str()].push_back(testTable[i]);
+			}
+		}
+		testTable.clear();
+	}
 }

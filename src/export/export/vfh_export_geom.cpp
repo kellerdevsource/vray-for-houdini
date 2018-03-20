@@ -980,7 +980,8 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 
 		// Instancer works only with Node plugins.
 		const VRay::Plugin node = getNodeForInstancerGeometry(primItem);
-
+		VRay::VUtils::Value val(node);
+		nodePluginTable.insertAt(nodePluginTable.count(), val);
 		uint32_t additional_params_flags = 0;
 		if (primItem.objectID != objectIdUndefined) {
 			additional_params_flags |= VRay::InstancerParamFlags::useObjectID;
@@ -2286,4 +2287,9 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 	}
 
 	return plugin;
+}
+
+ValueTable& ObjectExporter::getExportedNodes()
+{
+	return nodePluginTable;
 }

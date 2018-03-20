@@ -341,6 +341,8 @@ public:
 	/// @returns Node plugin.
 	VRay::Plugin exportNode(OBJ_Node &objNode, SOP_Node *specificSop = nullptr);
 
+	ValueTable& getExportedNodes();
+
 private:
 	/// Push context frame when exporting nested object.
 	void pushContext(const PrimContext &value) { primContextStack.push(value); }
@@ -404,6 +406,9 @@ private:
 
 	/// All primitive items for final Instancer.
 	PrimitiveItems instancerItems;
+
+	/// All node plugins that are exported
+	ValueTable nodePluginTable;
 };
 
 } // namespace VRayForHoudini
