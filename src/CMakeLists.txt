@@ -337,6 +337,56 @@ function(vfh_install_common _location)
 	endif()
 endfunction(vfh_install_common)
 
+function(vfh_update_houdini_env)
+	set(HOUDINI_ENV_FILEPATH ${HOUDINI_HOME_PATH}/houdini.env)
+
+	set(VFH_ENV_MATCH "# V-Ray for Houdini Begin(.*)# V-Ray for Houdini End")
+	set(VFH_ENV "# V-Ray for Houdini Begin
+VFH_BUILD_ROOT=\"${CMAKE_BINARY_DIR}\"
+VFH_SDK_ROOT=\"${VFH_SDK_HDK}\"
+VFH_SRC_ROOT=\"${CMAKE_SOURCE_DIR}\"
+
+VRAY_APPSDK=\"${_appsdk_root}\"
+VRAY_UI_DS_PATH=\"$\{VFH_SRC_ROOT\}/deploy/ui\"
+VRAY_FOR_HOUDINI_AURA_LOADERS=\"$\{VFH_SDK_ROOT\}/phxsdk/qt5/vc14/lib\"
+
+VFH_PYTHONPATH=\"$\{VFH_BUILD_ROOT\}/python;&\"
+VFH_PATH=\"$\{VFH_BUILD_ROOT\}/bin;$\{VRAY_APPSDK\}/bin;$\{VRAY_FOR_HOUDINI_AURA_LOADERS\}\"
+VFH_HOUDINI_PATH=\"$\{VFH_SRC_ROOT\}/deploy/vfh_home\"
+VFH_HOUDINI_DSO_PATH=\"$\{VFH_BUILD_ROOT\}/dso\"
+
+PYTHONPATH=\"$\{VFH_PYTHONPATH\};$\{PYTHONPATH\};&\"
+PATH=\"$\{VFH_PATH\};$\{PATH\}\"
+
+HOUDINI_PATH=\"$\{VFH_HOUDINI_PATH\};&\"
+HOUDINI_DSO_PATH=\"$\{VFH_HOUDINI_DSO_PATH\};$\{HOUDINI_DSO_PATH\};&\"
+
+HOUDINI13_VOLUME_COMPATIBILITY=1
+HDF5_DISABLE_VERSION_CHECK=1
+# V-Ray for Houdini End"
+)
+	if(EXISTS ${HOUDINI_ENV_FILEPATH})
+		file(READ ${HOUDINI_ENV_FILEPATH} HOUDINI_ENV)
+	endif()
+
+	if(NOT HOUDINI_ENV)
+		file(WRITE ${HOUDINI_ENV_FILEPATH} ${VFH_ENV})
+	else()
+		string(REGEX MATCH ${VFH_ENV_MATCH} HAS_VFH_ENV "${HOUDINI_ENV}")
+		if(NOT HAS_VFH_ENV)
+			file(APPEND ${HOUDINI_ENV_FILEPATH} "${VFH_ENV}")
+		else()
+			string(REGEX REPLACE ${VFH_ENV_MATCH}
+			       "${VFH_ENV}"
+			       VFH_ENV_NEW
+			       "${HOUDINI_ENV}"
+			)
+
+			file(WRITE ${HOUDINI_ENV_FILEPATH} "${VFH_ENV_NEW}")
+		endif()
+	endif()
+endfunction()
+
 if(INSTALL_RELEASE)
 	vfh_install_common(${INSTALL_RELEASE_PATH})
 
@@ -400,4 +450,6 @@ else()
 
 	vfh_generate_launcher(BATCH TEMPLATE_FILENAME ${TEMPLATE_FILENAME})
 	vfh_generate_launcher(      TEMPLATE_FILENAME ${TEMPLATE_FILENAME})
+
+	vfh_update_houdini_env()
 endif()
