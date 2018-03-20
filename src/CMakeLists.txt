@@ -343,7 +343,7 @@ function(vfh_update_houdini_env)
 	set(VFH_ENV_MATCH "# V-Ray for Houdini Begin(.*)# V-Ray for Houdini End")
 	set(VFH_ENV "# V-Ray for Houdini Begin
 VFH_BUILD_ROOT=\"${CMAKE_BINARY_DIR}\"
-VFH_SDK_ROOT=\"${VFH_SDK_HDK}\"
+VFH_SDK_ROOT=\"${SDK_PATH}\"
 VFH_SRC_ROOT=\"${CMAKE_SOURCE_DIR}\"
 
 VRAY_APPSDK=\"${_appsdk_root}\"
