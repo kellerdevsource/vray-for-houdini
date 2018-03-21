@@ -1,3 +1,5 @@
+#include "LightMacroDefines.ds"
+
 {
     name    LightAmbient
     label   "Ambient"
@@ -290,16 +292,7 @@
             parmtag { "vray_type" "int" }
             disablewhen "{ shadows == 0 }"
         }
-        parm {
-            name shadowmask
-            label "Shadow Mask"
-            type oplist
-            parmtag { spare_category FOLDER }
-            default { "*" }
-            parmtag { opfilter "!!OBJ/GEOMETRY!!" }
-            parmtag { opexpand "1" }
-            parmtag { oprelative "/obj" }
-        }
+        VRAY_SHADOW_MASK_PARM()
     }
 
     groupcollapsible {

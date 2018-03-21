@@ -1,3 +1,5 @@
+#include "LightMacroDefines.ds"
+
 {
     name    LightIES
     label   "IES"
@@ -319,16 +321,7 @@
             parmtag { "vray_pluginattr" "shadowSubdivs" }
             parmtag { "vray_type" "int" }
         }
-        parm {
-            name shadowmask
-            label "Shadow Mask"
-            type oplist
-            parmtag { spare_category FOLDER }
-            default { "*" }
-            parmtag { opfilter "!!OBJ/GEOMETRY!!" }
-            parmtag { opexpand "1" }
-            parmtag { oprelative "/obj" }
-        }
+        VRAY_SHADOW_MASK_PARM()
     }
 
     groupcollapsible {
