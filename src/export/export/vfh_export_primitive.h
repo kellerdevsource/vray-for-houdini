@@ -22,6 +22,7 @@
 namespace VRayForHoudini {
 
 typedef VUtils::HashSet<VRay::Plugin> PluginSet;
+typedef VUtils::HashMap<OBJ_Node*, PluginSet> PluginMap;
 
 enum ObjectIDTypes {
 	objectIdUndefined = -1,
@@ -81,7 +82,7 @@ struct PrimitiveItem {
 };
 
 typedef VUtils::Table<PrimitiveItem, -1> PrimitiveItems;
-typedef VUtils::Table<VRay::VUtils::Value, -1> ValueTable;
+typedef VUtils::HashSet<VRay::Plugin> PluginSet;
 class VRayExporter;
 
 /// Base class for exporting primitives from OBJ nodes

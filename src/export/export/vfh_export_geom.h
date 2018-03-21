@@ -341,7 +341,9 @@ public:
 	/// @returns Node plugin.
 	VRay::Plugin exportNode(OBJ_Node &objNode, SOP_Node *specificSop = nullptr);
 
-	ValueTable& getExportedNodes();
+	/// Get map of all exported instanced Node plugins with OBJ_Node keys
+	/// @returns Map between OBJ_Node and plugins exported from it
+	PluginMap& getExportedNodes();
 
 private:
 	/// Push context frame when exporting nested object.
@@ -407,8 +409,8 @@ private:
 	/// All primitive items for final Instancer.
 	PrimitiveItems instancerItems;
 
-	/// All node plugins that are exported
-	ValueTable nodePluginTable;
+	/// All node plugins that are exported with their corresponding OBJ_Node key
+	PluginMap pluginMap;
 };
 
 } // namespace VRayForHoudini

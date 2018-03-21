@@ -282,6 +282,16 @@
             parmtag   { "vray_pluginattr" "shadowBias" }
             parmtag   { "vray_type" "float" }
         }
+        parm {
+            name shadowmask
+            label "Shadow Mask"
+            type oplist
+            parmtag { spare_category FOLDER }
+            default { "*" }
+            parmtag { opfilter "!!OBJ/GEOMETRY!!" }
+            parmtag { opexpand "1" }
+            parmtag { oprelative "/obj" }
+        }
     }
 
     groupcollapsible {
