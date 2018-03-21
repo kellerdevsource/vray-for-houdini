@@ -1981,8 +1981,9 @@ void VRayExporter::exportScene()
 			OP_Node *node = activeGeo->getNode(i);
 			if (node) {
 				exportObject(node);
-				fillLightLinkerGeomMap(node->castToOBJNode() ?
-										node->castToOBJNode()->castToOBJGeometry() : nullptr,
+				OBJ_Node *objNode = node->castToOBJNode();
+				fillLightLinkerGeomMap(objNode ?
+										objNode->castToOBJGeometry() : nullptr,
 										pluginMap);
 			}
 		}
@@ -1999,11 +2000,13 @@ void VRayExporter::exportScene()
 				VRay::Plugin exportedLight = exportObject(objNode);
 				if (exportedLight) {
 					pluginMap[objNode->getName()].push_back(VRay::VUtils::Value(exportedLight));
-
-					OP_Bundle *bundle = objNode->castToOBJLight()->getShadowMaskBundle(0);
-					OP_NodeList list;
-					bundle->getMembers(list);
-					shadowMap[exportedLight] = list;
+					OBJ_Light *lightNode = objNode->castToOBJLight();
+					if (lightNode) {
+						OP_Bundle *bundle = lightNode->getShadowMaskBundle(getContext().getTime());
+						OP_NodeList list;
+						bundle->getMembers(list);
+						shadowMap[exportedLight] = list;
+					}
 				}
 			}
 		}
@@ -2618,6 +2621,8 @@ void VRayExporter::exportFrame(fpreal time)
 	else if (sessionType != VfhSessionType::cloud) {
 		renderFrame(!isInteractive());
 	}
+
+	objectExporter.clearExportedNodes();
 }
 
 static void fillJobSettingsFromROP(OP_Node &rop, Cloud::Job &job)
@@ -2856,10 +2861,11 @@ void VRayExporter::exportLightLinker(const StringValueHashMap &pluginMap, const 
 	int at = 0;
 	for(StringValueHashMap::const_iterator::DereferenceType tempList : pluginMap)
 	{
-		const std::vector<VRay::VUtils::Value> valueList = tempList.data();
-		VRay::VUtils::ValueRefList lightList(valueList.size());
-		lightList[0] = valueList.at(valueList.size() - 1);
-		for (int i = 0; i < valueList.size() - 1; ++i) {
+		const std::vector<VRay::VUtils::Value> &valueList = tempList.data();
+		const int size = valueList.size();
+		VRay::VUtils::ValueRefList lightList(size);
+		lightList[0] = valueList.at(size - 1);
+		for (int i = 0; i < size - 1; ++i) {
 			lightList[i+1] = valueList[i];
 		}
 
@@ -2878,9 +2884,12 @@ void VRayExporter::exportLightLinker(const StringValueHashMap &pluginMap, const 
 		VUtils::Table<VRay::Plugin> plugins;
 
 		for (OP_Node *node : list) {
-			if (node && node->castToOBJNode()) {
-				for (VRay::Plugin plugin : exportedPluginMap[node->castToOBJNode()]) {
-					plugins += plugin;
+			OBJ_Node *objNode;
+			if (node && (objNode = node->castToOBJNode())) {
+				for (VRay::Plugin plugin : exportedPluginMap[objNode]) {
+					if (plugin){
+						plugins += plugin;
+					}
 				}
 			}
 		}

@@ -82,7 +82,6 @@ struct PrimitiveItem {
 };
 
 typedef VUtils::Table<PrimitiveItem, -1> PrimitiveItems;
-typedef VUtils::HashSet<VRay::Plugin> PluginSet;
 class VRayExporter;
 
 /// Base class for exporting primitives from OBJ nodes

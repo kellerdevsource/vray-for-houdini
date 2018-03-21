@@ -2294,3 +2294,8 @@ PluginMap& ObjectExporter::getExportedNodes()
 {
 	return pluginMap;
 }
+
+void ObjectExporter::clearExportedNodes()
+{
+	pluginMap.clear();
+}

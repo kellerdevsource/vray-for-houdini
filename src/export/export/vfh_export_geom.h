@@ -345,6 +345,8 @@ public:
 	/// @returns Map between OBJ_Node and plugins exported from it
 	PluginMap& getExportedNodes();
 
+	void clearExportedNodes();
+
 private:
 	/// Push context frame when exporting nested object.
 	void pushContext(const PrimContext &value) { primContextStack.push(value); }
