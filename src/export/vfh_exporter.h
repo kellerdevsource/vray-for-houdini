@@ -632,7 +632,7 @@ private:
 	/// @param exportedNode[in] Plugin of type Node that has been already exported
 	/// @param node[in] OP_Node from which light mask data shall be obtained
 	/// @param map[out] Map in which the information regarding the plugins is stored
-	void fillLightLinkerGeomMap(OBJ_Geometry *node, StringPluginSetHashMap &map);
+	void fillLightLinkerGeomMap(OBJ_Geometry &node, StringPluginSetHashMap &map);
 
 	/// Export V-Ray material from VOP node.
 	/// @param node VOP node.

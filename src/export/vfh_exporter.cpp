@@ -1982,9 +1982,12 @@ void VRayExporter::exportScene()
 			if (node) {
 				exportObject(node);
 				OBJ_Node *objNode = node->castToOBJNode();
-				fillLightLinkerGeomMap(objNode ?
-					objNode->castToOBJGeometry() : nullptr,
-					pluginMap);
+				if (objNode) {
+					OBJ_Geometry *geom = objNode->castToOBJGeometry();
+					if (geom) {
+						fillLightLinkerGeomMap(*geom, pluginMap);
+					}
+				}
 			}
 		}
 	}
@@ -2001,7 +2004,6 @@ void VRayExporter::exportScene()
 				VRay::Plugin exportedLight = exportObject(objNode);
 				if (exportedLight) {
 					lightMap[objNode->getName().buffer()] = exportedLight;
-					//pluginMap[objNode->getName()].insert(exportedLight);
 					OBJ_Light *lightNode = objNode->castToOBJLight();
 					if (lightNode) {
 						OP_Bundle *bundle = lightNode->getShadowMaskBundle(getContext().getTime());
@@ -2856,26 +2858,26 @@ void VRayExporter::VfhBundleMap::freeMem()
 
 void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, const PluginNodeListMap &shadowMap, const StringPluginMap &lightMap)
 {
-	if (pluginMap.empty() && shadowMap.empty())
+	if ((pluginMap.empty() || lightMap.empty()) && shadowMap.empty())
 		return;
 
 	VRay::VUtils::ValueRefList lightLists(pluginMap.size());
 	VRay::VUtils::ValueRefList shadowLists(shadowMap.size());
 
 	int at = 0;
-	for(StringPluginSetHashMap::const_iterator::DereferenceType &tempList : pluginMap)
+	for(StringPluginSetHashMap::const_iterator::DereferenceType &pluginSetMapIterator : pluginMap)
 	{
-		const PluginSet &valueList = tempList.data();
-		const int size = valueList.size();
-		VRay::VUtils::ValueRefList lightList(size+1);
-		StringPluginMap::const_iterator it = lightMap.find(tempList.key());
-		if (it != lightMap.end()) {
-			VRay::Plugin lightPlugin = it.data();
+		const PluginSet &pluginSet = pluginSetMapIterator.data();
+		const int pluginCount = pluginSet.size();
+		VRay::VUtils::ValueRefList lightList(pluginCount+1);
+		StringPluginMap::const_iterator lightMapIterator = lightMap.find(pluginSetMapIterator.key());
+		if (lightMapIterator != lightMap.end()) {
+			VRay::Plugin lightPlugin = lightMapIterator.data();
 			if (lightPlugin) {
 				lightList[0] = VRay::VUtils::Value(lightPlugin);
 
 				int listAt = 1;
-				for (VRay::Plugin plugin : valueList) {
+				for (VRay::Plugin plugin : pluginSet) {
 					if (plugin) {
 						lightList[listAt++] = VRay::VUtils::Value(plugin);
 					}
@@ -2901,9 +2903,9 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, co
 			if (node) {
 				OBJ_Node *objNode = node->castToOBJNode();
 				if (objNode) {
-					PluginMap::iterator test = exportedPluginMap.find(objNode);
-					if(test != exportedPluginMap.end()) {
-						for (const VRay::Plugin &plugin : test.data()) {
+					PluginMap::iterator pluginIterator = exportedPluginMap.find(objNode);
+					if(pluginIterator != exportedPluginMap.end()) {
+						for (const VRay::Plugin &plugin : pluginIterator.data()) {
 							if (plugin) {
 								plugins += plugin;
 							}
@@ -2937,18 +2939,19 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, co
 	exportPlugin(lightLinkerDesc);
 }
 
-void VRayExporter::fillLightLinkerGeomMap(OBJ_Geometry *node, StringPluginSetHashMap &map)
+void VRayExporter::fillLightLinkerGeomMap(OBJ_Geometry &node, StringPluginSetHashMap &map)
 {
 	OP_NodeList list;
-	if (node)
-		node->getLightMaskObjects(list, getContext().getTime());
+	node.getLightMaskObjects(list, getContext().getTime());
 
-	PluginMap &pluginMap = objectExporter.getExportedNodes();
-	OBJ_Node* objNode = node->castToOBJNode();
-	if (objNode) {
-		for (OP_Node *maskNode : list) {
-			for (VRay::Plugin plugin : pluginMap[objNode]) {
-				map[maskNode->getName().buffer()].insert(plugin);
+	if (list.size()) {
+		PluginMap &pluginMap = objectExporter.getExportedNodes();
+		OBJ_Node* objNode = node.castToOBJNode();
+		if (objNode) {
+			for (const OP_Node *maskNode : list) {
+				for (const VRay::Plugin &plugin : pluginMap[objNode]) {
+					map[maskNode->getName().buffer()].insert(plugin);
+				}
 			}
 		}
 	}
