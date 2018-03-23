@@ -108,7 +108,7 @@ struct OpInterestItem {
 };
 
 typedef std::vector<OpInterestItem> CbItems;
-typedef VUtils::StringHashMap<PluginSet> StringValueHashMap;
+typedef VUtils::StringHashMap<PluginSet> StringPluginSetHashMap;
 typedef VUtils::StringHashMap<VRay::Plugin> StringPluginMap;
 typedef VUtils::HashMap<VRay::Plugin, OP_NodeList> PluginNodeListMap;
 
@@ -205,7 +205,7 @@ public:
 	/// @param shadowMap[in] A Hash Map between Plugin and OP_NodeList, contains all geometries
 	/// @param lightMap[in] A String Hash Map between Light node names and their exported plugins
 	/// that cast shadows from the given light plugin
-	void exportLightLinker(const StringValueHashMap &pluginMap, const PluginNodeListMap &shadowMap, const StringPluginMap &lightMap);
+	void exportLightLinker(const StringPluginSetHashMap &pluginMap, const PluginNodeListMap &shadowMap, const StringPluginMap &lightMap);
 
 	/// Export global renderer settings - color mapping, gi, irradiance cache, etc.
 	/// This is called once when a render session is initililzed.
@@ -632,7 +632,7 @@ private:
 	/// @param exportedNode[in] Plugin of type Node that has been already exported
 	/// @param node[in] OP_Node from which light mask data shall be obtained
 	/// @param map[out] Map in which the information regarding the plugins is stored
-	void fillLightLinkerGeomMap(OBJ_Geometry *node, StringValueHashMap &map);
+	void fillLightLinkerGeomMap(OBJ_Geometry *node, StringPluginSetHashMap &map);
 
 	/// Export V-Ray material from VOP node.
 	/// @param node VOP node.

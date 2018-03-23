@@ -1971,7 +1971,7 @@ void VRayExporter::exportScene()
 	objectExporter.clearOpDepPluginCache();
 	objectExporter.clearPrimPluginCache();
 
-	StringValueHashMap pluginMap;
+	StringPluginSetHashMap pluginMap;
 	PluginNodeListMap shadowMap;
 
 	// export geometry nodes
@@ -1988,6 +1988,7 @@ void VRayExporter::exportScene()
 			}
 		}
 	}
+
 	StringPluginMap lightMap;
 	OP_Bundle *activeLights = getActiveLightsBundle(*m_rop, m_context.getTime());
 	if (!activeLights || activeLights->entries() <= 0) {
@@ -2853,7 +2854,7 @@ void VRayExporter::VfhBundleMap::freeMem()
 	bundles.clear();
 }
 
-void VRayExporter::exportLightLinker(const StringValueHashMap &pluginMap, const PluginNodeListMap &shadowMap, const StringPluginMap &lightMap)
+void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, const PluginNodeListMap &shadowMap, const StringPluginMap &lightMap)
 {
 	if (pluginMap.empty() && shadowMap.empty())
 		return;
@@ -2862,7 +2863,7 @@ void VRayExporter::exportLightLinker(const StringValueHashMap &pluginMap, const 
 	VRay::VUtils::ValueRefList shadowLists(shadowMap.size());
 
 	int at = 0;
-	for(StringValueHashMap::const_iterator::DereferenceType &tempList : pluginMap)
+	for(StringPluginSetHashMap::const_iterator::DereferenceType &tempList : pluginMap)
 	{
 		const PluginSet &valueList = tempList.data();
 		const int size = valueList.size();
@@ -2936,7 +2937,7 @@ void VRayExporter::exportLightLinker(const StringValueHashMap &pluginMap, const 
 	exportPlugin(lightLinkerDesc);
 }
 
-void VRayExporter::fillLightLinkerGeomMap(OBJ_Geometry *node, StringValueHashMap &map)
+void VRayExporter::fillLightLinkerGeomMap(OBJ_Geometry *node, StringPluginSetHashMap &map)
 {
 	OP_NodeList list;
 	if (node)
