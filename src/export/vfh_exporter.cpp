@@ -695,12 +695,11 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 											  : boost::str(Parm::FmtPrefixManual % prefix % attrDesc.attr.ptr());
 
 				const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
-
-				// check for properties that are marked for custom handling on hou side
 				if (parm) {
-					auto spareData = parm->getSparePtr();
-					if (spareData && spareData->getValue("vray_custom_handling")) {
-						continue;
+					if (attrDesc.flags & Parm::attrFlagEnabledOnly) {
+						if (!parm->getEnableState() || !parm->getVisibleState()) {
+							continue;
+						}
 					}
 				}
 

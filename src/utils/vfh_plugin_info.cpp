@@ -226,6 +226,11 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 			attrDesc.attr = vrayPluginAttr;
 			attrDesc.flags = attrFlags;
 
+			const UT_String vrayEnabledBy(parmSpare->getValue("vray_enabled_only"));
+			if (vrayEnabledBy.isstring()) {
+				attrDesc.flags |= attrFlagEnabledOnly;
+			}
+
 			if (UTisstring(vrayEnumKeys)) {
 				attrDesc.value.type = eEnum;
 			}

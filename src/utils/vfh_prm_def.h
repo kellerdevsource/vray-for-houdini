@@ -109,6 +109,7 @@ enum AttrDescFlags {
 	attrFlagCustomHandling = (1 << 0), ///< Parameter requires custom handling.
 	attrFlagLinkedOnly     = (1 << 1), ///< Skip parameter if socket is not connected.
 	attrFlagToRadians      = (1 << 2), ///< Value needs to be converted from degrees to radians.
+	attrFlagEnabledOnly    = (1 << 3), ///< Skip parameter is it's UI is disabled or hidden.
 };
 
 /// Descriptor for a single param
