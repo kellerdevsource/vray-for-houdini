@@ -368,7 +368,7 @@
             parmtag { "vray_pluginattr" "shadowBias" }
             parmtag { "vray_type" "float" }
         }
-        VRAY_SHADOW_MASK_PARM()
+        VRAY_SHADOW_MASK_PARM
     }
 
     groupcollapsible {

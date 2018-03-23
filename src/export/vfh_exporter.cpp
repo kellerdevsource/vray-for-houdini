@@ -1983,12 +1983,12 @@ void VRayExporter::exportScene()
 				exportObject(node);
 				OBJ_Node *objNode = node->castToOBJNode();
 				fillLightLinkerGeomMap(objNode ?
-										objNode->castToOBJGeometry() : nullptr,
-										pluginMap);
+					objNode->castToOBJGeometry() : nullptr,
+					pluginMap);
 			}
 		}
 	}
-
+	StringPluginMap lightMap;
 	OP_Bundle *activeLights = getActiveLightsBundle(*m_rop, m_context.getTime());
 	if (!activeLights || activeLights->entries() <= 0) {
 		exportDefaultHeadlight();
@@ -1999,13 +1999,16 @@ void VRayExporter::exportScene()
 			if (objNode) {
 				VRay::Plugin exportedLight = exportObject(objNode);
 				if (exportedLight) {
-					pluginMap[objNode->getName()].push_back(VRay::VUtils::Value(exportedLight));
+					lightMap[objNode->getName().buffer()] = exportedLight;
+					//pluginMap[objNode->getName()].insert(exportedLight);
 					OBJ_Light *lightNode = objNode->castToOBJLight();
 					if (lightNode) {
 						OP_Bundle *bundle = lightNode->getShadowMaskBundle(getContext().getTime());
-						OP_NodeList list;
-						bundle->getMembers(list);
-						shadowMap[exportedLight] = list;
+						if (bundle) {
+							OP_NodeList list;
+							bundle->getMembers(list);
+							shadowMap[exportedLight] = list;
+						}
 					}
 				}
 			}
@@ -2013,7 +2016,7 @@ void VRayExporter::exportScene()
 	}
 
 	if (pluginMap.size() || shadowMap.size()) {
-		exportLightLinker(pluginMap, shadowMap);
+		exportLightLinker(pluginMap, shadowMap, lightMap);
 	}
 
 	UT_String env_network_path;
@@ -2850,26 +2853,36 @@ void VRayExporter::VfhBundleMap::freeMem()
 	bundles.clear();
 }
 
-void VRayExporter::exportLightLinker(const StringValueHashMap &pluginMap, const PluginNodeListMap &shadowMap)
+void VRayExporter::exportLightLinker(const StringValueHashMap &pluginMap, const PluginNodeListMap &shadowMap, const StringPluginMap &lightMap)
 {
-	if (pluginMap.empty())
+	if (pluginMap.empty() && shadowMap.empty())
 		return;
 
 	VRay::VUtils::ValueRefList lightLists(pluginMap.size());
 	VRay::VUtils::ValueRefList shadowLists(shadowMap.size());
 
 	int at = 0;
-	for(StringValueHashMap::const_iterator::DereferenceType tempList : pluginMap)
+	for(StringValueHashMap::const_iterator::DereferenceType &tempList : pluginMap)
 	{
-		const std::vector<VRay::VUtils::Value> &valueList = tempList.data();
+		const PluginSet &valueList = tempList.data();
 		const int size = valueList.size();
-		VRay::VUtils::ValueRefList lightList(size);
-		lightList[0] = valueList.at(size - 1);
-		for (int i = 0; i < size - 1; ++i) {
-			lightList[i+1] = valueList[i];
-		}
+		VRay::VUtils::ValueRefList lightList(size+1);
+		StringPluginMap::const_iterator it = lightMap.find(tempList.key());
+		if (it != lightMap.end()) {
+			VRay::Plugin lightPlugin = it.data();
+			if (lightPlugin) {
+				lightList[0] = VRay::VUtils::Value(lightPlugin);
 
-		lightLists[at++].setList(lightList);
+				int listAt = 1;
+				for (VRay::Plugin plugin : valueList) {
+					if (plugin) {
+						lightList[listAt++] = VRay::VUtils::Value(plugin);
+					}
+				}
+
+				lightLists[at++].setList(lightList);
+			}
+		}
 	}
 
 	VRay::VUtils::IntRefList lightInclusivityList(at);
@@ -2884,11 +2897,16 @@ void VRayExporter::exportLightLinker(const StringValueHashMap &pluginMap, const 
 		VUtils::Table<VRay::Plugin> plugins;
 
 		for (OP_Node *node : list) {
-			OBJ_Node *objNode;
-			if (node && (objNode = node->castToOBJNode())) {
-				for (VRay::Plugin plugin : exportedPluginMap[objNode]) {
-					if (plugin){
-						plugins += plugin;
+			if (node) {
+				OBJ_Node *objNode = node->castToOBJNode();
+				if (objNode) {
+					PluginMap::iterator test = exportedPluginMap.find(objNode);
+					if(test != exportedPluginMap.end()) {
+						for (const VRay::Plugin &plugin : test.data()) {
+							if (plugin) {
+								plugins += plugin;
+							}
+						}
 					}
 				}
 			}
@@ -2926,9 +2944,11 @@ void VRayExporter::fillLightLinkerGeomMap(OBJ_Geometry *node, StringValueHashMap
 
 	PluginMap &pluginMap = objectExporter.getExportedNodes();
 	OBJ_Node* objNode = node->castToOBJNode();
-	for (OP_Node *maskNode : list) {
-		for (VRay::Plugin plugin : pluginMap[objNode]) {
-			map[maskNode->getName().buffer()].push_back(VRay::VUtils::Value(plugin));
+	if (objNode) {
+		for (OP_Node *maskNode : list) {
+			for (VRay::Plugin plugin : pluginMap[objNode]) {
+				map[maskNode->getName().buffer()].insert(plugin);
+			}
 		}
 	}
 }

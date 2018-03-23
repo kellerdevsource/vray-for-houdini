@@ -284,7 +284,7 @@
             parmtag { "vray_pluginattr" "shadowSubdivs" }
             parmtag { "vray_type" "int" }
         }
-        VRAY_SHADOW_MASK_PARM()
+        VRAY_SHADOW_MASK_PARM
     }
 
     groupcollapsible {

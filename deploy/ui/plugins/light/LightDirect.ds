@@ -265,7 +265,7 @@
             parmtag { "vray_type" "int" }
             disablewhen "{ shadows == 0 }"
         }
-        VRAY_SHADOW_MASK_PARM()
+        VRAY_SHADOW_MASK_PARM
     }
 
     groupcollapsible {

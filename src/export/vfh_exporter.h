@@ -108,7 +108,8 @@ struct OpInterestItem {
 };
 
 typedef std::vector<OpInterestItem> CbItems;
-typedef VUtils::StringHashMap<std::vector<VRay::VUtils::Value>> StringValueHashMap;
+typedef VUtils::StringHashMap<PluginSet> StringValueHashMap;
+typedef VUtils::StringHashMap<VRay::Plugin> StringPluginMap;
 typedef VUtils::HashMap<VRay::Plugin, OP_NodeList> PluginNodeListMap;
 
 struct ConnectedPluginInfo {
@@ -202,8 +203,9 @@ public:
 	/// Export light linker plugin
 	/// @param pluginMap[in] A String Hash Map of Light node names and plugins that relate to them
 	/// @param shadowMap[in] A Hash Map between Plugin and OP_NodeList, contains all geometries
+	/// @param lightMap[in] A String Hash Map between Light node names and their exported plugins
 	/// that cast shadows from the given light plugin
-	void exportLightLinker(const StringValueHashMap &pluginMap, const PluginNodeListMap &shadowMap);
+	void exportLightLinker(const StringValueHashMap &pluginMap, const PluginNodeListMap &shadowMap, const StringPluginMap &lightMap);
 
 	/// Export global renderer settings - color mapping, gi, irradiance cache, etc.
 	/// This is called once when a render session is initililzed.

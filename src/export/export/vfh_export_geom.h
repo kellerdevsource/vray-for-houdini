@@ -345,6 +345,7 @@ public:
 	/// @returns Map between OBJ_Node and plugins exported from it
 	PluginMap& getExportedNodes();
 
+	/// Clear the map of all exported instanced Node plugins
 	void clearExportedNodes();
 
 private:
