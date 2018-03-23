@@ -1,4 +1,4 @@
-#include "LightMacroDefines.ds"
+#include "vfh_light_common.ds"
 
 {
     name    LightIES

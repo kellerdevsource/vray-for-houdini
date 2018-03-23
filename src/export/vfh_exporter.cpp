@@ -2001,7 +2001,7 @@ void VRayExporter::exportScene()
 		for (int i = 0; i < activeLights->entries(); ++i) {
 			OBJ_Node *objNode = CAST_OBJNODE(activeLights->getNode(i));
 			if (objNode) {
-				VRay::Plugin exportedLight = exportObject(objNode);
+				const VRay::Plugin &exportedLight = exportObject(objNode);
 				if (exportedLight) {
 					lightMap[objNode->getName().buffer()] = exportedLight;
 					OBJ_Light *lightNode = objNode->castToOBJLight();
@@ -2872,12 +2872,12 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, co
 		VRay::VUtils::ValueRefList lightList(pluginCount+1);
 		StringPluginMap::const_iterator lightMapIterator = lightMap.find(pluginSetMapIterator.key());
 		if (lightMapIterator != lightMap.end()) {
-			VRay::Plugin lightPlugin = lightMapIterator.data();
+			const VRay::Plugin &lightPlugin = lightMapIterator.data();
 			if (lightPlugin) {
 				lightList[0] = VRay::VUtils::Value(lightPlugin);
 
 				int listAt = 1;
-				for (VRay::Plugin plugin : pluginSet) {
+				for (const VRay::Plugin &plugin : pluginSet) {
 					if (plugin) {
 						lightList[listAt++] = VRay::VUtils::Value(plugin);
 					}
