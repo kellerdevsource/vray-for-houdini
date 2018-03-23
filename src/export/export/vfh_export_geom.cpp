@@ -981,7 +981,8 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		// Instancer works only with Node plugins.
 		const VRay::Plugin node = getNodeForInstancerGeometry(primItem);
 
-		pluginMap[&objNode].insert(node);
+		if (primItem.geometry)
+			pluginMap[&objNode].insert(primItem.geometry.getName());
 
 		uint32_t additional_params_flags = 0;
 		if (primItem.objectID != objectIdUndefined) {
@@ -2290,9 +2291,16 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 	return plugin;
 }
 
-PluginMap& ObjectExporter::getExportedNodes()
+PluginSet ObjectExporter::getExportedNodes(const OBJ_Node *node)
 {
-	return pluginMap;
+	if (!node || pluginMap.find(node) == pluginMap.end())
+		return PluginSet();
+
+	PluginSet set;
+	for (VUtils::CharString name : pluginMap[node]) {
+		set.insert(pluginCache.instancerNodeWrapper[name.ptr()]);
+	}
+	return set;
 }
 
 void ObjectExporter::clearExportedNodes()

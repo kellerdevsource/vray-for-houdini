@@ -342,8 +342,9 @@ public:
 	VRay::Plugin exportNode(OBJ_Node &objNode, SOP_Node *specificSop = nullptr);
 
 	/// Get map of all exported instanced Node plugins with OBJ_Node keys
-	/// @returns Map between OBJ_Node and plugins exported from it
-	PluginMap& getExportedNodes();
+	/// @param node[in] OBJ_Node from which the plugins have been exported
+	/// @returns Set of Plugins that have been exported for that specific node
+	PluginSet getExportedNodes(const OBJ_Node *node);
 
 	/// Clear the map of all exported instanced Node plugins
 	void clearExportedNodes();

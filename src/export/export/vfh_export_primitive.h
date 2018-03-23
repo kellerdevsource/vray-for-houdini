@@ -22,7 +22,8 @@
 namespace VRayForHoudini {
 
 typedef VUtils::HashSet<VRay::Plugin> PluginSet;
-typedef VUtils::HashMap<OBJ_Node*, PluginSet> PluginMap;
+typedef VUtils::HashSet<VUtils::CharString> CharStringSet;
+typedef VUtils::HashMap<const OBJ_Node*, CharStringSet> PluginMap;
 
 enum ObjectIDTypes {
 	objectIdUndefined = -1,

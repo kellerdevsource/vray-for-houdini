@@ -1,5 +1,5 @@
-#define VRAY_SHADOW_MASK_PARM\
-    parm { \
+#define VRAY_SHADOW_MASK_PARM \
+parm { \
     name shadowmask \
     label "Shadow Mask" \
     type oplist \
@@ -8,4 +8,4 @@
     parmtag { opfilter "!!OBJ/GEOMETRY!!" } \
     parmtag { opexpand "1" } \
     parmtag { oprelative "/obj" } \
-        }
+}

@@ -2894,7 +2894,6 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, co
 	}
 
 	at = 0;
-	PluginMap &exportedPluginMap = objectExporter.getExportedNodes();
 	for (PluginNodeListMap::const_iterator::DereferenceType objList : shadowMap) {
 		const OP_NodeList &list = objList.data();
 		VUtils::Table<VRay::Plugin> plugins;
@@ -2903,12 +2902,10 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, co
 			if (node) {
 				OBJ_Node *objNode = node->castToOBJNode();
 				if (objNode) {
-					PluginMap::iterator pluginIterator = exportedPluginMap.find(objNode);
-					if(pluginIterator != exportedPluginMap.end()) {
-						for (const VRay::Plugin &plugin : pluginIterator.data()) {
-							if (plugin) {
-								plugins += plugin;
-							}
+					const PluginSet &set = objectExporter.getExportedNodes(objNode);
+					for (const VRay::Plugin &plugin : set) {
+						if (plugin) {
+							plugins += plugin;
 						}
 					}
 				}
@@ -2944,15 +2941,14 @@ void VRayExporter::fillLightLinkerGeomMap(OBJ_Geometry &node, StringPluginSetHas
 	OP_NodeList list;
 	node.getLightMaskObjects(list, getContext().getTime());
 
-	if (list.size()) {
-		PluginMap &pluginMap = objectExporter.getExportedNodes();
-		OBJ_Node* objNode = node.castToOBJNode();
-		if (objNode) {
-			for (const OP_Node *maskNode : list) {
-				for (const VRay::Plugin &plugin : pluginMap[objNode]) {
-					map[maskNode->getName().buffer()].insert(plugin);
-				}
-			}
+	if (list.isEmpty())
+		return;
+
+	OBJ_Node* objNode = &node;
+	const PluginSet pluginSet = objectExporter.getExportedNodes(objNode);
+	for (const OP_Node *maskNode : list) {
+		for (const VRay::Plugin &plugin : pluginSet) {
+			map[maskNode->getName().buffer()].insert(plugin);
 		}
 	}
 }
