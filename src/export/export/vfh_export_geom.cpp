@@ -1978,13 +1978,6 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 		// Check parent overrides.
 		getPrimMaterial(item.primMaterial);
 
-		// Mult with object inv. tm.
-		VRay::Transform objTm = VRayExporter::getObjTransform(instaceObjNode, ctx, false);
-		objTm.makeInverse();
-		// NOTE: Houdini seems to ignore object offset for point instancing.
-		objTm.offset.makeZero();
-		item.tm = item.tm * objTm;
-
 		pushContext(PrimContext(&objNode, item));
 		item.geometry = pluginExporter.exportObject(instaceObjNode);
 		popContext();
