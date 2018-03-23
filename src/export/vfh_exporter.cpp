@@ -1059,10 +1059,7 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		{
 			const int relementsSeparateFiles = m_rop->evalInt("SettingsOutput_relements_separateFiles", 0, t);
 			if (!relementsSeparateFiles) {
-				if (sessionType != VfhSessionType::cloud) {
-#pragma message("Remove img_rawFile workaround after AppSDK fix!")
-					pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
-				}
+				pluginDesc.addAttribute(Attrs::PluginAttr("img_rawFile", 1));
 			}
 		}
 
