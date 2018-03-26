@@ -166,6 +166,18 @@ static void setSettingsRTEnginetOptimizedGpuSettings(SettingsRTEngine &self, con
 	}
 }
 
+/// Make sure path is relative (strip leading slashes) added by ChannelManager's expand path
+static void makePathRelative(UT_String &path)
+{
+	if (path.isstring() && (path[0] == '\\' || path[0] == '/')) {
+		UT_String result(UT_String::ALWAYS_DEEP);
+		const int lenBefore = path.length();
+		const int newLen = path.substr(result, 1, INT_MAX);
+		path = result;
+		vassert(newLen == lenBefore - 1 && "makePathRelative failed to strip leading slash");
+	}
+}
+
 void VRayExporter::reset()
 {
 	objectExporter.clearPrimPluginCache();
@@ -1035,6 +1047,10 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		CH_Manager *chanMan = OPgetDirector()->getChannelManager();
 		chanMan->expandString(fileNameRaw.buffer(), fileName, t);
 		chanMan->expandString(dirPathRaw.buffer(), dirPath, t);
+
+		// CH_Manager adds leading shashes sometimes
+		makePathRelative(dirPath);
+		makePathRelative(fileName);
 
 		if (sessionType != VfhSessionType::cloud) {
 			// Create output directory.
