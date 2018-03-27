@@ -2942,10 +2942,9 @@ void VRayExporter::fillLightLinkerGeomMap(OBJ_Geometry &node, StringPluginSetHas
 	if (list.isEmpty())
 		return;
 
-	OBJ_Node* objNode = &node;
-	const ObjectExporter::GeomNodeCache &temp = objectExporter.getExportedNodes(*objNode);
+	const ObjectExporter::GeomNodeCache &nodeMap = objectExporter.getExportedNodes(node);
 	for (const OP_Node *maskNode : list) {
-		for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : temp) {
+		for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : nodeMap) {
 			if(it.data())
 				map[maskNode->getName().buffer()].insert(it.data());
 		}
