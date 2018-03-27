@@ -169,13 +169,15 @@ static void setSettingsRTEnginetOptimizedGpuSettings(SettingsRTEngine &self, con
 /// Make sure path is relative (strip leading slashes) added by ChannelManager's expand path
 static void makePathRelative(UT_String &path)
 {
-	if (path.isstring() && (path[0] == '\\' || path[0] == '/')) {
-		UT_String result(UT_String::ALWAYS_DEEP);
-		const int lenBefore = path.length();
-		const int newLen = path.substr(result, 1, INT_MAX);
-		path = result;
-		vassert(newLen == lenBefore - 1 && "makePathRelative failed to strip leading slash");
+	if (!path.isstring() || !(path[0] == '\\' || path[0] == '/')) {
+		return;
 	}
+
+	UT_String result(UT_String::ALWAYS_DEEP);
+	const int lenBefore = path.length();
+	const int newLen = path.substr(result, 1, INT_MAX);
+	path = result;
+	vassert(newLen == lenBefore - 1 && "makePathRelative failed to strip leading slash");
 }
 
 void VRayExporter::reset()
@@ -1048,8 +1050,9 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		chanMan->expandString(fileNameRaw.buffer(), fileName, t);
 		chanMan->expandString(dirPathRaw.buffer(), dirPath, t);
 
-		// CH_Manager adds leading shashes sometimes
-		makePathRelative(dirPath);
+		// fileName must be relative path inside dirPath, but if it starts with a variable which when expanded contains
+		// leading slash, then fileName will have leading slash which will make it not relative
+		// for exmaple ${HIPNAME}/result.exr could expand to /HBATCH/scene_name/result.exr
 		makePathRelative(fileName);
 
 		if (sessionType != VfhSessionType::cloud) {
