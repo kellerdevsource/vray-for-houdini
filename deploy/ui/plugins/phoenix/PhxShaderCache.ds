@@ -236,23 +236,6 @@
             label   "Smoke"
             type    ordinal
             default { "0" }
-            menu    {
-                [ "menuItems = ['0', 'None']" ]
-                [ "geom = kwargs['node'].geometry()" ]
-                [ "if not geom:" ]
-                [ "    return menuItems" ]
-                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
-                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
-                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
-                [ "    if type(channels) is tuple:" ]
-                [ "        # duplicate all channels so we have (key, val) pairs" ]
-                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
-                [ "    else:" ]
-                [ "        menuItems.extend([channels, channels])" ]
-                [ "return menuItems" ]
-                language    python
-            }
-            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }                
             parmtag { "vray_custom_handling" " " }
@@ -262,23 +245,6 @@
             label   "Temperature"
             type    ordinal
             default { "0" }
-            menu    {
-                [ "menuItems = ['0', 'None']" ]
-                [ "geom = kwargs['node'].geometry()" ]
-                [ "if not geom:" ]
-                [ "    return menuItems" ]
-                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
-                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
-                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
-                [ "    if type(channels) is tuple:" ]
-                [ "        # duplicate all channels so we have (key, val) pairs" ]
-                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
-                [ "    else:" ]
-                [ "        menuItems.extend([channels, channels])" ]
-                [ "return menuItems" ]
-                language    python
-            }
-            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }                            
             parmtag { "vray_custom_handling" " " }
@@ -288,23 +254,6 @@
             label   "Fuel"
             type    ordinal
             default { "0" }
-            menu    {
-                [ "menuItems = ['0', 'None']" ]
-                [ "geom = kwargs['node'].geometry()" ]
-                [ "if not geom:" ]
-                [ "    return menuItems" ]
-                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
-                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
-                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
-                [ "    if type(channels) is tuple:" ]
-                [ "        # duplicate all channels so we have (key, val) pairs" ]
-                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
-                [ "    else:" ]
-                [ "        menuItems.extend([channels, channels])" ]
-                [ "return menuItems" ]
-                language    python
-            }
-            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }                
             parmtag { "vray_custom_handling" " " }
@@ -314,23 +263,6 @@
             label   "Velocity.x"
             type    ordinal
             default { "0" }
-            menu    {
-                [ "menuItems = ['0', 'None']" ]
-                [ "geom = kwargs['node'].geometry()" ]
-                [ "if not geom:" ]
-                [ "    return menuItems" ]
-                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
-                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
-                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
-                [ "    if type(channels) is tuple:" ]
-                [ "        # duplicate all channels so we have (key, val) pairs" ]
-                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
-                [ "    else:" ]
-                [ "        menuItems.extend([channels, channels])" ]
-                [ "return menuItems" ]
-                language    python
-            }
-            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }                
             parmtag { "vray_custom_handling" " " }
@@ -340,23 +272,6 @@
             label   "Velocity.y"
             type    ordinal
             default { "0" }
-            menu    {
-                [ "menuItems = ['0', 'None']" ]
-                [ "geom = kwargs['node'].geometry()" ]
-                [ "if not geom:" ]
-                [ "    return menuItems" ]
-                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
-                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
-                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
-                [ "    if type(channels) is tuple:" ]
-                [ "        # duplicate all channels so we have (key, val) pairs" ]
-                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
-                [ "    else:" ]
-                [ "        menuItems.extend([channels, channels])" ]
-                [ "return menuItems" ]
-                language    python
-            }
-            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }                
             parmtag { "vray_custom_handling" " " }
@@ -366,23 +281,6 @@
             label   "Velocity.z"
             type    ordinal
             default { "0" }
-            menu    {
-                [ "menuItems = ['0', 'None']" ]
-                [ "geom = kwargs['node'].geometry()" ]
-                [ "if not geom:" ]
-                [ "    return menuItems" ]
-                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
-                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
-                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
-                [ "    if type(channels) is tuple:" ]
-                [ "        # duplicate all channels so we have (key, val) pairs" ]
-                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
-                [ "    else:" ]
-                [ "        menuItems.extend([channels, channels])" ]
-                [ "return menuItems" ]
-                language    python
-            }
-            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }                
             parmtag { "vray_custom_handling" " " }
@@ -392,22 +290,6 @@
             label   "Red"
             type    ordinal
             default { "0" }
-            menu    {
-                [ "menuItems = ['0', 'None']" ]
-                [ "geom = kwargs['node'].geometry()" ]
-                [ "if not geom:" ]
-                [ "    return menuItems" ]
-                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
-                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
-                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
-                [ "    if type(channels) is tuple:" ]
-                [ "        # duplicate all channels so we have (key, val) pairs" ]
-                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
-                [ "    else:" ]
-                [ "        menuItems.extend([channels, channels])" ]
-                [ "return menuItems" ]
-                language    python
-            }
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }                
@@ -418,23 +300,6 @@
             label   "Green"
             type    ordinal
             default { "0" }
-            menu    {
-                [ "menuItems = ['0', 'None']" ]
-                [ "geom = kwargs['node'].geometry()" ]
-                [ "if not geom:" ]
-                [ "    return menuItems" ]
-                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
-                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
-                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
-                [ "    if type(channels) is tuple:" ]
-                [ "        # duplicate all channels so we have (key, val) pairs" ]
-                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
-                [ "    else:" ]
-                [ "        menuItems.extend([channels, channels])" ]
-                [ "return menuItems" ]
-                language    python
-            }
-            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }                
             parmtag { "vray_custom_handling" " " }
@@ -444,23 +309,6 @@
             label   "Blue"
             type    ordinal
             default { "0" }
-            menu    {
-                [ "menuItems = ['0', 'None']" ]
-                [ "geom = kwargs['node'].geometry()" ]
-                [ "if not geom:" ]
-                [ "    return menuItems" ]
-                [ "prim = geom.prims()[0] if len(geom.prims()) > 0 else None" ]
-                [ "if prim and 'phx_channel_map' in prim.intrinsicNames():" ]
-                [ "    channels = prim.intrinsicValue('phx_channel_map')" ]
-                [ "    if type(channels) is tuple:" ]
-                [ "        # duplicate all channels so we have (key, val) pairs" ]
-                [ "        menuItems.extend([channels[c//2] for c in range(len(channels) * 2)])" ]
-                [ "    else:" ]
-                [ "        menuItems.extend([channels, channels])" ]
-                [ "return menuItems" ]
-                language    python
-            }
-            range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }                
             parmtag { "vray_custom_handling" " " }
