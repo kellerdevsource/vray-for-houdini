@@ -21,8 +21,14 @@ class PhxShaderCache
 	: public NodePackedBase
 {
 public:
+	static void buildMenuPrmNames(void *data, PRM_Name *choicenames, int listsize, const PRM_SpareData *spare, const PRM_Parm *parm);
+	static PRM_Template* getPrmTemplate();
+
+public:
 	PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry);
-	virtual ~PhxShaderCache() {}
+	virtual ~PhxShaderCache();
+
+	PRM_Name *getChannelNames() const;
 
 protected:
 	// From VRayNode.
@@ -31,6 +37,9 @@ protected:
 	// From NodePackedBase.
 	void setTimeDependent() VRAY_OVERRIDE;
 	void updatePrimitive(const OP_Context &context) VRAY_OVERRIDE;
+
+private:
+	mutable PRM_Name *m_channelNames;
 };
 
 } // namespace SOP
