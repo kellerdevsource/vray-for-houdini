@@ -2627,8 +2627,6 @@ void VRayExporter::exportFrame(fpreal time)
 	else if (sessionType != VfhSessionType::cloud) {
 		renderFrame(!isInteractive());
 	}
-
-	objectExporter.clearExportedNodes();
 }
 
 static void fillJobSettingsFromROP(OP_Node &rop, Cloud::Job &job)
@@ -2902,10 +2900,10 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, co
 			if (node) {
 				OBJ_Node *objNode = node->castToOBJNode();
 				if (objNode) {
-					const PluginSet &set = objectExporter.getExportedNodes(objNode);
-					for (const VRay::Plugin &plugin : set) {
-						if (plugin) {
-							plugins += plugin;
+					const ObjectExporter::GeomNodeCache &temp = objectExporter.getExportedNodes(objNode);
+					for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : temp) {
+						if (it.data()) {
+							plugins += it.data();
 						}
 					}
 				}
@@ -2945,10 +2943,11 @@ void VRayExporter::fillLightLinkerGeomMap(OBJ_Geometry &node, StringPluginSetHas
 		return;
 
 	OBJ_Node* objNode = &node;
-	const PluginSet pluginSet = objectExporter.getExportedNodes(objNode);
+	const ObjectExporter::GeomNodeCache &temp = objectExporter.getExportedNodes(objNode);
 	for (const OP_Node *maskNode : list) {
-		for (const VRay::Plugin &plugin : pluginSet) {
-			map[maskNode->getName().buffer()].insert(plugin);
+		for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : temp) {
+			if(it.data())
+				map[maskNode->getName().buffer()].insert(it.data());
 		}
 	}
 }

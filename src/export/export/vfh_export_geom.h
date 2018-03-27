@@ -141,9 +141,11 @@ class ObjectExporter
 	typedef VUtils::StringHashMap<VRay::Plugin> OpPluginCache;
 	typedef VUtils::HashMap<int, VRay::Plugin> PrimPluginCache;
 	typedef VUtils::HashMap<Hash::MHash, VRay::Plugin> HashPluginCache;
-	typedef VUtils::StringHashMap<VRay::Plugin> GeomNodeCache;
 
 public:
+	typedef VUtils::StringHashMap<VRay::Plugin> GeomNodeCache;
+	typedef VUtils::HashMap<const OBJ_Node*, GeomNodeCache> NodeMap;
+
 	explicit ObjectExporter(VRayExporter &pluginExporter);
 
 	/// Clears OBJ plugin cache.
@@ -278,7 +280,7 @@ public:
 	/// the Node plugin if needed.
 	/// @param geometry Geometry plugin instance.
 	/// @returns Node plugin instance.
-	VRay::Plugin getNodeForInstancerGeometry(const PrimitiveItem &primItem);
+	VRay::Plugin getNodeForInstancerGeometry(const PrimitiveItem &primItem, const OBJ_Node &objNode);
 
 	/// Export object geometry.
 	/// @returns Geometry plugin.
@@ -343,11 +345,8 @@ public:
 
 	/// Get map of all exported instanced Node plugins with OBJ_Node keys
 	/// @param node[in] OBJ_Node from which the plugins have been exported
-	/// @returns Set of Plugins that have been exported for that specific node
-	PluginSet getExportedNodes(const OBJ_Node *node);
-
-	/// Clear the map of all exported instanced Node plugins
-	void clearExportedNodes();
+	/// @returns Map of Plugins that have been exported for that specific node
+	GeomNodeCache& getExportedNodes(const OBJ_Node *node);
 
 private:
 	/// Push context frame when exporting nested object.
@@ -396,7 +395,7 @@ private:
 		HashPluginCache polyMapChannels;
 
 		/// Wrapper nodes cache for Instancer plugin.
-		GeomNodeCache instancerNodeWrapper;
+		NodeMap instancerNodesMap;
 
 		/// Maps OP_Node with generated set of plugins for
 		/// non directly instancable object.
@@ -412,9 +411,6 @@ private:
 
 	/// All primitive items for final Instancer.
 	PrimitiveItems instancerItems;
-
-	/// All node plugins that are exported with their corresponding OBJ_Node key
-	PluginMap pluginMap;
 };
 
 } // namespace VRayForHoudini

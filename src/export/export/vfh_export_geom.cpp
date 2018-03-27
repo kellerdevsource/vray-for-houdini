@@ -285,7 +285,7 @@ void ObjectExporter::clearPrimPluginCache()
 	pluginCache.polyMapChannels.clear();
 	pluginCache.polyMaterial.clear();
 	pluginCache.hashCache.clear();
-	pluginCache.instancerNodeWrapper.clear();
+	pluginCache.instancerNodesMap.clear();
 }
 
 SubdivInfo ObjectExporter::getSubdivInfoFromMatNode(OP_Node &matNode)
@@ -410,7 +410,7 @@ int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 	return bundle->contains(&objNode, false);
 }
 
-VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &primItem)
+VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &primItem, const OBJ_Node &objNode)
 {
 	if (!primItem.geometry) {
 		return VRay::Plugin();
@@ -421,8 +421,9 @@ VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &pr
 		return primItem.geometry;
 	}
 
-	GeomNodeCache::iterator gnIt = pluginCache.instancerNodeWrapper.find(primItem.geometry.getName());
-	if (gnIt != pluginCache.instancerNodeWrapper.end()) {
+	GeomNodeCache &cache = pluginCache.instancerNodesMap[&objNode];
+	GeomNodeCache::iterator gnIt = cache.find(primItem.geometry.getName());
+	if (gnIt != cache.end()) {
 		return gnIt.data();
 	}
 
@@ -442,7 +443,7 @@ VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &pr
 	VRay::Plugin node = pluginExporter.exportPlugin(nodeDesc);
 	UT_ASSERT(node);
 
-	pluginCache.instancerNodeWrapper.insert(primItem.geometry.getName(), node);
+	cache.insert(primItem.geometry.getName(), node);
 
 	return node;
 }
@@ -978,11 +979,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 			material = pluginExporter.exportPlugin(mtlStatsDesc);
 		}
 
-		// Instancer works only with Node plugins.
-		const VRay::Plugin node = getNodeForInstancerGeometry(primItem);
-
-		if (primItem.geometry)
-			pluginMap[&objNode].insert(primItem.geometry.getName());
+		const VRay::Plugin node = getNodeForInstancerGeometry(primItem, objNode);
 
 		uint32_t additional_params_flags = 0;
 		if (primItem.objectID != objectIdUndefined) {
@@ -2291,19 +2288,12 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 	return plugin;
 }
 
-PluginSet ObjectExporter::getExportedNodes(const OBJ_Node *node)
+ObjectExporter::GeomNodeCache& ObjectExporter::getExportedNodes(const OBJ_Node *node)
 {
-	if (!node || pluginMap.find(node) == pluginMap.end())
-		return PluginSet();
-
-	PluginSet set;
-	for (VUtils::CharString name : pluginMap[node]) {
-		set.insert(pluginCache.instancerNodeWrapper[name.ptr()]);
-	}
-	return set;
-}
-
-void ObjectExporter::clearExportedNodes()
-{
-	pluginMap.clear();
+	if (!node || pluginCache.instancerNodesMap.find(node) == pluginCache.instancerNodesMap.end())
+		return GeomNodeCache();
+	if (!node)
+		return GeomNodeCache();
+	NodeMap::iterator it = pluginCache.instancerNodesMap.find(node);
+	return it==pluginCache.instancerNodesMap.end() ? GeomNodeCache() : pluginCache.instancerNodesMap[node];
 }
