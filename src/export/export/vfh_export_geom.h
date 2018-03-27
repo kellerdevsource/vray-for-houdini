@@ -346,7 +346,7 @@ public:
 	/// Get map of all exported instanced Node plugins with OBJ_Node keys
 	/// @param node[in] OBJ_Node from which the plugins have been exported
 	/// @returns Map of Plugins that have been exported for that specific node
-	GeomNodeCache& getExportedNodes(const OBJ_Node *node);
+	GeomNodeCache& getExportedNodes(const OBJ_Node &node);
 
 private:
 	/// Push context frame when exporting nested object.

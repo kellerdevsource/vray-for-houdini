@@ -2288,12 +2288,8 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 	return plugin;
 }
 
-ObjectExporter::GeomNodeCache& ObjectExporter::getExportedNodes(const OBJ_Node *node)
+ObjectExporter::GeomNodeCache& ObjectExporter::getExportedNodes(const OBJ_Node &node)
 {
-	if (!node || pluginCache.instancerNodesMap.find(node) == pluginCache.instancerNodesMap.end())
-		return GeomNodeCache();
-	if (!node)
-		return GeomNodeCache();
-	NodeMap::iterator it = pluginCache.instancerNodesMap.find(node);
-	return it==pluginCache.instancerNodesMap.end() ? GeomNodeCache() : pluginCache.instancerNodesMap[node];
+	NodeMap::iterator it = pluginCache.instancerNodesMap.find(&node);
+	return it==pluginCache.instancerNodesMap.end() ? GeomNodeCache() : it.data();
 }
