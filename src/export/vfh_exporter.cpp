@@ -2900,8 +2900,8 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, co
 			if (node) {
 				OBJ_Node *objNode = node->castToOBJNode();
 				if (objNode) {
-					const ObjectExporter::GeomNodeCache &temp = objectExporter.getExportedNodes(*objNode);
-					for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : temp) {
+					const ObjectExporter::GeomNodeCache &nodeMap = objectExporter.getExportedNodes(*objNode);
+					for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : nodeMap) {
 						if (it.data()) {
 							plugins += it.data();
 						}
