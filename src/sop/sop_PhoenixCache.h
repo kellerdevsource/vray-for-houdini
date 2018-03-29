@@ -28,6 +28,7 @@ public:
 	PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry);
 
 	UT_StringArray& getPhxChannels() const;
+	UT_StringHolder evalCachePath(fpreal t = 0.f) const;
 
 protected:
 	// From VRayNode.

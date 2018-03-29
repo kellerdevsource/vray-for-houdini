@@ -24,10 +24,12 @@ void PhxShaderCache::buildMenuPrmNames(void *data, PRM_Name *choicenames, int li
 {
 	SOP_Node *sop = CAST_SOPNODE((OP_Node *)data);
 	PhxShaderCache *phxCache = dynamic_cast<PhxShaderCache *>(sop);
-
+	
 	if (phxCache)
 	{
 		UT_StringArray phxChannels = phxCache->getPhxChannels();
+
+		int chCount = phxChannels.size();
 
 		choicenames[0].setTokenAndLabel("0", "None");
 		for (size_t idx = 0; idx < phxChannels.size(); ++idx)
@@ -116,13 +118,12 @@ PhxShaderCache::PhxShaderCache(OP_Network *parent, const char *name, OP_Operator
 
 UT_StringArray & PhxShaderCache::getPhxChannels() const
 {
-	if (m_phxChannels.size() != 0
-		|| !m_primOptions.hasOption("cache_path")) {
-
+	// TODO: handle cache_path changes
+	if (m_phxChannels.size() != 0) {
 		return m_phxChannels;
 	}
 
-	UT_StringHolder cachePath = m_primOptions.getOptionS("cache_path");
+	UT_StringHolder cachePath = evalCachePath();
 	return m_phxChannels = PhxChannelsUtils::getPhxChannels(cachePath);
 }
 
@@ -139,6 +140,22 @@ void PhxShaderCache::setTimeDependent()
 	evalStringRaw(raw, "cache_path", 0, 0.0f);
 
 	flags().setTimeDep(raw.findString("$F", false, false));
+}
+
+UT_StringHolder PhxShaderCache::evalCachePath(fpreal t /*= 0.f*/) const
+{
+	// Replace frame number with Phoenix compatible frame pattern.
+	UT_String rawLoadPath;
+	evalStringRaw(rawLoadPath, "cache_path", 0, t);
+
+		rawLoadPath.changeWord("$F", "####");
+
+		// Expand all the other variables.
+		CH_Manager *chanMan = OPgetDirector()->getChannelManager();
+		UT_String loadPath;
+		chanMan->expandString(rawLoadPath.buffer(), loadPath, t);
+
+	return loadPath;
 }
 
 void PhxShaderCache::updatePrimitive(const OP_Context &context)
