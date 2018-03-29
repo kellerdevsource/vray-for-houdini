@@ -124,6 +124,7 @@ UT_StringArray & PhxShaderCache::getPhxChannels() const
 	}
 
 	UT_StringHolder cachePath = evalCachePath();
+	const char* cp = cachePath.buffer();
 	return m_phxChannels = PhxChannelsUtils::getPhxChannels(cachePath);
 }
 
@@ -153,23 +154,24 @@ UT_StringHolder PhxShaderCache::evalCachePath(fpreal t /*= 0.f*/) const
 		// Expand all the other variables.
 		CH_Manager *chanMan = OPgetDirector()->getChannelManager();
 		UT_String loadPath;
-		chanMan->expandString(rawLoadPath.buffer(), loadPath, t);
+		fpreal tt = chanMan->getContext().getTime();
+		chanMan->expandString(rawLoadPath.buffer(), loadPath, tt);
 
 	return loadPath;
 }
 
 void PhxShaderCache::updatePrimitive(const OP_Context &context)
 {
-	const fpreal t = context.getTime();
+	const fpreal t = m_t = context.getTime();
 
 	OP_Options primOptions;
+
 	for (int i = 0; i < getParmList()->getEntries(); ++i) {
 		const PRM_Parm &prm = getParm(i);
 		primOptions.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
 	}
 
 	const int isTimeDependent = flags().getTimeDep();
-
 	if (isTimeDependent) {
 		// Replace frame number with Phoenix compatible frame pattern.
 		UT_String rawLoadPath;

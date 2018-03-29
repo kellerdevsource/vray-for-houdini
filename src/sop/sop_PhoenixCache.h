@@ -40,6 +40,7 @@ protected:
 
 private:
 	mutable UT_StringArray m_phxChannels;
+	fpreal m_t;
 };
 
 } // namespace SOP
