@@ -2288,12 +2288,7 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 	return plugin;
 }
 
-bool ObjectExporter::getExportedNodes(const OBJ_Node &node, ObjectExporter::GeomNodeCache& map)
+const ObjectExporter::GeomNodeCache& ObjectExporter::getExportedNodes(const OBJ_Node &node) const
 {
-	NodeMap::iterator it = pluginCache.instancerNodesMap.find(&node);
-	if (it != pluginCache.instancerNodesMap.end()) {
-		map = it.data();
-		return true;
-	}
-	return false;
+	return pluginCache.instancerNodesMap[&node];
 }

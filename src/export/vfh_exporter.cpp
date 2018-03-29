@@ -2911,13 +2911,11 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, co
 			if (node) {
 				OBJ_Node *objNode = node->castToOBJNode();
 				if (objNode) {
-					ObjectExporter::GeomNodeCache nodeMap;
-					if (objectExporter.getExportedNodes(*objNode, nodeMap)) {
-						for (ObjectExporter::GeomNodeCache::iterator::MutableDereferenceType it : nodeMap) {
-							const VRay::Plugin &plugin = it.data();
-							if (plugin) {
-								plugins += plugin;
-							}
+					const ObjectExporter::GeomNodeCache &nodeMap = objectExporter.getExportedNodes(*objNode);
+					for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : nodeMap) {
+						const VRay::Plugin &plugin = it.data();
+						if (plugin) {
+							plugins += plugin;
 						}
 					}
 				}
@@ -2956,14 +2954,12 @@ void VRayExporter::fillLightLinkerGeomMap(OBJ_Geometry &node, StringPluginSetHas
 	if (list.isEmpty())
 		return;
 
-	ObjectExporter::GeomNodeCache nodeMap;
-	if (objectExporter.getExportedNodes(node, nodeMap)) {
-		for (const OP_Node *maskNode : list) {
-			for (ObjectExporter::GeomNodeCache::iterator::MutableDereferenceType it : nodeMap) {
-				const VRay::Plugin &plugin = it.data();
-				if (plugin)
-					map[maskNode->getName().buffer()].insert(plugin);
-			}
+	const ObjectExporter::GeomNodeCache &nodeMap = objectExporter.getExportedNodes(node);
+	for (const OP_Node *maskNode : list) {
+		for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : nodeMap) {
+			const VRay::Plugin &plugin = it.data();
+			if (plugin)
+				map[maskNode->getName().buffer()].insert(plugin);
 		}
 	}
 }

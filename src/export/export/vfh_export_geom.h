@@ -347,7 +347,7 @@ public:
 	/// @param node[in] OBJ_Node from which the plugins have been exported
 	/// @param map[out] Map of all nodes that have been exported for the given node
 	/// @returns true if the map has been set, false otherwise
-	bool getExportedNodes(const OBJ_Node &node, ObjectExporter::GeomNodeCache& map);
+	const ObjectExporter::GeomNodeCache& getExportedNodes(const OBJ_Node &node) const;
 
 private:
 	/// Push context frame when exporting nested object.
