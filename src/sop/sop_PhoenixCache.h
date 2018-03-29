@@ -26,9 +26,8 @@ public:
 
 public:
 	PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry);
-	virtual ~PhxShaderCache();
 
-	PRM_Name *getChannelNames() const;
+	UT_StringArray& getPhxChannels() const;
 
 protected:
 	// From VRayNode.
@@ -39,7 +38,7 @@ protected:
 	void updatePrimitive(const OP_Context &context) VRAY_OVERRIDE;
 
 private:
-	mutable PRM_Name *m_channelNames;
+	mutable UT_StringArray m_phxChannels;
 };
 
 } // namespace SOP
