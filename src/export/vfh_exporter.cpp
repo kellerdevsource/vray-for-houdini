@@ -2859,7 +2859,7 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, co
 	if ((pluginMap.empty() || lightMap.empty()) && shadowMap.empty())
 		return;
 
-	VRay::VUtils::ValueRefList lightLists(pluginMap.size());
+	VRay::VUtils::ValueRefList lightLists(lightMap.size());
 	VRay::VUtils::ValueRefList shadowLists(shadowMap.size());
 
 	int at = 0;
@@ -2881,6 +2881,17 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, co
 					}
 				}
 
+				lightLists[at++].setList(lightList);
+			}
+		}
+	}
+
+	// Add any lights that don't illuminate anything
+	if (lightMap.size() > at) {
+		for (StringPluginMap::const_iterator::DereferenceType lightMapIt : lightMap) {
+			if (pluginMap.find(lightMapIt.key()) == pluginMap.end()) {
+				VRay::VUtils::ValueRefList lightList(1);
+				lightList[0] = VRay::VUtils::Value(lightMapIt.data());
 				lightLists[at++].setList(lightList);
 			}
 		}
