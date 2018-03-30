@@ -118,7 +118,7 @@ UT_StringArray & PhxShaderCache::getPhxChannels(fpreal t /*= -1.f*/) const
 	if (!m_pathChanged || m_phxChannels.size() != 0) {
 		return m_phxChannels;
 	}
-	?
+	
 	// Default value is current time
 	t = (t >= 0.f) ? t : OPgetDirector()->getTime();
 
