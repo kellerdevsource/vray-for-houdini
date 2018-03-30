@@ -21,14 +21,12 @@ class PhxShaderCache
 	: public NodePackedBase
 {
 public:
-	static void buildMenuPrmNames(void *data, PRM_Name *choicenames, int listsize, const PRM_SpareData *spare, const PRM_Parm *parm);
+	/// Fills @param choicenames with the Phoenix channels names
+	static void channelsMenuGenerator(void *data, PRM_Name *choicenames, int listsize, const PRM_SpareData *spare, const PRM_Parm *parm);
+	/// Returns the parms of this SOP
 	static PRM_Template* getPrmTemplate();
 
-public:
 	PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry);
-
-	UT_StringArray& getPhxChannels() const;
-	UT_StringHolder evalCachePath(fpreal t = 0.f) const;
 
 protected:
 	// From VRayNode.
@@ -39,8 +37,21 @@ protected:
 	void updatePrimitive(const OP_Context &context) VRAY_OVERRIDE;
 
 private:
-	mutable UT_StringArray m_phxChannels;
-	fpreal m_t;
+	/// Get the channels names for the file "cache_path" in moment @param t
+	/// @param t - time, if not specified current time is assumed
+	UT_StringArray& getPhxChannels(fpreal t = -1.f) const;
+
+	// TODO: may be useful in other code, add option type and move to parent
+	/// Compares if the value of "cache_path" is the same in m_primOptions as in @param options
+	bool isSamePath(const OP_Options& options) const;
+
+	/// Evaluates the cache_path parm in the specified time
+	/// @param t - time
+	/// @retval UT_StringHolder with the cache_path value
+	UT_StringHolder evalCachePath(fpreal t) const;
+
+	mutable bool m_pathChanged; ///< True if the cache_path is changed
+	mutable UT_StringArray m_phxChannels; ///< The names of the channels in the cache file
 };
 
 } // namespace SOP

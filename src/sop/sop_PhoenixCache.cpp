@@ -20,7 +20,7 @@ using namespace VRayForHoudini;
 using namespace VRayForHoudini::PhxChannelsUtils;
 using namespace SOP;
 
-void PhxShaderCache::buildMenuPrmNames(void *data, PRM_Name *choicenames, int listsize, const PRM_SpareData *spare, const PRM_Parm *parm)
+void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, int listsize, const PRM_SpareData *spare, const PRM_Parm *parm)
 {
 	SOP_Node *sop = CAST_SOPNODE((OP_Node *)data);
 	PhxShaderCache *phxCache = dynamic_cast<PhxShaderCache *>(sop);
@@ -28,7 +28,7 @@ void PhxShaderCache::buildMenuPrmNames(void *data, PRM_Name *choicenames, int li
 	if (phxCache)
 	{
 		UT_StringArray phxChannels = phxCache->getPhxChannels();
-
+	
 		int chCount = phxChannels.size();
 
 		choicenames[0].setTokenAndLabel("0", "None");
@@ -62,47 +62,47 @@ PRM_Template *PhxShaderCache::getPrmTemplate()
 	myPrmList.switcherBegin("folder3");
 	myPrmList.addFolder("Channel Mapping");
 	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_smoke", "Smoke")
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::buildMenuPrmNames))
+		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
 		.setSpareData(&phxShaderCacheSpareData)
 		.setDefault(new PRM_Default(0))
 	);
 	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_temp",  "Temperature")
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::buildMenuPrmNames))
+		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
 		.setSpareData(&phxShaderCacheSpareData)
 		.setDefault(new PRM_Default(0))
 	);
 	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_fuel",  "Fuel")       
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::buildMenuPrmNames))
+		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
 		.setSpareData(&phxShaderCacheSpareData)
 		.setDefault(new PRM_Default(0))
 	);
 	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_vel_x", "Velocity.x") 
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::buildMenuPrmNames))
+		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
 		.setSpareData(&phxShaderCacheSpareData)
 		.setDefault(new PRM_Default(0))
 	);
 	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_vel_y", "Velocity.y") 
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::buildMenuPrmNames))
+		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
 		.setSpareData(&phxShaderCacheSpareData)
 		.setDefault(new PRM_Default(0))
 	);
 	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_vel_z", "Velocity.z") 
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::buildMenuPrmNames))
+		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
 		.setSpareData(&phxShaderCacheSpareData)
 		.setDefault(new PRM_Default(0))
 	);
 	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_red",   "Red")        
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::buildMenuPrmNames))
+		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
 		.setSpareData(&phxShaderCacheSpareData)
 		.setDefault(new PRM_Default(0))
 	);
 	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_green", "Green")      
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::buildMenuPrmNames))
+		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
 		.setSpareData(&phxShaderCacheSpareData)
 		.setDefault(new PRM_Default(0))
 	);
 	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_blue",  "Blue")       
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::buildMenuPrmNames))
+		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
 		.setSpareData(&phxShaderCacheSpareData)
 		.setDefault(new PRM_Default(0))
 	);
@@ -113,19 +113,40 @@ PRM_Template *PhxShaderCache::getPrmTemplate()
 
 PhxShaderCache::PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry)
 	: NodePackedBase("VRayVolumeGridRef", parent, name, entry)
-{
-}
+	, m_pathChanged(true)
+	, m_phxChannels()
+{}
 
-UT_StringArray & PhxShaderCache::getPhxChannels() const
+UT_StringArray & PhxShaderCache::getPhxChannels(fpreal t /*= -1.f*/) const
 {
-	// TODO: handle cache_path changes
-	if (m_phxChannels.size() != 0) {
+	// Channels depend on the file not the time
+	if (!m_pathChanged 
+		|| m_phxChannels.size() != 0) {
 		return m_phxChannels;
 	}
+	
+	// Default value is current time
+	t = (t >= 0.f) ? t :
+		OPgetDirector()->getTime();
 
-	UT_StringHolder cachePath = evalCachePath();
-	const char* cp = cachePath.buffer();
-	return m_phxChannels = PhxChannelsUtils::getPhxChannels(cachePath);
+	UT_StringHolder cachePath = evalCachePath(t);
+	m_phxChannels = PhxChannelsUtils::getPhxChannels(cachePath);
+
+	m_pathChanged = false;
+	return m_phxChannels;
+}
+
+bool PhxShaderCache::isSamePath(const OP_Options &options) const
+{
+	if (!m_primOptions.hasOption("cache_path") || !options.hasOption("cache_path")) {
+		return false;
+	}
+
+	UT_StringHolder oldPath, newPath;
+	m_primOptions.getOptionS("cache_path", oldPath);
+	options.getOptionS("cache_path", newPath);
+
+	return oldPath == newPath;
 }
 
 void PhxShaderCache::setPluginType()
@@ -143,26 +164,25 @@ void PhxShaderCache::setTimeDependent()
 	flags().setTimeDep(raw.findString("$F", false, false));
 }
 
-UT_StringHolder PhxShaderCache::evalCachePath(fpreal t /*= 0.f*/) const
+UT_StringHolder PhxShaderCache::evalCachePath(fpreal t) const
 {
-	// Replace frame number with Phoenix compatible frame pattern.
 	UT_String rawLoadPath;
 	evalStringRaw(rawLoadPath, "cache_path", 0, t);
+	
+	// Replace frame number with Phoenix compatible frame pattern.
+	rawLoadPath.changeWord("$F", "####");
 
-		rawLoadPath.changeWord("$F", "####");
-
-		// Expand all the other variables.
-		CH_Manager *chanMan = OPgetDirector()->getChannelManager();
-		UT_String loadPath;
-		fpreal tt = chanMan->getContext().getTime();
-		chanMan->expandString(rawLoadPath.buffer(), loadPath, tt);
+	// Expand all the other variables.
+	CH_Manager *chanMan = OPgetDirector()->getChannelManager();
+	UT_String loadPath;
+	chanMan->expandString(rawLoadPath.buffer(), loadPath, t);
 
 	return loadPath;
 }
 
 void PhxShaderCache::updatePrimitive(const OP_Context &context)
 {
-	const fpreal t = m_t = context.getTime();
+	const fpreal t = context.getTime();
 
 	OP_Options primOptions;
 
@@ -173,22 +193,17 @@ void PhxShaderCache::updatePrimitive(const OP_Context &context)
 
 	const int isTimeDependent = flags().getTimeDep();
 	if (isTimeDependent) {
-		// Replace frame number with Phoenix compatible frame pattern.
-		UT_String rawLoadPath;
-		evalStringRaw(rawLoadPath, "cache_path", 0, t);
-		rawLoadPath.changeWord("$F", "####");
+		UT_StringHolder cachePath = evalCachePath(t);
+		primOptions.setOptionS("cache_path", cachePath);
+	}
 
-		// Expand all the other variables.
-		CH_Manager *chanMan = OPgetDirector()->getChannelManager();
-		UT_String loadPath;
-		chanMan->expandString(rawLoadPath.buffer(), loadPath, t);
-
-		primOptions.setOptionS("cache_path", loadPath);
+	if (!isSamePath(primOptions)) {
+		m_pathChanged = true;
 	}
 
 	primOptions.setOptionF("current_frame", isTimeDependent ? context.getFloatFrame() : 0.0);
 
-	UT_StringArray phxChanMap = PhxChannelsUtils::getPhxChannels(primOptions.getOptionS("cache_path"));
+	UT_StringArray phxChanMap = getPhxChannels(t);
 	primOptions.setOptionSArray("phx_channel_map", phxChanMap);
 
 	updatePrimitiveFromOptions(primOptions);

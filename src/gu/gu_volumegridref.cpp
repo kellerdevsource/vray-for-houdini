@@ -282,7 +282,8 @@ void VRayVolumeGridRef::buildMapping()
 		setPhxChannelMap(UT_StringArray());
 	}
 	else {
-		UT_StringArray channels = getPhxChannels(getCachePath());
+		UT_StringArray channels;
+		getPhxChannelMap(channels);
 
 		// will hold names so we can use pointers to them
 		std::vector<UT_String> names;
