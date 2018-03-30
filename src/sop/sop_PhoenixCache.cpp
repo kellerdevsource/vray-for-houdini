@@ -30,7 +30,7 @@ void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, in
 		UT_StringArray phxChannels = phxCache->getPhxChannels();
 		
 		choicenames[0].setTokenAndLabel("0", "None");
-		for (size_t idx = 0; idx < phxChannels.size(); ++idx)
+		for (int idx = 0; idx < phxChannels.size(); ++idx)
 		{
 			choicenames[idx + 1].setTokenAndLabel(phxChannels[idx], phxChannels[idx]);
 		}

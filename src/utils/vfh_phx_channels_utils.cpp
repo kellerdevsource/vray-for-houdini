@@ -22,8 +22,7 @@ UT_StringArray VRayForHoudini::PhxChannelsUtils::getPhxChannels(const char* load
 	int chanIndex = 0;
 	int isChannelVector3D = 0;
 	char chanName[MAX_CHAN_MAP_LEN];
-	int a;
-	while (1 == (a = aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, loadPath, chanIndex++))) {
+	while (1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, loadPath, chanIndex++)) {
 		channels.append(chanName);
 	}
 
