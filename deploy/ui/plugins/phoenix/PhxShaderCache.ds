@@ -224,6 +224,7 @@
             parmtag { "vray_plugin"     "PhxShaderCache" }
             parmtag { "vray_pluginattr" "usrchmap" }
             parmtag { "vray_type"       "string" }
+            invisible
         }
     }
 

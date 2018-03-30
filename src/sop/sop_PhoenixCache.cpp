@@ -28,9 +28,7 @@ void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, in
 	if (phxCache)
 	{
 		UT_StringArray phxChannels = phxCache->getPhxChannels();
-	
-		int chCount = phxChannels.size();
-
+		
 		choicenames[0].setTokenAndLabel("0", "None");
 		for (size_t idx = 0; idx < phxChannels.size(); ++idx)
 		{
