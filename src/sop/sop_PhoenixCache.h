@@ -38,15 +38,14 @@ protected:
 
 private:
 	/// Get the channels names for the file "cache_path" in moment @param t
-	/// @param t - time, if not specified current time is assumed
+	/// @param t Time, if not specified current time is assumed
 	UT_StringArray& getPhxChannels(fpreal t = -1.f) const;
 
-	// TODO: may be useful in other code, add option type and move to parent
 	/// Compares if the value of "cache_path" is the same in m_primOptions as in @param options
 	bool isSamePath(const OP_Options& options) const;
 
 	/// Evaluates the cache_path parm in the specified time
-	/// @param t - time
+	/// @param t Time
 	/// @retval UT_StringHolder with the cache_path value
 	UT_StringHolder evalCachePath(fpreal t) const;
 
