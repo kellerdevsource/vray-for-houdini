@@ -25,19 +25,16 @@ void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, in
 	SOP_Node *sop = CAST_SOPNODE((OP_Node *)data);
 	PhxShaderCache *phxCache = dynamic_cast<PhxShaderCache *>(sop);
 	
-	if (phxCache)
-	{
+	if (phxCache) {
 		UT_StringArray phxChannels = phxCache->getPhxChannels();
 		
 		choicenames[0].setTokenAndLabel("0", "None");
-		for (int idx = 0; idx < phxChannels.size(); ++idx)
-		{
+		for (int idx = 0; idx < phxChannels.size(); ++idx) {
 			choicenames[idx + 1].setTokenAndLabel(phxChannels[idx], phxChannels[idx]);
 		}
 		choicenames[phxChannels.size() + 1].setTokenAndLabel(nullptr, nullptr);
 	}
-	else
-	{
+	else {
 		choicenames[0].setTokenAndLabel(nullptr, nullptr);
 	}
 }
@@ -118,14 +115,12 @@ PhxShaderCache::PhxShaderCache(OP_Network *parent, const char *name, OP_Operator
 UT_StringArray & PhxShaderCache::getPhxChannels(fpreal t /*= -1.f*/) const
 {
 	// Channels depend on the file not the time
-	if (!m_pathChanged 
-		|| m_phxChannels.size() != 0) {
+	if (!m_pathChanged || m_phxChannels.size() != 0) {
 		return m_phxChannels;
 	}
-	
+	?
 	// Default value is current time
-	t = (t >= 0.f) ? t :
-		OPgetDirector()->getTime();
+	t = (t >= 0.f) ? t : OPgetDirector()->getTime();
 
 	UT_StringHolder cachePath = evalCachePath(t);
 	m_phxChannels = PhxChannelsUtils::getPhxChannels(cachePath);
