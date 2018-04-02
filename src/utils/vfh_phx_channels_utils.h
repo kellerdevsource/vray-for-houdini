@@ -16,6 +16,8 @@
 
 #include <aurloader.h>
 
+#include "systemstuff.h"
+
 namespace VRayForHoudini {
 namespace PhxChannelsUtils {
 
@@ -36,13 +38,25 @@ struct ChannelInfo {
 	}
 };
 
-extern const ChannelInfo chInfo[];
+/// Info for the channels
+static constexpr ChannelInfo chInfo[] = {
+	{ "channel_smoke", "Smoke",       GridChannels::ChSm },
+	{ "channel_temp",  "Temperature", GridChannels::ChT },
+	{ "channel_fuel",  "Fuel",        GridChannels::ChFl },
+	{ "channel_vel_x", "Velocity X",  GridChannels::ChVx },
+	{ "channel_vel_y", "Velocity Y",  GridChannels::ChVy },
+	{ "channel_vel_z", "Velocity Z",  GridChannels::ChVz },
+	{ "channel_red",   "Color R",     GridChannels::ChU },
+	{ "channel_green", "Color G",     GridChannels::ChV },
+	{ "channel_blue",  "Color B",     GridChannels::ChW },
+	{ "INVALID",       "INVALID",     GridChannels::ChReserved }
+};
 
 /// Number of valid channels.
-const int CHANNEL_COUNT = 9;
-const int MAX_CHAN_MAP_LEN = 2048;
+static constexpr int CHANNEL_COUNT = COUNT_OF(chInfo) - 1;
+static constexpr int MAX_CHAN_MAP_LEN = 2048;
 
-UT_StringArray getPhxChannels(const char* loadPath);
+UT_StringArray loadChannelsNames(const char* loadPath);
 
 } // namespace VRayForHoudini
 } // namespace PhxChannelsUtils

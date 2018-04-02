@@ -11,20 +11,7 @@
 
 #include "vfh_phx_channels_utils.h"
 
-const VRayForHoudini::PhxChannelsUtils::ChannelInfo VRayForHoudini::PhxChannelsUtils::chInfo[] = {
-	{ "channel_smoke", "Smoke",       GridChannels::ChSm },
-	{ "channel_temp",  "Temperature", GridChannels::ChT },
-	{ "channel_fuel",  "Fuel",        GridChannels::ChFl },
-	{ "channel_vel_x", "Velocity X",  GridChannels::ChVx },
-	{ "channel_vel_y", "Velocity Y",  GridChannels::ChVy },
-	{ "channel_vel_z", "Velocity Z",  GridChannels::ChVz },
-	{ "channel_red",   "Color R",     GridChannels::ChU },
-	{ "channel_green", "Color G",     GridChannels::ChV },
-	{ "channel_blue",  "Color B",     GridChannels::ChW },
-	{ "INVALID",       "INVALID",     GridChannels::ChReserved },
-};
-
-UT_StringArray VRayForHoudini::PhxChannelsUtils::getPhxChannels(const char* loadPath)
+UT_StringArray VRayForHoudini::PhxChannelsUtils::loadChannelsNames(const char* loadPath)
 {
 	using namespace VRayForHoudini::PhxChannelsUtils;
 
