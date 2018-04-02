@@ -60,7 +60,7 @@
             default { "" }
             range   { 0 1 }
             export  none
-            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_custom_handling" "1" }
         }
         parm {
             name    "isz"
@@ -70,7 +70,7 @@
             default { "" }
             range   { 0 1 }
             export  none
-            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_custom_handling" "1" }
         }
         parm {
             name    "parm18"
@@ -83,7 +83,7 @@
             export  none
             parmtag { "editor" "1" }
             parmtag { "script_callback_language" "python" }
-            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_custom_handling" "1" }
         }
         parm {
             name    "anim_mode"
@@ -239,7 +239,7 @@
             default { "0" }
             export  none
             parmtag { "cook_dependent" "1" }                
-            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_custom_handling" "1" }
         }
         parm {
             name    "channel_temp"
@@ -248,7 +248,7 @@
             default { "0" }
             export  none
             parmtag { "cook_dependent" "1" }                            
-            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_custom_handling" "1" }
         }
         parm {
             name    "channel_fuel"
@@ -257,7 +257,7 @@
             default { "0" }
             export  none
             parmtag { "cook_dependent" "1" }                
-            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_custom_handling" "1" }
         }
         parm {
             name    "channel_vel_x"
@@ -266,7 +266,7 @@
             default { "0" }
             export  none
             parmtag { "cook_dependent" "1" }                
-            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_custom_handling" "1" }
         }
         parm {
             name    "channel_vel_y"
@@ -275,7 +275,7 @@
             default { "0" }
             export  none
             parmtag { "cook_dependent" "1" }                
-            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_custom_handling" "1" }
         }
         parm {
             name    "channel_vel_z"
@@ -284,7 +284,7 @@
             default { "0" }
             export  none
             parmtag { "cook_dependent" "1" }                
-            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_custom_handling" "1" }
         }
         parm {
             name    "channel_red"
@@ -294,7 +294,7 @@
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }                
-            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_custom_handling" "1" }
         }
         parm {
             name    "channel_green"
@@ -303,7 +303,7 @@
             default { "0" }
             export  none
             parmtag { "cook_dependent" "1" }                
-            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_custom_handling" "1" }
         }
         parm {
             name    "channel_blue"
@@ -312,7 +312,7 @@
             default { "0" }
             export  none
             parmtag { "cook_dependent" "1" }                
-            parmtag { "vray_custom_handling" " " }
+            parmtag { "vray_custom_handling" "1" }
         }
     }
 
