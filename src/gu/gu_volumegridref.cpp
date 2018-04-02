@@ -174,6 +174,7 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 		Log::getLog().debug("Loading cache took %dms", static_cast<int>(std::chrono::duration_cast<milliseconds>(tEndCache - tStart).count()));
 	}
 	else {
+		data.detailHandle.clear();
 		Log::getLog().error("Failed to load cache \"%s\"", _toChar(key.path));
 		return;
 	}
