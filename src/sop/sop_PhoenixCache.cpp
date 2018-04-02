@@ -41,11 +41,30 @@ void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, in
 
 PRM_Template *PhxShaderCache::getPrmTemplate()
 {
-	static Parm::PRMList myPrmList;
-	if (!myPrmList.empty()) {
-		return myPrmList.getPRMTemplate();
+	static PRM_Template* myPrmList = nullptr;
+	if (myPrmList) {
+		return myPrmList;
 	}
 
+	static PRM_ChoiceList channelChoices(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator);
+
+	myPrmList = Parm::getPrmTemplate("PhxShaderCache");
+
+	PRM_Template* prmIt = myPrmList;
+	while (prmIt && prmIt->getType() != PRM_LIST_TERMINATOR) {
+		if (prmIt->getType() == PRM_ORD) {
+			// Append choices to channel parms
+			for (int i = 0; i < CHANNEL_COUNT; ++i) {
+				if (vutils_strcmp(prmIt->getToken(), chInfo[i].propName) == 0) {
+					prmIt->setChoiceListPtr(&channelChoices);
+				}
+			}
+		}
+
+		++prmIt;
+	}
+
+<<<<<<< Updated upstream
 	static PRM_ChoiceList channelChoices(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator);
 
 	Parm::addPrmTemplateForPlugin("PhxShaderCache", myPrmList);
@@ -63,6 +82,9 @@ PRM_Template *PhxShaderCache::getPrmTemplate()
 	}
 
 	return myPrmList.getPRMTemplate();
+=======
+	return myPrmList;
+>>>>>>> Stashed changes
 }
 
 PhxShaderCache::PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry)
