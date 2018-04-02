@@ -25,18 +25,18 @@ void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, in
 	SOP_Node *sop = CAST_SOPNODE((OP_Node *)data);
 	PhxShaderCache *phxCache = dynamic_cast<PhxShaderCache *>(sop);
 	
-	if (phxCache) {
-		UT_StringArray phxChannels = phxCache->getChannelsNames();
-		
-		choicenames[0].setTokenAndLabel("0", "None");
-		for (int idx = 0; idx < phxChannels.size(); ++idx) {
-			choicenames[idx + 1].setTokenAndLabel(phxChannels[idx], phxChannels[idx]);
-		}
-		choicenames[phxChannels.size() + 1].setTokenAndLabel(nullptr, nullptr);
-	}
-	else {
+	if (!phxCache) {
 		choicenames[0].setTokenAndLabel(nullptr, nullptr);
+		return;
 	}
+
+	UT_StringArray phxChannels = phxCache->getChannelsNames();
+		
+	choicenames[0].setTokenAndLabel("0", "None");
+	for (int idx = 0; idx < phxChannels.size(); ++idx) {
+		choicenames[idx + 1].setTokenAndLabel(phxChannels[idx], phxChannels[idx]);
+	}
+	choicenames[phxChannels.size() + 1].setTokenAndLabel(nullptr, nullptr);
 }
 
 static PRM_SpareData phxShaderCacheSpareData(
