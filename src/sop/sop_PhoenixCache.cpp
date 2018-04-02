@@ -41,7 +41,7 @@ void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, in
 
 static PRM_SpareData phxShaderCacheSpareData(
 	PRM_SpareArgs()
-		<< PRM_SpareToken("vray_custom_handling", " ")
+		<< PRM_SpareToken("vray_custom_handling", "1")
 		<< PRM_SpareToken("cook_dependent", "1")
 );
 
