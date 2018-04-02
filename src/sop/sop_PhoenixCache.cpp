@@ -39,12 +39,6 @@ void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, in
 	choicenames[phxChannels.size() + 1].setTokenAndLabel(nullptr, nullptr);
 }
 
-static PRM_SpareData phxShaderCacheSpareData(
-	PRM_SpareArgs()
-		<< PRM_SpareToken("vray_custom_handling", "1")
-		<< PRM_SpareToken("cook_dependent", "1")
-);
-
 PRM_Template *PhxShaderCache::getPrmTemplate()
 {
 	static Parm::PRMList myPrmList;
@@ -52,56 +46,21 @@ PRM_Template *PhxShaderCache::getPrmTemplate()
 		return myPrmList.getPRMTemplate();
 	}
 
+	static PRM_ChoiceList channelChoices(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator);
+
 	Parm::addPrmTemplateForPlugin("PhxShaderCache", myPrmList);
 
-	myPrmList.switcherBegin("folder3");
-	myPrmList.addFolder("Channel Mapping");
-	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_smoke", "Smoke")
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
-		.setSpareData(&phxShaderCacheSpareData)
-		.setDefault(new PRM_Default(0))
-	);
-	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_temp",  "Temperature")
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
-		.setSpareData(&phxShaderCacheSpareData)
-		.setDefault(new PRM_Default(0))
-	);
-	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_fuel",  "Fuel")       
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
-		.setSpareData(&phxShaderCacheSpareData)
-		.setDefault(new PRM_Default(0))
-	);
-	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_vel_x", "Velocity.x") 
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
-		.setSpareData(&phxShaderCacheSpareData)
-		.setDefault(new PRM_Default(0))
-	);
-	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_vel_y", "Velocity.y") 
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
-		.setSpareData(&phxShaderCacheSpareData)
-		.setDefault(new PRM_Default(0))
-	);
-	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_vel_z", "Velocity.z") 
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
-		.setSpareData(&phxShaderCacheSpareData)
-		.setDefault(new PRM_Default(0))
-	);
-	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_red",   "Red")        
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
-		.setSpareData(&phxShaderCacheSpareData)
-		.setDefault(new PRM_Default(0))
-	);
-	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_green", "Green")      
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
-		.setSpareData(&phxShaderCacheSpareData)
-		.setDefault(new PRM_Default(0))
-	);
-	myPrmList.addPrm(Parm::PRMFactory(PRM_ORD, "channel_blue",  "Blue")       
-		.setChoiceList(new PRM_ChoiceList(PRM_CHOICELIST_SINGLE, PhxShaderCache::channelsMenuGenerator))
-		.setSpareData(&phxShaderCacheSpareData)
-		.setDefault(new PRM_Default(0))
-	);
-	myPrmList.switcherEnd();
+	PRM_Template* prmIt = myPrmList.getPRMTemplate();
+	while (prmIt && prmIt->getType() != PRM_LIST_TERMINATOR) {
+		// Append choices to channel parms
+		for (int i = 0; i < CHANNEL_COUNT; ++i) {
+			if (vutils_strcmp(prmIt->getToken(), chInfo[i].propName) == 0) {
+				prmIt->setChoiceListPtr(&channelChoices);
+			}
+		}
+
+		++prmIt;
+	}
 
 	return myPrmList.getPRMTemplate();
 }
