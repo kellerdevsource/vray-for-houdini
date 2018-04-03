@@ -188,7 +188,7 @@ void newSopOperator(OP_OperatorTable *table)
 		}
 	}
 
-	VFH_ADD_SOP_GENERATOR(table, PhxShaderCache);
+	VFH_ADD_SOP_GENERATOR_CUSTOM(table, PhxShaderCache, PhxShaderCache::getPrmTemplate());
 #endif
 
 #ifdef CGR_HAS_VRAYSCENE

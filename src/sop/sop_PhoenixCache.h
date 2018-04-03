@@ -21,8 +21,12 @@ class PhxShaderCache
 	: public NodePackedBase
 {
 public:
+	/// Fills @param choicenames with the Phoenix channels names
+	static void channelsMenuGenerator(void *data, PRM_Name *choicenames, int listsize, const PRM_SpareData *spare, const PRM_Parm *parm);
+	/// Returns the parms of this SOP
+	static PRM_Template* getPrmTemplate();
+
 	PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry);
-	virtual ~PhxShaderCache() {}
 
 protected:
 	// From VRayNode.
@@ -31,6 +35,22 @@ protected:
 	// From NodePackedBase.
 	void setTimeDependent() VRAY_OVERRIDE;
 	void updatePrimitive(const OP_Context &context) VRAY_OVERRIDE;
+
+private:
+	/// Get the channels names for the file "cache_path" in moment @param t
+	/// @param t Time, if not specified current time is assumed
+	UT_StringArray& getChannelsNames(fpreal t = -1.f) const;
+
+	/// Compares if the value of "cache_path" is the same in m_primOptions as in @param options
+	bool isSamePath(const OP_Options& options) const;
+
+	/// Evaluates the cache_path parm in the specified time
+	/// @param t Time
+	/// @retval UT_StringHolder with the cache_path value
+	UT_StringHolder evalCachePath(fpreal t) const;
+
+	mutable bool m_pathChanged; ///< True if the cache_path is changed
+	mutable UT_StringArray m_phxChannels; ///< The names of the channels in the cache file
 };
 
 } // namespace SOP

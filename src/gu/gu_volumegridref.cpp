@@ -12,50 +12,15 @@
 
 #include "vfh_log.h"
 #include "vfh_attr_utils.h"
+#include "vfh_phx_channels_utils.h"
 #include "gu_volumegridref.h"
 
 #include <GU/GU_PrimVolume.h>
-
-#include <aurinterface.h>
-#include <aurloader.h>
 
 #include <chrono>
 #include <QScopedPointer>
 
 namespace {
-
-/// Info for a single channel, could be casted to int to obtain the channel type for PHX
-struct ChannelInfo {
-	/// The name of the property in the plugin.
-	const char *propName;
-
-	/// The displayed name for the channel.
-	const char *displayName;
-
-	/// Value of the channel for PHX.
-	GridChannels::Enum type;
-
-	/// Get channel type.
-	explicit operator int() const {
-		return static_cast<int>(type);
-	}
-};
-
-const ChannelInfo chInfo[] = {
-	{ "channel_smoke", "Smoke",       GridChannels::ChSm },
-	{ "channel_temp",  "Temperature", GridChannels::ChT },
-	{ "channel_fuel",  "Fuel",        GridChannels::ChFl },
-	{ "channel_vel_x", "Velocity X",  GridChannels::ChVx },
-	{ "channel_vel_y", "Velocity Y",  GridChannels::ChVy },
-	{ "channel_vel_z", "Velocity Z",  GridChannels::ChVz },
-	{ "channel_red",   "Color R",     GridChannels::ChU },
-	{ "channel_green", "Color G",     GridChannels::ChV },
-	{ "channel_blue",  "Color B",     GridChannels::ChW },
-	{ "INVALID",       "INVALID",     GridChannels::ChReserved },
-};
-
-/// Number of valid channels.
-const int CHANNEL_COUNT = (sizeof(chInfo) / sizeof(chInfo[0])) - 1;
 
 UT_Matrix4F getCacheTm(VRayForHoudini::VRayVolumeGridRef::CachePtr &cache, bool flipYZ)
 {
@@ -98,13 +63,13 @@ UT_Matrix4F getCacheTm(VRayForHoudini::VRayVolumeGridRef::CachePtr &cache, bool 
 	return hou2phx * m4;
 }
 
-}
+} // namespace
 
 using namespace VRayForHoudini;
+using namespace VRayForHoudini::PhxChannelsUtils;
 
 typedef VRayBaseRefFactory<VRayVolumeGridRef> VRayVolumeGridRefFactory;
 
-static const int MAX_CHAN_MAP_LEN = 2048;
 static const int MAX_RESOLUTION = 255;
 static const QString framePattern("####");
 
@@ -305,30 +270,6 @@ int VRayVolumeGridRef::detailRebuild()
 	return res;
 }
 
-UT_StringArray VRayVolumeGridRef::getCacheChannels() const
-{
-	UT_StringArray channels;
-	if (!m_channelDirty) {
-		getPhxChannelMap(channels);
-		return channels;
-	}
-
-	const QString loadPath = getCurrentPath();
-
-	int chanIndex = 0;
-	int isChannelVector3D = 0;
-	char chanName[MAX_CHAN_MAP_LEN];
-
-	while (1 == aurGet3rdPartyChannelName(chanName, MAX_CHAN_MAP_LEN, &isChannelVector3D, _toChar(loadPath), chanIndex++)) {
-		channels.append(chanName);
-	}
-
-	SYSconst_cast(this)->m_channelDirty = false;
-	SYSconst_cast(this)->setPhxChannelMap(channels);
-
-	return channels;
-}
-
 void VRayVolumeGridRef::buildMapping()
 {
 	const QString loadPath = getCurrentPath();
@@ -342,7 +283,8 @@ void VRayVolumeGridRef::buildMapping()
 		setPhxChannelMap(UT_StringArray());
 	}
 	else {
-		UT_StringArray channels = getCacheChannels();
+		UT_StringArray channels;
+		getPhxChannelMap(channels);
 
 		// will hold names so we can use pointers to them
 		std::vector<UT_String> names;
