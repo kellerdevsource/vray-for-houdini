@@ -471,9 +471,17 @@ i64 VRayVolumeGridRef::getFullCacheVoxelCount() const
 
 i64 VRayVolumeGridRef::getCurrentCacheVoxelCount() const
 {
-	return getResolution() == MAX_RESOLUTION
+	fpreal64 resolution = getResolution();
+	i64 fullVoxelCount = getFullCacheVoxelCount();
+
+	int64 count_digits = static_cast<int64>(log10(fullVoxelCount)) + 1;
+	int64 relativity = count_digits <= 6 
+		? 1
+		: pow(10, count_digits - 6);
+
+	return resolution == MAX_RESOLUTION
 		? -1
-		: getFullCacheVoxelCount() * (getResolution() / MAX_RESOLUTION);
+		: fullVoxelCount * resolution / MAX_RESOLUTION /  relativity;
 }
 
 #ifdef HDK_16_5
