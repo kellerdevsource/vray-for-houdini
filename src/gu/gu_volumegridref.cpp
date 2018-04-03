@@ -445,10 +445,10 @@ QString VRayVolumeGridRef::getCurrentPath() const
 	return loadPath;
 }
 
-int VRayVolumeGridRef::getResolution() const
+fpreal64 VRayVolumeGridRef::getResolution() const
 {
 	const int resMode = getResMode();
-	const int previewRes = getPreviewRes();
+	const fpreal64 previewRes = getPreviewRes();
 
 	return resMode == 0 ? MAX_RESOLUTION : previewRes;
 }
@@ -473,7 +473,7 @@ i64 VRayVolumeGridRef::getCurrentCacheVoxelCount() const
 {
 	return getResolution() == MAX_RESOLUTION
 		? -1
-		: static_cast<double>(getResolution()) / MAX_RESOLUTION * getFullCacheVoxelCount();
+		: getFullCacheVoxelCount() * (getResolution() / MAX_RESOLUTION);
 }
 
 #ifdef HDK_16_5

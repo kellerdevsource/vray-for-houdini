@@ -171,7 +171,7 @@ private:
 	QString getCurrentPath() const;
 
 	/// Gets resolution of cache (from UI)
-	int getResolution() const;
+	fpreal64 getResolution() const;
 
 	/// Gets count of voxels in cache (in full resolution)
 	/// @return - -1 if generated key is invalid
