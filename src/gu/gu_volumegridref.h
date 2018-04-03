@@ -155,9 +155,6 @@ protected:
 	int detailRebuild() VRAY_OVERRIDE;
 
 private:
-	/// Sets fetch and evict callback.
-	void initDataCache() const;
-
 	/// Get all channels present in the current cache
 	UT_StringArray getCacheChannels() const;
 
@@ -184,8 +181,6 @@ private:
 	/// Build channel mapping, should be called after update to cache or ui mappings
 	void buildMapping();
 
-	/// Data cache used to cache last 10 volumes loaded, mutable (needs to be updated from const functions not changing other (immutable)members)
-	mutable VolumeCache m_dataCache;
 	mutable VolumeCacheData m_currentData;
 
 	/// True if channel mapping have changed since we last built them.
