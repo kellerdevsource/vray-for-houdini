@@ -105,7 +105,7 @@ using namespace VRayForHoudini;
 typedef VRayBaseRefFactory<VRayVolumeGridRef> VRayVolumeGridRefFactory;
 
 static const int MAX_CHAN_MAP_LEN = 2048;
-static const int MAX_RESOLUTION = 255;
+static const int MAX_RESOLUTION = 100;
 static const QString framePattern("####");
 
 static GA_PrimitiveTypeId theTypeId(-1);

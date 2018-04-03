@@ -46,8 +46,8 @@
             name    "preview_res"
             label   "Preview Resolution"
             type    int
-            default { "255" }
-            range   { 1 255 }
+            default { "50" }
+            range   { 1 50 }
             disablewhen "{ res_mode != 1 }"
             parmtag { "cook_dependent" "1" }
         }
