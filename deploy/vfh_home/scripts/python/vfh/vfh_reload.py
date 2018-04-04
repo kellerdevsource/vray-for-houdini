@@ -8,7 +8,7 @@
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
 
-def reload(m):
+def reload_module(m):
     import os
 
     HOUDINI_SOHO_DEVELOPER = os.environ.get("HOUDINI_SOHO_DEVELOPER", False)
@@ -16,3 +16,4 @@ def reload(m):
         return
 
     print "Reloading: %s" % (m.__file__)
+    reload(m)
