@@ -1973,6 +1973,7 @@ void VRayExporter::exportScene()
 
 	StringPluginSetHashMap pluginMap;
 	PluginNodeListMap shadowMap;
+	StringPluginSetHashMap instancedLights;
 
 	// export geometry nodes
 	OP_Bundle *activeGeo = getActiveGeometryBundle(*m_rop, m_context.getTime());
@@ -1981,6 +1982,13 @@ void VRayExporter::exportScene()
 			OP_Node *node = activeGeo->getNode(i);
 			if (node) {
 				exportObject(node);
+				UT_String instanceFullPath;
+				node->evalString(instanceFullPath, "instancepath", 0, getContext().getTime());
+				if (instanceFullPath.isstring()) {
+					const PluginSet *lights = objectExporter.getGenerated(node->getFullPath().buffer());
+					if (lights)
+						instancedLights[instanceFullPath.buffer()] = *lights;
+				}
 				OBJ_Node *objNode = node->castToOBJNode();
 				if (objNode) {
 					OBJ_Geometry *geom = objNode->castToOBJGeometry();
@@ -2003,7 +2011,7 @@ void VRayExporter::exportScene()
 			if (objNode) {
 				const VRay::Plugin &exportedLight = exportObject(objNode);
 				if (exportedLight) {
-					lightMap[objNode->getName().buffer()] = exportedLight;
+					lightMap[objNode->getFullPath().buffer()] = exportedLight;
 					OBJ_Light *lightNode = objNode->castToOBJLight();
 					if (lightNode) {
 						OP_Bundle *bundle = lightNode->getShadowMaskBundle(getContext().getTime());
@@ -2019,7 +2027,7 @@ void VRayExporter::exportScene()
 	}
 
 	if (pluginMap.size() || shadowMap.size()) {
-		exportLightLinker(pluginMap, shadowMap, lightMap);
+		exportLightLinker(pluginMap, shadowMap, lightMap, instancedLights);
 	}
 
 	UT_String env_network_path;
@@ -2854,69 +2862,188 @@ void VRayExporter::VfhBundleMap::freeMem()
 	bundles.clear();
 }
 
-void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, const PluginNodeListMap &shadowMap, const StringPluginMap &lightMap)
+void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap,
+	const PluginNodeListMap &shadowMap,
+	const StringPluginMap &lightMap,
+	const StringPluginSetHashMap &instancedLights)
 {
 	if ((pluginMap.empty() || lightMap.empty()) && shadowMap.empty())
 		return;
 
-	VRay::VUtils::ValueRefList lightLists(lightMap.size());
-	VRay::VUtils::ValueRefList shadowLists(shadowMap.size());
+	PluginTables lightTables;
+	PluginTables shadowTables;
 
-	int at = 0;
+	// fill the List of Lights and nodes they illuminate
 	for(StringPluginSetHashMap::const_iterator::DereferenceType &pluginSetMapIterator : pluginMap)
 	{
 		const PluginSet &pluginSet = pluginSetMapIterator.data();
-		const int pluginCount = pluginSet.size();
-		VRay::VUtils::ValueRefList lightList(pluginCount+1);
+		PluginTableWrapper lightTable;
 		StringPluginMap::const_iterator lightMapIterator = lightMap.find(pluginSetMapIterator.key());
 		if (lightMapIterator != lightMap.end()) {
 			const VRay::Plugin &lightPlugin = lightMapIterator.data();
 			if (lightPlugin) {
-				lightList[0] = VRay::VUtils::Value(lightPlugin);
-
-				int listAt = 1;
+				lightTable.pluginTable += lightPlugin;
 				for (const VRay::Plugin &plugin : pluginSet) {
 					if (plugin) {
-						lightList[listAt++] = VRay::VUtils::Value(plugin);
+						lightTable.pluginTable += plugin;
 					}
 				}
-
-				lightLists[at++].setList(lightList);
+				lightTables += lightTable;
+				// check if the light is instanced and export all instances if yes
+				StringPluginSetHashMap::const_iterator &instanceIt = instancedLights.find(pluginSetMapIterator.key());
+				if (instanceIt != instancedLights.end()) {
+					const PluginSet &pluginSet = instanceIt.data();
+					for (const VRay::Plugin &lightPlugin : pluginSet) {
+						lightTable.pluginTable[0] = lightPlugin;
+						lightTables += lightTable;
+					}
+				}
+			}
+		}
+		else {
+			StringPluginSetHashMap::const_iterator &instanceIt = instancedLights.find(pluginSetMapIterator.key());
+			if (instanceIt != instancedLights.end()) {
+				lightTable.pluginTable += VRay::Plugin();
+				const PluginSet &pluginSet = pluginSetMapIterator.data();
+				for (const VRay::Plugin &plugin : pluginSet) {
+					if (plugin)
+						lightTable.pluginTable += plugin;
+				}
+				for (const VRay::Plugin &lightPlugin : instanceIt.data()) {
+					lightTable.pluginTable[0] = lightPlugin;
+					lightTables += lightTable;
+				}
 			}
 		}
 	}
 
 	// Add any lights that don't illuminate anything
-	if (lightMap.size() > at) {
+	if (lightMap.size() > lightTables.count()) {
 		for (StringPluginMap::const_iterator::DereferenceType lightMapIt : lightMap) {
 			if (pluginMap.find(lightMapIt.key()) == pluginMap.end()) {
-				VRay::VUtils::ValueRefList lightList(1);
-				lightList[0] = VRay::VUtils::Value(lightMapIt.data());
-				lightLists[at++].setList(lightList);
+				PluginTableWrapper lightTable;
+				StringPluginSetHashMap::const_iterator &instancedLightsIt = instancedLights.find(lightMapIt.key());
+				if (instancedLightsIt == instancedLights.end()) {
+					lightTable.pluginTable += lightMapIt.data();
+					lightTables += lightTable;
+				}
+				else {
+					const PluginSet &pluginSet = instancedLightsIt.data();
+					for (const VRay::Plugin &lightPlugin : pluginSet) {
+						if (lightTable.pluginTable.empty())
+							lightTable.pluginTable += lightPlugin;
+						else
+							lightTable.pluginTable[0] = lightPlugin;
+						lightTables += lightTable;
+					}
+				}
 			}
 		}
 	}
 
-	VRay::VUtils::IntRefList lightInclusivityList(at);
-	for (int i = 0; i < at; i++) {
+	const int lightTablesSize = lightTables.count();
+	VRay::VUtils::ValueRefList lightLists(lightTablesSize);
+
+	for (int i = 0; i < lightTablesSize; i++) {
+		const PluginTableWrapper &pluginList = lightTables[i];
+		VRay::VUtils::ValueRefList lightList(pluginList.pluginTable.count());
+		int listAt = 0;
+		for (const VRay::Plugin &plugin : pluginList.pluginTable) {
+			lightList[listAt++] = VRay::VUtils::Value(plugin);
+		}
+		lightLists[i].setList(lightList);
+	}
+
+	VRay::VUtils::IntRefList lightInclusivityList(lightTablesSize);
+	for (int i = 0; i < lightTablesSize; i++) {
 		lightInclusivityList[i] = 1;
 	}
 
-	at = 0;
+	// Fill list of Lights and which objects cast shadows from them
 	for (PluginNodeListMap::const_iterator::DereferenceType objList : shadowMap) {
 		const OP_NodeList &list = objList.data();
-		VUtils::Table<VRay::Plugin> plugins;
+		PluginTableWrapper shadowTable;
 
-		for (OP_Node *node : list) {
-			if (node) {
-				OBJ_Node *objNode = node->castToOBJNode();
+		PluginSet const *instancedLightsSet = nullptr;
+		shadowTable.pluginTable += objList.key();
+		if (list.size()) {
+			for (OP_Node *node : list) {
+				if (node) {
+					instancedLightsSet = objectExporter.getGenerated(node->getFullPath().buffer());
+					OBJ_Node *objNode = node->castToOBJNode();
+					if (objNode) {
+						const ObjectExporter::GeomNodeCache *nodeMap = objectExporter.getExportedNodes(*objNode);
+						if (nodeMap) {
+							for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *nodeMap) {
+								const VRay::Plugin &plugin = it.data();
+								if (plugin) {
+									shadowTable.pluginTable += plugin;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		else {
+			for (StringPluginMap::const_iterator::DereferenceType light : lightMap) {
+				if (light.data() == objList.key()) {
+					StringPluginSetHashMap::const_iterator instanceIt = instancedLights.find(light.key());
+					if (instanceIt != instancedLights.end()) {
+						instancedLightsSet = &instanceIt.data();
+					}
+				}
+			}
+		}
+		shadowTables += shadowTable;
+		// if the light has been instanced, add it's instances as well
+		if (!instancedLightsSet) {
+			for (const VRay::Plugin &lightInstance : *instancedLightsSet) {
+				shadowTable.pluginTable[0] = lightInstance;
+				shadowTables += shadowTable;
+			}
+		}
+	}
+
+	for (StringPluginSetHashMap::const_iterator::DereferenceType &instancedLightIt : instancedLights) {
+		const StringPluginMap::const_iterator &lightMapIt = lightMap.find(instancedLightIt.key());
+		if (lightMapIt == lightMap.end()) {
+			PluginTableWrapper pluginTable;
+
+			pluginTable.pluginTable += VRay::Plugin();
+			OP_Node *opNode = OPgetDirector()->findNode(instancedLightIt.key());
+			if (opNode) {
+				OBJ_Node *objNode = opNode->castToOBJNode();
 				if (objNode) {
-					const ObjectExporter::GeomNodeCache *nodeMap = objectExporter.getExportedNodes(*objNode);
-					if (nodeMap) {
-						for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *nodeMap) {
-							const VRay::Plugin &plugin = it.data();
-							if (plugin) {
-								plugins += plugin;
+					OBJ_Light *objLight = objNode->castToOBJLight();
+					if (objLight) {
+						OP_Bundle *bundle = objLight->getShadowMaskBundle(getContext().getTime());
+						if (bundle) {
+							OP_NodeList list;
+							bundle->getMembers(list);
+							for (OP_Node *shadowedNode : list) {
+								if (shadowedNode) {
+									OBJ_Node *shadowedNodeObj = shadowedNode->castToOBJNode();
+									if (shadowedNodeObj) {
+										const ObjectExporter::GeomNodeCache *nodeMap = objectExporter.getExportedNodes(*shadowedNodeObj);
+										if (nodeMap) {
+											for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *nodeMap) {
+												const VRay::Plugin &plugin = it.data();
+												if (plugin) {
+													pluginTable.pluginTable += plugin;
+												}
+											}
+										}
+									}
+								}
+							}
+
+							for (const VRay::Plugin &plugin : instancedLightIt.data()) {
+								if (plugin) {
+									pluginTable.pluginTable[0] = plugin;
+
+									shadowTables += pluginTable;
+								}
 							}
 						}
 					}
@@ -2924,18 +3051,25 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap, co
 			}
 		}
 
-		VRay::VUtils::ValueRefList shadowedList(plugins.count() + 1);
-		shadowedList[0] = VRay::VUtils::Value(objList.key());
-
-		for (int i = 0; i < plugins.count(); i++) {
-			shadowedList[i + 1] = VRay::VUtils::Value(plugins[i]);
-		}
-		shadowLists[at++].setList(shadowedList);
 	}
 
-	VRay::VUtils::IntRefList shadowInclusivityList(at);
-	for (int i = 0; i < at; i++) {
+	const int shadowTablesSize = shadowTables.count();
+
+	VRay::VUtils::IntRefList shadowInclusivityList(shadowTablesSize);
+	for (int i = 0; i < shadowTablesSize; i++) {
 		shadowInclusivityList[i] = 1;
+	}
+
+	VRay::VUtils::ValueRefList shadowLists(shadowTablesSize);
+	for (int i = 0; i < shadowTablesSize; i++) {
+		const PluginTableWrapper &shadowPluginsList = shadowTables[i];
+		VRay::VUtils::ValueRefList shadowList(shadowPluginsList.pluginTable.count());
+		int listAt = 0;
+		for (const VRay::Plugin &plugin : shadowPluginsList.pluginTable) {
+			shadowList[listAt++] = VRay::VUtils::Value(plugin);
+		}
+
+		shadowLists[i].setList(shadowList);
 	}
 
 	Attrs::PluginDesc lightLinkerDesc("settings_lightlinker", "SettingsLightLinker");
@@ -2962,7 +3096,7 @@ void VRayExporter::fillLightLinkerGeomMap(OBJ_Geometry &node, StringPluginSetHas
 			for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *nodeMap) {
 				const VRay::Plugin &plugin = it.data();
 				if (plugin)
-					map[maskNode->getName().buffer()].insert(plugin);
+					map[maskNode->getFullPath().buffer()].insert(plugin);
 			}
 		}
 	}

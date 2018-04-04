@@ -2207,8 +2207,8 @@ void ObjectExporter::addGenerated(OP_Node &opNode, VRay::Plugin plugin)
 	}
 
 	const UT_StringHolder &key = getKeyFromOpNode(opNode);
-
 	PluginSet &pluginsSet = pluginCache.generated[key.buffer()];
+
 	pluginsSet.insert(plugin);
 }
 
@@ -2293,4 +2293,10 @@ ObjectExporter::GeomNodeCache* ObjectExporter::getExportedNodes(const OBJ_Node &
 	ObjectExporter::NodeMap::iterator it = pluginCache.instancerNodesMap.find(&node);
 
 	return it != pluginCache.instancerNodesMap.end() ? &it.data() : nullptr;
+}
+
+PluginSet* ObjectExporter::getGenerated(const char *key) {
+	OpPluginGenCache::iterator it = pluginCache.generated.find(key);
+
+	return it != pluginCache.generated.end() ? &it.data() : nullptr;
 }

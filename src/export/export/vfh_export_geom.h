@@ -349,6 +349,11 @@ public:
 	/// @returns true if the map has been set, false otherwise
 	ObjectExporter::GeomNodeCache* getExportedNodes(const OBJ_Node &node);
 
+	/// Get map of OP_Node of non directly instancable objects
+	/// @param key[in] Full path of node for which the plugins have been exported
+	/// @returns Pointer to set of plugins that corespond to the given node, may be null if not found
+	PluginSet* getGenerated(const char *key);
+
 private:
 	/// Push context frame when exporting nested object.
 	void pushContext(const PrimContext &value) { primContextStack.push(value); }
