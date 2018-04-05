@@ -70,7 +70,7 @@ using namespace VRayForHoudini::PhxChannelsUtils;
 
 typedef VRayBaseRefFactory<VRayVolumeGridRef> VRayVolumeGridRefFactory;
 
-static const int MAX_RESOLUTION = 255;
+static const int MAX_RESOLUTION = 100;
 static const QString framePattern("####");
 
 static GA_PrimitiveTypeId theTypeId(-1);
@@ -387,10 +387,10 @@ QString VRayVolumeGridRef::getCurrentPath() const
 	return loadPath;
 }
 
-int VRayVolumeGridRef::getResolution() const
+fpreal64 VRayVolumeGridRef::getResolution() const
 {
 	const int resMode = getResMode();
-	const int previewRes = getPreviewRes();
+	const fpreal64 previewRes = getPreviewRes();
 
 	return resMode == 0 ? MAX_RESOLUTION : previewRes;
 }
@@ -413,9 +413,17 @@ i64 VRayVolumeGridRef::getFullCacheVoxelCount() const
 
 i64 VRayVolumeGridRef::getCurrentCacheVoxelCount() const
 {
-	return getResolution() == MAX_RESOLUTION
+	fpreal64 resolution = getResolution();
+	i64 fullVoxelCount = getFullCacheVoxelCount();
+
+	int64 count_digits = static_cast<int64>(log10(fullVoxelCount)) + 1;
+	int64 relativity = count_digits <= 6 
+		? 1
+		: pow(10, count_digits - 6);
+
+	return resolution == MAX_RESOLUTION
 		? -1
-		: static_cast<double>(getResolution()) / MAX_RESOLUTION * getFullCacheVoxelCount();
+		: fullVoxelCount * resolution / MAX_RESOLUTION /  relativity;
 }
 
 #ifdef HDK_16_5
