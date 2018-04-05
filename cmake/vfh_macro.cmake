@@ -168,43 +168,23 @@ function(vfh_find_file)
 endfunction()
 
 # Generate launcher with all needed environment variables set.
-# NOTE: used to generate .bat launchers and also used in c++ launcher
+# NOTE: used to generate .bat launchers.
 function(vfh_generate_launcher)
-	cmake_parse_arguments(ARG "BATCH;RELEASE;CPP_LAUNCHER" "TEMPLATE_FILENAME;FILENAME;DESTINATION;BIN;TEMPLATE_DIR" "" ${ARGN})
+	cmake_parse_arguments(ARG "BATCH;RELEASE" "TEMPLATE_FILENAME;FILENAME;DESTINATION;BIN;TEMPLATE_DIR" "" ${ARGN})
 
 	if(NOT ARG_BIN)
-		if(ARG_CPP_LAUNCHER)
-			# Set executable file
+		if(WIN32)
 			if(ARG_BATCH)
-				set(EXE_FILE hbatch)
+				set(ARG_BIN "\"%HFS%\\bin\\hbatch.exe\"")
 			else()
-				set(EXE_FILE houdini)
+				set(ARG_BIN "start \"V-Ray For Houdini\" /D \"%USERPROFILE%\\Desktop\" \"%HFS%\\bin\\houdini.exe\"")
 			endif()
-
-			# Set working dir and executable extension
-			if(WIN32)
-				set(EXE_EXT ".exe")
-				set(HFS_DIR ${HOUDINI_INSTALL_ROOT})
-			else()
-				set(EXE_EXT "")
-				set(HFS_DIR ${HFS})
-			endif()
-
-			set(ARG_BIN ${HFS_DIR}/bin/${EXE_FILE}${EXE_EXT})
+		elseif(APPLE)
 		else()
-			if(WIN32)
-				if(ARG_BATCH)
-					set(ARG_BIN "\"%HFS%\\bin\\hbatch.exe\"")
-				else()
-					set(ARG_BIN "start \"V-Ray For Houdini\" /D \"%USERPROFILE%\\Desktop\" \"%HFS%\\bin\\houdini.exe\"")
-				endif()
-			elseif(APPLE)
+			if(ARG_BATCH)
+				set(ARG_BIN "\"\${HFS}/bin/hbatch\"")
 			else()
-				if(ARG_BATCH)
-					set(ARG_BIN "\"\${HFS}/bin/hbatch\"")
-				else()
-					set(ARG_BIN "\"\${HFS}/bin/houdini\" -foreground")
-				endif()
+				set(ARG_BIN "\"\${HFS}/bin/houdini\" -foreground")
 			endif()
 		endif()
 	endif()
@@ -261,20 +241,13 @@ function(vfh_generate_launcher)
 	               ${TMP_FILEPATH}
 	               @ONLY)
 
-	if(ARG_CPP_LAUNCHER)
-		# For cpp launcher we need to make the template now so we COPY instead of INSTALL
-		file(COPY ${TMP_FILEPATH}
-			DESTINATION
-				${ARG_DESTINATION})
-	else()
-		file(INSTALL ${TMP_FILEPATH}
-			DESTINATION
-				${ARG_DESTINATION}
-			FILE_PERMISSIONS
-				OWNER_READ OWNER_WRITE OWNER_EXECUTE
-				GROUP_READ GROUP_EXECUTE
-				WORLD_READ WORLD_EXECUTE)
-	endif()
+	file(INSTALL ${TMP_FILEPATH}
+		DESTINATION
+			${ARG_DESTINATION}
+		FILE_PERMISSIONS
+			OWNER_READ OWNER_WRITE OWNER_EXECUTE
+			GROUP_READ GROUP_EXECUTE
+			WORLD_READ WORLD_EXECUTE)
 
 	file(REMOVE ${TMP_FILEPATH})
 endfunction()

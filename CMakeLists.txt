@@ -26,8 +26,6 @@ option(BUILD_TESTING         "Enable build testing"           OFF)
 option(WITH_TESTS            "Run tests"                      OFF)
 option(WITH_TEST_APP         "Build AppSDK test applications" OFF)
 
-option(WITH_LAUNCHER         "Build development launcher"     OFF)
-
 option(USE_CONAN "Use internal Conan server for SDK" OFF)
 
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
@@ -88,10 +86,6 @@ if(WITH_VRAY_FOR_HOUDINI)
 		add_subdirectory(src/ipr)
 	endif()
 	add_subdirectory(src)
-	if(WITH_LAUNCHER)
-		add_subdirectory(launcher)
-		set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "vray_for_houdini_launcher")
-	endif()
 endif()
 
 if(WITH_TESTS)

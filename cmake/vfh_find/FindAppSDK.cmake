@@ -9,7 +9,7 @@
 #
 
 if(USE_CONAN)
-	vfh_install_xpak(PAK VRayForHoudiniAppSDK VERSION latest)
+	vfh_install_xpak(PAK "VRayForHoudiniAppSDK" VERSION latest)
 
 	set(_appsdk_root ${X_PAK}/VRayForHoudiniAppSDK)
 else()

@@ -384,6 +384,10 @@ HDF5_DISABLE_VERSION_CHECK=1
 			       "${HOUDINI_ENV}"
 			)
 
+			if(NOT WIN32)
+				string(REPLACE ";" ":" VFH_ENV_NEW "${VFH_ENV_NEW}")
+			endif()
+
 			file(WRITE ${HOUDINI_ENV_FILEPATH} "${VFH_ENV_NEW}")
 		endif()
 	endif()
@@ -438,20 +442,5 @@ if(INSTALL_RELEASE)
 	endif()
 else()
 	cgr_install_runtime(${PROJECT_NAME} ${VFH_DSO_DIRPATH})
-
-	if(WIN32)
-		set(TEMPLATE_FILENAME "hfs.local.bat.in")
-	elseif(APPLE)
-		set(TEMPLATE_FILENAME "hfs.local.osx.sh.in")
-	else()
-		set(TEMPLATE_FILENAME "hfs.local.sh.in")
-	endif()
-
-	file(TO_NATIVE_PATH ${VFH_DSO_DIRPATH} VFH_DSO_DIRPATH)
-	file(TO_NATIVE_PATH ${VFH_BIN_DIRPATH} VFH_BIN_DIRPATH)
-
-	vfh_generate_launcher(BATCH TEMPLATE_FILENAME ${TEMPLATE_FILENAME})
-	vfh_generate_launcher(      TEMPLATE_FILENAME ${TEMPLATE_FILENAME})
-
 	vfh_update_houdini_env()
 endif()
