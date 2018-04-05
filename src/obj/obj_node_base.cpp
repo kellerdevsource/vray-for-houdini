@@ -172,7 +172,7 @@ int isMeshLightSupportedGeometryType(const VRay::Plugin &geometry) {
 }
 
 static int fillLightPluginDesc(Attrs::PluginDesc &pluginDesc, OP_Node &objLight, const PrimitiveItem &item, const VRay::Transform &objTm) {
-	if (!item.geometry || !isMeshLightSupportedGeometryType(item.geometry)) {
+	if (item.geometry.isEmpty() || !isMeshLightSupportedGeometryType(item.geometry)) {
 		Log::getLog().warning("Unsupported geometry type for Mesh Light: %s ! Node name: %s",
 		                      item.geometry.getType(), pluginDesc.pluginName.c_str());
 		return 0;
@@ -292,7 +292,7 @@ static VRay::Plugin exportAttributeFromPathAuto(VRayExporter &exporter,
 		static_cast<BitmapBufferColorSpace>(Parm::getParmEnum(node, texColorSpaceAttrName.c_str(), bitmapBufferColorSpaceLinear, 0.0));
 
 	const VRay::Plugin texPlugin = exporter.exportNodeFromPathWithDefaultMapping(texPath, mappingType, colorSpace);
-	if (texPlugin) {
+	if (texPlugin.isNotEmpty()) {
 		pluginDesc.addAttribute(Attrs::PluginAttr(texAttrName, texPlugin));
 	}
 
@@ -308,7 +308,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightDome>::asPluginDesc(
 	const VRayExporter::DefaultMappingType domeMapping = VRayExporter::defaultMappingSpherical;
 
 	const VRay::Plugin domeTex = exportAttributeFromPathAuto(exporter, *this, "dome", domeMapping, pluginDesc);
-	if (!domeTex) {
+	if (domeTex.isEmpty()) {
 		pluginDesc.add(Attrs::PluginAttr("use_dome_tex", false));
 	}
 
@@ -330,7 +330,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightRectangle>::asPlugin
 	const VRayExporter::DefaultMappingType rectMapping = VRayExporter::defaultMappingChannel;
 
 	const VRay::Plugin rectTex = exportAttributeFromPathAuto(exporter, *this, "rect", rectMapping, pluginDesc);
-	if (!rectTex) {
+	if (rectTex.isEmpty()) {
 		pluginDesc.add(Attrs::PluginAttr("use_rect_tex", false));
 	}
 	else {

@@ -106,7 +106,7 @@ OP::VRayNode::PluginResult VOP::RenderChannelsContainer::asPluginDesc(Attrs::Plu
 		}
 		else {
 			VRay::Plugin chan_plugin = exporter.exportVop(chan_node, parentContext);
-			if (NOT(chan_plugin)) {
+			if (chan_plugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export render channel node connected to \"%s\", ignoring...",
 							getName().buffer(), chanSockName.c_str());
 			}

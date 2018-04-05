@@ -440,7 +440,7 @@ static VRay::Plugin exportPhysicalCamera(VRayExporter &self, const ViewParams &v
 	const PhysicalCameraParams &cameraPhysical = viewParams.cameraPhysical;
 
 	Attrs::PluginDesc pluginDesc(viewPluginCameraPhysical, "CameraPhysical");
-	pluginDesc.add(Attrs::PluginAttr("type", cameraPhysical.type));
+	pluginDesc.add(Attrs::PluginAttr("type", static_cast<int>(cameraPhysical.type)));
 	pluginDesc.add(Attrs::PluginAttr("film_width", cameraPhysical.film_width));
 	pluginDesc.add(Attrs::PluginAttr("focal_length", cameraPhysical.focal_length));
 	pluginDesc.add(Attrs::PluginAttr("zoom_factor", cameraPhysical.zoom_factor));

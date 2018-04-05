@@ -348,7 +348,7 @@ bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, PrimitiveItems &in
 		}
 
 		item.geometry = exporter.exportPlugin(geomDesc);
-		if (item.geometry) {
+		if (item.geometry.isNotEmpty()) {
 			instancerItems += item;
 		}
 	}
@@ -665,7 +665,7 @@ VRay::Plugin MeshExporter::getMaterial()
 
 	int matIndex = 0;
 
-	if (objectMaterial) {
+	if (objectMaterial.isNotEmpty()) {
 		matOpNodeToMatPlugin.insert(objMatNode, SubMaterial(objectMaterial, matIndex));
 	}
 

@@ -40,7 +40,7 @@
 
 #undef itoa
 
-inline VRay::Transform toAppSdkTm(const VUtils::TraceTransform &tm)
+FORCEINLINE VRay::Transform toAppSdkTm(const VUtils::TraceTransform &tm)
 {
 	return VRay::Transform(
 			VRay::Matrix(
@@ -52,7 +52,7 @@ inline VRay::Transform toAppSdkTm(const VUtils::TraceTransform &tm)
 }
 
 
-inline VUtils::TraceTransform toVutilsTm(const VRay::Transform &tm)
+FORCEINLINE VUtils::TraceTransform toVutilsTm(const VRay::Transform &tm)
 {
 	return VUtils::TraceTransform(
 			VUtils::Matrix(

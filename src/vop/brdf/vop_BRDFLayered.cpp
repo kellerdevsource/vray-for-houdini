@@ -242,7 +242,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 			const std::string &weightSockName = boost::str(boost::format("weight_%i") % i);
 
 			VRay::Plugin brdf_plugin = exporter.exportVop(brdf_node, parentContext);
-			if (NOT(brdf_plugin)) {
+			if (brdf_plugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export BRDF node connected to \"%s\", ignoring...",
 							getName().buffer(), brdfSockName.c_str());
 			}
@@ -263,7 +263,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 					weight_plugin = exporter.exportPlugin(weight_tex);
 				}
 
-				if (NOT(weight_plugin)) {
+				if (weight_plugin.isEmpty()) {
 					Log::getLog().error("Node \"%s\": Failed to export BRDF weight node connected to \"%s\", ignoring...",
 								getName().buffer(), brdfSockName.c_str());
 				}

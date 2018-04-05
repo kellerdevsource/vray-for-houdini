@@ -87,7 +87,7 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 			colPluginDesc.add(Attrs::PluginAttr("texture", Attrs::PluginAttr::AttrTypeAColor, colR, colG, colB, 1.0f));
 
 			VRay::Plugin colPlugin = exporter.exportPlugin(colPluginDesc);
-			if (colPlugin) {
+			if (colPlugin.isNotEmpty()) {
 				colorPlugins.push_back(VRay::Value(colPlugin));
 				positions.push_back(pos);
 				if (needTypes) {

@@ -225,7 +225,7 @@ VRay::Plugin VRayExporter::exportCopNodeWithDefaultMapping(COP2_Node &copNode, D
 	VRay::Plugin res;
 
 	const VRay::Plugin bitmapBuffer = exportCopNodeBitmapBuffer(copNode);
-	if (bitmapBuffer) {
+	if (bitmapBuffer.isNotEmpty()) {
 		Attrs::PluginDesc uvwgenDesc;
 		uvwgenDesc.pluginName = str(fmtPrefix % "DefaultMapping" % bitmapBuffer.getName()),
 		fillDefaultMappingDesc(mappingType, uvwgenDesc);
@@ -252,7 +252,7 @@ VRay::Plugin VRayExporter::exportCopNodeWithDefaultMapping(COP2_Node &copNode, D
 				break;
 		}
 
-		if (uvwgen) {
+		if (uvwgen.isNotEmpty()) {
 			Attrs::PluginDesc texBitmapDesc(getPluginName(&copNode, "TexBitmap"),
 											"TexBitmap");
 			texBitmapDesc.addAttribute(PluginAttr("bitmap", bitmapBuffer));
@@ -281,13 +281,13 @@ VRay::Plugin VRayExporter::exportFileTextureWithDefaultMapping(const UT_String &
 	VRay::Plugin res;
 
 	const VRay::Plugin bitmapBuffer = exportFileTextureBitmapBuffer(filePath, colorSpace);
-	if (bitmapBuffer) {
+	if (bitmapBuffer.isNotEmpty()) {
 		Attrs::PluginDesc uvwgenDesc;
 		uvwgenDesc.pluginName = str(fmtPrefix % "DefaultMapping" % bitmapBuffer.getName()),
 		fillDefaultMappingDesc(mappingType, uvwgenDesc);
 
 		const VRay::Plugin uvwgen = exportPlugin(uvwgenDesc);
-		if (uvwgen) {
+		if (uvwgen.isNotEmpty()) {
 			Attrs::PluginDesc texBitmapDesc(str(fmtPrefix % "TexBitmap" % bitmapBuffer.getName()),
 											"TexBitmap");
 			texBitmapDesc.addAttribute(PluginAttr("bitmap", bitmapBuffer));

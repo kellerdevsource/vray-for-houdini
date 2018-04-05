@@ -57,7 +57,7 @@ VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
 		material = exportPlugin(mtlPluginDesc);
 	}
 
-	if (material && isInteractive()) {
+	if (material.isNotEmpty() && isInteractive()) {
 		// Wrap material into MtlRenderStats to always have the same material name.
 		// Used when rewiring materials when running interactive RT session.
 		Attrs::PluginDesc pluginDesc(getPluginName(vopNode, "MtlStats"), "MtlRenderStats");
@@ -100,7 +100,7 @@ VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 		}
 	}
 
-	if (!material) {
+	if (material.isEmpty()) {
 		material = exportDefaultMaterial();
 	}
 
@@ -176,7 +176,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			creator->evalString(path, prm, 0, t);
 
 			const VRay::Plugin opPlugin = exportNodeFromPath(path);
-			if (opPlugin) {
+			if (opPlugin.isNotEmpty()) {
 				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, opPlugin));
 			}
 		}

@@ -483,7 +483,7 @@ VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportConte
 /// @param connectedPluginInfo Connected plugin info.
 static void setPluginValueFromConnectedPluginInfo(Attrs::PluginDesc &pluginDesc, const char *attrName, const ConnectedPluginInfo &conPluginInfo)
 {
-	if (!conPluginInfo.plugin)
+	if (conPluginInfo.plugin.isEmpty())
 		return;
 
 	if (!conPluginInfo.output.empty()) {
@@ -631,7 +631,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 		}
 
 		VRay::Plugin conPlugin = exportConnectedVop(vopNode, sockName.ptr(), parentContext);
-		if (!conPlugin) {
+		if (conPlugin.isEmpty()) {
 			if (!(attrDesc.flags & Parm::attrFlagLinkedOnly) &&
 				vrayNode->getVRayPluginType() == VRayPluginType::TEXTURE  &&
 				attrName == "uvwgen")
@@ -673,7 +673,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 			}
 		}
 
-		if (conPlugin) {
+		if (conPlugin.isNotEmpty()) {
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(vopNode, attrName.ptr());
 
 			// autoconvert color/float
@@ -728,7 +728,7 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 					opNode->evalString(opPath, parm->getToken(), 0, 0.0f);
 
 					const VRay::Plugin opPlugin = exportNodeFromPath(opPath);
-					if (opPlugin) {
+					if (opPlugin.isNotEmpty()) {
 						pluginDesc.addAttribute(Attrs::PluginAttr(attrName, opPlugin));
 					}
 				}
@@ -1549,7 +1549,7 @@ int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &
 			VRay::Plugin texture = exportNodeFromPathWithDefaultMapping(texPath,
 			                                                            defaultMappingChannelName,
 			                                                            bitmapBufferColorSpaceLinear);
-			if (!texture) {
+			if (texture.isEmpty()) {
 				return false;
 			}
 
@@ -1594,7 +1594,7 @@ int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &
 		OP_Node *texFloat = opNode.getInput(idxTexFloat);
 		if (texCol) {
 			VRay::Plugin texture = exportVop(texCol);
-			if (texture) {
+			if (texture.isNotEmpty()) {
 				const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(&opNode, "displacement_tex_color");
 				if (fromSocketInfo
 				    && fromSocketInfo->attrType >= Parm::ParmType::eOutputColor
@@ -1634,7 +1634,7 @@ int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &
 		}
 		if (texFloat) {
 			VRay::Plugin texture = exportVop(texFloat);
-			if (texture) {
+			if (texture.isNotEmpty()) {
 				const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(&opNode, "displacement_tex_float");
 				if (fromSocketInfo
 				    && fromSocketInfo->attrType >= Parm::ParmType::eOutputColor

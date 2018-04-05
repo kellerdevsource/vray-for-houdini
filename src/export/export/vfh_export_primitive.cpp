@@ -385,7 +385,7 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 	UT_ASSERT_MSG(primPacked, "PhxShaderCache plugin is not set!");
 
 	VRay::Plugin cachePlugin = exportVRayVolumeGridRef(objNode, *primPacked);
-	if (!cachePlugin) {
+	if (cachePlugin.isEmpty()) {
 		UT_ASSERT_MSG(primPacked, "PhxShaderCache plugin is not exported!");
 		return;
 	}
@@ -428,7 +428,7 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 	UT_ASSERT_MSG(rendModeAttr, "Trying to export PhxShaderSim without setting it's _vray_render_mode.");
 
 	VRay::Plugin overwriteSim = pluginExporter.exportPlugin(phxSim);
-	if (rendModeAttr && overwriteSim) {
+	if (rendModeAttr && overwriteSim.isNotEmpty()) {
 		typedef VOP::PhxShaderSim::RenderMode RMode;
 
 		const auto rendMode = static_cast<RMode>(rendModeAttr->paramValue.valInt);

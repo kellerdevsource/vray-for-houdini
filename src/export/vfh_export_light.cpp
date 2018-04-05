@@ -76,7 +76,7 @@ VRay::Plugin VRayExporter::exportDefaultHeadlight(bool update)
 
 	if (update) {
 		VRay::Plugin light = m_renderer.getPlugin(theHeadlightNameToken);
-		if (!light) {
+		if (light.isEmpty()) {
 			return VRay::Plugin();
 		}
 	}

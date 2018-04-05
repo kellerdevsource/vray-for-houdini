@@ -133,7 +133,7 @@ OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &p
 		}
 		else {
 			const VRay::Plugin tex_plugin = exporter.exportVop(tex_node, parentContext);
-			if (!tex_plugin) {
+			if (tex_plugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
 							getName().buffer(), _toChar(texSockName));
 			}

@@ -62,7 +62,7 @@ void VRayExporter::fillNodeTexSky(const OP_Node &opNode, Attrs::PluginDesc &plug
 
 		// A bit tricky; should work in this particular case since TexSky will be avaluated last.
 		if (getObjectExporter().getPluginFromCache(*sunOp, sunPlugin)) {
-			if (sunPlugin) {
+			if (sunPlugin.isNotEmpty()) {
 				pluginDesc.add(PluginAttr("sun", sunPlugin));
 			}
 		}

@@ -185,7 +185,7 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 	}
 
 	VRay::Plugin plug = m_vray->getOrCreatePlugin(pluginDesc.pluginName, pluginDesc.pluginID);
-	if (!plug) {
+	if (plug.isEmpty()) {
 		VRay::Error err = m_vray->getLastError();
 		if (err != VRay::SUCCESS) {
 			Log::getLog().error("Error creating plugin: %s",
@@ -229,7 +229,7 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 				plugin.setValue(p.paramName, p.paramValue.valPlugin);
 			}
 			else {
-				plugin.setValue(p.paramName, p.paramValue.valPlugin, p.paramValue.valPluginOutput);
+				plugin.setValue(p.paramName, VRay::PluginRef(p.paramValue.valPlugin, p.paramValue.valPluginOutput.c_str()));
 			}
 		}
 		else if (p.paramType == PluginAttr::AttrTypeTransform) {

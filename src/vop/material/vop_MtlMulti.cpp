@@ -192,7 +192,7 @@ OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &plugin
 		else {
 			VRay::Plugin mtl_plugin = exporter.exportVop(mtl_node, parentContext);
 
-			if (NOT(mtl_plugin)) {
+			if (mtl_plugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export material node connected to \"%s\", ignoring...",
 							getName().buffer(), mtlSockName.c_str());
 			}

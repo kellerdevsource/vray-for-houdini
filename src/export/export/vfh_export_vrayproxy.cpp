@@ -151,7 +151,8 @@ VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, c
 			if (sopNode) {
 				OBJ_Node *objNode = CAST_OBJNODE(sopNode->getParentNetwork());
 				if (objNode) {
-					if (!exporter.getObjectExporter().exportNode(*objNode, sopNode)) {
+					const VRay::Plugin &nodePlugin = exporter.getObjectExporter().exportNode(*objNode, sopNode);
+					if (nodePlugin.isEmpty()) {
 						err.setError(__FUNCTION__,
 							SOP_ERR_FILEGEO,
 							"Could not export \"%s\" as proxy.", sopNode->getName().c_str());

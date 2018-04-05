@@ -130,7 +130,7 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 		}
 		else {
 			VRay::Plugin texPlugin = exporter.exportVop(texNode, parentContext);
-			if (!texPlugin) {
+			if (texPlugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
 									getName().buffer(), _toChar(texSockName));
 			}

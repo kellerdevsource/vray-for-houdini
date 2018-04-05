@@ -20,7 +20,6 @@ macro(use_vray_osl)
 
 	include_directories(${VRayOSL_INCLUDES})
 	link_directories(${VRayOSL_LIBRARIES})
-	add_definitions(-DWITH_VRAY_OSL)
 endmacro()
 
 macro(link_with_vray_osl _name)

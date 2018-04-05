@@ -278,7 +278,7 @@ VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
 		}
 
 		VRay::Plugin plugin = objectExporter.exportObject(*objNode);
-		if (!plugin) {
+		if (plugin.isEmpty()) {
 			Log::getLog().error("Error exporting OBJ: %s [%s]",
 								opNode->getName().buffer(),
 								objOpType.buffer());
@@ -344,9 +344,9 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 			continue;
 		}
 
-		Attrs::PluginDesc nodePluginDesc(VRayExporter::getPluginName(objNode), "Node");
+		const Attrs::PluginDesc nodePluginDesc(VRayExporter::getPluginName(objNode), "Node");
 		VRay::Plugin nodePlugin = exportPlugin(nodePluginDesc);
-		if (NOT(nodePlugin)) {
+		if (nodePlugin.isEmpty()) {
 			continue;
 		}
 
@@ -356,11 +356,11 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 	pluginDesc.addAttribute(Attrs::PluginAttr("exclusion_nodes", nodePluginList));
 
 	// transform
-	pluginDesc.addAttribute(Attrs::PluginAttr("transform", VRayExporter::getObjTransform(&clipperNode, m_context, NOT(clipNodePlugin))));
+	pluginDesc.addAttribute(Attrs::PluginAttr("transform", VRayExporter::getObjTransform(&clipperNode, m_context, clipNodePlugin.isEmpty())));
 
 	// material
-	VRay::Plugin mtlPlugin = exportMaterial(clipperNode.getMaterialNode(t));
-	if (mtlPlugin) {
+	const VRay::Plugin &mtlPlugin = exportMaterial(clipperNode.getMaterialNode(t));
+	if (mtlPlugin.isNotEmpty()) {
 		pluginDesc.addAttribute(Attrs::PluginAttr("material", mtlPlugin));
 	}
 
