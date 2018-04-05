@@ -120,6 +120,57 @@ void PhxShaderCache::setTimeDependent()
 	flags().setTimeDep(raw.findString("$F", false, false));
 }
 
+int PhxShaderCache::getFrame(fpreal t) const
+{
+	float frame = OPgetDirector()->getChannelManager()->getFrame(t);
+	const exint animLen = evalInt("max_length", 0, t);
+	const float fractionalLen = animLen * evalFloat("play_speed", 0, t);
+
+	switch (evalInt("max_length", 0, t)) {
+	case directIndex: {
+		frame = evalFloat("t2f", 0, t);
+		break;
+	}
+	case standard: {
+		frame = evalFloat("play_speed", 0, t) * (frame - evalInt("play_at", 0, t));
+
+		if (fractionalLen > 1e-4f) {
+			if (frame < 0.f || frame > fractionalLen) {
+				if (evalInt("load_nearest", 0, t)) {
+					// clamp frame in [0, animLen]
+					frame = std::max(0.f, std::min(fractionalLen, frame));
+				}
+				else {
+					frame = INT_MIN;
+				}
+			}
+		}
+
+		frame += evalInt("read_offset", 0, t);
+		break;
+	}
+	case loop: {
+		frame = evalFloat("play_speed", 0, t) * (frame - evalInt("play_at", 0, t));
+
+		if (fractionalLen > 1e-4f) {
+			while (frame < 0) {
+				frame += fractionalLen;
+			}
+			while (frame > fractionalLen) {
+				frame -= fractionalLen;
+			}
+		}
+
+		frame += evalInt("read_offset", 0, t);
+		break;
+	}
+	default:
+		break;
+	}
+
+	return frame;
+}
+
 UT_StringHolder PhxShaderCache::evalCachePath(fpreal t) const
 {
 	using namespace std;

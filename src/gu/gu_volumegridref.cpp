@@ -326,57 +326,6 @@ void VRayVolumeGridRef::buildMapping()
 	setUsrchmap(chanMap.buffer());
 }
 
-int VRayVolumeGridRef::getFrame() const
-{
-	float frame = getCurrentFrame();
-	const float animLen = getMaxLength();
-	const float fractionalLen = animLen * getPlaySpeed();
-
-	switch (getAnimMode()) {
-		case directIndex: {
-			frame = getT2F();
-			break;
-		}
-		case standard: {
-			frame = getPlaySpeed() * (frame - getPlayAt());
-
-			if (fractionalLen > 1e-4f) {
-				if (frame < 0.f || frame > fractionalLen) {
-					if (getLoadNearest()) {
-						// clamp frame in [0, animLen]
-						frame = std::max(0.f, std::min(fractionalLen, frame));
-					}
-					else {
-						frame = INT_MIN;
-					}
-				}
-			}
-
-			frame += getReadOffset();
-			break;
-		}
-		case loop: {
-			frame = getPlaySpeed() * (frame - getPlayAt());
-
-			if (fractionalLen > 1e-4f) {
-				while (frame < 0) {
-					frame += fractionalLen;
-				}
-				while (frame > fractionalLen) {
-					frame -= fractionalLen;
-				}
-			}
-
-			frame += getReadOffset();
-			break;
-		}
-		default:
-			break;
-	}
-
-	return frame;
-}
-
 QString VRayVolumeGridRef::getCurrentPath() const
 {
 	QString loadPath = getCachePath();

@@ -84,13 +84,6 @@ namespace VRayForHoudini {
 class VRayVolumeGridRef
 	: public VRayVolumeGridRefBase
 {
-	// These *must* match Phoenix values.
-	enum AnimationMode {
-		standard = 0,
-		directIndex = 1,
-		loop = 2,
-	};
-
 public:
 	typedef std::shared_ptr<IAur> CachePtr;
 
@@ -163,9 +156,6 @@ private:
 
 	/// Generates VolumeCacheKey from current data
 	VolumeCacheKey genKey() const;
-
-	/// Get current cache frame based on current frame + cache play settings
-	int getFrame() const;
 
 	/// Returns fully resolved cache load path.
 	QString getCurrentPath() const;
