@@ -1,20 +1,25 @@
 V-Ray For Houdini
 =================
 
-License
--------
+Source Code License
+-------------------
 
     https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 
+V-Ray License Requirements
+--------------------------
+
+* V-Ray 4.x Render Node license
+* V-Ray Application SDK 4.x license
 
 Binary Builds
 -------------
 
 Binary builds are available at "[V-Ray For Houdini](https://nightlies.chaosgroup.com/main#/vray4houdini)" section at http://nightlies.chaosgroup.com/.
 
-You'll have to request access at support@chaosgroup.com for this section.
+You may need to request access for this section at support@chaosgroup.com.
 
-Build archive name description:
+Archive name description:
 
 ```
     vfh-701-078856b-hfs16.0.600-qt5-windows.zip
@@ -35,7 +40,7 @@ Houdini License Restrictions
 
 * Indie
 
-    - Maximum render size for animations is 1920 x 1080.
+    - Maximum render size for animations is 1920 x 1080 (for 16.5 and later 4096 x 4096).
     - *.vrscene file export is not allowed.
 
 Building From Source
@@ -60,7 +65,6 @@ Building From Source
 * Python in `%PATH%`
 
 * Ninja (> 1.5.x, optional)
-
 
 ### Installation
 
