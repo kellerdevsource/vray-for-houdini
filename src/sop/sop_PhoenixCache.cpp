@@ -10,6 +10,8 @@
 
 #ifdef CGR_HAS_AUR
 
+#include <regex>
+
 #include "sop_PhoenixCache.h"
 
 #include "vfh_attr_utils.h"
@@ -120,11 +122,28 @@ void PhxShaderCache::setTimeDependent()
 
 UT_StringHolder PhxShaderCache::evalCachePath(fpreal t) const
 {
+	using namespace std;
+
 	UT_String rawLoadPath;
 	evalStringRaw(rawLoadPath, "cache_path", 0, t);
-	
-	// Replace frame number with Phoenix compatible frame pattern.
-	rawLoadPath.changeWord("$F", "####");
+
+	regex framePattern("\\$F[0-9]+");
+	smatch matched;
+	string rawLoadPathStdS = rawLoadPath.toStdString();
+	if (regex_search(rawLoadPathStdS, matched, framePattern)) {
+		vassert(matched.size() == 1);
+
+		string matched_string = matched[0].str();
+		// remove $F, leave only number
+		matched_string.erase(matched_string.begin(), matched_string.begin() + 2);
+
+		int cache_number = std::stoi(matched_string);
+		string pattern;
+		pattern.append(cache_number, '#');
+
+		rawLoadPathStdS = regex_replace(rawLoadPathStdS, framePattern, pattern);
+		rawLoadPath = rawLoadPathStdS;
+	}
 
 	// Expand all the other variables.
 	CH_Manager *chanMan = OPgetDirector()->getChannelManager();
