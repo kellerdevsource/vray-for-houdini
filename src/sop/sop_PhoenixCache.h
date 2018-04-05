@@ -21,13 +21,6 @@ class PhxShaderCache
 	: public NodePackedBase
 {
 public:
-	// These *must* match Phoenix values.
-	enum AnimationMode {
-		standard = 0,
-		directIndex = 1,
-		loop = 2,
-	};
-
 	/// Fills @param choicenames with the Phoenix channels names
 	static void channelsMenuGenerator(void *data, PRM_Name *choicenames, int listsize, const PRM_SpareData *spare, const PRM_Parm *parm);
 	/// Returns the parms of this SOP
@@ -54,10 +47,10 @@ private:
 	/// Evaluates the cache_path parm in the specified time
 	/// @param t Time
 	/// @retval UT_StringHolder with the cache_path value
-	UT_StringHolder evalCachePath(fpreal t) const;
+	UT_StringHolder evalCachePath(fpreal t, bool sequencePath) const;
 
 	/// Get current cache frame based on current frame + cache play settings
-	int getFrame(fpreal t) const;
+	int evalCacheFrame(fpreal t) const;
 
 	mutable bool m_pathChanged; ///< True if the cache_path is changed
 	mutable UT_StringArray m_phxChannels; ///< The names of the channels in the cache file

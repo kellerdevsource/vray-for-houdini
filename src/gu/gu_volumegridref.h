@@ -157,6 +157,9 @@ private:
 	/// Generates VolumeCacheKey from current data
 	VolumeCacheKey genKey() const;
 
+	/// Get current cache frame based on current frame + cache play settings
+	int evalCacheFrame() const;
+
 	/// Returns fully resolved cache load path.
 	QString getCurrentPath() const;
 

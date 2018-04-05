@@ -66,7 +66,6 @@ UT_Matrix4F getCacheTm(VRayForHoudini::VRayVolumeGridRef::CachePtr &cache, bool 
 } // namespace
 
 using namespace VRayForHoudini;
-using namespace VRayForHoudini::PhxChannelsUtils;
 
 typedef VRayBaseRefFactory<VRayVolumeGridRef> VRayVolumeGridRefFactory;
 
@@ -85,8 +84,8 @@ static UT_String getDefaultMapping(const char *cachePath)
 {
 	UT_String defMapping("");
 
-	char buff[MAX_CHAN_MAP_LEN];
-	if (1 == aurGenerateDefaultChannelMappings(buff, MAX_CHAN_MAP_LEN, cachePath)) {
+	char buff[PhxChannelsUtils::MAX_CHAN_MAP_LEN];
+	if (1 == aurGenerateDefaultChannelMappings(buff, PhxChannelsUtils::MAX_CHAN_MAP_LEN, cachePath)) {
 		defMapping = UT_String(buff, true);
 	}
 
@@ -118,6 +117,8 @@ void VRayVolumeGridRef::fetchData(const VolumeCacheKey &key, VolumeCacheData &da
 
 void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheData &data, const i64 voxelCount, const bool infoOnly)
 {
+	using namespace PhxChannelsUtils;
+
 	typedef std::chrono::high_resolution_clock::time_point time_point;
 	typedef std::chrono::high_resolution_clock time_clock;
 	typedef std::chrono::milliseconds milliseconds;
@@ -237,6 +238,20 @@ VolumeCacheKey VRayVolumeGridRef::genKey() const
 	return VolumeCacheKey(getCurrentPath(), getUsrchmap(), getFlipYz());
 }
 
+int VRayVolumeGridRef::evalCacheFrame() const
+{
+	return PhxAnimUtils::evalCacheFrame(
+		getCurrentFrame(),
+		getMaxLength(),
+		getPlaySpeed(),
+		getAnimMode(),
+		getT2F(),
+		getPlayAt(),
+		getLoadNearest(),
+		getReadOffset()
+	);
+}
+
 GU_PackedFactory* VRayVolumeGridRef::getFactory() const
 {
 	return &theFactory;
@@ -272,6 +287,8 @@ int VRayVolumeGridRef::detailRebuild()
 
 void VRayVolumeGridRef::buildMapping()
 {
+	using namespace PhxChannelsUtils;
+
 	const QString loadPath = getCurrentPath();
 	if (loadPath.isEmpty())
 		return;
@@ -328,11 +345,9 @@ void VRayVolumeGridRef::buildMapping()
 
 QString VRayVolumeGridRef::getCurrentPath() const
 {
-	QString loadPath = getCachePath();
-	if (pathContainFramePattern(loadPath)) {
-		loadPath = loadPath.replace(framePattern,
-									QString::number(getFrame()));
-	}
+	UT_StringHolder loadPath = getCachePath();
+	PhxAnimUtils::evalPhxPattern(loadPath, this->evalCacheFrame());
+	
 	return loadPath;
 }
 

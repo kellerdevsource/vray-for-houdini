@@ -85,7 +85,7 @@ UT_StringArray & PhxShaderCache::getChannelsNames(fpreal t /*= -1.f*/) const
 	// Default value is current time
 	t = (t >= 0.f) ? t : OPgetDirector()->getTime();
 
-	UT_StringHolder cachePath = evalCachePath(t);
+	UT_StringHolder cachePath = evalCachePath(t, false);
 	m_phxChannels = PhxChannelsUtils::loadChannelsNames(cachePath);
 
 	m_pathChanged = false;
@@ -120,58 +120,21 @@ void PhxShaderCache::setTimeDependent()
 	flags().setTimeDep(raw.findString("$F", false, false));
 }
 
-int PhxShaderCache::getFrame(fpreal t) const
+int PhxShaderCache::evalCacheFrame(fpreal t) const
 {
-	float frame = OPgetDirector()->getChannelManager()->getFrame(t);
-	const exint animLen = evalInt("max_length", 0, t);
-	const float fractionalLen = animLen * evalFloat("play_speed", 0, t);
-
-	switch (evalInt("max_length", 0, t)) {
-	case directIndex: {
-		frame = evalFloat("t2f", 0, t);
-		break;
-	}
-	case standard: {
-		frame = evalFloat("play_speed", 0, t) * (frame - evalInt("play_at", 0, t));
-
-		if (fractionalLen > 1e-4f) {
-			if (frame < 0.f || frame > fractionalLen) {
-				if (evalInt("load_nearest", 0, t)) {
-					// clamp frame in [0, animLen]
-					frame = std::max(0.f, std::min(fractionalLen, frame));
-				}
-				else {
-					frame = INT_MIN;
-				}
-			}
-		}
-
-		frame += evalInt("read_offset", 0, t);
-		break;
-	}
-	case loop: {
-		frame = evalFloat("play_speed", 0, t) * (frame - evalInt("play_at", 0, t));
-
-		if (fractionalLen > 1e-4f) {
-			while (frame < 0) {
-				frame += fractionalLen;
-			}
-			while (frame > fractionalLen) {
-				frame -= fractionalLen;
-			}
-		}
-
-		frame += evalInt("read_offset", 0, t);
-		break;
-	}
-	default:
-		break;
-	}
-
-	return frame;
+	return PhxAnimUtils::evalCacheFrame(
+		OPgetDirector()->getChannelManager()->getFrame(t),
+		evalInt("max_length", 0, t),
+		evalFloat("play_speed", 0, t),
+		evalInt("anim_mode", 0, t),
+		evalFloat("t2f", 0, t),
+		evalInt("play_at", 0, t),
+		evalInt("load_nearest", 0, t),
+		evalInt("read_offset", 0, t)
+	);
 }
 
-UT_StringHolder PhxShaderCache::evalCachePath(fpreal t) const
+UT_StringHolder PhxShaderCache::evalCachePath(fpreal t, bool sequencePath) const
 {
 	using namespace std;
 
@@ -185,14 +148,22 @@ UT_StringHolder PhxShaderCache::evalCachePath(fpreal t) const
 		vassert(matched.size() == 1);
 
 		string matched_string = matched[0].str();
-		// remove $F, leave only number
+		// Remove $F, leave only number
 		matched_string.erase(matched_string.begin(), matched_string.begin() + 2);
+		int numberPadding = std::stoi(matched_string);
 
-		int cache_number = std::stoi(matched_string);
-		string pattern;
-		pattern.append(cache_number, '#');
+		string cacheFrameS;
+		if (sequencePath) {
+			cacheFrameS.append(numberPadding, '#');
+		}
+		else {
+			int cacheFrame = evalCacheFrame(t);
+			cacheFrameS = to_string(cacheFrame);
+			// Pad left with '0's
+			cacheFrameS.insert(cacheFrameS.begin(), numberPadding - cacheFrameS.size(), '0');
+		}
 
-		rawLoadPathStdS = regex_replace(rawLoadPathStdS, framePattern, pattern);
+		rawLoadPathStdS = regex_replace(rawLoadPathStdS, framePattern, cacheFrameS);
 		rawLoadPath = rawLoadPathStdS;
 	}
 
@@ -217,7 +188,7 @@ void PhxShaderCache::updatePrimitive(const OP_Context &context)
 
 	const int isTimeDependent = flags().getTimeDep();
 	if (isTimeDependent) {
-		UT_StringHolder cachePath = evalCachePath(t);
+		UT_StringHolder cachePath = evalCachePath(t, true);
 		primOptions.setOptionS("cache_path", cachePath);
 	}
 
