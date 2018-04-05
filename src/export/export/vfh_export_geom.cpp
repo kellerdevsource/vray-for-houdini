@@ -106,6 +106,9 @@ static const UT_String vrayPluginTypeNode = "Node";
 
 static const UT_String vrayUserAttrSceneName = "VRay_Scene_Node_Name";
 
+static const UT_String attrCd("Cd");
+static const UT_String attrIntensity("intensity");
+
 /// Identity transform.
 static VRay::Transform identityTm(1);
 
@@ -2093,12 +2096,21 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 			VUtils::swap(tm.matrix[1], tm.matrix[2]);
 		}
 
-		MtlOverrideItems::iterator oIt = primMaterial.overrides.find("Cd");
-		if (oIt != primMaterial.overrides.end()) {
-			const MtlOverrideItem &cdItem = oIt.data();
-
-			if (cdItem.getType() == MtlOverrideItem::itemTypeVector) {
-				pluginDesc.addAttribute(Attrs::PluginAttr("color_tex", cdItem.valueVector[0], cdItem.valueVector[1], cdItem.valueVector[2]));
+		for (const auto &it : primMaterial.overrides) {
+			const MtlOverrideItem &overrideItem = it.data();
+			if (attrCd.equal(it.key())) {
+				if (overrideItem.getType() == MtlOverrideItem::itemTypeVector) {
+					pluginDesc.addAttribute(Attrs::PluginAttr("color_tex",
+					                                          overrideItem.valueVector[0],
+					                                          overrideItem.valueVector[1],
+					                                          overrideItem.valueVector[2]));
+				}
+			}
+			else if (attrIntensity.equal(it.key())) {
+				if (overrideItem.getType() == MtlOverrideItem::itemTypeDouble) {
+					pluginDesc.addAttribute(Attrs::PluginAttr("intensity_tex",
+					                                          overrideItem.valueDouble));
+				}
 			}
 		}
 
