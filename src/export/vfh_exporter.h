@@ -126,7 +126,7 @@ struct PluginTableWrapper {
 	}
 };
 
-typedef VUtils::Table<PluginTableWrapper> PluginTables;
+typedef VUtils::Table<PluginTable*> PluginTables;
 
 struct ConnectedPluginInfo {
 	explicit ConnectedPluginInfo(VRay::Plugin plugin = VRay::Plugin(), const std::string &output = "")
