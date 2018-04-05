@@ -205,19 +205,15 @@ static void fillViewParams(VRayExporter &exporter, PyObject *viewParamsDict, Vie
 	OBJ_Node *cameraNode = nullptr;
 
 	const char *camera = PyString_AsString(PyDict_GetItemString(viewParamsDict, "camera"));
-	if (UTisstring(camera)) {
-		cameraNode = CAST_OBJNODE(getOpNodeFromPath(camera));
-	}
 
 	ROP_Node *iprRop = CAST_ROPNODE(exporter.getRopPtr());
 	if (iprRop) {
+		cameraNode = CAST_OBJNODE(getOpNodeFromPath(*iprRop, camera));
+
 		exporter.fillViewParamsFromRopNode(*iprRop, viewParams);
 
 		if (iprRop->evalInt("vfh_use_camera_settings", 0, 0.0)) {
-			UT_String cameraPath;
-			iprRop->evalString(cameraPath, "render_camera", 0, 0.0);
-
-			cameraNode = CAST_OBJNODE(getOpNodeFromPath(cameraPath));
+			cameraNode = getOBJNodeFromAttr(*iprRop, "render_camera");
 		}
 	}
 
@@ -334,7 +330,7 @@ static PyObject* vfhExportOpNode(PyObject*, PyObject *args, PyObject *keywds)
 	{
 		HOM_AutoLock autoLock;
 		if (WithExporter lock{}) {
-			OBJ_Node *objNode = CAST_OBJNODE(getOpNodeFromPath(opNodePath));
+			OBJ_Node *objNode = CAST_OBJNODE(OPgetDirector()->findNode(opNodePath));
 			if (objNode) {
 				Log::getLog().debug("vfhExportOpNode(\"%s\")", opNodePath);
 
@@ -388,7 +384,7 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 	HOM_AutoLock autoLock;
 
 	UT_String ropPath(rop);
-	OP_Node *ropNode = getOpNodeFromPath(ropPath);
+	OP_Node *ropNode = OPgetDirector()->findNode(ropPath);
 	if (ropNode) {
 		// Start the imdisplay thread so we can get pipe signals sooner
 		{

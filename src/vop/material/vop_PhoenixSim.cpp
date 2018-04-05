@@ -551,10 +551,7 @@ void PhxShaderSim::loadDataRanges()
 		}
 	}
 
-	UT_String sopPath;
-	evalString(sopPath, token, 0, 0);
-
-	SOP_Node *cacheSop = getSOPNodeFromPath(sopPath);
+	SOP_Node *cacheSop = getSOPNodeFromAttr(*this, token);
 	if (!cacheSop || !cacheSop->getOperator()->getName().startsWith("VRayNodePhxShaderCache")) {
 		Log::getLog().warning("Only a V-Ray PhxShaderCache sop can be selected!");
 		return;

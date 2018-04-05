@@ -327,15 +327,13 @@ void VRayExporter::TransformToMatrix4(const VUtils::TraceTransform &tm, UT_Matri
 
 OBJ_Node *VRayExporter::getCamera(const OP_Node *rop)
 {
+	vassert(rop);
+
 	OBJ_Node *camera = nullptr;
 
-	UT_String camera_path;
-	rop->evalString(camera_path, "render_camera", 0, 0.0);
-	if (NOT(camera_path.equal(""))) {
-		OP_Node *node = getOpNodeFromPath(camera_path);
-		if (node) {
-			camera = node->castToOBJNode();
-		}
+	OP_Node *node = getOpNodeFromAttr(*rop, "render_camera");
+	if (node) {
+		camera = node->castToOBJNode();
 	}
 
 	return camera;
@@ -2010,34 +2008,26 @@ void VRayExporter::exportScene()
 		}
 	}
 
-	UT_String env_network_path;
-	m_rop->evalString(env_network_path, "render_network_environment", 0, 0.0f);
-	if (NOT(env_network_path.equal(""))) {
-		OP_Node *env_network = getOpNodeFromPath(env_network_path);
-		if (env_network) {
-			OP_Node *env_node = VRayExporter::FindChildNodeByType(env_network, "VRayNodeSettingsEnvironment");
-			if (NOT(env_node)) {
-				Log::getLog().error("Node of type \"VRay SettingsEnvironment\" is not found!");
-			}
-			else {
-				exportEnvironment(env_node);
-				exportEffects(env_network);
-			}
+	OP_Node *env_network = getOpNodeFromAttr(*m_rop, "render_network_environment");
+	if (env_network) {
+		OP_Node *env_node = FindChildNodeByType(env_network, "VRayNodeSettingsEnvironment");
+		if (!env_node) {
+			Log::getLog().error("Node of type \"VRay SettingsEnvironment\" is not found!");
+		}
+		else {
+			exportEnvironment(env_node);
+			exportEffects(env_network);
 		}
 	}
 
-	UT_String channels_network_path;
-	m_rop->evalString(channels_network_path, "render_network_render_channels", 0, 0.0f);
-	if (NOT(channels_network_path.equal(""))) {
-		OP_Node *channels_network = getOpNodeFromPath(channels_network_path);
-		if (channels_network) {
-			OP_Node *chan_node = VRayExporter::FindChildNodeByType(channels_network, "VRayNodeRenderChannelsContainer");
-			if (NOT(chan_node)) {
-				Log::getLog().error("Node of type \"VRay RenderChannelsContainer\" is not found!");
-			}
-			else {
-				exportRenderChannels(chan_node);
-			}
+	OP_Node *channels_network = getOpNodeFromAttr(*m_rop, "render_network_render_channels");
+	if (channels_network) { 
+		OP_Node *chan_node = FindChildNodeByType(channels_network, "VRayNodeRenderChannelsContainer");
+		if (!chan_node) {
+			Log::getLog().error("Node of type \"VRay RenderChannelsContainer\" is not found!");
+		}
+		else {
+			exportRenderChannels(chan_node);
 		}
 	}
 
@@ -2413,9 +2403,7 @@ int VRayExporter::hasVelocityOn(OP_Node &rop) const
 {
 	const fpreal t = m_context.getTime();
 
-	UT_String rcNetworkPath;
-	rop.evalString(rcNetworkPath, "render_network_render_channels", 0, t);
-	OP_Node *rcNode = getOpNodeFromPath(rcNetworkPath, t);
+	OP_Node *rcNode = getOpNodeFromAttr(rop, "render_network_render_channels", t);
 	if (!rcNode) {
 		return false;
 	}

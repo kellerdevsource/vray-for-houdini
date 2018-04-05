@@ -305,7 +305,7 @@ VRay::Plugin VRayExporter::exportNodeFromPathWithDefaultMapping(const UT_String 
 	VRay::Plugin res;
 
 	if (path.startsWith(OPREF_PREFIX)) {
-		OP_Node *opNode = getOpNodeFromPath(path, getContext().getTime());
+		OP_Node *opNode = OPgetDirector()->findNode(path);
 		if (opNode) {
 			COP2_Node *copNode = opNode->castToCOP2Node();
 			VOP_Node *vopNode = opNode->castToVOPNode();

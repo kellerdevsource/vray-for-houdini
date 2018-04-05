@@ -81,7 +81,7 @@ static OP_Bundle* getBundleFromOpNodePrm(OP_Node &node, const char *pn, fpreal t
 
 	if (prm && prm->getSparePtr()) {
 		const PRM_SpareData	&prmSpareData = *prm->getSparePtr();
-		opcreator = UTverify_cast<OP_Network*>(getOpNodeFromPath(prmSpareData.getOpRelative()));
+		opcreator = UTverify_cast<OP_Network*>(OPgetDirector()->findNode(prmSpareData.getOpRelative()));
 		opfilter = prmSpareData.getOpFilter();
 	}
 

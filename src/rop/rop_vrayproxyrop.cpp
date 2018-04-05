@@ -175,19 +175,15 @@ int VRayProxyROP::getSOPList(fpreal time, SOPList &sopList)
 	// if no sops from input filter sop nodes from params
 	if (nSOPs >= sopList.size()) {
 		if (evalInt("use_soppath", 0, time)) {
-			UT_String soppath;
-			evalString(soppath, "soppath", 0, time);
-			SOP_Node *sopNode = getSOPNodeFromPath(soppath, time);
+			SOP_Node *sopNode = getSOPNodeFromAttr(*this, "soppath", time);
 			if (sopNode) {
 				sopList.append(sopNode);
 			}
 		}
 		else {
-			// get a manager that contains objects
-			UT_String root;
-			evalString(root, "root", 0, time);
-			OP_Network *rootnet = getOBJNodeFromPath(root, time);
-			rootnet = (rootnet)? rootnet : OPgetDirector()->getManager("obj");
+			// Get a manager that contains objects.
+			OP_Network *rootnet = getOBJNodeFromAttr(*this, "root", time);
+			rootnet = rootnet ? rootnet : OPgetDirector()->getManager("obj");
 
 			UT_ASSERT( rootnet );
 

@@ -296,22 +296,22 @@ VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
 
 VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 {
+	const fpreal t = getContext().getTime();
+
 	addOpCallback(&clipperNode, VRayExporter::RtCallbackVRayClipper);
-	fpreal t = getContext().getTime();
 
 	Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(&clipperNode, ""), "VRayClipper");
 
-	// find and export clipping geometry plugins
-	UT_String nodePath;
-	clipperNode.evalString(nodePath, "clip_mesh", 0, 0, t);
-	OP_Node *opNode = getOpNodeFromPath(nodePath, t);
 	VRay::Plugin clipNodePlugin;
-	if (   opNode
-		&& opNode->getOpTypeID() == OBJ_OPTYPE_ID
-		&& opNode->getUniqueId() != clipperNode.getUniqueId())
+
+	// Find and export clipping geometry plugins.
+	OP_Node *opNode = getOpNodeFromAttr(clipperNode, "clip_mesh", t);
+	if (opNode &&
+		opNode->getOpTypeID() == OBJ_OPTYPE_ID &&
+		opNode->getUniqueId() != clipperNode.getUniqueId())
 	{
 		OBJ_Node *objNode = opNode->castToOBJNode();
-		if (objNode->getObjectType() == OBJ_GEOMETRY) {
+		if (objNode && objNode->getObjectType() == OBJ_GEOMETRY) {
 			clipNodePlugin = exportObject(objNode);
 		}
 	}

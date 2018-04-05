@@ -71,6 +71,7 @@ set(EXPORTER_SOURCES
 	utils/vfh_prm_globals.cpp
 	utils/vfh_prm_templates.cpp
 	utils/vfh_sys_utils.cpp
+	utils/vfh_attr_utils.cpp
 	lib/vfh_vray_instances.cpp
 	op/op_node_base.cpp
 	rop/vfh_rop.cpp

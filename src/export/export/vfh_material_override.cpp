@@ -165,7 +165,7 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 					if (!primMaterial.matNode ||
 						mode == overrideMerge)
 					{
-						primMaterial.matNode = getOpNodeFromPath(stringVals[0].buffer());
+						primMaterial.matNode = OPgetDirector()->findNode(stringVals[0].buffer());
 					}
 				}
 			}
@@ -259,7 +259,7 @@ void VRayForHoudini::appendMaterialOverrides(PrimMaterial &primMaterial,
 {
 	// There is already some top-level material assigned.
 	if (!primMaterial.matNode) {
-		primMaterial.matNode = getOpNodeFromPath(matPath, t);
+		primMaterial.matNode = OPgetDirector()->findNode(matPath.buffer());
 	}
 
 	if (primMaterial.matNode && !materialOnly) {

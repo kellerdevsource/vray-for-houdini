@@ -193,53 +193,48 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 {
 	const fpreal t = exporter.getContext().getTime();
 
-	UT_String geometrypath;
-	evalString(geometrypath, "geometry", 0, t);
-	if (!geometrypath.equal("")) {
-		OBJ_Node *obj_node = getOBJNodeFromPath(geometrypath, t);
-		if (!obj_node) {
-			Log::getLog().error("Geometry node not found!");
-		}
-		else {
-			OBJ_Geometry *obj_geom = obj_node->castToOBJGeometry();
-			if (!obj_geom) {
-				Log::getLog().error("Geometry node export failed!");
-			}
-			else {
-				PrimitiveItems geomList;
-				exporter.getObjectExporter().exportGeometry(*obj_node, geomList);
-
-				const VRay::Transform &objTm =
-					VRayExporter::getObjTransform(this, exporter.getContext());
-
-				pluginDesc.pluginID = pluginID;
-				pluginDesc.pluginName = VRayExporter::getPluginName(this);
-				
-				if (geomList.count()) {
-					const PrimitiveItem &item = geomList[0];
-					fillLightPluginDesc(pluginDesc, *this, item, objTm);
-				}
-
-				for (int i = 1; i < geomList.count(); ++i) {
-					const PrimitiveItem &item = geomList[i];
-					
-					const std::string meshLightName =
-						pluginDesc.pluginName + "|" + std::to_string(i) + "|" + item.geometry.getName();
-
-					Attrs::PluginDesc meshLightDesc(meshLightName, pluginID);
-					if (!fillLightPluginDesc(meshLightDesc, *this, item, objTm)) {
-						continue;
-					}
-
-					exporter.setAttrsFromOpNodePrms(meshLightDesc, this);
-					exporter.exportPlugin(meshLightDesc);
-				}
-
-				return PluginResultContinue;
-			}
-		}
+	OBJ_Node *obj_node = getOBJNodeFromAttr(*this, "geometry", t);
+	if (!obj_node) {
+		Log::getLog().error("Geometry node not found!");
+		return PluginResultError;
 	}
-	return PluginResultError;
+
+	OBJ_Geometry *obj_geom = obj_node->castToOBJGeometry();
+	if (!obj_geom) {
+		Log::getLog().error("Geometry node export failed!");
+		return PluginResultError;
+	}
+
+	PrimitiveItems geomList;
+	exporter.getObjectExporter().exportGeometry(*obj_node, geomList);
+
+	const VRay::Transform &objTm =
+		VRayExporter::getObjTransform(this, exporter.getContext());
+
+	pluginDesc.pluginID = pluginID;
+	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+
+	if (geomList.count()) {
+		const PrimitiveItem &item = geomList[0];
+		fillLightPluginDesc(pluginDesc, *this, item, objTm);
+	}
+
+	for (int i = 1; i < geomList.count(); ++i) {
+		const PrimitiveItem &item = geomList[i];
+
+		const std::string meshLightName =
+			pluginDesc.pluginName + "|" + std::to_string(i) + "|" + item.geometry.getName();
+
+		Attrs::PluginDesc meshLightDesc(meshLightName, pluginID);
+		if (!fillLightPluginDesc(meshLightDesc, *this, item, objTm)) {
+			continue;
+		}
+
+		exporter.setAttrsFromOpNodePrms(meshLightDesc, this);
+		exporter.exportPlugin(meshLightDesc);
+	}
+
+	return PluginResultContinue;
 }
 
 template<>
@@ -250,10 +245,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::SunLight>::asPluginDesc(A
 
 	pluginDesc.addAttribute(Attrs::PluginAttr("up_vector", VRay::Vector(0.f,1.f,0.f)));
 
-	UT_String targetpath;
-	evalString(targetpath, "lookatpath", 0, exporter.getContext().getTime());
-
-	OP_Node *opNode = getOpNodeFromPath(targetpath, exporter.getContext().getTime());
+	OP_Node *opNode = getOpNodeFromAttr(*this, "lookatpath", exporter.getContext().getTime());
 	if (opNode) {
 		OBJ_Node *targetNode = CAST_OBJNODE(opNode);
 		if (targetNode) {

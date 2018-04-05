@@ -49,12 +49,7 @@ void VRayExporter::fillNodeTexSky(const OP_Node &opNode, Attrs::PluginDesc &plug
 		}
 	}
 	else {
-		UT_String sunOpPath;
-		opNode.evalString(sunOpPath, "sun", 0, 0.0);
-
-		if (sunOpPath.isstring()) {
-			sunOp = getOpNodeFromPath(sunOpPath);
-		}
+		sunOp = getOpNodeFromAttr(opNode, "sun");
 	}
 
 	if (sunOp) {

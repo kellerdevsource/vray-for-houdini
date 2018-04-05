@@ -702,9 +702,7 @@ VRay::Plugin MeshExporter::getMaterial()
 			}
 			else if (hasMaterialPathAttr) {
 				const UT_String matPath(materialPathHndl.get(primOffset));
-				if (!matPath.equal("")) {
-					primMtlNode = getOpNodeFromPath(matPath, ctx.getTime());
-				}
+				primMtlNode = getOpNodeFromPath(objNode, matPath, ctx.getTime());
 			}
 		}
 

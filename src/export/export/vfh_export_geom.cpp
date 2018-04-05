@@ -342,7 +342,7 @@ SubdivInfo ObjectExporter::getSubdivInfo(OBJ_Node &objNode, OP_Node *matNode)
 										  objNode.getFullPath().buffer());
 				}
 				else {
-					OP_Node *shopNode = getOpNodeFromPath(matPath, 0.0);
+					OP_Node *shopNode = getOpNodeFromPath(objNode, matPath);
 					if (shopNode) {
 						subdivInfo = getSubdivInfoFromVRayMaterialOutput(*shopNode);
 					}
@@ -1519,7 +1519,7 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 						const UT_String opPath              = pluginMappingPair[0].ptr();
 						const VUtils::CharString pluginName = pluginMappingPair[1].ptr();
 
-						OP_Node *opNode = getOpNodeFromPath(opPath, ctx.getTime());
+						OP_Node *opNode = getOpNodeFromPath(objNode, opPath, ctx.getTime());
 						if (opNode) {
 							VRay::Plugin opPlugin;
 							if (!getPluginFromCache(*opNode, opPlugin)) {
@@ -1957,7 +1957,7 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 		}
 		UT_ASSERT_MSG(instanceObjectPath.length(), "Instance object path is not set!");
 
-		OP_Node *instaceOpNode = getOpNodeFromPath(instanceObjectPath, ctx.getTime());
+		OP_Node *instaceOpNode = getOpNodeFromPath(objNode, instanceObjectPath, ctx.getTime());
 		UT_ASSERT_MSG(instanceObjectPath, "Instance object is not found!");
 
 		OBJ_Node *instaceObjNode = CAST_OBJNODE(instaceOpNode);

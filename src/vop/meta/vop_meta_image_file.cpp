@@ -165,7 +165,7 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 	UT_String path;
 	evalString(path, "BitmapBuffer_file", 0, t);
 	if (path.startsWith(OPREF_PREFIX)) {
-		OP_Node *opNode = getOpNodeFromPath(path, t);
+		OP_Node *opNode = getOpNodeFromAttr(*this, "BitmapBuffer_file", t);
 		if (opNode) {
 			COP2_Node *copNode = opNode->castToCOP2Node();
 			if (copNode) {
