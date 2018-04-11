@@ -10,8 +10,6 @@
 
 #ifdef CGR_HAS_AUR
 
-#include <regex>
-
 #include "sop_PhoenixCache.h"
 
 #include "vfh_attr_utils.h"
@@ -149,7 +147,8 @@ UT_StringHolder PhxShaderCache::evalCachePath(fpreal t, bool sequencePath) const
 	// Expand all the other variables.
 	CH_Manager *chanMan = OPgetDirector()->getChannelManager();
 	UT_String loadPath;
-	chanMan->expandString(rawLoadPathQtS.toLocal8Bit(), loadPath, t);
+	chanMan->expandString(rawLoadPathQtS.toLocal8Bit().data(), loadPath, t);
+	
 
 	return loadPath;
 }

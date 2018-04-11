@@ -12,15 +12,13 @@
 #ifndef VFH_PHX_CHANNELS_UTILS_H
 #define VFH_PHX_CHANNELS_UTILS_H
 
-#include <UT/UT_StringArray.h>
 #include <QString>
 #include <QRegularExpression>
+#include <UT/UT_StringArray.h>
 
 #include <aurloader.h>
 
 #include "systemstuff.h"
-
-#include <regex>
 
 namespace VRayForHoudini {
 namespace PhxChannelsUtils {
