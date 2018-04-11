@@ -11,7 +11,6 @@
 #include "vfh_attr_utils.h"
 #include "vfh_log.h"
 
-#include <OP/OP_Director.h>
 #include <OP/OP_Expression.h>
 
 using namespace VRayForHoudini;
@@ -24,19 +23,22 @@ OP_Node* getOpNodeFromPath(const OP_Node &node, const char *path, fpreal t)
 	if (!UTisstring(path))
 		return nullptr;
 
-	UT_String value(path);
-
-	int op_id = 0;
-	fpreal op_time = 0.0;
-	OPgetDirector()->evalOpPathString(value, 0, 0, t, op_id, op_time);
-
-	return findOp.getNode(value.buffer(), const_cast<OP_Node*>(&node), false);
+	return findOp.getNode(path, const_cast<OP_Node*>(&node), false);
 }
 
 OP_Node* getOpNodeFromAttr(const OP_Node &node, const char *attrName, fpreal t)
 {
 	UT_String value;
-	node.evalString(value, attrName, 0, t);
+
+	if (!value.startsWith(OPREF_PREFIX)) {
+		node.evalString(value, attrName, 0, t);
+	}
+	else {
+		int pi = 0;
+		int op_id = 0;
+		fpreal op_time = 0.0;
+		const_cast<OP_Node&>(node).evalOpPathString(value, attrName, pi, 0, t, op_id, op_time);
+	}
 
 	if (!value.isstring())
 		return nullptr;
