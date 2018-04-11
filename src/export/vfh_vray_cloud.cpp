@@ -108,7 +108,7 @@ static void findVRayCloudClient()
 	}
 
 	if (vrayCloudClient.isEmpty()) {
-		Log::getLog().error("V-Ray Cloud Client is not found! Please, register at https://vray.cloud!");
+		Log::getLog().error("V-Ray Cloud Client is not found! Please, visit https://www.chaosgroup.com/cloud");
 	}
 
 	vrayCloudClientChecked = true;
@@ -146,6 +146,9 @@ QString JobFilePath::createFilePath()
 
 void JobFilePath::removeFilePath(const QString &filePath)
 {
+	if (!QFile::exists(filePath))
+		return;
+
 	const int removeRes = QFile::remove(filePath);
 	if (!removeRes) {
 		Log::getLog().error("Failed to remove \"%s\"!", _toChar(filePath));
@@ -312,6 +315,17 @@ public:
 		stopButton->hide();
 	}
 
+	void appendText(const QByteArray &data) const {
+		QString text(QString(data).trimmed());
+		if (text.isEmpty())
+			return;
+
+		text = text.replace(urlMatch, urlMatchReplace);
+
+		editor->insertHtml(preTag.arg(text));
+		editor->insertPlainText("\n");
+	}
+
 private Q_SLOTS:
 	void onPressAbort() {
 		close();
@@ -362,17 +376,6 @@ protected:
 		}
 	}
 
-	void appendText(const QByteArray &data) const {
-		QString text(QString(data).trimmed());
-		if (text.isEmpty())
-			return;
-
-		text = text.replace(urlMatch, urlMatchReplace);
-
-		editor->insertHtml(preTag.arg(text));
-		editor->insertPlainText("\n");
-	}
-
 	void terminateProcess() {
 		if (proc.state() == QProcess::NotRunning)
 			return;
@@ -385,6 +388,7 @@ protected:
 		stopButton->setEnabled(false);
 
 		commands.clear();
+
 		proc.terminate();
 		proc.waitForFinished(2000);
 	}
@@ -456,6 +460,27 @@ int VRayForHoudini::Cloud::submitJob(const Job &job)
 	}
 
 	return true;
+}
+
+int VRayForHoudini::Cloud::isClientAvailable()
+{
+	findVRayCloudClient();
+
+	if (!vrayCloudClient.isEmpty())
+		return true;
+
+	// findVRayCloudClient() will print text error if client is not found.
+	if (HOU::isUIAvailable()) {
+		if (!cloudWindowInstance) {
+			cloudWindowInstance = new CloudWindow(cloudWindowInstance, QString(), RE_Window::mainQtWindow());
+			cloudWindowInstance->appendText("V-Ray Cloud Client is not found!");
+			cloudWindowInstance->appendText("Please, visit https://www.chaosgroup.com/cloud");
+			cloudWindowInstance->uploadCompleted();
+			cloudWindowInstance->show();
+		}
+	}
+
+	return false;
 }
 
 #ifndef Q_MOC_RUN

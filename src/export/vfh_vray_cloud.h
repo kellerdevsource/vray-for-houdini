@@ -129,6 +129,9 @@ private:
 /// @param job Job settings.
 int submitJob(const Job &job);
 
+/// Check if V-Ray Cloud Client is available at the system.
+int isClientAvailable();
+
 } // namespace Cloud
 } // namespace VRayForHoudini
 

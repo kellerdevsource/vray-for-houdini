@@ -14,6 +14,7 @@
 #include "vfh_prm_templates.h"
 #include "vfh_hou_utils.h"
 #include "vfh_gpu_device_select.h"
+#include "vfh_vray_cloud.h"
 
 #include <ROP/ROP_Error.h>
 #include <OBJ/OBJ_Geometry.h>
@@ -188,7 +189,7 @@ int VRayRendererNode::initSession(VfhSessionType sessionType, int nframes, fprea
 	if (!VRayExporter::getCamera(this)) {
 		Log::getLog().error("Camera is not set!");
 	}
-	else if (m_exporter.initRenderer(hasUI, false)) {
+	else {
 		// Force production mode for background rendering.
 		if (!hasUI) {
 			sessionType = VfhSessionType::production;
@@ -200,24 +201,32 @@ int VRayRendererNode::initSession(VfhSessionType sessionType, int nframes, fprea
 			}
 		}
 
-		const VRay::RendererOptions::RenderMode renderMode =
-			getRenderModeFromROP(*this, sessionType);
-
-		m_exporter.setRopPtr(this);
-
-		m_exporter.setSessionType(sessionType);
-		m_exporter.setExportMode(sessionType == VfhSessionType::cloud ? VRayExporter::ExpExport : getExportMode(*this));
-		m_exporter.setRenderMode(renderMode);
-		m_exporter.setDRSettings();
-
-		m_exporter.initExporter(getFrameBufferType(*this), nframes, tstart, tend);
-
-		// SOHO IPR handles this differently for now.
-		if (sessionType == VfhSessionType::rt) {
-			m_exporter.addOpCallback(this, RtCallbackRop);
+		if (sessionType == VfhSessionType::cloud) {
+			if (!Cloud::isClientAvailable()) {
+				return ROP_ABORT_RENDER;
+			}
 		}
 
-		error = m_exporter.getError();
+		if (m_exporter.initRenderer(hasUI, false)) {
+			const VRay::RendererOptions::RenderMode renderMode =
+				getRenderModeFromROP(*this, sessionType);
+
+			m_exporter.setRopPtr(this);
+
+			m_exporter.setSessionType(sessionType);
+			m_exporter.setExportMode(sessionType == VfhSessionType::cloud ? VRayExporter::ExpExport : getExportMode(*this));
+			m_exporter.setRenderMode(renderMode);
+			m_exporter.setDRSettings();
+
+			m_exporter.initExporter(getFrameBufferType(*this), nframes, tstart, tend);
+
+			// SOHO IPR handles this differently for now.
+			if (sessionType == VfhSessionType::rt) {
+				m_exporter.addOpCallback(this, RtCallbackRop);
+			}
+
+			error = m_exporter.getError();
+		}
 	}
 
 	return error;
