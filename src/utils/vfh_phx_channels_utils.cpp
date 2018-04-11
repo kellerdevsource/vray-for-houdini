@@ -50,8 +50,7 @@ int VRayForHoudini::PhxAnimUtils::evalCacheFrame(fpreal frame, exint max_length,
 				if (load_nearest) {
 					// clamp frame in [0, animLen]
 					frame = std::max(0.f, std::min(fractionalLen, static_cast<float>(frame)));
-				}
-				else {
+				} else {
 					frame = INT_MIN;
 				}
 			}
