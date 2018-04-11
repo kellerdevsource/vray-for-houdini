@@ -116,7 +116,6 @@ public:
 		UT_BoundingBox bbox;
 		DataRangeMap dataRange;
 	};
-	typedef Caches::LRUCache<VolumeCacheKey, VolumeCacheData, std::hash<VolumeCacheKey>, std::equal_to<VolumeCacheKey>, 10> VolumeCache;
 
 	/// Returns the primitive type ID.
 	static GA_PrimitiveTypeId typeId();
