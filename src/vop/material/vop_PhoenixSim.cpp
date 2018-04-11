@@ -397,7 +397,10 @@ void PhxShaderSim::setRampDefaults()
 		auto & smokeColor = m_ramps["dcolor_ramp"]->data(RampType_Color, ch);
 
 		// fire
-		const float fireColors[6] = { 1,0.094,0,  1,0.597,0.255 };
+		const float fireColors[6] = {
+			1.0f, 0.094f, 0.0f,
+			1.0f, 0.597f, 0.255f
+		};
 
 		for (int r = 0; r < 2; ++r) {
 			const float T = MINT + (MAXT - MINT) * r / (2 - 1);

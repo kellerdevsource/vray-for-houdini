@@ -38,8 +38,8 @@ struct VRayProxyRefKeyHasher {
 		} settingsKey = { key.lod
 			, key.f
 			, key.animType
-			, key.animOffset
-			, key.animSpeed
+			, VUtils::fast_floor(key.animOffset * 100.0)
+			, VUtils::fast_floor(key.animSpeed * 100.0)
 			, key.animOverride
 			, key.animLength
 			, key.previewFaces
