@@ -36,12 +36,12 @@ int VRayForHoudini::PhxAnimUtils::evalCacheFrame(fpreal frame, exint max_length,
 	const exint animLen = max_length;
 	const float fractionalLen = animLen * play_speed;
 
-	switch (anim_mode) {
-	case directIndex: {
+	switch (AnimMode(anim_mode)) {
+	case AnimMode::directIndex: {
 		frame = t2f;
 		break;
 	}
-	case standard: {
+	case AnimMode::standard: {
 		frame = play_speed * (frame - play_at);
 
 		if (fractionalLen > 1e-4f) {
@@ -58,7 +58,7 @@ int VRayForHoudini::PhxAnimUtils::evalCacheFrame(fpreal frame, exint max_length,
 		frame += read_offset;
 		break;
 	}
-	case loop: {
+	case AnimMode::loop: {
 		frame = play_speed * (frame - play_at);
 
 		if (fractionalLen > 1e-4f) {

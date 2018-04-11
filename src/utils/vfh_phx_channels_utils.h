@@ -68,7 +68,7 @@ UT_StringArray loadChannelsNames(const char* loadPath);
 namespace PhxAnimUtils {
 
 // These *must* match Phoenix values.
-enum AnimMode {
+enum class AnimMode {
 	standard = 0,
 	directIndex = 1,
 	loop = 2,
