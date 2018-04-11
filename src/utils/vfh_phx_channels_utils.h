@@ -13,10 +13,14 @@
 #define VFH_PHX_CHANNELS_UTILS_H
 
 #include <UT/UT_StringArray.h>
+#include <QString>
+#include <QRegularExpression>
 
 #include <aurloader.h>
 
 #include "systemstuff.h"
+
+#include <regex>
 
 namespace VRayForHoudini {
 namespace PhxChannelsUtils {
@@ -70,6 +74,11 @@ enum AnimMode {
 	loop = 2,
 };
 
+/// The pattern that Phoenix FD replaces with the current frame
+static const QRegularExpression phxFramePattern("#+");
+/// The pattern that Houdini replaces with the current frame
+static const QRegularExpression houFramePattern("\\$F[0-9]+");
+
 /// This is the formula used by Phoenix FD to get the frame number of the exported cache based on the animation options
 /// @param frame The frame from Houdini UI
 /// @param max_length Play Length
@@ -86,7 +95,9 @@ int evalCacheFrame(fpreal frame, exint max_length, fpreal play_speed, exint anim
 /// for example: from './vdb/hou-####.vdb' './vdb/hou-0013.vdb'
 /// @param path Path with some '#'s in it
 /// @param frame The number to replace the '#'s with
-void evalPhxPattern(UT_StringHolder& path, exint frame);
+void evalPhxPattern(QString &path, exint frame);
+
+void hou2PhxPattern(QString& path);
 
 } // namespace PhxAnimUtils
 } // namespace VRayForHoudini

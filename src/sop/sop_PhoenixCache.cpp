@@ -136,41 +136,20 @@ int PhxShaderCache::evalCacheFrame(fpreal t) const
 
 UT_StringHolder PhxShaderCache::evalCachePath(fpreal t, bool sequencePath) const
 {
-	using namespace std;
-
 	UT_String rawLoadPath;
 	evalStringRaw(rawLoadPath, "cache_path", 0, t);
 
-	regex framePattern("\\$F[0-9]+");
-	smatch matched;
-	string rawLoadPathStdS = rawLoadPath.toStdString();
-	if (regex_search(rawLoadPathStdS, matched, framePattern)) {
-		vassert(matched.size() == 1);
+	QString rawLoadPathQtS(rawLoadPath);
+	PhxAnimUtils::hou2PhxPattern(rawLoadPathQtS);
 
-		string matched_string = matched[0].str();
-		// Remove $F, leave only number
-		matched_string.erase(matched_string.begin(), matched_string.begin() + 2);
-		int numberPadding = std::stoi(matched_string);
-
-		string cacheFrameS;
-		if (sequencePath) {
-			cacheFrameS.append(numberPadding, '#');
-		}
-		else {
-			int cacheFrame = evalCacheFrame(t);
-			cacheFrameS = to_string(cacheFrame);
-			// Pad left with '0's
-			cacheFrameS.insert(cacheFrameS.begin(), numberPadding - cacheFrameS.size(), '0');
-		}
-
-		rawLoadPathStdS = regex_replace(rawLoadPathStdS, framePattern, cacheFrameS);
-		rawLoadPath = rawLoadPathStdS;
+	if (!sequencePath) {
+		PhxAnimUtils::evalPhxPattern(rawLoadPathQtS, evalCacheFrame(t));
 	}
 
 	// Expand all the other variables.
 	CH_Manager *chanMan = OPgetDirector()->getChannelManager();
 	UT_String loadPath;
-	chanMan->expandString(rawLoadPath.buffer(), loadPath, t);
+	chanMan->expandString(rawLoadPathQtS.toLocal8Bit(), loadPath, t);
 
 	return loadPath;
 }

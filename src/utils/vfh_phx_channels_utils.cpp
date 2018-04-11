@@ -12,7 +12,6 @@
 #include "vfh_phx_channels_utils.h"
 
 #include <algorithm>
-#include <regex>
 
 #include <vassert.h>
 
@@ -81,25 +80,32 @@ int VRayForHoudini::PhxAnimUtils::evalCacheFrame(fpreal frame, exint max_length,
 	return frame;
 }
 
-void VRayForHoudini::PhxAnimUtils::evalPhxPattern(UT_StringHolder &path, exint frame)
+void VRayForHoudini::PhxAnimUtils::evalPhxPattern(QString &path, exint frame)
 {
-	using namespace std;
+	QString cacheFrameS = QString::number(frame);
+	// last symbol of string
+	QChar *cacheFrameSIt = cacheFrameS.end() - 1;
+	for (QChar *pathIt = path.end() - 1; pathIt >= path.begin(); --pathIt) {
+		while (*pathIt == '#') {
+			if (cacheFrameSIt >= cacheFrameS.begin()) {
+				*pathIt = *cacheFrameSIt;
+				--cacheFrameSIt;
+			}
+			else {
+				*pathIt = '0';
+			}
+		}
+	}
+}
 
-	regex framePattern("#+");
-	smatch matched;
-	string loadPathStdS = path;
+void VRayForHoudini::PhxAnimUtils::hou2PhxPattern(QString &path)
+{
+	using namespace VRayForHoudini::PhxChannelsUtils;
 
-	if (regex_search(loadPathStdS, matched, framePattern)) {
-		vassert(matched.size() == 1);
-
-		string matched_string = matched[0].str();
-		int numberPadding = matched_string.size();
-
-		int cacheFrame = frame;
-		string cacheFrameS = to_string(cacheFrame);
-		// Pad left with '0's
-		cacheFrameS.insert(cacheFrameS.begin(), numberPadding - cacheFrameS.size(), '0');
-
-		path = regex_replace(loadPathStdS, framePattern, cacheFrameS);
+	QRegularExpressionMatch m = houFramePattern.match(path);
+	if (m.hasMatch()) {
+		int padding = m.captured().remove(0, 2).toInt();
+		QString phxPattern(padding, '#');
+		path.replace(houFramePattern, phxPattern);
 	}
 }

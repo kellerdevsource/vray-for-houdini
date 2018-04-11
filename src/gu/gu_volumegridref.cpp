@@ -345,7 +345,7 @@ void VRayVolumeGridRef::buildMapping()
 
 QString VRayVolumeGridRef::getCurrentPath() const
 {
-	UT_StringHolder loadPath = getCachePath();
+	QString loadPath = getCachePath();
 	PhxAnimUtils::evalPhxPattern(loadPath, this->evalCacheFrame());
 	
 	return loadPath;
