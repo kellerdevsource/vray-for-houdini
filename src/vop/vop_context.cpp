@@ -38,10 +38,13 @@ VOP::VRayVOPContextOPFilter::VRayVOPContextOPFilter()
 
 bool VOP::VRayVOPContextOPFilter::allowOperatorAsChild(OP_Operator *op)
 {
+	const VOP_OperatorInfo *info =
+		static_cast<const VOP_OperatorInfo*>(op->getOpSpecificData());
+
 	bool res = false;
-	auto info = static_cast<const VOP_OperatorInfo *>(op->getOpSpecificData());
-	res |= ((info)? info->getVopnetMask().startsWith("VRay") : false);
-	res |= m_allowedVOPs.count(op->getName().buffer());
+	res |= info ? info->getVopnetMask().startsWith("VRay") : false;
+	res |= bool(m_allowedVOPs.count(op->getName().buffer()));
+
 	return res;
 }
 
