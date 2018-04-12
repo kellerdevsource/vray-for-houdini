@@ -9,7 +9,7 @@
 //   https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vfh_phx_channels_utils.h"
+#include "vfh_phx_utils.h"
 
 #include <utils.h>
 #include <misc.h>

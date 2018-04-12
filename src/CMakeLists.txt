@@ -64,7 +64,7 @@ set(EXPORTER_SOURCES
 	utils/vfh_log.cpp
 	utils/vfh_lru_cache.hpp
 	utils/vfh_op_utils.cpp
-	utils/vfh_phx_channels_utils.cpp
+	utils/vfh_phx_utils.cpp
 	utils/vfh_plugin_info.cpp
 	utils/vfh_prm_def.cpp
 	utils/vfh_prm_defaults.cpp
@@ -107,7 +107,7 @@ set(EXPORTER_HEADERS
 	utils/vfh_hou_utils.h
 	utils/vfh_log.h
 	utils/vfh_op_utils.h
-	utils/vfh_phx_channels_utils.h
+	utils/vfh_phx_utils.h
 	utils/vfh_plugin_info.h
 	utils/vfh_prm_def.h
 	utils/vfh_prm_defaults.h

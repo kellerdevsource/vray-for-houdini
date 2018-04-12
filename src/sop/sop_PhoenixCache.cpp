@@ -14,10 +14,9 @@
 
 #include "vfh_attr_utils.h"
 #include "vfh_prm_templates.h"
-#include "vfh_phx_channels_utils.h"
+#include "vfh_phx_utils.h"
 
 using namespace VRayForHoudini;
-using namespace VRayForHoudini::PhxChannelsUtils;
 using namespace SOP;
 
 void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, int listsize, const PRM_SpareData *spare, const PRM_Parm *parm)
@@ -54,8 +53,8 @@ PRM_Template *PhxShaderCache::getPrmTemplate()
 	while (prmIt && prmIt->getType() != PRM_LIST_TERMINATOR) {
 		if (prmIt->getType() == PRM_ORD) {
 			// Append choices to channel parms
-			for (int i = 0; i < CHANNEL_COUNT; ++i) {
-				if (vutils_strcmp(prmIt->getToken(), chInfo[i].propName) == 0) {
+			for (int i = 0; i < PhxChannelsUtils::CHANNEL_COUNT; ++i) {
+				if (vutils_strcmp(prmIt->getToken(), PhxChannelsUtils::chInfo[i].propName) == 0) {
 					prmIt->setChoiceListPtr(&channelChoices);
 				}
 			}
@@ -147,7 +146,7 @@ UT_StringHolder PhxShaderCache::evalCachePath(fpreal t, bool sequencePath) const
 	// Expand all the other variables.
 	CH_Manager *chanMan = OPgetDirector()->getChannelManager();
 	UT_String loadPath;
-	chanMan->expandString(rawLoadPathQtS.toLocal8Bit().data(), loadPath, t);
+	chanMan->expandString(_toChar(rawLoadPathQtS), loadPath, t);
 	
 
 	return loadPath;

@@ -12,7 +12,7 @@
 
 #include "vfh_log.h"
 #include "vfh_attr_utils.h"
-#include "vfh_phx_channels_utils.h"
+#include "vfh_phx_utils.h"
 #include "gu_volumegridref.h"
 
 #include <GU/GU_PrimVolume.h>
