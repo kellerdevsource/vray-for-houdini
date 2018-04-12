@@ -48,8 +48,7 @@ int VRayForHoudini::PhxAnimUtils::evalCacheFrame(fpreal frame, exint max_length,
 		if (fractionalLen > 1e-4f) {
 			if (frame < 0.f || frame > fractionalLen) {
 				if (load_nearest) {
-					// clamp frame in [0, animLen]
-					frame = VUtils::Max(0.f, VUtils::Min(fractionalLen, static_cast<float>(frame)));
+					frame = VUtils::clamp(frame, 0.f, fractionalLen);
 				} else {
 					frame = INT_MIN;
 				}
