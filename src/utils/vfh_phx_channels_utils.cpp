@@ -11,7 +11,8 @@
 
 #include "vfh_phx_channels_utils.h"
 
-#include <algorithm>
+#include <utils.h>
+#include <misc.h>
 
 #include <vassert.h>
 
@@ -48,7 +49,7 @@ int VRayForHoudini::PhxAnimUtils::evalCacheFrame(fpreal frame, exint max_length,
 			if (frame < 0.f || frame > fractionalLen) {
 				if (load_nearest) {
 					// clamp frame in [0, animLen]
-					frame = std::max(0.f, std::min(fractionalLen, static_cast<float>(frame)));
+					frame = VUtils::Max(0.f, VUtils::Min(fractionalLen, static_cast<float>(frame)));
 				} else {
 					frame = INT_MIN;
 				}

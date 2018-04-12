@@ -95,6 +95,8 @@ int evalCacheFrame(fpreal frame, exint max_length, fpreal play_speed, exint anim
 /// @param frame The number to replace the '#'s with
 void evalPhxPattern(QString &path, exint frame);
 
+/// Replaces Houdini current frame pattern($F) with Phoenix FD current frame pattern(##) if found
+/// @param path Path with $F in it
 void hou2PhxPattern(QString& path);
 
 } // namespace PhxAnimUtils
