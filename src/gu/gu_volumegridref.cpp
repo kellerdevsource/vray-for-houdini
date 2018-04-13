@@ -203,7 +203,6 @@ VRayVolumeGridRef::VRayVolumeGridRef()
 	: m_channelDirty(false)
 {
 	memset(m_currentData.dataRange.data(), 0, DataRangeMapSize);
-	initDataCache();
 }
 
 VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
@@ -211,7 +210,6 @@ VRayVolumeGridRef::VRayVolumeGridRef(const VRayVolumeGridRef &src)
 	, m_currentData(src.m_currentData)
 	, m_channelDirty(false)
 {
-	initDataCache();
 }
 
 VRayVolumeGridRef::~VRayVolumeGridRef()
@@ -220,17 +218,6 @@ VRayVolumeGridRef::~VRayVolumeGridRef()
 GA_PrimitiveTypeId VRayVolumeGridRef::typeId()
 {
 	return theTypeId;
-}
-
-void VRayVolumeGridRef::initDataCache() const
-{
-	m_dataCache.setFetchCallback(fetchData);
-
-	// We don't need the evict callback, because the data is in RAII objects and will be freed when evicted from cache,
-	// so just print info.
-	m_dataCache.setEvictCallback([](const VolumeCacheKey &key, VolumeCacheData&) {
-		Log::getLog().debug("Removing \"%s\" from cache", _toChar(key.path));
-	});
 }
 
 VolumeCacheKey VRayVolumeGridRef::genKey() const
