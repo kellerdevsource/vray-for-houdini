@@ -44,10 +44,14 @@ private:
 	/// Compares if the value of "cache_path" is the same in m_primOptions as in @param options
 	bool isSamePath(const OP_Options& options) const;
 
-	/// Evaluates the cache_path parm in the specified time
+	/// Evaluates the "cache_path" parm in the specified time
 	/// @param t Time
+	/// @param sequencePath Removes $F substring from  "cache_path". If true replaces it with Phoenix sequence pattern("###"), else with the current frame.
 	/// @retval UT_StringHolder with the cache_path value
-	UT_StringHolder evalCachePath(fpreal t) const;
+	UT_StringHolder evalCachePath(fpreal t, bool sequencePath) const;
+
+	/// Get current cache frame based on current frame + cache play settings
+	int evalCacheFrame(fpreal t) const;
 
 	mutable bool m_pathChanged; ///< True if the cache_path is changed
 	mutable UT_StringArray m_phxChannels; ///< The names of the channels in the cache file

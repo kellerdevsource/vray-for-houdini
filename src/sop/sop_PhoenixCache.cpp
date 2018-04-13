@@ -14,10 +14,9 @@
 
 #include "vfh_attr_utils.h"
 #include "vfh_prm_templates.h"
-#include "vfh_phx_channels_utils.h"
+#include "vfh_phx_utils.h"
 
 using namespace VRayForHoudini;
-using namespace VRayForHoudini::PhxChannelsUtils;
 using namespace SOP;
 
 void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, int listsize, const PRM_SpareData *spare, const PRM_Parm *parm)
@@ -54,8 +53,8 @@ PRM_Template *PhxShaderCache::getPrmTemplate()
 	while (prmIt && prmIt->getType() != PRM_LIST_TERMINATOR) {
 		if (prmIt->getType() == PRM_ORD) {
 			// Append choices to channel parms
-			for (int i = 0; i < CHANNEL_COUNT; ++i) {
-				if (vutils_strcmp(prmIt->getToken(), chInfo[i].propName) == 0) {
+			for (int i = 0; i < PhxChannelsUtils::CHANNEL_COUNT; ++i) {
+				if (vutils_strcmp(prmIt->getToken(), PhxChannelsUtils::chInfo[i].propName) == 0) {
 					prmIt->setChoiceListPtr(&channelChoices);
 				}
 			}
@@ -83,7 +82,7 @@ UT_StringArray & PhxShaderCache::getChannelsNames(fpreal t /*= -1.f*/) const
 	// Default value is current time
 	t = (t >= 0.f) ? t : OPgetDirector()->getTime();
 
-	UT_StringHolder cachePath = evalCachePath(t);
+	UT_StringHolder cachePath = evalCachePath(t, false);
 	m_phxChannels = PhxChannelsUtils::loadChannelsNames(cachePath);
 
 	m_pathChanged = false;
@@ -118,18 +117,37 @@ void PhxShaderCache::setTimeDependent()
 	flags().setTimeDep(raw.findString("$F", false, false));
 }
 
-UT_StringHolder PhxShaderCache::evalCachePath(fpreal t) const
+int PhxShaderCache::evalCacheFrame(fpreal t) const
+{
+	return PhxAnimUtils::evalCacheFrame(
+		OPgetDirector()->getChannelManager()->getFrame(t),
+		evalInt("max_length", 0, t),
+		evalFloat("play_speed", 0, t),
+		evalInt("anim_mode", 0, t),
+		evalFloat("t2f", 0, t),
+		evalInt("play_at", 0, t),
+		evalInt("load_nearest", 0, t),
+		evalInt("read_offset", 0, t)
+	);
+}
+
+UT_StringHolder PhxShaderCache::evalCachePath(fpreal t, bool sequencePath) const
 {
 	UT_String rawLoadPath;
 	evalStringRaw(rawLoadPath, "cache_path", 0, t);
-	
-	// Replace frame number with Phoenix compatible frame pattern.
-	rawLoadPath.changeWord("$F", "####");
+
+	QString rawLoadPathQtS(rawLoadPath);
+	PhxAnimUtils::hou2PhxPattern(rawLoadPathQtS);
+
+	if (!sequencePath) {
+		PhxAnimUtils::evalPhxPattern(rawLoadPathQtS, evalCacheFrame(t));
+	}
 
 	// Expand all the other variables.
 	CH_Manager *chanMan = OPgetDirector()->getChannelManager();
 	UT_String loadPath;
-	chanMan->expandString(rawLoadPath.buffer(), loadPath, t);
+	chanMan->expandString(_toChar(rawLoadPathQtS), loadPath, t);
+	
 
 	return loadPath;
 }
@@ -147,7 +165,7 @@ void PhxShaderCache::updatePrimitive(const OP_Context &context)
 
 	const int isTimeDependent = flags().getTimeDep();
 	if (isTimeDependent) {
-		UT_StringHolder cachePath = evalCachePath(t);
+		UT_StringHolder cachePath = evalCachePath(t, true);
 		primOptions.setOptionS("cache_path", cachePath);
 	}
 

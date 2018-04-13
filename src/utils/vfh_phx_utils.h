@@ -12,6 +12,8 @@
 #ifndef VFH_PHX_CHANNELS_UTILS_H
 #define VFH_PHX_CHANNELS_UTILS_H
 
+#include <QString>
+#include <QRegularExpression>
 #include <UT/UT_StringArray.h>
 
 #include <aurloader.h>
@@ -58,7 +60,46 @@ static constexpr int MAX_CHAN_MAP_LEN = 2048;
 
 UT_StringArray loadChannelsNames(const char* loadPath);
 
-} // namespace VRayForHoudini
 } // namespace PhxChannelsUtils
+
+
+namespace PhxAnimUtils {
+
+// These *must* match Phoenix values.
+enum class AnimMode {
+	standard = 0,
+	directIndex = 1,
+	loop = 2,
+};
+
+/// The pattern that Phoenix FD replaces with the current frame
+static const QRegularExpression phxFramePattern("#+");
+/// The pattern that Houdini replaces with the current frame
+static const QRegularExpression houFramePattern("\\$F[0-9]+");
+
+/// This is the formula used by Phoenix FD to get the frame number of the exported cache based on the animation options
+/// @param frame The frame from Houdini UI
+/// @param max_length Play Length
+/// @param play_speed Play Speed
+/// @param anim_mode Playback Mode, 0 - Linear, 1 - Frame Index, 2 - Loop
+/// @param t2f Direct time to frame transformation.
+/// @param play_at Play Start
+/// @param load_nearest If there is no cache file with the desired frame number, the nearest cache is found and loaded.
+/// @param read_offset Cache Start
+/// @retval The frame number that is needed
+int evalCacheFrame(fpreal frame, exint max_length, fpreal play_speed, exint anim_mode, fpreal t2f, exint play_at, exint load_nearest, exint read_offset);
+
+/// From a path with Phoenix frame pattern to a real file path
+/// for example: from './vdb/hou-####.vdb' './vdb/hou-0013.vdb'
+/// @param path Path with some '#'s in it
+/// @param frame The number to replace the '#'s with
+void evalPhxPattern(QString &path, exint frame);
+
+/// Replaces Houdini current frame pattern($F) with Phoenix FD current frame pattern(##) if found
+/// @param path Path with $F in it
+void hou2PhxPattern(QString& path);
+
+} // namespace PhxAnimUtils
+} // namespace VRayForHoudini
 
 #endif // VFH_PHX_CHANNELS_UTILS_H
