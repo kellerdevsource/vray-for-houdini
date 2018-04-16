@@ -38,8 +38,8 @@ protected:
 
 private:
 	/// Get the channels names for the file "cache_path" in moment @param t
-	/// @param t Time, if not specified current time is assumed
-	UT_StringArray& getChannelsNames(fpreal t = -1.f) const;
+	/// @param t Time
+	UT_StringArray& getChannelsNames(fpreal t) const;
 
 	UT_String getChannelsMapping(fpreal t);
 

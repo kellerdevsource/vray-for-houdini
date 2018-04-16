@@ -29,7 +29,7 @@ void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, in
 		return;
 	}
 
-	UT_StringArray phxChannels = phxCache->getChannelsNames();
+	UT_StringArray phxChannels = phxCache->getChannelsNames(OPgetDirector()->getTime());
 		
 	choicenames[0].setTokenAndLabel("0", "None");
 	for (int idx = 0; idx < phxChannels.size(); ++idx) {
@@ -72,15 +72,12 @@ PhxShaderCache::PhxShaderCache(OP_Network *parent, const char *name, OP_Operator
 	, m_phxChannels()
 {}
 
-UT_StringArray & PhxShaderCache::getChannelsNames(fpreal t /*= -1.f*/) const
+UT_StringArray &PhxShaderCache::getChannelsNames(fpreal t) const
 {
 	// Channels depend on the file not the time
 	if (!m_pathChanged || m_phxChannels.size() != 0) {
 		return m_phxChannels;
 	}
-	
-	// Default value is current time
-	t = (t >= 0.f) ? t : OPgetDirector()->getTime();
 
 	UT_StringHolder cachePath = evalCachePath(t, false);
 	m_phxChannels = PhxChannelsUtils::loadChannelsNames(cachePath);
