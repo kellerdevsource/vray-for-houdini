@@ -29,6 +29,8 @@ public:
 	PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry);
 
 protected:
+	static UT_String getDefaultMapping(const char *cachePath);
+
 	// From VRayNode.
 	void setPluginType() VRAY_OVERRIDE;
 
@@ -40,6 +42,8 @@ private:
 	/// Get the channels names for the file "cache_path" in moment @param t
 	/// @param t Time, if not specified current time is assumed
 	UT_StringArray& getChannelsNames(fpreal t = -1.f) const;
+
+	UT_String getChannelsMapping(fpreal t);
 
 	/// Compares if the value of "cache_path" is the same in m_primOptions as in @param options
 	bool isSamePath(const OP_Options& options) const;

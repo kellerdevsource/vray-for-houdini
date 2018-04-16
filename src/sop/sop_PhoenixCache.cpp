@@ -72,6 +72,18 @@ PhxShaderCache::PhxShaderCache(OP_Network *parent, const char *name, OP_Operator
 	, m_phxChannels()
 {}
 
+UT_String PhxShaderCache::getDefaultMapping(const char *cachePath)
+{
+	UT_String defMapping("");
+
+	char buff[PhxChannelsUtils::MAX_CHAN_MAP_LEN];
+	if (1 == aurGenerateDefaultChannelMappings(buff, PhxChannelsUtils::MAX_CHAN_MAP_LEN, cachePath)) {
+		defMapping = UT_String(buff, true);
+	}
+
+	return defMapping;
+}
+
 UT_StringArray & PhxShaderCache::getChannelsNames(fpreal t /*= -1.f*/) const
 {
 	// Channels depend on the file not the time
@@ -87,6 +99,53 @@ UT_StringArray & PhxShaderCache::getChannelsNames(fpreal t /*= -1.f*/) const
 
 	m_pathChanged = false;
 	return m_phxChannels;
+}
+
+
+UT_String PhxShaderCache::getChannelsMapping(fpreal t)
+{
+	UT_StringArray channels = getChannelsNames(t);
+
+	// will hold names so we can use pointers to them
+	std::vector<UT_String> names;
+	std::vector<int> ids;
+	for (int c = 0; c < PhxChannelsUtils::CHANNEL_COUNT; ++c) {
+		const PhxChannelsUtils::ChannelInfo &chan = PhxChannelsUtils::chInfo[c];
+
+		UT_String value(UT_String::ALWAYS_DEEP);
+
+		//const int64 res = m_primOptions.hasOption(chan.propName)
+		//	? m_primOptions.getOptionI(chan.propName) - 1
+		//	: -1;
+
+		const int64 res = evalInt(chan.propName, 0, t) - 1;
+
+		if (res >= 0 && res < channels.size()) {
+			value = channels(res);
+			if (value != "" && value != "0") {
+				names.push_back(value);
+				ids.push_back(static_cast<int>(chan));
+			}
+		}
+	}
+
+	const char *inputNames[PhxChannelsUtils::CHANNEL_COUNT] = { 0 };
+	for (int c = 0; c < names.size(); ++c) {
+		inputNames[c] = names[c].c_str();
+	}
+
+	UT_String chanMap = "";
+	char usrchmap[PhxChannelsUtils::MAX_CHAN_MAP_LEN] = { 0, };
+	if (1 == aurComposeChannelMappingsString(usrchmap, PhxChannelsUtils::MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
+		chanMap = usrchmap;
+	}
+
+	// user made no mappings - get default
+	if (chanMap.equal("")) {
+		chanMap = getDefaultMapping(evalCachePath(t, false));
+	}
+
+	return chanMap;
 }
 
 bool PhxShaderCache::isSamePath(const OP_Options &options) const
@@ -177,6 +236,9 @@ void PhxShaderCache::updatePrimitive(const OP_Context &context)
 
 	UT_StringArray phxChanMap = getChannelsNames(t);
 	primOptions.setOptionSArray("phx_channel_map", phxChanMap);
+
+	UT_String usrchmap = getChannelsMapping(t);
+	primOptions.setOptionS("usrchmap", usrchmap);
 
 	updatePrimitiveFromOptions(primOptions);
 }
