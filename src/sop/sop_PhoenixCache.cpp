@@ -29,7 +29,7 @@ void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, in
 		return;
 	}
 
-	UT_StringArray phxChannels = phxCache->getChannelsNames(OPgetDirector()->getTime());
+	const UT_StringArray &phxChannels = phxCache->getChannelsNames(OPgetDirector()->getTime());
 		
 	choicenames[0].setTokenAndLabel("0", "None");
 	for (int idx = 0; idx < phxChannels.size(); ++idx) {
@@ -72,7 +72,7 @@ PhxShaderCache::PhxShaderCache(OP_Network *parent, const char *name, OP_Operator
 	, m_phxChannels()
 {}
 
-UT_StringArray &PhxShaderCache::getChannelsNames(fpreal t) const
+const UT_StringArray &PhxShaderCache::getChannelsNames(fpreal t) const
 {
 	// Channels depend on the file not the time
 	if (!m_pathChanged || m_phxChannels.size() != 0) {
@@ -187,7 +187,7 @@ void PhxShaderCache::updatePrimitive(const OP_Context &context)
 
 	primOptions.setOptionF("current_frame", isTimeDependent ? context.getFloatFrame() : 0.0);
 
-	UT_StringArray phxChanMap = getChannelsNames(t);
+	const UT_StringArray &phxChanMap = getChannelsNames(t);
 	primOptions.setOptionSArray("phx_channel_map", phxChanMap);
 
 	UT_String usrchmap = getChannelsMapping(t);

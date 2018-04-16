@@ -39,8 +39,10 @@ protected:
 private:
 	/// Get the channels names for the file "cache_path" in moment @param t
 	/// @param t Time
-	UT_StringArray& getChannelsNames(fpreal t) const;
+	const UT_StringArray& getChannelsNames(fpreal t) const;
 
+	/// Get the channels mapping for the file "cache_path" in moment @param t
+	/// @param t Time
 	UT_String getChannelsMapping(fpreal t);
 
 	/// Compares if the value of "cache_path" is the same in m_primOptions as in @param options
