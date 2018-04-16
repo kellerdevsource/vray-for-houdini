@@ -22,7 +22,6 @@
 #include <GU/GU_PrimPoly.h>
 #include <GU/GU_PackedContext.h>
 #include <GU/GU_PackedGeometry.h>
-#include <FS/UT_DSO.h>
 
 using namespace VRayForHoudini;
 using namespace VUtils::Vrscene::Preview;
@@ -51,12 +50,12 @@ struct SettingsWrapper {
 		, flipAxis(flip)
 	{}
 
-	bool operator == (const SettingsWrapper &other) const {
-		return (settings == other.settings &&
-			flipAxis == other.flipAxis);
+	bool operator ==(const SettingsWrapper &other) const {
+		return settings == other.settings &&
+		       flipAxis == other.flipAxis;
 	}
 
-	bool operator !=(const SettingsWrapper &other) {
+	bool operator !=(const SettingsWrapper &other) const {
 		return !(*this == other);
 	}
 
@@ -73,7 +72,7 @@ struct VrsceneSettingsHasher {
 			int minPreviewFaces;
 			int masPreviewFaces;
 			int previewType;
-			int previewFlags;
+			uint32 previewFlags;
 			int shouldFlip;
 		} settingsKey = { key.settings.usePreview
 			, key.settings.previewFacesCount
@@ -118,7 +117,7 @@ public:
 		}
 
 		rvalue.shouldFlip = rvalue.flipAxis == FlipAxisMode::flipZY ||
-			rvalue.flipAxis == FlipAxisMode::automatic && vrsceneDesc->getUpAxis() == vrsceneUpAxisZ;
+		                    rvalue.flipAxis == FlipAxisMode::automatic && vrsceneDesc->getUpAxis() == vrsceneUpAxisZ;
 
 		return build(vrsceneDesc, rvalue.shouldFlip, frame, rvalue);
 	}
@@ -178,6 +177,11 @@ private:
 
 		GU_DetailHandle detail;
 		detail.allocateAndSet(meshDetail);
+
+		GU_Detail *gdpPacked = new GU_Detail;
+		GU_PackedGeometry::packGeometry(*gdpPacked, detail);
+
+		detail.allocateAndSet(gdpPacked);
 
 		return detail;
 	}
@@ -305,7 +309,6 @@ void VRaySceneRef::updateCacheRelatedVars() {
 
 int VRaySceneRef::detailRebuild()
 {
-	int res = false;
 	updateCacheRelatedVars();
 
 	ReturnSettings update(m_bbox);
@@ -313,6 +316,7 @@ int VRaySceneRef::detailRebuild()
 
 	m_detail = cache.getDetail(getFilepath(), SettingsWrapper(vrsSettings, shouldFlipAxis), getFrame(getCurrentFrame()), update);
 
+	int res;
 	if (!update.clearDetail && getAddNodes()) {
 		// Update flip axis intrinsic.
 		setShouldFlip(update.shouldFlip);

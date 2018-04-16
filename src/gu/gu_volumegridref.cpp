@@ -16,6 +16,7 @@
 #include "gu_volumegridref.h"
 
 #include <GU/GU_PrimVolume.h>
+#include <GU/GU_PackedGeometry.h>
 
 #include <chrono>
 #include <QScopedPointer>
@@ -196,7 +197,13 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 		}
 	}
 
+	
 	data.detailHandle.allocateAndSet(gdp);
+
+	GU_Detail *gdpPacked = new GU_Detail;
+	GU_PackedGeometry::packGeometry(*gdpPacked, data.detailHandle);
+
+	data.detailHandle.allocateAndSet(gdpPacked);
 }
 
 VRayVolumeGridRef::VRayVolumeGridRef()

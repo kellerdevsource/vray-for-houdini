@@ -95,7 +95,7 @@ void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 	evalString(objectPath, "object_path", 0, 0.0);
 	primOptions.setOptionS("object_path", objectPath);
 
-	primOptions.setOptionI("lod", evalInt("loadtype", 0, 0.0));
+	primOptions.setOptionI("preview_type", evalInt("preview_type", 0, 0.0));
 	primOptions.setOptionF("current_frame", flags().getTimeDep() ? context.getFloatFrame() : 0.0f);
 	
 	updatePrimitiveFromOptions(primOptions);

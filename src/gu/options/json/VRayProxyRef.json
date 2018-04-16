@@ -2,7 +2,7 @@
     "class_name" : "VRayProxyRef",
     "intrinsics" : [
         { "type": "CHAR", "name" : "file", "value" : "" },
-        { "type": "INT", "name" : "lod", "value" : 0 },
+        { "type": "INT", "name" : "preview_type", "value" : 0 },
         { "type": "INT", "name" : "anim_type", "value" : 0 },
         { "type": "FLOAT", "name" : "anim_offset", "value" : 0.0 },
         { "type": "FLOAT", "name" : "anim_speed", "value" : 1.0 },

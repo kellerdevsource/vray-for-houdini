@@ -27,8 +27,8 @@
     }
 
     parm {
-        name "loadtype"
-        label "Load"
+        name "preview_type"
+        label "Preview Type"
         type ordinal
         menu {
             "0" "Bounding Box"
