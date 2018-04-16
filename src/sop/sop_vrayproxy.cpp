@@ -104,6 +104,25 @@ void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 
 	primOptions.setOptionI("preview_type", evalInt("preview_type", 0, 0.0));
 	primOptions.setOptionF("current_frame", flags().getTimeDep() ? context.getFloatFrame() : 0.0f);
+
+	/* alembic_layers */ {
+		const int numFiles = evalInt("alembic_layers", 0, 0.0);
+		const int numFilesOffset = getParm("alembic_layers").getMultiStartOffset();
+
+		UT_StringArray layerFiles;
+		for (int i = 0; i < numFiles; ++i) {
+			const int multiIdx = numFilesOffset + i;
+
+			UT_String layerPath;
+			evalStringInst("alembic_layer#", &multiIdx, layerPath, 0, t);
+
+			if (layerPath.isstring()) {
+				layerFiles.append(layerPath);
+			}
+		}
+
+		primOptions.setOptionSArray("alembic_layers", layerFiles);
+	}
 	
 	updatePrimitiveFromOptions(primOptions);
 }

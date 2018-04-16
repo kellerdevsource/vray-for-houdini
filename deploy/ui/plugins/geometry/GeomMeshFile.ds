@@ -613,7 +613,7 @@
                 label "File Layers"
 
                 parm {
-                    name "alembic_layers#"
+                    name "alembic_layer#"
                     label "File #"
                     type file
                     default { "" }

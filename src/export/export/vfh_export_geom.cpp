@@ -1442,6 +1442,19 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 	const UT_Options &options = vrayproxyref->getOptions();
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
+	if (options.hasOption("alembic_layers")) {
+		const UT_StringArray &layerFiles = options.getOptionSArray("alembic_layers");
+		const int numLayers = layerFiles.size();
+		if (numLayers) {
+			VRay::VUtils::CharStringRefList alembicLayers(numLayers);
+			for (int i = 0; i < numLayers; ++i) {
+				alembicLayers[i].set(layerFiles(i).buffer());
+			}
+
+			pluginDesc.add(Attrs::PluginAttr("alembic_layers", alembicLayers));
+		}
+	}
+
 	return pluginExporter.exportPlugin(pluginDesc);
 }
 

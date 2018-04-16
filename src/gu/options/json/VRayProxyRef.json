@@ -12,6 +12,7 @@
         { "type": "FLOAT", "name" : "scale", "value" : 1.0 },
         { "type": "INT", "name" : "flip_axis", "value" : 0 },
         { "type": "FLOAT", "name" : "current_frame", "value" : 0 },
-        { "type": "INT", "name" : "num_preview_faces", "value" : 10000}
+        { "type": "INT", "name" : "num_preview_faces", "value" : 10000},
+        { "type": "CHAR", "name" : "alembic_layers", "value" : "", "size" : 0 }
     ]
 }
