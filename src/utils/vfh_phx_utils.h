@@ -60,6 +60,8 @@ static constexpr int MAX_CHAN_MAP_LEN = 2048;
 
 UT_StringArray loadChannelsNames(const char* loadPath);
 
+UT_String buildChannelsMapping();
+
 } // namespace PhxChannelsUtils
 
 

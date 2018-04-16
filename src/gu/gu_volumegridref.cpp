@@ -274,8 +274,6 @@ int VRayVolumeGridRef::detailRebuild()
 
 void VRayVolumeGridRef::buildMapping()
 {
-	using namespace PhxChannelsUtils;
-
 	const QString loadPath = getCurrentPath();
 	if (loadPath.isEmpty())
 		return;
@@ -293,8 +291,8 @@ void VRayVolumeGridRef::buildMapping()
 		// will hold names so we can use pointers to them
 		std::vector<UT_String> names;
 		std::vector<int> ids;
-		for (int c = 0; c < CHANNEL_COUNT; ++c) {
-			const ChannelInfo &chan = chInfo[c];
+		for (int c = 0; c < PhxChannelsUtils::CHANNEL_COUNT; ++c) {
+			const PhxChannelsUtils::ChannelInfo &chan = PhxChannelsUtils::chInfo[c];
 
 			UT_String value(UT_String::ALWAYS_DEEP);
 
@@ -311,13 +309,13 @@ void VRayVolumeGridRef::buildMapping()
 			}
 		}
 
-		const char *inputNames[CHANNEL_COUNT] = { 0 };
+		const char *inputNames[PhxChannelsUtils::CHANNEL_COUNT] = { 0 };
 		for (int c = 0; c < names.size(); ++c) {
 			inputNames[c] = names[c].c_str();
 		}
 
-		char usrchmap[MAX_CHAN_MAP_LEN] = { 0, };
-		if (1 == aurComposeChannelMappingsString(usrchmap, MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
+		char usrchmap[PhxChannelsUtils::MAX_CHAN_MAP_LEN] = { 0, };
+		if (1 == aurComposeChannelMappingsString(usrchmap, PhxChannelsUtils::MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
 			chanMap = usrchmap;
 		}
 
