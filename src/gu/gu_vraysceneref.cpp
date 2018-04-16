@@ -8,8 +8,7 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <SYS/SYS_Types.h>
-
+#include "vfh_vray.h"
 #include "vfh_defines.h"
 #include "vfh_log.h"
 #include "vfh_hashes.h"
@@ -22,6 +21,7 @@
 #include <GU/GU_PrimPoly.h>
 #include <GU/GU_PackedContext.h>
 #include <GU/GU_PackedGeometry.h>
+#include "../export/vfh_export_view.h"
 
 using namespace VRayForHoudini;
 using namespace VUtils::Vrscene::Preview;

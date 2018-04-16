@@ -10,7 +10,9 @@
 
 #ifdef CGR_HAS_VRAYSCENE
 
+#include "vfh_vray.h"
 #include "sop_vrayscene.h"
+#include "gu_vraysceneref.h"
 
 using namespace VRayForHoudini;
 using namespace SOP;
@@ -44,10 +46,37 @@ void VRayScene::setTimeDependent()
 	flags().setTimeDep(previewMeshAnimated);
 }
 
+void VRayScene::getCreatePrimitive()
+{
+	UT_String filePath;
+	evalString(filePath, "filepath", 0, 0.0);
+
+	try {
+		const VRay::ScenePreview::Settings settings;
+		VRay::ScenePreview scenePreview(filePath.buffer(), settings);
+	}
+	catch (...) {
+	}
+}
+
+void VRayScene::updatePrimitiveFromOptions(const OP_Options &options)
+{
+	for (PrimWithOptions &prim : prims) {
+		prim.options = options;
+
+		GU_PackedImpl *primImpl = m_primPacked->implementation();
+		if (primImpl) {
+#ifdef HDK_16_5
+			primImpl->update(prim.prim, prim.options);
+#else
+			primImpl->update(prim.options);
+#endif
+		}
+	}
+}
+
 void VRayScene::updatePrimitive(const OP_Context &context)
 {
-	// Set the options on the primitive
-
 	OP_Options primOptions;
 	primOptions.setOptionI("cache", flags().getTimeDep());
 	for (int i = 0; i < getParmList()->getEntries(); ++i) {

@@ -59,7 +59,7 @@ protected:
 	virtual void updatePrimitiveFromOptions(const OP_Options &options);
 
 	/// Use existing or create a new primitive.
-	void getCreatePrimitive();
+	virtual void getCreatePrimitive();
 
 	/// Packed primitive type.
 	const UT_String m_primType;

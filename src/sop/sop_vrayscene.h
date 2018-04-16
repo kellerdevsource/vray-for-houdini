@@ -17,6 +17,14 @@
 namespace VRayForHoudini {
 namespace SOP {
 
+struct PrimWithOptions
+{
+	GU_PrimPacked *prim{nullptr};
+	OP_Options options;
+};
+
+typedef UT_ValArray<PrimWithOptions> PrimWithOptionsList;
+
 class VRayScene
 	: public NodePackedBase
 {
@@ -29,7 +37,12 @@ protected:
 
 	// From NodePackedBase.
 	void setTimeDependent() VRAY_OVERRIDE;
+	void getCreatePrimitive() VRAY_OVERRIDE;
+	void updatePrimitiveFromOptions(const OP_Options &options) VRAY_OVERRIDE;
 	void updatePrimitive(const OP_Context &context) VRAY_OVERRIDE;
+
+	/// Packed primitives list.
+	PrimWithOptionsList prims;
 };
 
 } // namespace SOP
