@@ -29,8 +29,6 @@ public:
 	PhxShaderCache(OP_Network *parent, const char *name, OP_Operator *entry);
 
 protected:
-	static UT_String getDefaultMapping(const char *cachePath);
-
 	// From VRayNode.
 	void setPluginType() VRAY_OVERRIDE;
 
