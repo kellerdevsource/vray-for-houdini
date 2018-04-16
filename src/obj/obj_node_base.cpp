@@ -174,16 +174,16 @@ int isMeshLightSupportedGeometryType(const VRay::Plugin &geometry) {
 static int fillLightPluginDesc(Attrs::PluginDesc &pluginDesc, OP_Node &objLight, const PrimitiveItem &item, const VRay::Transform &objTm) {
 	if (item.geometry.isEmpty() || !isMeshLightSupportedGeometryType(item.geometry)) {
 		Log::getLog().warning("Unsupported geometry type for Mesh Light: %s ! Node name: %s",
-		                      item.geometry.getType(), pluginDesc.pluginName.c_str());
+		                      item.geometry.getType(), pluginDesc.pluginName);
 		return 0;
 	}
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("geometry", item.geometry));
-	pluginDesc.addAttribute(Attrs::PluginAttr("transform", objTm * item.tm));
+	pluginDesc.add(Attrs::PluginAttr("geometry", item.geometry));
+	pluginDesc.add(Attrs::PluginAttr("transform", objTm * item.tm));
 	if (item.objectID != objectIdUndefined) {
-		pluginDesc.addAttribute(Attrs::PluginAttr("objectID", item.objectID));
+		pluginDesc.add(Attrs::PluginAttr("objectID", item.objectID));
 	}
-	pluginDesc.addAttribute(Attrs::PluginAttr("scene_name", VRayExporter::getSceneName(objLight)));
+	pluginDesc.add(Attrs::PluginAttr("scene_name", VRayExporter::getSceneName(objLight)));
 
 	return 1;
 }
@@ -222,7 +222,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 	for (int i = 1; i < geomList.count(); ++i) {
 		const PrimitiveItem &item = geomList[i];
 
-		const std::string meshLightName =
+		const QString meshLightName =
 			pluginDesc.pluginName + "|" + std::to_string(i) + "|" + item.geometry.getName();
 
 		Attrs::PluginDesc meshLightDesc(meshLightName, pluginID);
@@ -243,14 +243,14 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::SunLight>::asPluginDesc(A
 	pluginDesc.pluginID   = pluginID;
 	pluginDesc.pluginName = VRayExporter::getPluginName(this);
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("up_vector", VRay::Vector(0.f,1.f,0.f)));
+	pluginDesc.add(Attrs::PluginAttr("up_vector", VRay::Vector(0.f,1.f,0.f)));
 
 	OP_Node *opNode = getOpNodeFromAttr(*this, "lookatpath", exporter.getContext().getTime());
 	if (opNode) {
 		OBJ_Node *targetNode = CAST_OBJNODE(opNode);
 		if (targetNode) {
 			const VRay::Transform &tm = VRayExporter::getObjTransform(targetNode, exporter.getContext());
-			pluginDesc.addAttribute(Attrs::PluginAttr("target_transform", tm));
+			pluginDesc.add(Attrs::PluginAttr("target_transform", tm));
 		}
 	}
 
@@ -267,25 +267,25 @@ static VRay::Plugin exportAttributeFromPathAuto(VRayExporter &exporter,
                                                 VRayExporter::DefaultMappingType mappingType,
                                                 Attrs::PluginDesc &pluginDesc)
 {
-	const std::string toggleAttrName(str(fmtToggle % attrName));
-	const std::string texAttrName(str(fmtTex % attrName));
-	const std::string texColorSpaceAttrName(str(fmtTexColorSpace % attrName));
+	const QString toggleAttrName(str(fmtToggle % attrName));
+	const QString texAttrName(str(fmtTex % attrName));
+	const QString texColorSpaceAttrName(str(fmtTexColorSpace % attrName));
 
 	const OP_Context &ctx = exporter.getContext();
 	const fpreal t = ctx.getTime();
 
-	if (!node.evalInt(toggleAttrName.c_str(), 0, t))
+	if (!node.evalInt(toggleAttrName, 0, t))
 		return VRay::Plugin();
 
 	UT_String texPath;
-	node.evalString(texPath, texAttrName.c_str(), 0, t);
+	node.evalString(texPath, texAttrName, 0, t);
 
 	const BitmapBufferColorSpace colorSpace =
-		static_cast<BitmapBufferColorSpace>(Parm::getParmEnum(node, texColorSpaceAttrName.c_str(), bitmapBufferColorSpaceLinear, 0.0));
+		static_cast<BitmapBufferColorSpace>(Parm::getParmEnum(node, texColorSpaceAttrName, bitmapBufferColorSpaceLinear, 0.0));
 
 	const VRay::Plugin texPlugin = exporter.exportNodeFromPathWithDefaultMapping(texPath, mappingType, colorSpace);
 	if (texPlugin.isNotEmpty()) {
-		pluginDesc.addAttribute(Attrs::PluginAttr(texAttrName, texPlugin));
+		pluginDesc.add(Attrs::PluginAttr(texAttrName, texPlugin));
 	}
 
 	return texPlugin;

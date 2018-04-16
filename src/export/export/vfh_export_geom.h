@@ -137,11 +137,11 @@ class VRayExporter;
 class VRayRendererNode;
 class ObjectExporter
 {
-	typedef VUtils::StringHashMap<PluginSet> OpPluginGenCache;
-	typedef VUtils::StringHashMap<VRay::Plugin> OpPluginCache;
+	typedef QMap<QString, PluginSet> OpPluginGenCache;
+	typedef QMap<QString, VRay::Plugin> OpPluginCache;
 	typedef VUtils::HashMap<int, VRay::Plugin> PrimPluginCache;
 	typedef VUtils::HashMap<Hash::MHash, VRay::Plugin> HashPluginCache;
-	typedef VUtils::StringHashMap<VRay::Plugin> GeomNodeCache;
+	typedef QMap<QString, VRay::Plugin> GeomNodeCache;
 
 public:
 	explicit ObjectExporter(VRayExporter &pluginExporter);

@@ -319,7 +319,7 @@ void VRayVolumeGridRef::buildMapping()
 
 		const char *inputNames[CHANNEL_COUNT] = { 0 };
 		for (int c = 0; c < names.size(); ++c) {
-			inputNames[c] = names[c].c_str();
+			inputNames[c] = names[c];
 		}
 
 		char usrchmap[MAX_CHAN_MAP_LEN] = { 0, };

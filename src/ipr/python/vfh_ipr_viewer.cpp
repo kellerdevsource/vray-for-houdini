@@ -46,7 +46,7 @@ static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int 
 	const VRay::RenderElements &reMan = renderer.getRenderElements();
 	const RenderElementsList &reList = reMan.getAllByType(VRay::RenderElement::NONE);
 	for (const VRay::RenderElement &re : reList) {
-		TileImage *renderElementImage = new TileImage(re.getImage(&region), re.getName().c_str());
+		TileImage *renderElementImage = new TileImage(re.getImage(&region), re.getName());
 		renderElementImage->setRegion(region);
 
 		planes.append(renderElementImage);
@@ -102,7 +102,7 @@ void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer, const char *rop
 
 	const VRay::RenderElements &reMan = renderer.getRenderElements();
 	for (const VRay::RenderElement &re : reMan.getAllByType(VRay::RenderElement::NONE)) {
-		imageHeaderMsg->planeNames.append(re.getName().c_str());
+		imageHeaderMsg->planeNames.append(re.getName());
 	}
 
 	imdisplayThread.add(imageHeaderMsg);

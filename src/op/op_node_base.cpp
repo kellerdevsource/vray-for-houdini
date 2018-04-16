@@ -17,5 +17,5 @@ void OP::VRayNode::init()
 {
 	setPluginType();
 
-	pluginInfo = Parm::getVRayPluginInfo(pluginID.c_str());
+	pluginInfo = Parm::getVRayPluginInfo(pluginID);
 }

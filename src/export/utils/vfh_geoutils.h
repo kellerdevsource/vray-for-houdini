@@ -61,7 +61,7 @@ struct CharStringTable
 /// Helper structure to wrap relevant map channel properties
 struct MapChannel {
 	/// Maps string with its index in the strings table.
-	typedef VUtils::StringHashMap<int> StringToTableIndex;
+	typedef QMap<QString, int> StringToTableIndex;
 
 	enum MapChannelType {
 		mapChannelTypeVertex = 0,
@@ -92,7 +92,7 @@ struct MapChannel {
 	StringToTableIndex stringToTableIndex;
 };
 
-typedef VUtils::StringHashMap<MapChannel> MapChannels;
+typedef QMap<QString, MapChannel> MapChannels;
 
 typedef UT_ValArray<const GEO_Primitive*> GEOPrimList;
 typedef UT_Array<const GA_Attribute*>     GEOAttribList;

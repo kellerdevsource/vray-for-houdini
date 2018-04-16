@@ -8,8 +8,6 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <boost/format.hpp>
-
 #include "vop_MtlMulti.h"
 
 using namespace VRayForHoudini;
@@ -38,9 +36,9 @@ const char* VOP::MtlMulti::inputLabel(unsigned idx) const
 	}
 
 	const int socketIndex = idx - numBaseInputs + 1;
-	const std::string &label =boost::str(boost::format("Material %i") % socketIndex);
+	const QString &label =boost::str(boost::format("Material %i") % socketIndex);
 
-	return label.c_str();
+	return label;
 }
 
 
@@ -182,19 +180,19 @@ OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &plugin
 	VRay::IntList   ids_list;
 
 	for (int i = 1; i <= mtls_count; ++i) {
-		const std::string &mtlSockName = boost::str(boost::format("mtl_%i") % i);
+		const QString &mtlSockName = boost::str(boost::format("mtl_%i") % i);
 
 		OP_Node *mtl_node = VRayExporter::getConnectedNode(this, mtlSockName);
 		if (NOT(mtl_node)) {
 			Log::getLog().warning("Node \"%s\": Material node is not connected to \"%s\", ignoring...",
-					   getName().buffer(), mtlSockName.c_str());
+					   getName().buffer(), mtlSockName);
 		}
 		else {
 			VRay::Plugin mtl_plugin = exporter.exportVop(mtl_node, parentContext);
 
 			if (mtl_plugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export material node connected to \"%s\", ignoring...",
-							getName().buffer(), mtlSockName.c_str());
+							getName().buffer(), mtlSockName);
 			}
 			else {
 				mtls_list.push_back(VRay::Value(mtl_plugin));
@@ -207,18 +205,18 @@ OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &plugin
 		return PluginResult::PluginResultError;
 	}
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("mtls_list", mtls_list));
-	pluginDesc.addAttribute(Attrs::PluginAttr("ids_list", ids_list));
+	pluginDesc.add(Attrs::PluginAttr("mtls_list", mtls_list));
+	pluginDesc.add(Attrs::PluginAttr("ids_list", ids_list));
 
 	OP_Node *mtlid_gen       = VRayExporter::getConnectedNode(this, "mtlid_gen");
 	OP_Node *mtlid_gen_float = VRayExporter::getConnectedNode(this, "mtlid_gen_float");
 
 	if (mtlid_gen && NOT(mtlid_gen_float)) {
-		pluginDesc.addAttribute(Attrs::PluginAttr("mtlid_gen_float", Attrs::PluginAttr::AttrTypeIgnore));
+		pluginDesc.add(Attrs::PluginAttr("mtlid_gen_float", Attrs::PluginAttr::AttrTypeIgnore));
 	}
 
 	if (mtlid_gen_float && NOT(mtlid_gen)) {
-		pluginDesc.addAttribute(Attrs::PluginAttr("mtlid_gen", Attrs::PluginAttr::AttrTypeIgnore));
+		pluginDesc.add(Attrs::PluginAttr("mtlid_gen", Attrs::PluginAttr::AttrTypeIgnore));
 	}
 
 	return PluginResult::PluginResultContinue;

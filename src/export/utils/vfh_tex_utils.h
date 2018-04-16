@@ -71,9 +71,9 @@ inline VRAY_InterpolationType mapToVray(HOU_InterpolationType type) {
 /// @param remapInterp[in] - flags if interpolation type should be remapped to the
 ///        closest one supported by V-Ray
 void exportRampAttribute(VRayExporter &exporter, Attrs::PluginDesc &pluginDesc, OP_Node *op_node,
-						 const std::string &rampAttrName,
-						 const std::string &colAttrName, const std::string &posAttrName, const std::string &typesAttrName="",
-						 const bool asColor=false, const bool remapInterp=false);
+						 const QString &rampAttrName,
+						 const QString &colAttrName, const QString &posAttrName, const QString &typesAttrName="",
+                         bool asColor=false, bool remapInterp=false);
 
 /// Helpper function to obtain data from a curve ramp parameter
 /// @param exporter[in] - reference to the main vfh exporter
@@ -90,7 +90,7 @@ void exportRampAttribute(VRayExporter &exporter, Attrs::PluginDesc &pluginDesc, 
 /// @param remapInterp[in] - flags if interpolation type should be remapped to the
 ///        closest one supported by V-Ray
 void getCurveData(VRayExporter &exporter, OP_Node *node,
-				  const std::string &curveAttrName,
+				  const QString &curveAttrName,
 				  VRay::IntList &interpolations, VRay::FloatList &positions, VRay::FloatList *values=nullptr,
 				  const bool needHandles=false, const bool remapInterp=false);
 

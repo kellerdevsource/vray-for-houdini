@@ -104,7 +104,7 @@ struct VRayIMDisplayImage {
 		, single(true)
 	{}
 
-	std::string name;
+	QString name;
 	VRay::VRayImage *image;
 	int ownImage;
 
@@ -154,7 +154,7 @@ public:
 					//const VRayIMDisplayImage &vi = images[imageIdx];
 					char tempArray[40] = { '\0' };
 					const char *planeName = itoa(imageIdx, tempArray, 10);
-					std::string temp = tempArray;
+					QString temp = tempArray;
 					const int   planeNameSize = temp.size();
 
 					PlaneDefinition planesDef;

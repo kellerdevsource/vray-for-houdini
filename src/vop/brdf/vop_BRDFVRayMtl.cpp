@@ -21,7 +21,7 @@ OP::VRayNode::PluginResult BRDFVRayMtl::asPluginDesc(Attrs::PluginDesc &pluginDe
 	const fpreal reflectionColourValue = evalFloat("reflect_glossiness", 0, t);
 
 	if (hilightLockVal) {
-		pluginDesc.addAttribute(Attrs::PluginAttr("hilight_glossiness", reflectionColourValue));
+		pluginDesc.add(Attrs::PluginAttr("hilight_glossiness", reflectionColourValue));
 	}
 
 	return PluginResult::PluginResultNA;

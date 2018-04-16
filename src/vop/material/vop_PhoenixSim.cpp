@@ -524,7 +524,7 @@ int PhxShaderSim::rampDropDownDependCB(void * data, int index, fpreal64 time, co
 	const auto chan = static_cast<RampContext::RampChannel>(index);
 
 	if (!ctx) {
-		Log::getLog().error("Missing context for \"%s\"!", token.c_str());
+		Log::getLog().error("Missing context for \"%s\"!", token);
 		return 0;
 	}
 
@@ -617,7 +617,7 @@ int PhxShaderSim::rampButtonClickCB(void *data, int, fpreal64, const PRM_Templat
 
 	// this should not happen - calling callback on uninited context
 	if (!ctx) {
-		Log::getLog().error("Missing context for \"%s\"!", token.c_str());
+		Log::getLog().error("Missing context for \"%s\"!", token);
 		return 0;
 	}
 
@@ -691,7 +691,7 @@ PRM_Template* PhxShaderSim::GetPrmTemplate()
 {
 	if (!AttrItems) {
 		static Parm::PRMList paramList;
-		paramList.addFromFile(Parm::expandUiPath("PhxShaderSim.ds").c_str());
+		paramList.addFromFile(Parm::expandUiPath("PhxShaderSim.ds"));
 		AttrItems = paramList.getPRMTemplate();
 
 		// set callbacks for ramp params
@@ -942,7 +942,7 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 
 			if (ramp != m_ramps.end() && ramp->second) {
 				if (!(ramp->second->m_uiType & type)) {
-					Log::getLog().error("Ramp name \"%s\" has unexpected type [%d]- discarding data!", rampName.c_str(), static_cast<int>(type));
+					Log::getLog().error("Ramp name \"%s\" has unexpected type [%d]- discarding data!", rampName, static_cast<int>(type));
 				} else {
 					ramp->second->m_data[r][RampContext::rampTypeToIdx(type)] = data;
 				}
@@ -979,10 +979,10 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 
 	// renderMode
 	rendMode = static_cast<RenderMode>(evalInt("renderMode", 0, t));
-	pluginDesc.addAttribute(Attrs::PluginAttr("geommode", rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface));
-	pluginDesc.addAttribute(Attrs::PluginAttr("mesher", rendMode == Mesh));
-	pluginDesc.addAttribute(Attrs::PluginAttr("rendsolid", rendMode == Isosurface));
-	pluginDesc.addAttribute(Attrs::PluginAttr("heathaze", rendMode == Volumetric_Heat_Haze));
+	pluginDesc.add(Attrs::PluginAttr("geommode", rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface));
+	pluginDesc.add(Attrs::PluginAttr("mesher", rendMode == Mesh));
+	pluginDesc.add(Attrs::PluginAttr("rendsolid", rendMode == Isosurface));
+	pluginDesc.add(Attrs::PluginAttr("heathaze", rendMode == Volumetric_Heat_Haze));
 
 	// TODO: find a better way to pass these
 	// add these so we know later in what to wrap this sim
@@ -999,12 +999,12 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 
 	const auto primVal = evalInt("pmprimary", 0, t);
 	const bool enableProb = (exporter.isInteractive() && primVal) || primVal == 2;
-	pluginDesc.addAttribute(Attrs::PluginAttr("pmprimary", enableProb));
+	pluginDesc.add(Attrs::PluginAttr("pmprimary", enableProb));
 
-	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID.c_str());
+	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID);
 	if (NOT(pluginInfo)) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
-							this->getName().buffer(), pluginDesc.pluginID.c_str());
+							this->getName().buffer(), pluginDesc.pluginID);
 	}
 	else {
 		// export ramp data
@@ -1013,12 +1013,12 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 				continue;
 			}
 
-			const std::string &rampToken = ramp.first;
+			const QString &rampToken = ramp.first;
 
 			const bool hasRampToken = RAMP_ATTRIBUTE_NAMES.find(rampToken) != RAMP_ATTRIBUTE_NAMES.end();
 			if (!hasRampToken) {
 				Log::getLog().error("Node \"%s\": Plugin \"%s\" missing description for \"%s\"",
-					this->getName().buffer(), pluginDesc.pluginID.c_str(), rampToken.c_str());
+					this->getName().buffer(), pluginDesc.pluginID, rampToken);
 			} else {
 				const auto & attrNames = RAMP_ATTRIBUTE_NAMES.at(rampToken);
 

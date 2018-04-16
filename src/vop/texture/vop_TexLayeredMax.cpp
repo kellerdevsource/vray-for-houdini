@@ -10,8 +10,6 @@
 
 #include "vop_TexLayeredMax.h"
 
-#include <boost/format.hpp>
-
 using namespace VRayForHoudini;
 
 void VOP::TexLayeredMax::setPluginType()

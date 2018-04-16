@@ -82,7 +82,7 @@ VRay::Plugin VRayExporter::exportDefaultHeadlight(bool update)
 	}
 
 	Attrs::PluginDesc pluginDesc(theHeadlightNameToken.buffer(), "LightDirect");
-	pluginDesc.addAttribute(Attrs::PluginAttr("transform", m_viewParams.renderView.tm));
+	pluginDesc.add(Attrs::PluginAttr("transform", m_viewParams.renderView.tm));
 
 	return exportPlugin(pluginDesc);
 }

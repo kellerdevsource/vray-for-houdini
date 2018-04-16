@@ -8,28 +8,17 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vfh_defines.h"
 #include "vfh_plugin_attrs.h"
-#include "vfh_vray.h"
 
 using namespace VRayForHoudini;
 using namespace Attrs;
 
-Attrs::PluginDesc::PluginDesc()
-{}
-
-Attrs::PluginDesc::PluginDesc(const std::string &pluginName, const std::string &pluginID)
+Attrs::PluginDesc::PluginDesc(const QString &pluginName, const QString &pluginID)
 	: pluginName(pluginName)
 	, pluginID(pluginID)
 {}
 
-PluginAttr::PluginAttrValue::PluginAttrValue()
-	: valInt(0)
-	, valFloat(0)
-	, valPluginDesc(nullptr)
-{}
-
-PluginAttr::PluginAttr(const std::string &attrName, const Attrs::PluginDesc *attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const Attrs::PluginDesc *attrValue)
 	: paramName(attrName)
 	, paramType(AttrTypePluginDesc)
 {
@@ -69,40 +58,35 @@ const char *PluginAttr::typeStr() const
 	return "AttrTypeUnknown";
 }
 
-bool Attrs::PluginDesc::contains(const std::string &paramName) const
+bool Attrs::PluginDesc::contains(const QString &paramName) const
 {
-	return pluginAttrs.find(paramName.c_str()) != pluginAttrs.end();
+	return pluginAttrs.find(paramName) != pluginAttrs.end();
 }
 
-const PluginAttr *Attrs::PluginDesc::get(const std::string &paramName) const
+const PluginAttr* Attrs::PluginDesc::get(const QString &paramName) const
 {
-	PluginAttrs::const_iterator it = pluginAttrs.find(paramName.c_str());
+	PluginAttrs::const_iterator it = pluginAttrs.find(paramName);
 	if (it != pluginAttrs.end()) {
-		return &it.data();
+		return &it.value();
 	}
 	return nullptr;
 }
 
-PluginAttr *Attrs::PluginDesc::get(const std::string &paramName)
+PluginAttr* Attrs::PluginDesc::get(const QString &paramName)
 {
-	PluginAttrs::iterator it = pluginAttrs.find(paramName.c_str());
+	PluginAttrs::iterator it = pluginAttrs.find(paramName);
 	if (it != pluginAttrs.end()) {
-		return &it.data();
+		return &it.value();
 	}
 	return nullptr;
-}
-
-void Attrs::PluginDesc::addAttribute(const PluginAttr &attr)
-{
-	pluginAttrs[attr.paramName.c_str()] = attr;
 }
 
 void Attrs::PluginDesc::add(const PluginAttr &attr)
 {
-	addAttribute(attr);
+	pluginAttrs[attr.paramName] = attr;
 }
 
 void Attrs::PluginDesc::remove(const char *name)
 {
-	pluginAttrs.erase(name);
+	pluginAttrs.remove(name);
 }

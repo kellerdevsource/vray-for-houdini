@@ -197,7 +197,7 @@ private:
 	};
 
 	typedef VUtils::HashMap<T, CacheElement, KeyHash> CacheElementMap;
-	typedef VUtils::StringHashMap<CacheElementMap> DetailCacheMap;
+	typedef QMap<QString, CacheElementMap> DetailCacheMap;
 
 	/// Cache container.
 	DetailCacheMap detailCache;

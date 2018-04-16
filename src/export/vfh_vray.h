@@ -11,6 +11,9 @@
 #ifndef VRAY_FOR_HOUDINI_VRAY_H
 #define VRAY_FOR_HOUDINI_VRAY_H
 
+#include <QMap>
+#include <QStringBuilder>
+
 #include <SYS/SYS_Types.h>
 
 #include <vraysdk.hpp>
@@ -62,5 +65,7 @@ FORCEINLINE VUtils::TraceTransform toVutilsTm(const VRay::Transform &tm)
 			),
 			VUtils::Vector(tm.offset.x, tm.offset.y, tm.offset.z));
 }
+
+#define SL(x) QStringLiteral(x)
 
 #endif // VRAY_FOR_HOUDINI_VRAY_H

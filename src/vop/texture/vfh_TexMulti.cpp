@@ -135,7 +135,7 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 									getName().buffer(), _toChar(texSockName));
 			}
 			else {
-				exporter.convertInputPlugin(texPlugin, pluginDesc, texNode, VOP_TYPE_COLOR, texSockName.toStdString().c_str());
+				exporter.convertInputPlugin(texPlugin, pluginDesc, texNode, VOP_TYPE_COLOR, texSockName.toStdString());
 
 				textures.push_back(VRay::Value(texPlugin));
 				textureIds.push_back(i-1);
@@ -146,8 +146,8 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 	if (textures.empty())
 		return PluginResultError;
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("textures_list", textures));
-	pluginDesc.addAttribute(Attrs::PluginAttr("ids_list", textureIds));
+	pluginDesc.add(Attrs::PluginAttr("textures_list", textures));
+	pluginDesc.add(Attrs::PluginAttr("ids_list", textureIds));
 
 	return PluginResultContinue;
 }

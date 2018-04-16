@@ -46,7 +46,7 @@ static QStringList availableOpenClDeviceList;
 static void appendDeviceToList(const ComputeDeviceInfoList &deviceInfoList, QStringList &devicesList)
 {
 	for (const VRay::ComputeDeviceInfo &devInfo : deviceInfoList) {
-		devicesList.append(devInfo.name.c_str());
+		devicesList.append(devInfo.name);
 	}
 }
 

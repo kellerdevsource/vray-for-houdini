@@ -173,18 +173,19 @@ VRay::Plugin VRayPluginRenderer::getPlugin(const char *pluginName)
 VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDesc)
 {
 #define CGR_DEBUG_APPSDK_VALUES  0
-	if (NOT(m_vray)) {
+	if (!m_vray) {
 		return VRay::Plugin();
 	}
 
-	if (pluginDesc.pluginID.empty()) {
+	if (pluginDesc.pluginID.isEmpty()) {
 		// NOTE: Could be done intentionally to skip plugin creation
 		Log::getLog().debug("[%s] PluginDesc.pluginID is not set!",
-							  pluginDesc.pluginName.c_str());
+		                    _toChar(pluginDesc.pluginName));
 		return VRay::Plugin();
 	}
 
-	VRay::Plugin plug = m_vray->getOrCreatePlugin(pluginDesc.pluginName, pluginDesc.pluginID);
+	VRay::Plugin plug = m_vray->getOrCreatePlugin(pluginDesc.pluginName.toStdString(),
+	                                              pluginDesc.pluginID.toStdString());
 	if (plug.isEmpty()) {
 		VRay::Error err = m_vray->getLastError();
 		if (err != VRay::SUCCESS) {
@@ -203,92 +204,93 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc)
 {
 	FOR_CONST_IT (PluginAttrs, pIt, pluginDesc.pluginAttrs) {
-		const PluginAttr &p = pIt.data();
+		const PluginAttr &p = pIt.value();
+		const std::string &paramName = p.paramName.toStdString();
 
 		if (p.paramType == PluginAttr::AttrTypeIgnore) {
 			continue;
 		}
 
 		if (p.paramType == PluginAttr::AttrTypeInt) {
-			plugin.setValue(p.paramName, p.paramValue.valInt);
+			plugin.setValue(paramName, p.paramValue.valInt);
 		}
 		else if (p.paramType == PluginAttr::AttrTypeFloat) {
-			plugin.setValue(p.paramName, p.paramValue.valFloat);
+			plugin.setValue(paramName, p.paramValue.valFloat);
 		}
 		else if (p.paramType == PluginAttr::AttrTypeColor) {
-			plugin.setValue(p.paramName, VRay::Color(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2]));
+			plugin.setValue(paramName, VRay::Color(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2]));
 		}
 		else if (p.paramType == PluginAttr::AttrTypeVector) {
-			plugin.setValue(p.paramName, VRay::Vector(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2]));
+			plugin.setValue(paramName, VRay::Vector(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2]));
 		}
 		else if (p.paramType == PluginAttr::AttrTypeAColor) {
-			plugin.setValue(p.paramName, VRay::AColor(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2], p.paramValue.valVector[3]));
+			plugin.setValue(paramName, VRay::AColor(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2], p.paramValue.valVector[3]));
 		}
 		else if (p.paramType == PluginAttr::AttrTypePlugin) {
-			if (p.paramValue.valPluginOutput.empty()) {
-				plugin.setValue(p.paramName, p.paramValue.valPlugin);
+			if (p.paramValue.valPluginOutput.isEmpty()) {
+				plugin.setValue(paramName, p.paramValue.valPlugin);
 			}
 			else {
-				plugin.setValue(p.paramName, VRay::PluginRef(p.paramValue.valPlugin, p.paramValue.valPluginOutput.c_str()));
+				plugin.setValue(paramName, VRay::PluginRef(p.paramValue.valPlugin, _toChar(p.paramValue.valPluginOutput)));
 			}
 		}
 		else if (p.paramType == PluginAttr::AttrTypeTransform) {
-			plugin.setValue(p.paramName, p.paramValue.valTransform);
+			plugin.setValue(paramName, p.paramValue.valTransform);
 		}
 		else if (p.paramType == PluginAttr::AttrTypeMatrix) {
-			plugin.setValue(p.paramName, p.paramValue.valTransform.matrix);
+			plugin.setValue(paramName, p.paramValue.valTransform.matrix);
 		}
 		else if (p.paramType == PluginAttr::AttrTypeString) {
-			plugin.setValue(p.paramName, p.paramValue.valString);
+			plugin.setValue(paramName, p.paramValue.valString.toStdString());
 #if CGR_DEBUG_APPSDK_VALUES
 			Log::getLog().debug("AttrTypeString:  %s [%s] = %s",
-								p.paramName.c_str(), plug.getType().c_str(), plug.getValueAsString(p.paramName).c_str());
+								paramName, plug.getType(), plug.getValueAsString(p.paramName));
 #endif
 		}
 		else if (p.paramType == PluginAttr::AttrTypeListPlugin) {
-			plugin.setValue(p.paramName, VRay::Value(p.paramValue.valListValue));
+			plugin.setValue(paramName, VRay::Value(p.paramValue.valListValue));
 		}
 		else if (p.paramType == PluginAttr::AttrTypeListInt) {
-			plugin.setValue(p.paramName, VRay::Value(p.paramValue.valListInt));
+			plugin.setValue(paramName, VRay::Value(p.paramValue.valListInt));
 #if CGR_DEBUG_APPSDK_VALUES
 			Log::getLog().debug("AttrTypeListInt:  %s [%s] = %s",
-								p.paramName.c_str(), plug.getType().c_str(), plug.getValueAsString(p.paramName).c_str());
+								paramName, plug.getType(), plug.getValueAsString(p.paramName));
 #endif
 		}
 		else if (p.paramType == PluginAttr::AttrTypeListFloat) {
-			plugin.setValue(p.paramName, VRay::Value(p.paramValue.valListFloat));
+			plugin.setValue(paramName, VRay::Value(p.paramValue.valListFloat));
 #if CGR_DEBUG_APPSDK_VALUES
 			Log::getLog().debug("AttrTypeListFloat:  %s [%s] = %s",
-								p.paramName.c_str(), plug.getType().c_str(), plug.getValueAsString(p.paramName).c_str());
+								paramName, plug.getType(), plug.getValueAsString(p.paramName));
 #endif
 		}
 		else if (p.paramType == PluginAttr::AttrTypeListVector) {
-			plugin.setValue(p.paramName, VRay::Value(p.paramValue.valListVector));
+			plugin.setValue(paramName, VRay::Value(p.paramValue.valListVector));
 		}
 		else if (p.paramType == PluginAttr::AttrTypeListColor) {
-			plugin.setValue(p.paramName, VRay::Value(p.paramValue.valListColor));
+			plugin.setValue(paramName, VRay::Value(p.paramValue.valListColor));
 		}
 		else if (p.paramType == PluginAttr::AttrTypeListValue) {
-			plugin.setValue(p.paramName, VRay::Value(p.paramValue.valListValue));
+			plugin.setValue(paramName, VRay::Value(p.paramValue.valListValue));
 #if CGR_DEBUG_APPSDK_VALUES
 			Log::getLog().debug("AttrTypeListValue:  %s [%s] = %s",
-								p.paramName.c_str(), plug.getType().c_str(), plug.getValueAsString(p.paramName).c_str());
+								paramName, plug.getType(), plug.getValueAsString(p.paramName));
 #endif
 		}
 		else if (p.paramType == PluginAttr::AttrTypeRawListInt) {
-			plugin.setValue(p.paramName, p.paramValue.valRawListInt);
+			plugin.setValue(paramName, p.paramValue.valRawListInt);
 		}
 		else if (p.paramType == PluginAttr::AttrTypeRawListFloat) {
-			plugin.setValue(p.paramName, p.paramValue.valRawListFloat);
+			plugin.setValue(paramName, p.paramValue.valRawListFloat);
 		}
 		else if (p.paramType == PluginAttr::AttrTypeRawListVector) {
-			plugin.setValue(p.paramName, p.paramValue.valRawListVector);
+			plugin.setValue(paramName, p.paramValue.valRawListVector);
 		}
 		else if (p.paramType == PluginAttr::AttrTypeRawListColor) {
-			plugin.setValue(p.paramName, p.paramValue.valRawListColor);
+			plugin.setValue(paramName, p.paramValue.valRawListColor);
 		}
 		else if (p.paramType == PluginAttr::AttrTypeRawListCharString) {
-			plugin.setValue(p.paramName, p.paramValue.valRawListCharString);
+			plugin.setValue(paramName, p.paramValue.valRawListCharString);
 		}
 		else if (p.paramType == PluginAttr::AttrTypeRawListValue) {
 			const bool curAnimValue = m_vray->getUseAnimatedValuesState();
@@ -298,14 +300,14 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 				m_vray->useAnimatedValues(false);
 			}
 
-			plugin.setValue(p.paramName, p.paramValue.valRawListValue);
+			plugin.setValue(paramName, p.paramValue.valRawListValue);
 
 			m_vray->useAnimatedValues(curAnimValue);
 		}
 
 #if CGR_DEBUG_APPSDK_VALUES
 		Log::getLog().debug("Setting plugin parameter: \"%s\" %s.%s = %s",
-							pluginDesc.pluginName.c_str(), pluginDesc.pluginID.c_str(), p.paramName.c_str(), plugin.getValue(p.paramName).toString().c_str());
+							pluginDesc.pluginName, pluginDesc.pluginID, paramName, plugin.getValue(p.paramName).toString());
 #endif
 	}
 }
@@ -423,7 +425,7 @@ void VRayPluginRenderer::removePlugin(const VRay::Plugin &plugin) const
 }
 
 
-void VRayPluginRenderer::removePlugin(const std::string &pluginName) const
+void VRayPluginRenderer::removePlugin(const QString &pluginName) const
 {
 	vassert(m_vray);
 
@@ -431,11 +433,11 @@ void VRayPluginRenderer::removePlugin(const std::string &pluginName) const
 
 	const VRay::Error err = m_vray->getLastError();
 	if (err.getCode() != VRay::SUCCESS) {
-		Log::getLog().debug("Error removing plugin \"%s\": %s", pluginName.c_str(), err.toString());
+		Log::getLog().debug("Error removing plugin \"%s\": %s", pluginName, err.toString());
 	}
 }
 
-int VRayPluginRenderer::exportScene(const std::string &filepath, VRay::VRayExportSettings &settings)
+int VRayPluginRenderer::exportScene(const QString &filepath, VRay::VRayExportSettings &settings)
 {
 	int res = 0;
 
@@ -443,9 +445,9 @@ int VRayPluginRenderer::exportScene(const std::string &filepath, VRay::VRayExpor
 		Log::getLog().error("Export to the *.vrscene files is not allowed in Houdini Indie");
 	}
 	else if (m_vray) {
-		Log::getLog().info("Starting export to \"%s\"...", filepath.c_str());
+		Log::getLog().info("Starting export to \"%s\"...", filepath);
 
-		res = m_vray->exportScene(filepath.c_str(), settings);
+		res = m_vray->exportScene(filepath, settings);
 
 		VRay::Error err = m_vray->getLastError();
 		if (err != VRay::SUCCESS) {

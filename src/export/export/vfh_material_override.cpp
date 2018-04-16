@@ -78,7 +78,7 @@ void PrimMaterial::appendOverrides(const MtlOverrideItems &items, OverrideAppend
 			}
 		}
 
-		overrides[it.key()] = it.data();
+		overrides[it.key()] = it.value();
 	}
 }
 
@@ -179,7 +179,7 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 				const STY_OptionEntryHandle &opt = value.second.myValue;
 
 				if (mode == overrideAppend) {
-					const MtlOverrideItems::const_iterator &moIt = primMaterial.overrides.find(attrName);
+					const MtlOverrideItems::const_iterator &moIt = primMaterial.overrides.find(attrName.buffer());
 					if (moIt != primMaterial.overrides.end())
 						continue;
 				}

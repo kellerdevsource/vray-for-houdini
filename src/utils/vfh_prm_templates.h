@@ -36,16 +36,16 @@ class PRMList;
 /// does minimal validation if UI root and file path exist
 /// @relPath - relative path to the VRAY_UI_DS_PATH env var
 /// @return the full path
-std::string expandUiPath(const char *relPath);
+QString expandUiPath(const QString &relPath);
 
 /// Load params from DS file for this plugin if the DS file exists
 /// @pluginID - the plugin ID
 /// @prmList - list to append params to
 /// @return true - arguments were valid
 ///         false - otherwise
-bool addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &prmList);
-PRMList* generatePrmTemplate(const std::string &pluginID);
-PRM_Template* getPrmTemplate(const std::string &pluginID);
+bool addPrmTemplateForPlugin(const QString &pluginID, Parm::PRMList &prmList);
+PRMList* generatePrmTemplate(const QString &pluginID);
+PRM_Template* getPrmTemplate(const QString &pluginID);
 
 /// List of PRM_Templates which is always terminated
 class PRMList
@@ -140,7 +140,7 @@ public:
 	/// PRM_ScriptPages used by the loaded PRM_Templates
 	/// @filepath - full path to the .ds file
 	/// @return *this
-	PRMList& addFromFile(const char *filepath);
+	PRMList& addFromFile(const QString &filePath);
 
 	/// Append all templates from a terminated list of templates
 	/// NOTE: tmpl should be list terminated array of parameters
@@ -161,8 +161,8 @@ public:
 	static void setCookDependent(PRM_Template tmpl[], bool recook);
 
 	/// Add prefix to the names of all templates in the given list
-	/// @tmpl - *terminated* list of templates
-	/// @prefix - the prefix to prepend
+	/// @param tmpl Terminated list of templates.
+	/// @param prefix The prefix to prepend.
 	static void renamePRMTemplate(PRM_Template tmpl[], const char *prefix);
 
 private:
@@ -223,9 +223,9 @@ public:
 public:
 	PRMFactory();
 	explicit PRMFactory(const PRM_Type &type, const char *token, const char *label=0);
-	explicit PRMFactory(const PRM_Type &type, const std::string &token, const std::string &label);
+	explicit PRMFactory(const PRM_Type &type, const QString &token, const QString &label);
 	explicit PRMFactory(const PRM_MultiType &multiType, const char *token, const char *label=0);
-	explicit PRMFactory(const PRM_MultiType &multiType, const std::string &token, const std::string &label);
+	explicit PRMFactory(const PRM_MultiType &multiType, const QString &token, const QString &label);
 
 	/// Settings
 
@@ -236,7 +236,7 @@ public:
 
 	/// Specify name and label for this parameter.
 	PRMFactory& setName(const char *token, const char *label=0);
-	PRMFactory& setName(const std::string &token, const std::string &label);
+	PRMFactory& setName(const QString &token, const QString &label);
 
 	/// Specify an extended type for this parameter.
 	PRMFactory& setTypeExtended(const PRM_TypeExtended &type);
@@ -253,7 +253,7 @@ public:
 	/// (but rounded if this parameter is integer-valued).
 	/// NOTE: The string pointer must not point to a temporary.
 	PRMFactory& setDefault(fpreal f, const char* s=nullptr, CH_StringMeaning meaning=CH_STRING_LITERAL);
-	PRMFactory& setDefault(const std::string&, CH_StringMeaning = CH_STRING_LITERAL);
+	PRMFactory& setDefault(const QString&, CH_StringMeaning = CH_STRING_LITERAL);
 	PRMFactory& setDefault(const PRM_Default *d);
 	PRMFactory& setDefaults(const int items[], int nItems);
 	PRMFactory& setDefaults(const fpreal items[], int nItems);
@@ -304,7 +304,7 @@ private:
 /// @attrName - the name of param we are searching for
 /// return 1 - the param exists in this node
 ///        0 - otherwise
-int isParmExist(const OP_Node &node, const std::string &attrName);
+int isParmExist(const OP_Node &node, const QString &attrName);
 
 /// Check if the param at index is a switcher
 /// @node - the node which parameters will be checked
@@ -325,14 +325,14 @@ const PRM_Parm *getParm(const OP_Node &node, const int index);
 /// @index - the name of the param template
 /// @return pointer - to the param template
 ///         nullptr - if template with that name is not found
-const PRM_Parm *getParm(const OP_Node &node, const std::string &attrName);
+const PRM_Parm *getParm(const OP_Node &node, const QString &attrName);
 
 /// Find and eval node's param as int
 /// @node - the node which will be used for eval
 /// @attrName - the name of the param
 /// @t - the time at which to eval at
 /// @return the value of the param
-int getParmInt(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
+int getParmInt(const OP_Node &node, const QString &attrName, fpreal t=0.0);
 
 /// Returns enum value from the parameter if set.
 /// @param opNode Node instance.
@@ -346,7 +346,7 @@ int getParmEnum(const OP_Node &opNode, const char *name, int defaultValue, fprea
 /// @attrName - the name of the param
 /// @t - the time at which to eval at
 /// @return the value of the param
-float getParmFloat(const OP_Node &node, const std::string &attrName, fpreal t=0.0);
+float getParmFloat(const OP_Node &node, const QString &attrName, fpreal t=0.0);
 
 } // namespace Parm
 } // namespace VRayForHoudini

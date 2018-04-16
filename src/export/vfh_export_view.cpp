@@ -15,13 +15,13 @@
 
 using namespace VRayForHoudini;
 
-static const std::string viewPluginRenderView("vfhRenderView");
-static const std::string viewPluginSettingsCamera("vfhSettingsCamera");
-static const std::string viewPluginSettingsCameraDof("vfhSettingsCameraDof");
-static const std::string viewPluginSettingsMotionBlur("vfhSettingsMotionBlur");
-static const std::string viewPluginStereoSettings("vfhStereoSettings");
-static const std::string viewPluginCameraPhysical("vfhCameraPhysical");
-static const std::string viewPluginCameraDefault("vfhCameraDefault");
+static const QString viewPluginRenderView("vfhRenderView");
+static const QString viewPluginSettingsCamera("vfhSettingsCamera");
+static const QString viewPluginSettingsCameraDof("vfhSettingsCameraDof");
+static const QString viewPluginSettingsMotionBlur("vfhSettingsMotionBlur");
+static const QString viewPluginStereoSettings("vfhStereoSettings");
+static const QString viewPluginCameraPhysical("vfhCameraPhysical");
+static const QString viewPluginCameraDefault("vfhCameraDefault");
 
 float VRayForHoudini::getFov(float aperture, float focal)
 {
@@ -97,12 +97,12 @@ static float getLensShift(const OBJ_Node &camera, OP_Context &context)
 
 PhysicalCameraMode VRayExporter::usePhysicalCamera(const OBJ_Node &camera) const
 {
-	static const std::string paramUsePhysCam("CameraPhysical_use");
+	static const QString paramUsePhysCam("CameraPhysical_use");
 
 	PhysicalCameraMode physCamMode = PhysicalCameraMode::modeNone;
 
 	if (Parm::isParmExist(camera, paramUsePhysCam)) {
-		if (camera.evalInt(paramUsePhysCam.c_str(), 0, 0.0)) {
+		if (camera.evalInt(paramUsePhysCam, 0, 0.0)) {
 			physCamMode = PhysicalCameraMode::modeUser;
 		}
 	}

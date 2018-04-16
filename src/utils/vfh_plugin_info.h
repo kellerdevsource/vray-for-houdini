@@ -11,7 +11,7 @@
 #ifndef VRAY_FOR_HOUDINI_VRAY_PLUGIN_INFO_H
 #define VRAY_FOR_HOUDINI_VRAY_PLUGIN_INFO_H
 
-#include "vfh_defines.h"
+#include "vfh_vray.h"
 #include "vfh_prm_def.h"
 
 namespace VRayForHoudini {
@@ -23,11 +23,21 @@ struct VRayPluginInfo {
 
 	/// Checks if plugins has an attribute.
 	/// @param attrName Attribute name.
+	VRAY_DEPRECATED("Use hasAttribute(QString&)")
 	bool hasAttribute(const tchar *attrName) const;
+
+	/// Checks if plugins has an attribute.
+	/// @param attrName Attribute name.
+	bool hasAttribute(const QString &attrName) const;
 
 	/// Returns attribute description.
 	/// @param attrName Attribute name.
-	const AttrDesc &getAttribute(const tchar *attrName) const;
+	VRAY_DEPRECATED("Use getAttribute(QString&)")
+	const AttrDesc& getAttribute(const tchar *attrName) const;
+
+	/// Returns attribute description.
+	/// @param attrName Attribute name.
+	const AttrDesc& getAttribute(const QString &attrName) const;
 
 	/// Attribute description list.
 	AttributeDescs attributes;
@@ -44,7 +54,7 @@ struct VRayPluginInfo {
 /// Get plugin info for a given plugin ID.
 /// @param pluginID V-Ray plugin ID.
 /// @returns VRayPluginInfo instance.
-const VRayPluginInfo* getVRayPluginInfo(const char *pluginID);
+const VRayPluginInfo* getVRayPluginInfo(const QString &pluginID);
 
 } // namespace Parm
 } // namespace VRayForHoudini

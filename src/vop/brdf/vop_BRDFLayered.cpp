@@ -8,8 +8,6 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <boost/format.hpp>
-
 #include "vop_BRDFLayered.h"
 
 using namespace VRayForHoudini;
@@ -41,11 +39,11 @@ const char* VOP::BRDFLayered::inputLabel(unsigned idx) const
 		const int socketIndex = idx - numBaseInputs;
 		const int inputHumanIndex = ((socketIndex) / 2) + 1;
 
-		const std::string &label = (socketIndex % 2)
+		const QString &label = (socketIndex % 2)
 								   ? boost::str(boost::format("Weight %i") % inputHumanIndex)
 								   : boost::str(boost::format("BRDF %i")   % inputHumanIndex);
 
-		return label.c_str();
+		return label;
 	}
 }
 
@@ -229,22 +227,22 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 	VRay::ValueList weights;
 
 	for (int i = 1; i <= brdf_count; ++i) {
-		const std::string &paramPrefix = boost::str(boost::format("@%i") % i);
+		const QString &paramPrefix = boost::str(boost::format("@%i") % i);
 
-		const std::string &brdfSockName = boost::str(boost::format("brdf_%i") % i);
+		const QString &brdfSockName = boost::str(boost::format("brdf_%i") % i);
 
 		OP_Node *brdf_node = VRayExporter::getConnectedNode(this, brdfSockName);
 		if (NOT(brdf_node)) {
 			Log::getLog().warning("Node \"%s\": BRDF node is not connected to \"%s\", ignoring...",
-					   getName().buffer(), brdfSockName.c_str());
+					   getName().buffer(), brdfSockName);
 		}
 		else {
-			const std::string &weightSockName = boost::str(boost::format("weight_%i") % i);
+			const QString &weightSockName = boost::str(boost::format("weight_%i") % i);
 
 			VRay::Plugin brdf_plugin = exporter.exportVop(brdf_node, parentContext);
 			if (brdf_plugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export BRDF node connected to \"%s\", ignoring...",
-							getName().buffer(), brdfSockName.c_str());
+							getName().buffer(), brdfSockName);
 			}
 			else {
 				VRay::Plugin weight_plugin = VRay::Plugin();
@@ -265,13 +263,13 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 
 				if (weight_plugin.isEmpty()) {
 					Log::getLog().error("Node \"%s\": Failed to export BRDF weight node connected to \"%s\", ignoring...",
-								getName().buffer(), brdfSockName.c_str());
+								getName().buffer(), brdfSockName);
 				}
 				else {
 					// convert weight plugin
-					exporter.convertInputPlugin(weight_plugin, pluginDesc, this, VOP_TYPE_FLOAT, weightSockName.c_str());
+					exporter.convertInputPlugin(weight_plugin, pluginDesc, this, VOP_TYPE_FLOAT, weightSockName);
 					// convert brdf plugin
-					exporter.convertInputPlugin(brdf_plugin, pluginDesc, this, VOP_TYPE_BSDF, brdfSockName.c_str());
+					exporter.convertInputPlugin(brdf_plugin, pluginDesc, this, VOP_TYPE_BSDF, brdfSockName);
 
 					brdfs.push_back(VRay::Value(brdf_plugin));
 					weights.push_back(VRay::Value(weight_plugin));

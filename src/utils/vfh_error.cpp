@@ -45,9 +45,9 @@ void Error::ErrorChaser::crashHandler()
 
 	UT_String filename("$HIP/crash.vfhlog.$USER.$HIPNAME.txt");
 	filename.expandVariables();
-	FILE *file = vutils_fopen(filename.c_str(), "w");
+	FILE *file = vutils_fopen(filename, "w");
 	if (file) {
-		Log::getLog().msg("Saving crash dump to %s", filename.c_str());
+		Log::getLog().msg("Saving crash dump to %s", filename);
 	}
 	else {
 		file = stderr;

@@ -9,14 +9,12 @@
 //   https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_vray.h"
 #include "vfh_exporter.h"
 #include "vfh_prm_templates.h"
 
 using namespace VRayForHoudini;
 using namespace Attrs;
-
-static boost::format opNodeNameFmt("%s@%s");
-static boost::format texUserNameFmt("%s|%s@%s");
 
 static void getColor(OP_Node &opNode, const char *parmName, fpreal color[3], fpreal t)
 {
@@ -29,13 +27,12 @@ static VRay::Plugin exportTexUserColor(VRayExporter &exporter, OP_Node &opNode, 
 {
 	const fpreal t = exporter.getContext().getTime();
 
-	UT_String nodePath;
-	opNode.getFullPath(nodePath);
+	const UT_StringHolder &nodePath = opNode.getFullPath();
 
 	fpreal defaultColor[3];
 	getColor(opNode, parmName, defaultColor, t);
 
-	Attrs::PluginDesc texUserColor(str(texUserNameFmt % "TexUserColor" % parmName % nodePath.buffer()),
+	Attrs::PluginDesc texUserColor(SL("TexUserColor|") % parmName % SL("@") % nodePath.buffer(),
 								   "TexUserColor");
 
 	// TODO: This may be a texture.
@@ -50,10 +47,9 @@ VRay::Plugin VRayExporter::exportPrincipledShader(OP_Node &opNode, ExportContext
 {
 	const fpreal t = getContext().getTime();
 
-	UT_String nodePath;
-	opNode.getFullPath(nodePath);
+	const UT_StringHolder &nodePath = opNode.getFullPath();
 
-	Attrs::PluginDesc brdfVRayMtl(str(opNodeNameFmt % "BRDFVRayMtl" % nodePath.buffer()),
+	Attrs::PluginDesc brdfVRayMtl(SL("BRDFVRayMtl@") % nodePath.buffer(),
 								  "BRDFVRayMtl");
 
 	if (Parm::getParmInt(opNode, "basecolor_usePointColor", t)) {
@@ -68,7 +64,7 @@ VRay::Plugin VRayExporter::exportPrincipledShader(OP_Node &opNode, ExportContext
 
 	brdfVRayMtl.add(PluginAttr("roughness", opNode.evalFloat("rough", 0, t)));
 
-	Attrs::PluginDesc mtlSingleBRDF(str(opNodeNameFmt % "MtlSingleBRDF" % nodePath.buffer()),
+	Attrs::PluginDesc mtlSingleBRDF(SL("MtlSingleBRDF@") % nodePath.buffer(),
 									"MtlSingleBRDF");
 	mtlSingleBRDF.add(PluginAttr("brdf", exportPlugin(brdfVRayMtl)));
 

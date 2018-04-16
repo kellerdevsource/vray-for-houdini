@@ -25,7 +25,7 @@ void VOP::TexRemap::setPluginType()
 OP::VRayNode::PluginResult VOP::TexRemap::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	Texture::exportRampAttribute(exporter, pluginDesc, this,
-								 "ramp",
+								 SL("ramp"),
 								 "color_colors", "color_positions", "color_types");
 
 	return OP::VRayNode::PluginResultContinue;

@@ -11,10 +11,9 @@
 #ifndef VRAY_FOR_HOUDINI_TYPEDEFS_H
 #define VRAY_FOR_HOUDINI_TYPEDEFS_H
 
-#include <set>
-#include <string>
+#include <QSet>
 
-typedef std::set<std::string> StringSet;
-typedef std::set<float> FloatSet;
+typedef QSet<QString> StringSet;
+typedef QSet<float> FloatSet;
 
 #endif // VRAY_FOR_HOUDINI_TYPEDEFS_H

@@ -176,7 +176,7 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet
 		return;
 	}
 
-	typedef std::map<std::string, VRay::Plugin> CustomFluidData;
+	typedef std::map<QString, VRay::Plugin> CustomFluidData;
 	CustomFluidData customFluidData;
 	int res[3] = {0, 0, 0};
 
@@ -196,7 +196,7 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet
 		const GA_Offset off = *offIt;
 		const GEO_Primitive *prim = detail.getGEOPrimitive(off);
 		VolumeProxy vol(prim);
-		const std::string texType = hnd_name.get(off);
+		const QString texType = hnd_name.get(off);
 		if (vol && (texType == "vel.x" || texType == "vel.y" || texType == "vel.z")) {
 			int chRes[3];
 			vol.getRes(res);
@@ -227,7 +227,7 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet
 		const GEO_Primitive *prim = detail.getGEOPrimitive(off);
 
 		VolumeProxy volume(prim);
-		const std::string texType = hnd_name.get(off);
+		const QString texType = hnd_name.get(off);
 
 		// unknown primitive, or unknow volume type
 		if (!volume || texType.empty()) {
@@ -255,7 +255,7 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet
 		VRay::Transform phxMatchTm = nodeTm * phxTm;
 
 		Log::getLog().debug("Volume \"%s\": %i x %i x %i",
-							texType.c_str(), res[0], res[1], res[2]);
+							texType, res[0], res[1], res[2]);
 
 		// extract data
 		if (texType == "vel.x") {
@@ -272,24 +272,24 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet
 		VRay::VUtils::FloatRefList values(voxCount);
 		volume.copyTo(values, [](float & c) -> float & { return c; });
 
-		const std::string primPluginNamePrefix = texType + "|";
+		const QString primPluginNamePrefix = texType + "|";
 
 		Attrs::PluginDesc fluidTex(VRayExporter::getPluginName(&m_object, primPluginNamePrefix), "TexMayaFluid");
-		fluidTex.addAttribute(Attrs::PluginAttr("size_x", res[0]));
-		fluidTex.addAttribute(Attrs::PluginAttr("size_y", res[1]));
-		fluidTex.addAttribute(Attrs::PluginAttr("size_z", res[2]));
-		fluidTex.addAttribute(Attrs::PluginAttr("values", values));
+		fluidTex.add(Attrs::PluginAttr("size_x", res[0]));
+		fluidTex.add(Attrs::PluginAttr("size_y", res[1]));
+		fluidTex.add(Attrs::PluginAttr("size_z", res[2]));
+		fluidTex.add(Attrs::PluginAttr("values", values));
 
 		Attrs::PluginDesc fluidTexTm(VRayExporter::getPluginName(&m_object, primPluginNamePrefix+"Tm"), "TexMayaFluidTransformed");
-		fluidTexTm.addAttribute(Attrs::PluginAttr("fluid_tex", m_exporter.exportPlugin(fluidTex)));
-		fluidTexTm.addAttribute(Attrs::PluginAttr("fluid_value_scale", 1.0f));
-		fluidTexTm.addAttribute(Attrs::PluginAttr("object_to_world", phxMatchTm));
+		fluidTexTm.add(Attrs::PluginAttr("fluid_tex", m_exporter.exportPlugin(fluidTex)));
+		fluidTexTm.add(Attrs::PluginAttr("fluid_value_scale", 1.0f));
+		fluidTexTm.add(Attrs::PluginAttr("object_to_world", phxMatchTm));
 
 		VRay::Plugin fluidTexPlugin = m_exporter.exportPlugin(fluidTexTm);
 
 		if (texType == "density") {
 			Attrs::PluginDesc fluidTexAlpha(VRayExporter::getPluginName(&m_object, primPluginNamePrefix+"Alpha"), "PhxShaderTexAlpha");
-			fluidTexAlpha.addAttribute(Attrs::PluginAttr("ttex", fluidTexPlugin));
+			fluidTexAlpha.add(Attrs::PluginAttr("ttex", fluidTexPlugin));
 
 			fluidTexPlugin = m_exporter.exportPlugin(fluidTexAlpha);
 		}
@@ -300,14 +300,14 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet
 	// write velocities if we have any
 	if (vel.count()) {
 		Attrs::PluginDesc velTexDesc(VRayExporter::getPluginName(&m_object, "vel"), "TexMayaFluid");
-		velTexDesc.addAttribute(Attrs::PluginAttr("size_x", velocityRes[0]));
-		velTexDesc.addAttribute(Attrs::PluginAttr("size_y", velocityRes[1]));
-		velTexDesc.addAttribute(Attrs::PluginAttr("size_z", velocityRes[2]));
-		velTexDesc.addAttribute(Attrs::PluginAttr("color_values", vel));
+		velTexDesc.add(Attrs::PluginAttr("size_x", velocityRes[0]));
+		velTexDesc.add(Attrs::PluginAttr("size_y", velocityRes[1]));
+		velTexDesc.add(Attrs::PluginAttr("size_z", velocityRes[2]));
+		velTexDesc.add(Attrs::PluginAttr("color_values", vel));
 
 		Attrs::PluginDesc velTexTmDesc(VRayExporter::getPluginName(&m_object, "Vel@Tm@"), "TexMayaFluidTransformed");
-		velTexTmDesc.addAttribute(Attrs::PluginAttr("fluid_tex", m_exporter.exportPlugin(velTexDesc)));
-		velTexTmDesc.addAttribute(Attrs::PluginAttr("fluid_value_scale", 1.0f));
+		velTexTmDesc.add(Attrs::PluginAttr("fluid_tex", m_exporter.exportPlugin(velTexDesc)));
+		velTexTmDesc.add(Attrs::PluginAttr("fluid_value_scale", 1.0f));
 
 		VRay::Plugin velTmTex = m_exporter.exportPlugin(velTexTmDesc);
 
@@ -317,9 +317,9 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet
 	}
 
 	Attrs::PluginDesc phxShaderCacheDesc(VRayExporter::getPluginName(&m_object), "PhxShaderCache");
-	phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_x", (float)res[0]));
-	phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_y", (float)res[1]));
-	phxShaderCacheDesc.addAttribute(Attrs::PluginAttr("grid_size_z", (float)res[2]));
+	phxShaderCacheDesc.add(Attrs::PluginAttr("grid_size_x", (float)res[0]));
+	phxShaderCacheDesc.add(Attrs::PluginAttr("grid_size_y", (float)res[1]));
+	phxShaderCacheDesc.add(Attrs::PluginAttr("grid_size_z", (float)res[2]));
 
 	// Skip "cache_path" exporting - we don't have chache but texture plugins
 	phxShaderCacheDesc.add(Attrs::PluginAttr("cache_path", Attrs::PluginAttr::AttrTypeIgnore));
@@ -364,8 +364,6 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet
 
 VRay::Plugin VolumeExporter::exportVRayVolumeGridRef(OBJ_Node &objNode, const GU_PrimPacked &prim) const
 {
-	static boost::format phxCacheNameFmt("PhxShaderCache|%i@%s");
-
 	UT_Options opts;
 	prim.saveOptions(opts, GA_SaveMap(prim.getDetail(), nullptr));
 
@@ -410,7 +408,6 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 
 	VOP::NodeBase &phxSimVopNode = static_cast<VOP::NodeBase&>(*simVop);
 
-	static boost::format phxSimNameFmt("PhxShaderSim|%i@%s");
 	Attrs::PluginDesc phxSim(boost::str(phxSimNameFmt % primID % objNode.getName().buffer()),
 							 "PhxShaderSim");
 
@@ -424,7 +421,7 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 	phxSim.add(Attrs::PluginAttr("node_transform", tm));
 	phxSim.add(Attrs::PluginAttr("cache", cachePlugin));
 
-	const auto rendModeAttr = phxSim.get("_vray_render_mode");
+	const auto rendModeAttr = phxSim.get(QString("_vray_render_mode"));
 	UT_ASSERT_MSG(rendModeAttr, "Trying to export PhxShaderSim without setting it's _vray_render_mode.");
 
 	VRay::Plugin overwriteSim = pluginExporter.exportPlugin(phxSim);
@@ -451,7 +448,7 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 				Attrs::PluginDesc meshWrapper(VRayExporter::getPluginName(simVop, "Mesh", cachePlugin.getName()), "GeomStaticMesh");
 				meshWrapper.add(Attrs::PluginAttr("static_mesh", phxWrapperPlugin));
 
-				const auto dynGeomAttr = phxSim.get("_vray_dynamic_geometry");
+				const auto dynGeomAttr = phxSim.get(QString("_vray_dynamic_geometry"));
 				UT_ASSERT_MSG(dynGeomAttr, "Exporting PhxShaderSim inside PhxShaderSimGeom with missing _vray_dynamic_geometry");
 				const bool dynamic_geometry = dynGeomAttr ? dynGeomAttr->paramValue.valInt : false;
 

@@ -8,8 +8,6 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <boost/format.hpp>
-
 #include "vop_rc_container.h"
 
 
@@ -25,9 +23,9 @@ void VOP::RenderChannelsContainer::setPluginType()
 
 const char* VOP::RenderChannelsContainer::inputLabel(unsigned idx) const
 {
-	const std::string &label =boost::str(boost::format("Channel %i") % (idx+1));
+	const QString &label =boost::str(boost::format("Channel %i") % (idx+1));
 
-	return label.c_str();
+	return label;
 }
 
 
@@ -90,25 +88,25 @@ unsigned VOP::RenderChannelsContainer::orderedInputs() const
 
 OP::VRayNode::PluginResult VOP::RenderChannelsContainer::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	pluginDesc.pluginID   = pluginID.c_str();
+	pluginDesc.pluginID   = pluginID;
 	pluginDesc.pluginName = "RenderChannels";
 
 	// Last is always not connected
 	const int channels_count = nInputs();
 
 	for (int i = 1; i <= channels_count; ++i) {
-		const std::string &chanSockName = boost::str(boost::format("chan_%i") % i);
+		const QString &chanSockName = boost::str(boost::format("chan_%i") % i);
 
 		OP_Node *chan_node = VRayExporter::getConnectedNode(this, chanSockName);
 		if (NOT(chan_node)) {
 			Log::getLog().warning("Node \"%s\": Render channel node is not connected to \"%s\", ignoring...",
-					   getName().buffer(), chanSockName.c_str());
+					   getName().buffer(), chanSockName);
 		}
 		else {
 			VRay::Plugin chan_plugin = exporter.exportVop(chan_node, parentContext);
 			if (chan_plugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export render channel node connected to \"%s\", ignoring...",
-							getName().buffer(), chanSockName.c_str());
+							getName().buffer(), chanSockName);
 			}
 		}
 	}

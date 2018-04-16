@@ -32,7 +32,7 @@ public:
 	virtual bool allowOperatorAsChild(OP_Operator *op) VRAY_OVERRIDE;
 
 private:
-	std::unordered_set<std::string> m_allowedVOPs;
+	std::unordered_set<QString> m_allowedVOPs;
 };
 
 

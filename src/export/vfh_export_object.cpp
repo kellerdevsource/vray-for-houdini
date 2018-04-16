@@ -24,8 +24,6 @@
 #include <GA/GA_IntrinsicMacros.h>
 #include <OBJ/OBJ_Geometry.h>
 
-#include <boost/algorithm/string.hpp>
-
 using namespace VRayForHoudini;
 
 VUtils::FastCriticalSection VRayExporter::csect;
@@ -197,7 +195,7 @@ static void dumpValues(const char *name, const UT_Options *options, bool readonl
 }
 
 static void dumpType(OBJ_OBJECT_TYPE objType) {
-	std::string objTypeStr;
+	QString objTypeStr;
 	if (objType & OBJ_WORLD) { objTypeStr += "OBJ_WORLD | "; }
 	if (objType & OBJ_GEOMETRY) {  objTypeStr += "OBJ_GEOMETRY | ";  }
 	if (objType & OBJ_CAMERA) { objTypeStr += "OBJ_CAMERA | "; }
@@ -229,7 +227,7 @@ static void dumpType(OBJ_OBJECT_TYPE objType) {
 	if (objType & OBJ_STD_MUSCLE) { objTypeStr += "OBJ_STD_MUSCLE | "; }
 	if (objType & OBJ_STD_CAMSWITCH) { objTypeStr += "OBJ_STD_CAMSWITCH | "; }
 	if (objType & OBJ_ALL) {  objTypeStr += "OBJ_ALL"; }
-	Log::getLog().debug("OBJ_OBJECT_TYPE = %s", objTypeStr.c_str());
+	Log::getLog().debug("OBJ_OBJECT_TYPE = %s", objTypeStr);
 }
 
 VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
@@ -316,7 +314,7 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 		}
 	}
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("clip_mesh", clipNodePlugin));
+	pluginDesc.add(Attrs::PluginAttr("clip_mesh", clipNodePlugin));
 
 	// find and export excussion node plugins
 	UT_String nodeMask;
@@ -353,15 +351,15 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 		nodePluginList.emplace_back(nodePlugin);
 	}
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("exclusion_nodes", nodePluginList));
+	pluginDesc.add(Attrs::PluginAttr("exclusion_nodes", nodePluginList));
 
 	// transform
-	pluginDesc.addAttribute(Attrs::PluginAttr("transform", VRayExporter::getObjTransform(&clipperNode, m_context, clipNodePlugin.isEmpty())));
+	pluginDesc.add(Attrs::PluginAttr("transform", VRayExporter::getObjTransform(&clipperNode, m_context, clipNodePlugin.isEmpty())));
 
 	// material
 	const VRay::Plugin &mtlPlugin = exportMaterial(clipperNode.getMaterialNode(t));
 	if (mtlPlugin.isNotEmpty()) {
-		pluginDesc.addAttribute(Attrs::PluginAttr("material", mtlPlugin));
+		pluginDesc.add(Attrs::PluginAttr("material", mtlPlugin));
 	}
 
 	setAttrsFromOpNodePrms(pluginDesc, &clipperNode);

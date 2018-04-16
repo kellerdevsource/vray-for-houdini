@@ -8,6 +8,9 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include <QStringBuilder>
+#include <QString>
+
 #include "vfh_export_geom.h"
 #include "vfh_export_mesh.h"
 #include "vfh_export_hair.h"
@@ -21,7 +24,6 @@
 #include "gu/gu_vrayproxyref.h"
 #include "gu/gu_volumegridref.h"
 #include "gu/gu_vraysceneref.h"
-#include "gu/gu_geomplaneref.h"
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
 #include "vop/vop_node_base.h"
@@ -82,15 +84,6 @@ public:
 	GA_PrimitiveTypeId pgYetiRef{0};
 } primPackedTypeIDs;
 
-static boost::format objGeomNameFmt("%s|%i@%s");
-static boost::format objInstancerNameFmt("Instancer@%s");
-static boost::format hairNameFmt("GeomMayaHair|%i@%s");
-static boost::format polyNameFmt("GeomStaticMesh|%i@%s");
-static boost::format alembicNameFmt("Alembic|%i@%s");
-static boost::format vrmeshNameFmt("VRayProxy|%i");
-static boost::format vrsceneNameFmt("VRayScene|%X@%X");
-static boost::format pgYetiNameFmt("VRayPgYeti|%i@%s");
-
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
 static const char intrPackedPrimName[] = "packedprimname";
@@ -106,8 +99,8 @@ static const UT_String vrayPluginTypeNode = "Node";
 
 static const UT_String vrayUserAttrSceneName = "VRay_Scene_Node_Name";
 
-static const UT_String attrCd("Cd");
-static const UT_String attrIntensity("intensity");
+static const QLatin1String attrCd("Cd");
+static const QLatin1String attrIntensity("intensity");
 
 /// Identity transform.
 static VRay::Transform identityTm(1);
@@ -163,9 +156,9 @@ static UT_StringHolder getKeyFromOpNode(const OP_Node &opNode)
 template <typename ContainerType, typename KeyType>
 static int getPluginFromCacheImpl(ContainerType &container, const KeyType &key, VRay::Plugin &plugin)
 {
-	typename ContainerType::iterator it = container.find(key);
+	typename ContainerType::const_iterator it = container.find(key);
 	if (it != container.end()) {
-		plugin = it.data();
+		plugin = it.value();
 		return true;
 	}
 	return false;
@@ -187,8 +180,8 @@ static void addPluginToCacheImpl(ContainerType &container, const KeyType &key, V
 ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
 	: pluginExporter(pluginExporter)
 	, ctx(pluginExporter.getContext())
-	, doExportGeometry(true)
 	, partitionAttribute("")
+	, doExportGeometry(true)
 {}
 
 VRay::Transform ObjectExporter::getTm() const
@@ -426,24 +419,22 @@ VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &pr
 
 	GeomNodeCache::iterator gnIt = pluginCache.instancerNodeWrapper.find(primItem.geometry.getName());
 	if (gnIt != pluginCache.instancerNodeWrapper.end()) {
-		return gnIt.data();
+		return gnIt.value();
 	}
-
-	static boost::format nodeNameFmt("Node@%s");
 
 	const VRay::Plugin objMaterial = pluginExporter.exportDefaultMaterial();
 
 	// Wrap into Node plugin.
-	Attrs::PluginDesc nodeDesc(boost::str(nodeNameFmt % primItem.geometry.getName()),
+	Attrs::PluginDesc nodeDesc(SL("Node@%s") % primItem.geometry.getName(),
 							   vrayPluginTypeNode.buffer());
-	nodeDesc.addAttribute(Attrs::PluginAttr("geometry", primItem.geometry));
-	nodeDesc.addAttribute(Attrs::PluginAttr("material", objMaterial));
-	nodeDesc.addAttribute(Attrs::PluginAttr("objectID", primItem.objectID != objectIdUndefined ? primItem.objectID : 0));
-	nodeDesc.addAttribute(Attrs::PluginAttr("transform", VRay::Transform(1)));
-	nodeDesc.addAttribute(Attrs::PluginAttr("visible", false));
+	nodeDesc.add(Attrs::PluginAttr(SL("geometry"), primItem.geometry));
+	nodeDesc.add(Attrs::PluginAttr(SL("material"), objMaterial));
+	nodeDesc.add(Attrs::PluginAttr(SL("objectID"), primItem.objectID != objectIdUndefined ? primItem.objectID : 0));
+	nodeDesc.add(Attrs::PluginAttr(SL("transform"), VRay::Transform(1)));
+	nodeDesc.add(Attrs::PluginAttr(SL("visible"), false));
 
 	VRay::Plugin node = pluginExporter.exportPlugin(nodeDesc);
-	UT_ASSERT(node);
+	vassert(node.isNotEmpty());
 
 	pluginCache.instancerNodeWrapper.insert(primItem.geometry.getName(), node);
 
@@ -451,10 +442,9 @@ VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &pr
 }
 
 /// Ensures "dynamic_geometry" is set for GeomStaticMesh.
-/// @param plugin Node or geometry plugin.
-static void ensureDynamicGeometryForInstancer(VRay::Plugin plugin)
+/// @param geometry Node or geometry plugin.
+static void ensureDynamicGeometryForInstancer(VRay::PluginRef geometry)
 {
-	VRay::Plugin geometry = plugin;
 	if (vrayPluginTypeNode.equal(geometry.getType())) {
 		geometry = geometry.getPlugin("geometry");
 	}
@@ -464,35 +454,33 @@ static void ensureDynamicGeometryForInstancer(VRay::Plugin plugin)
 }
 
 static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QString &userAttributes) {
-	QString buf;
-
 	FOR_CONST_IT (MtlOverrideItems, oiIt, overrides) {
-		const tchar *overrideName = oiIt.key();
-		const MtlOverrideItem &overrideItem = oiIt.data();
+		const QString overrideName = oiIt.key();
+		const MtlOverrideItem &overrideItem = oiIt.value();
 
 		switch (overrideItem.getType()) {
 			case MtlOverrideItem::itemTypeInt: {
-				userAttributes += buf.sprintf("%s=%lld;",
-											  overrideName,
-											  overrideItem.valueInt);
+				userAttributes += overrideName % SL("=") %
+					QString::number(overrideItem.valueInt) %
+					SL(";");
 				break;
 			}
 			case MtlOverrideItem::itemTypeDouble: {
-				userAttributes += buf.sprintf("%s=%.3f;",
-											  overrideName,
-											  overrideItem.valueDouble);
+				userAttributes += overrideName % SL("=") %
+					QString::number(overrideItem.valueDouble) %
+					SL(";");
 				break;
 			}
 			case MtlOverrideItem::itemTypeVector: {
-				userAttributes += buf.sprintf("%s=%.3f,%.3f,%.3f;",
-											  overrideName,
-											  overrideItem.valueVector.x, overrideItem.valueVector.y, overrideItem.valueVector.z);
+				userAttributes += overrideName % SL("=") %
+					QString::number(overrideItem.valueVector.x) % SL(",") %
+					QString::number(overrideItem.valueVector.y) % SL(",") %
+					QString::number(overrideItem.valueVector.z) %
+					SL(";");
 				break;
 			}
 			case MtlOverrideItem::itemTypeString: {
-				userAttributes += buf.sprintf("%s=%s;",
-											  overrideName,
-											  _toChar(overrideItem.valueString));
+				userAttributes += overrideName % SL("=") % overrideItem.valueString % SL(";");
 				break;
 			}
 			default: {
@@ -570,10 +558,10 @@ void ObjectExporter::addPluginToCache(OP_Node &opNode, VRay::Plugin &plugin)
 
 VRay::Plugin ObjectExporter::exportPrimSphere(OBJ_Node &objNode, const GA_Primitive&)
 {
-	Attrs::PluginDesc geomSphere(VRayExporter::getPluginName(objNode, "GeomSphere"),
-								 "GeomSphere");
-	geomSphere.addAttribute(Attrs::PluginAttr("radius", 1.0));
-	geomSphere.addAttribute(Attrs::PluginAttr("subdivs", 8));
+	Attrs::PluginDesc geomSphere(VRayExporter::getPluginName(objNode, SL("GeomSphere")),
+								 SL("GeomSphere"));
+	geomSphere.add(Attrs::PluginAttr(SL("radius"), 1.0));
+	geomSphere.add(Attrs::PluginAttr(SL("subdivs"), 8));
 
 	return pluginExporter.exportPlugin(geomSphere);
 }
@@ -902,9 +890,9 @@ static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
 /// @param opNode Scene node.
 static void appendObjUniqueID(QString &userAttributes, const OP_Node &opNode)
 {
-	userAttributes.append("Op_Id=");
+	userAttributes.append(SL("Op_Id="));
 	userAttributes.append(QString::number(opNode.getUniqueId()));
-	userAttributes.append(';');
+	userAttributes.append(SL(";"));
 }
 
 VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
@@ -946,7 +934,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 			if (separateAttrHandle.isValid()) {
 				const char *attrValue = separateAttrHandle.get(primItem.prim->getMapOffset());
 				if (attrValue) {
-					userAttributes += QString().sprintf("vrayPrimPartition=%s;", attrValue);
+					userAttributes += SL("vrayPrimPartition=%1;").arg(attrValue);
 				}
 			}
 		}
@@ -961,25 +949,26 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 
 		if (isNodeMatte(objNode)) {
 			// NOTE [MacOS]: Do not remove namespace here.
-			Attrs::PluginDesc mtlWrapperDesc(VRayExporter::getPluginName(&objNode, "MtlWrapper"),
-											 "MtlWrapper");
+			Attrs::PluginDesc mtlWrapperDesc(VRayExporter::getPluginName(objNode, SL("MtlWrapper")),
+											 SL("MtlWrapper"));
 
-			mtlWrapperDesc.addAttribute(PluginAttr("base_material", material));
-			mtlWrapperDesc.addAttribute(PluginAttr("matte_surface", 1));
-			mtlWrapperDesc.addAttribute(PluginAttr("alpha_contribution", -1));
-			mtlWrapperDesc.addAttribute(PluginAttr("affect_alpha", 1));
-			mtlWrapperDesc.addAttribute(PluginAttr("reflection_amount", 0));
-			mtlWrapperDesc.addAttribute(PluginAttr("refraction_amount", 0));
+			mtlWrapperDesc.add(PluginAttr("base_material", material));
+			mtlWrapperDesc.add(PluginAttr("matte_surface", 1));
+			mtlWrapperDesc.add(PluginAttr("alpha_contribution", -1));
+			mtlWrapperDesc.add(PluginAttr("affect_alpha", 1));
+			mtlWrapperDesc.add(PluginAttr("reflection_amount", 0));
+			mtlWrapperDesc.add(PluginAttr("refraction_amount", 0));
 
 			material = pluginExporter.exportPlugin(mtlWrapperDesc);
 		}
 
 		if (isNodePhantom(objNode)) {
 			// NOTE [MacOS]: Do not remove namespace here.
-			Attrs::PluginDesc mtlStatsDesc(VRayExporter::getPluginName(&objNode, "MtlRenderStats"),
-										   "MtlRenderStats");
-			mtlStatsDesc.addAttribute(PluginAttr("base_mtl", material));
-			mtlStatsDesc.addAttribute(PluginAttr("camera_visibility", 0));
+			Attrs::PluginDesc mtlStatsDesc(VRayExporter::getPluginName(objNode, SL("MtlRenderStats")),
+										   SL("MtlRenderStats"));
+
+			mtlStatsDesc.add(PluginAttr("base_mtl", material));
+			mtlStatsDesc.add(PluginAttr("camera_visibility", 0));
 
 			material = pluginExporter.exportPlugin(mtlStatsDesc);
 		}
@@ -1006,7 +995,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		}
 
 		// Index + TM + VEL_TM + AdditionalParams + Node + AdditionalParamsMembers
-		const int itemSize = 5 + VUtils::__popcnt(additional_params_flags);
+		const int itemSize = 5 + VUtils::popcnt_u32(additional_params_flags);
 
 		VRay::Transform vel = primItem.vel;
 		vel.matrix.makeZero();
@@ -1046,14 +1035,14 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 
 	instancerItems.clear();
 
-	Attrs::PluginDesc instancer2(str(objInstancerNameFmt % objNode.getName().buffer()),
-								 "Instancer2");
+	Attrs::PluginDesc instancer2(SL("Instancer@") % objNode.getName().buffer(),
+	                             SL("Instancer2"));
 
 	const int needKeyFrames = pluginExporter.isAnimation() || pluginExporter.needVelocity();
 
-	instancer2.addAttribute(Attrs::PluginAttr("instances", instances, needKeyFrames));
-	instancer2.addAttribute(Attrs::PluginAttr("use_additional_params", true));
-	instancer2.addAttribute(Attrs::PluginAttr("use_time_instancing", false));
+	instancer2.add(Attrs::PluginAttr("instances", instances, needKeyFrames));
+	instancer2.add(Attrs::PluginAttr("use_additional_params", true));
+	instancer2.add(Attrs::PluginAttr("use_time_instancing", false));
 
 	return pluginExporter.exportPlugin(instancer2);
 }
@@ -1129,8 +1118,8 @@ void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const G
 
 	if (doExportGeometry) {
 		if (!getMeshPluginFromCache(item.primID, item.geometry)) {
-			Attrs::PluginDesc hairDesc(boost::str(hairNameFmt % item.primID % objNode.getName().buffer()),
-									   "GeomMayaHair");
+			Attrs::PluginDesc hairDesc(SL("GeomMayaHair|") % QString::number(item.primID) % SL("@") % objNode.getName().buffer(),
+									   SL("GeomMayaHair"));
 			if (hairExporter.asPluginDesc(gdp, hairDesc)) {
 				item.geometry = pluginExporter.exportPlugin(hairDesc);
 			}
@@ -1266,8 +1255,8 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 			const SubdivInfo &subdivInfo = getSubdivInfo(objNode, matNode);
 			polyMeshExporter.setSubdivApplied(subdivInfo.hasSubdiv());
 
-			Attrs::PluginDesc geomDesc(str(polyNameFmt % item.primID % objNode.getName().buffer()),
-									   "GeomStaticMesh");
+			Attrs::PluginDesc geomDesc(SL("GeomStaticMesh|") % QString::number(item.primID) % SL("@") % objNode.getName().buffer(),
+									   SL("GeomStaticMesh"));
 			if (polyMeshExporter.asPluginDesc(gdp, geomDesc)) {
 				item.geometry = pluginExporter.exportPlugin(geomDesc);
 				if (item.geometry.isNotEmpty()) {
@@ -1391,9 +1380,6 @@ VRay::Plugin ObjectExporter::exportAlembicRef(OBJ_Node &objNode, const GU_PrimPa
 		return VRay::Plugin();
 	}
 
-	UT_String primname;
-	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
-
 	UT_String filename;
 	prim.getIntrinsic(prim.findIntrinsic(intrAlembicFilename), filename);
 
@@ -1405,14 +1391,15 @@ VRay::Plugin ObjectExporter::exportAlembicRef(OBJ_Node &objNode, const GU_PrimPa
 
 	const int key = getPrimPackedID(prim);
 
-	Attrs::PluginDesc pluginDesc(boost::str(alembicNameFmt % key % primname.buffer()),
+	Attrs::PluginDesc pluginDesc(SL("Alembic|") % QString::number(key),
 								 "GeomMeshFile");
-	pluginDesc.addAttribute(Attrs::PluginAttr("use_full_names", true));
-	pluginDesc.addAttribute(Attrs::PluginAttr("visibility_lists_type", 1));
-	pluginDesc.addAttribute(Attrs::PluginAttr("visibility_list_names", visibilityList));
-	pluginDesc.addAttribute(Attrs::PluginAttr("file", filename.toStdString()));
-	pluginDesc.addAttribute(Attrs::PluginAttr("use_alembic_offset", true));
-	pluginDesc.addAttribute(Attrs::PluginAttr("particle_width_multiplier", 0.05f));
+
+	pluginDesc.add(Attrs::PluginAttr("use_full_names", true));
+	pluginDesc.add(Attrs::PluginAttr("visibility_lists_type", 1));
+	pluginDesc.add(Attrs::PluginAttr("visibility_list_names", visibilityList));
+	pluginDesc.add(Attrs::PluginAttr("file", filename));
+	pluginDesc.add(Attrs::PluginAttr("use_alembic_offset", true));
+	pluginDesc.add(Attrs::PluginAttr("particle_width_multiplier", 0.05f));
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
@@ -1423,12 +1410,9 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 		return VRay::Plugin();
 	}
 
-	UT_String primname;
-	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
-
 	const int key = getPrimPackedID(prim);
 
-	Attrs::PluginDesc pluginDesc(boost::str(vrmeshNameFmt % key),
+	Attrs::PluginDesc pluginDesc(SL("VRayProxy|") % QString::number(key),
 								 "GeomMeshFile");
 
 	const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
@@ -1463,9 +1447,6 @@ VRay::Plugin ObjectExporter::exportPgYetiRef(OBJ_Node &objNode, const GU_PrimPac
 	if (!doExportGeometry)
 		return VRay::Plugin();
 
-	UT_String primname;
-	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
-
 	const int key = getPrimPackedID(prim);
 
 	const VRayPgYetiRef *pgYetiRef =
@@ -1473,7 +1454,7 @@ VRay::Plugin ObjectExporter::exportPgYetiRef(OBJ_Node &objNode, const GU_PrimPac
 
 	const UT_Options &options = pgYetiRef->getOptions();
 
-	Attrs::PluginDesc pluginDesc(str(pgYetiNameFmt % key % primname.buffer()),
+	Attrs::PluginDesc pluginDesc(SL("VRayPgYeti|") % QString::number(key),
 								 "pgYetiVRay");
 	pluginDesc.add(Attrs::PluginAttr("file", options.getOptionS("file").buffer()));
 	pluginDesc.add(Attrs::PluginAttr("imageSearchPath", options.getOptionS("imageSearchPath").buffer()));
@@ -1496,7 +1477,9 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	}
 
 	const int key = getPrimPackedID(prim);
-	Attrs::PluginDesc pluginDesc(str(vrsceneNameFmt % key % prim.getMapOffset()), "VRayScene");
+
+	Attrs::PluginDesc pluginDesc(SL("VRayScene|") % QString::number(key) % SL("@") % QString::number(prim.getMapOffset()),
+	                             "VRayScene");
 
 	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
 
@@ -1581,11 +1564,10 @@ VRay::Plugin ObjectExporter::exportGeomPlaneRef(OBJ_Node &objNode, const GU_Prim
 		return VRay::Plugin();
 	}
 
-	UT_String primname;
-	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimitiveName), primname);
-
 	const int key = getPrimPackedID(prim);
-	const Attrs::PluginDesc pluginDesc(boost::str(vrsceneNameFmt % key % primname.buffer()), "GeomPlane");
+
+	const Attrs::PluginDesc pluginDesc(SL("GeomPlane|") % QString::number(key),
+	                                   "GeomPlane");
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
@@ -1596,6 +1578,7 @@ VRay::Plugin ObjectExporter::exportPackedDisk(OBJ_Node &objNode, const GU_PrimPa
 		return VRay::Plugin();
 	}
 
+#if 0
 	UT_String primname;
 	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimName), primname);
 
@@ -1604,9 +1587,12 @@ VRay::Plugin ObjectExporter::exportPackedDisk(OBJ_Node &objNode, const GU_PrimPa
 
 	Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(objNode, primname.buffer()),
 								 "GeomMeshFile");
-	pluginDesc.addAttribute(Attrs::PluginAttr("file", filename.toStdString()));
+	pluginDesc.add(Attrs::PluginAttr("file", filename));
 
 	return pluginExporter.exportPlugin(pluginDesc);
+#else
+	return VRay::Plugin();
+#endif
 }
 
 void ObjectExporter::exportPackedFragment(OBJ_Node &objNode, const GU_PrimPacked &prim)
@@ -1768,24 +1754,24 @@ VRay::Plugin ObjectExporter::exportPointParticles(OBJ_Node &objNode, const GU_De
 
 	Attrs::PluginDesc partDesc(VRayExporter::getPluginName(&objNode, "GeomParticleSystem"),
 							   "GeomParticleSystem");
-	partDesc.addAttribute(Attrs::PluginAttr("positions", positions));
-	partDesc.addAttribute(Attrs::PluginAttr("render_type", renderType));
+	partDesc.add(Attrs::PluginAttr("positions", positions));
+	partDesc.add(Attrs::PluginAttr("render_type", renderType));
 	if (velocities.size()) {
-		partDesc.addAttribute(Attrs::PluginAttr("velocities", velocities));
+		partDesc.add(Attrs::PluginAttr("velocities", velocities));
 	}
 	if (color.size()) {
-		partDesc.addAttribute(Attrs::PluginAttr("colors", color));
+		partDesc.add(Attrs::PluginAttr("colors", color));
 	}
 	if (opacity.size()) {
-		partDesc.addAttribute(Attrs::PluginAttr("opacity_pp", opacity));
+		partDesc.add(Attrs::PluginAttr("opacity_pp", opacity));
 	}
 	if (pscale.size()) {
-		partDesc.addAttribute(Attrs::PluginAttr("radii", pscale));
-		partDesc.addAttribute(Attrs::PluginAttr("point_radii", true));
+		partDesc.add(Attrs::PluginAttr("radii", pscale));
+		partDesc.add(Attrs::PluginAttr("point_radii", true));
 	}
 	else {
-		partDesc.addAttribute(Attrs::PluginAttr("radius", radiusMult));
-		partDesc.addAttribute(Attrs::PluginAttr("point_size", radiusMult));
+		partDesc.add(Attrs::PluginAttr("radius", radiusMult));
+		partDesc.add(Attrs::PluginAttr("point_size", radiusMult));
 	}
 
 	return pluginExporter.exportPlugin(partDesc);
@@ -2082,7 +2068,7 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 	OP::VRayNode *vrayNode = dynamic_cast<OP::VRayNode*>(&objLight);
 	if (vrayNode) {
-		pluginDesc.addAttribute(Attrs::PluginAttr("enabled", isLightEnabled(objLight)));
+		pluginDesc.add(Attrs::PluginAttr("enabled", isLightEnabled(objLight)));
 
 		ExportContext expContext(CT_OBJ, pluginExporter, objLight);
 		const OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, pluginExporter, &expContext);
@@ -2109,31 +2095,33 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 			VUtils::swap(tm.matrix[1], tm.matrix[2]);
 		}
 
-		for (const auto &it : primMaterial.overrides) {
-			const MtlOverrideItem &overrideItem = it.data();
-			if (attrCd.equal(it.key())) {
+		FOR_CONST_IT (MtlOverrideItems, it, primMaterial.overrides) {
+			const QString overrideName = it.key();
+			const MtlOverrideItem &overrideItem = it.value();
+
+			if (overrideName == attrCd.buffer()) {
 				if (overrideItem.getType() == MtlOverrideItem::itemTypeVector) {
-					pluginDesc.addAttribute(Attrs::PluginAttr("color_tex",
+					pluginDesc.add(Attrs::PluginAttr("color_tex",
 					                                          overrideItem.valueVector[0],
 					                                          overrideItem.valueVector[1],
 					                                          overrideItem.valueVector[2]));
 				}
 			}
-			else if (attrIntensity.equal(it.key())) {
+			else if (overrideName == attrIntensity.buffer()) {
 				if (overrideItem.getType() == MtlOverrideItem::itemTypeDouble) {
-					pluginDesc.addAttribute(Attrs::PluginAttr("intensity_tex",
+					pluginDesc.add(Attrs::PluginAttr("intensity_tex",
 					                                          overrideItem.valueDouble));
 				}
 			}
 		}
 
-		pluginDesc.addAttribute(Attrs::PluginAttr("transform", tm));
+		pluginDesc.add(Attrs::PluginAttr("transform", tm));
 
 		if (isDomeLight ||
 			vrayNode->getPluginID() == static_cast<int>(VRayPluginID::LightRectangle) ||
 			vrayNode->getPluginID() == static_cast<int>(VRayPluginID::LightSphere))
 		{
-			pluginDesc.addAttribute(Attrs::PluginAttr("scene_name", VRayExporter::getSceneName(objLight)));
+			pluginDesc.add(Attrs::PluginAttr("scene_name", VRayExporter::getSceneName(objLight)));
 		}
 	}
 	else {
@@ -2150,16 +2138,16 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 		else if (lightType == VRayLightRectangle) {
 			pluginDesc.pluginID = "LightRectangle";
 
-			pluginDesc.addAttribute(Attrs::PluginAttr("u_size", objLight.evalFloat("areasize", 0, t) / 2.0));
-			pluginDesc.addAttribute(Attrs::PluginAttr("v_size", objLight.evalFloat("areasize", 1, t) / 2.0));
+			pluginDesc.add(Attrs::PluginAttr("u_size", objLight.evalFloat("areasize", 0, t) / 2.0));
+			pluginDesc.add(Attrs::PluginAttr("v_size", objLight.evalFloat("areasize", 1, t) / 2.0));
 
-			pluginDesc.addAttribute(Attrs::PluginAttr("invisible", NOT(objLight.evalInt("light_contribprimary", 0, t))));
+			pluginDesc.add(Attrs::PluginAttr("invisible", NOT(objLight.evalInt("light_contribprimary", 0, t))));
 		}
 		// Sphere
 		else if (lightType == VRayLightSphere) {
 			pluginDesc.pluginID = "LightSphere";
 
-			pluginDesc.addAttribute(Attrs::PluginAttr("radius", objLight.evalFloat("areasize", 0, t) / 2.0));
+			pluginDesc.add(Attrs::PluginAttr("radius", objLight.evalFloat("areasize", 0, t) / 2.0));
 		}
 		// Distant
 		else if (lightType == VRayLightDome) {
@@ -2174,23 +2162,23 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 			lightType == VRayLightRectangle ||
 			lightType == VRayLightDome)
 		{
-			pluginDesc.addAttribute(Attrs::PluginAttr("scene_name", VRayExporter::getSceneName(objLight)));
+			pluginDesc.add(Attrs::PluginAttr("scene_name", VRayExporter::getSceneName(objLight)));
 		}
 
-		pluginDesc.addAttribute(Attrs::PluginAttr("intensity", objLight.evalFloat("light_intensity", 0, t)));
-		pluginDesc.addAttribute(Attrs::PluginAttr("enabled",   objLight.evalInt("light_enable", 0, t)));
+		pluginDesc.add(Attrs::PluginAttr("intensity", objLight.evalFloat("light_intensity", 0, t)));
+		pluginDesc.add(Attrs::PluginAttr("enabled",   objLight.evalInt("light_enable", 0, t)));
 
 		if (lightType != VRayLightSun) {
-			pluginDesc.addAttribute(Attrs::PluginAttr("color", Attrs::PluginAttr::AttrTypeColor,
+			pluginDesc.add(Attrs::PluginAttr("color", Attrs::PluginAttr::AttrTypeColor,
 															   objLight.evalFloat("light_color", 0, t),
 															   objLight.evalFloat("light_color", 1, t),
 															   objLight.evalFloat("light_color", 2, t)));
 		}
 
-		pluginDesc.addAttribute(Attrs::PluginAttr("transform", getTm()));
+		pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
 	}
 
-	pluginDesc.pluginName = boost::str(objGeomNameFmt % "Light" % getDetailID() % objLight.getName().buffer());
+	pluginDesc.pluginName = SL("Light|") % QString::number(getDetailID()) % SL("@") % objLight.getName().buffer();
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
@@ -2239,7 +2227,7 @@ void ObjectExporter::removeGenerated(const char *key)
 		return;
 	}
 
-	PluginSet &pluginsSet = cIt.data();
+	PluginSet &pluginsSet = cIt.value();
 
 	FOR_IT (PluginSet, pIt, pluginsSet) {
 		pluginExporter.removePlugin(pIt.key());
@@ -2270,7 +2258,7 @@ void ObjectExporter::removeObject(const char *objNode)
 	// Remove self.
 	OpPluginCache::iterator pIt = pluginCache.op.find(objNode);
 	if (pIt != pluginCache.op.end()) {
-		pluginExporter.removePlugin(pIt.data());
+		pluginExporter.removePlugin(pIt.value());
 		pluginCache.op.erase(pIt);
 	}
 }

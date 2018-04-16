@@ -319,7 +319,7 @@ private:
 	VUtils::MeshFile *meshFile = nullptr;
 };
 
-typedef VUtils::StringHashMap<VRayProxyCache> VRayProxyCacheMan;
+typedef QMap<QString, VRayProxyCache> VRayProxyCacheMan;
 
 static UT_Lock theLock;
 static VRayProxyCacheMan theCacheMan;

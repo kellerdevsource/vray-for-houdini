@@ -64,8 +64,8 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	VRay::VUtils::VectorRefList verts(nVerts);
 	GEOgetDataFromAttribute(gdp.getP(), primList, verts);
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("num_hair_vertices", strands));
-	pluginDesc.addAttribute(Attrs::PluginAttr("hair_vertices", verts));
+	pluginDesc.add(Attrs::PluginAttr("num_hair_vertices", strands));
+	pluginDesc.add(Attrs::PluginAttr("hair_vertices", verts));
 
 	fpreal defaultWidth = 0.01f;
 
@@ -79,13 +79,13 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 	}
 	else {
 		// no hair rendering parameters found - use defaults
-		pluginDesc.addAttribute(Attrs::PluginAttr("geom_splines", true));
-		pluginDesc.addAttribute(Attrs::PluginAttr("widths_in_pixels", false));
-		pluginDesc.addAttribute(Attrs::PluginAttr("generate_w_coord", false));
-		pluginDesc.addAttribute(Attrs::PluginAttr("use_global_hair_tree", true));
-		pluginDesc.addAttribute(Attrs::PluginAttr("xgen_generated", false));
-		pluginDesc.addAttribute(Attrs::PluginAttr("min_pixel_width", 0.f));
-		pluginDesc.addAttribute(Attrs::PluginAttr("geom_tesselation_mult", 4.f));
+		pluginDesc.add(Attrs::PluginAttr("geom_splines", true));
+		pluginDesc.add(Attrs::PluginAttr("widths_in_pixels", false));
+		pluginDesc.add(Attrs::PluginAttr("generate_w_coord", false));
+		pluginDesc.add(Attrs::PluginAttr("use_global_hair_tree", true));
+		pluginDesc.add(Attrs::PluginAttr("xgen_generated", false));
+		pluginDesc.add(Attrs::PluginAttr("min_pixel_width", 0.f));
+		pluginDesc.add(Attrs::PluginAttr("geom_tesselation_mult", 4.f));
 	}
 
 	// widths
@@ -113,7 +113,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 		GEOgetDataFromAttribute(widthHdl.getAttribute(), primList, widths);
 	}
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("widths", widths));
+	pluginDesc.add(Attrs::PluginAttr("widths", widths));
 
 	// colors
 	GA_ROHandleV3 cdHdl = gdp.findAttribute(GEO_STD_ATTRIB_DIFFUSE,
@@ -123,7 +123,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 		VRay::VUtils::ColorRefList colors(nVerts);
 		GEOgetDataFromAttribute(cdHdl.getAttribute(), primList, colors);
 
-		pluginDesc.addAttribute(Attrs::PluginAttr("colors", colors));
+		pluginDesc.add(Attrs::PluginAttr("colors", colors));
 	}
 
 	// transparency
@@ -134,7 +134,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 		VRay::VUtils::ColorRefList transparency(nVerts);
 		GEOgetDataFromAttribute(transpHdl.getAttribute(), primList, transparency);
 
-		pluginDesc.addAttribute(Attrs::PluginAttr("transparency", transparency));
+		pluginDesc.add(Attrs::PluginAttr("transparency", transparency));
 	}
 
 	// incandescence
@@ -145,7 +145,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 		VRay::VUtils::ColorRefList incandescence(nVerts);
 		GEOgetDataFromAttribute(incdHdl.getAttribute(), primList, incandescence);
 
-		pluginDesc.addAttribute(Attrs::PluginAttr("incandescence", incandescence));
+		pluginDesc.add(Attrs::PluginAttr("incandescence", incandescence));
 	}
 
 	// uvw
@@ -158,7 +158,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 		std::memset(uvw.get(), 0, uvw.size() * sizeof(uvw[0]));
 	}
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("strand_uvw", uvw));
+	pluginDesc.add(Attrs::PluginAttr("strand_uvw", uvw));
 
 	// add all additional V3 vertex/point attributes as map_channels
 	GEOAttribList attrList;
@@ -196,20 +196,20 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 		VRay::VUtils::ValueRefList map_channels(mapChannels.size());
 
 		FOR_CONST_IT (MapChannels, mcIt, mapChannels) {
-			const char *map_channel_name = mcIt.key();
-			const MapChannel &mapChannel = mcIt.data();
+			const QString map_channel_name = mcIt.key();
+			const MapChannel &mapChannel = mcIt.value();
 
 			// Channel data
 			VRay::VUtils::ValueRefList map_channel(4);
 			map_channel[0].setDouble(mcItIdx);
 			map_channel[1].setListInt(mapChannel.faces);
 			map_channel[2].setListVector(mapChannel.vertices);
-			map_channel[3].setString(map_channel_name);
+			map_channel[3].setString(_toChar(map_channel_name));
 
 			map_channels[mcItIdx].setList(map_channel);
 		}
 
-		pluginDesc.addAttribute(Attrs::PluginAttr("map_channels", map_channels));
+		pluginDesc.add(Attrs::PluginAttr("map_channels", map_channels));
 	}
 
 	return true;
