@@ -38,15 +38,23 @@ static int cbClearCache(void *data, int index, fpreal t, const PRM_Template *tpl
 
 PRM_Template* SOP::VRayProxy::getPrmTemplate()
 {
-	PRM_Template *prmTemplate = Parm::getPrmTemplate("GeomMeshFile");
-	while (prmTemplate && prmTemplate->getType() != PRM_LIST_TERMINATOR) {
-		if (vutils_strcmp(prmTemplate->getToken(), "reload") == 0) {
-			prmTemplate->setCallback(cbClearCache);
+	static PRM_Template* myPrmList = nullptr;
+	if (myPrmList) {
+		return myPrmList;
+	}
+
+	myPrmList = Parm::getPrmTemplate("GeomMeshFile");
+
+	PRM_Template* prmIt = myPrmList;
+	while (prmIt && prmIt->getType() != PRM_LIST_TERMINATOR) {
+		if (vutils_strcmp(prmIt->getToken(), "reload") == 0) {
+			prmIt->setCallback(cbClearCache);
 			break;
 		}
-		prmTemplate++;
+		prmIt++;
 	}
-	return prmTemplate;
+
+	return myPrmList;
 }
 
 SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry)
@@ -65,7 +73,6 @@ SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *ent
 	// XXX: Is this still required?
 	// mySopFlags.setManagesDataIDs(true);
 }
-
 void SOP::VRayProxy::setPluginType()
 {
 	pluginType = VRayPluginType::GEOMETRY;
