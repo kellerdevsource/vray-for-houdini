@@ -197,7 +197,6 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 		}
 	}
 
-	
 	data.detailHandle.allocateAndSet(gdp);
 
 	GU_Detail *gdpPacked = new GU_Detail;

@@ -82,7 +82,10 @@ VRayProxyRef::VRayProxyRef()
 
 VRayProxyRef::VRayProxyRef(const VRayProxyRef &src)
 	: VRayProxyRefBase(src)
-{}
+{
+	const VRayProxyRefKey &key = getKey();
+	cache.registerInCache(key.filePath, key);
+}
 
 VRayProxyRef::~VRayProxyRef()
 {

@@ -80,13 +80,6 @@ bool VRayBaseRef::unpack(GU_Detail &destgdp) const
 
 GU_ConstDetailHandle VRayBaseRef::getPackedDetail(GU_PackedContext*) const
 {
-#if 0
-	if (!isValid()) {
-		VRayBaseRef &self = const_cast<VRayBaseRef&>(*this);
-		self.detailClear();
-		self.detailRebuild();
-	}
-#endif
 	return m_detail;
 }
 
