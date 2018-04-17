@@ -76,9 +76,9 @@ public:
 
 		CacheElementMap &tempVal = detailCache[filepath.ptr()];
 		if (--tempVal[settings].references < 1) {
-			tempVal.erase(settings);
-			if (tempVal.empty()) {
-				detailCache.erase(filepath.ptr());
+			tempVal.remove(settings);
+			if (tempVal.isEmpty()) {
+				detailCache.remove(filepath.ptr());
 				detailBuilder.cleanResource(filepath.ptr());
 			}
 		}
@@ -136,19 +136,19 @@ public:
 		if (fIt == detailCache.end())
 			return GU_DetailHandle();
 
-		const CacheElementMap &cacheElements = fIt.data();
+		const CacheElementMap &cacheElements = fIt.value();
 		const typename CacheElementMap::const_iterator ceIt = cacheElements.find(settings);
 		if (ceIt == cacheElements.end())
 			return GU_DetailHandle();
 
-		const CacheElement &cacheElement = ceIt.data();
+		const CacheElement &cacheElement = ceIt.value();
 
 		const typename CacheElement::DetailMap &detailMap = cacheElement.frameDetailMap;
 		const typename CacheElement::DetailMap::const_iterator dIt = detailMap.find(getFrameKey(frame));
 		if (dIt == detailMap.end())
 			return GU_DetailHandle();
 
-		return dIt.data();
+		return dIt.value();
 	}
 
 	/// Method for checking if sepcific filepath and settings pair is cached for a given frame
@@ -183,7 +183,7 @@ private:
 
 	/// Reference counted cache element. Contains frame / detail map.
 	struct CacheElement {
-		typedef VUtils::HashMap<FrameKey, GU_DetailHandle> DetailMap;
+		typedef QMap<FrameKey, GU_DetailHandle> DetailMap;
 
 		bool operator == (const CacheElement &other) const {
 			return references == other.references;
@@ -196,7 +196,7 @@ private:
 		DetailMap frameDetailMap;
 	};
 
-	typedef VUtils::HashMap<T, CacheElement, KeyHash> CacheElementMap;
+	typedef QMap<T, CacheElement> CacheElementMap;
 	typedef QMap<QString, CacheElementMap> DetailCacheMap;
 
 	/// Cache container.

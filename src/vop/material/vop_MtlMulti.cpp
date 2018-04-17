@@ -36,9 +36,8 @@ const char* VOP::MtlMulti::inputLabel(unsigned idx) const
 	}
 
 	const int socketIndex = idx - numBaseInputs + 1;
-	const QString &label =boost::str(boost::format("Material %i") % socketIndex);
 
-	return label;
+	return getCreateSocketLabel(socketIndex, "Material %i", socketIndex);
 }
 
 
@@ -57,15 +56,14 @@ void VOP::MtlMulti::getInputNameSubclass(UT_String &in, int idx) const
 	}
 	else {
 		const int socketIndex = idx - numBaseInputs + 1;
-		in = boost::str(boost::format("mtl_%i") % socketIndex);
+		in = getCreateSocketToken(socketIndex, "mtl_%i", socketIndex);
 	}
 }
 
 
 int VOP::MtlMulti::getInputFromNameSubclass(const UT_String &in) const
 {
-	int inIdx = -1;
-
+	int inIdx;
 	if (in.startsWith("mtl_")) {
 		const int numBaseInputs = VOP::NodeBase::orderedInputs();
 
@@ -146,8 +144,7 @@ bool VOP::MtlMulti::willAutoconvertInputType(int input_idx)
 int VOP::MtlMulti::customInputsCount() const
 {
 	// One socket per texture
-	int numCustomInputs = evalInt("mtl_count", 0, 0.0);
-
+	const int numCustomInputs = evalInt("mtl_count", 0, 0.0);
 	return numCustomInputs;
 }
 
@@ -180,44 +177,43 @@ OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &plugin
 	VRay::IntList   ids_list;
 
 	for (int i = 1; i <= mtls_count; ++i) {
-		const QString &mtlSockName = boost::str(boost::format("mtl_%i") % i);
+		const QString mtlSockName = SL("mtl_%i").arg(i);
 
 		OP_Node *mtl_node = VRayExporter::getConnectedNode(this, mtlSockName);
-		if (NOT(mtl_node)) {
+		if (!mtl_node) {
 			Log::getLog().warning("Node \"%s\": Material node is not connected to \"%s\", ignoring...",
-					   getName().buffer(), mtlSockName);
+			                      getName().buffer(), _toChar(mtlSockName));
 		}
 		else {
 			VRay::Plugin mtl_plugin = exporter.exportVop(mtl_node, parentContext);
 
 			if (mtl_plugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export material node connected to \"%s\", ignoring...",
-							getName().buffer(), mtlSockName);
+				                    getName().buffer(), _toChar(mtlSockName));
 			}
 			else {
 				mtls_list.push_back(VRay::Value(mtl_plugin));
-				ids_list.push_back(i-1);
+				ids_list.push_back(i - 1);
 			}
 		}
 	}
 
-	if (NOT(mtls_list.size())) {
-		return PluginResult::PluginResultError;
+	if (mtls_list.empty())
+		return PluginResultError;
+
+	pluginDesc.add(Attrs::PluginAttr(SL("mtls_list"), mtls_list));
+	pluginDesc.add(Attrs::PluginAttr(SL("ids_list"), ids_list));
+
+	OP_Node *mtlid_gen       = VRayExporter::getConnectedNode(this, SL("mtlid_gen"));
+	OP_Node *mtlid_gen_float = VRayExporter::getConnectedNode(this, SL("mtlid_gen_float"));
+
+	if (mtlid_gen && !mtlid_gen_float) {
+		pluginDesc.add(Attrs::PluginAttr(SL("mtlid_gen_float"), Attrs::PluginAttr::AttrTypeIgnore));
 	}
 
-	pluginDesc.add(Attrs::PluginAttr("mtls_list", mtls_list));
-	pluginDesc.add(Attrs::PluginAttr("ids_list", ids_list));
-
-	OP_Node *mtlid_gen       = VRayExporter::getConnectedNode(this, "mtlid_gen");
-	OP_Node *mtlid_gen_float = VRayExporter::getConnectedNode(this, "mtlid_gen_float");
-
-	if (mtlid_gen && NOT(mtlid_gen_float)) {
-		pluginDesc.add(Attrs::PluginAttr("mtlid_gen_float", Attrs::PluginAttr::AttrTypeIgnore));
+	if (mtlid_gen_float && !mtlid_gen) {
+		pluginDesc.add(Attrs::PluginAttr(SL("mtlid_gen"), Attrs::PluginAttr::AttrTypeIgnore));
 	}
 
-	if (mtlid_gen_float && NOT(mtlid_gen)) {
-		pluginDesc.add(Attrs::PluginAttr("mtlid_gen", Attrs::PluginAttr::AttrTypeIgnore));
-	}
-
-	return PluginResult::PluginResultContinue;
+	return PluginResultContinue;
 }

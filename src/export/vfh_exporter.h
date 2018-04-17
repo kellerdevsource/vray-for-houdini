@@ -523,7 +523,7 @@ public:
 	/// Obtain the first child node with given operator type
 	/// @param op_node[in] - parent node
 	/// @param op_type[in] - operator name
-	static OP_Node* FindChildNodeByType(OP_Node *op_node, const QLatin1String &op_type);
+	static OP_Node* FindChildNodeByType(OP_Node *op_node, const QString &op_type);
 
 	/// Helper function to fill in plugin description attributes from UT_options
 	/// @param pluginDesc[out] - the plugin description
@@ -558,7 +558,7 @@ public:
 	/// @param[in] node - current node
 	/// @param[in] socketType - socket type
 	/// @param[in] socketName - socket name
-	void convertInputPlugin(VRay::Plugin& inputPlugin, Attrs::PluginDesc &pluginDesc, OP_Node* node, VOP_Type socketType, const char* socketName);
+	void convertInputPlugin(VRay::Plugin& inputPlugin, Attrs::PluginDesc &pluginDesc, OP_Node* node, VOP_Type socketType, const QString &socketName);
 
 	/// Helper function to fill in plugin description attributes from VOP node connected inputs
 	/// @param pluginDesc[out] - the plugin description

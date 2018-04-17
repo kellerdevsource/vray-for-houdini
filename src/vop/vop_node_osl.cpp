@@ -70,10 +70,10 @@ class OSLErrorHandle: public VRayOpenImageIO::ErrorHandler
 public:
 	OSLErrorHandle()
 	{}
-	virtual ~OSLErrorHandle() VRAY_OVERRIDE
+	virtual ~OSLErrorHandle()
 	{}
 
-	virtual void operator () (int errcode, const QString &msg) VRAY_OVERRIDE
+	virtual void operator () (int errcode, const QString &msg)
 	{
 		const ErrCode code = static_cast<ErrCode>((0xff << 16) & errcode); // code is in high 16 bits
 		const int errorNo = ~(0xff << 16) & errcode;
@@ -98,7 +98,7 @@ public:
 } staticErrHandle;
 
 /// All osl params in OSL multiparam
-const QString OSL_PARAM_TYPE_LIST[] = {
+const std::string OSL_PARAM_TYPE_LIST[] = {
 	"color_param",
 	"vector_param",
 	"float_param",
@@ -111,12 +111,12 @@ const QString OSL_PARAM_TYPE_LIST[] = {
 /// Env var reader for APPSDK_PATH
 VUtils::GetEnvVar APPSDK_PATH("VRAY_APPSDK", "");
 /// We ship the stdosl.h that comes with appsdk
-const QString stdOslPath = APPSDK_PATH.getValue().ptr() + QString("/bin/stdosl.h");
+const std::string stdOslPath = APPSDK_PATH.getValue().ptr() + std::string("/bin/stdosl.h");
 
 const int OSL_PARAM_TYPE_COUNT = sizeof(OSL_PARAM_TYPE_LIST) / sizeof(OSL_PARAM_TYPE_LIST[0]);
 
 template <bool MTL>
-QString mapTypeToParam(const typename OSLNodeBase<MTL>::ParamInfo & info)
+std::string mapTypeToParam(const typename OSLNodeBase<MTL>::ParamInfo & info)
 {
 	// keep in-sync with OSL_PARAM_TYPE_LIST and vfh_osl_base.ds
 	switch (info.type) {
@@ -149,7 +149,7 @@ typedef param_list::const_iterator param_iter;
 param_iter findMetaParam(const param_list & list, const char * key)
 {
 	return std::find_if(list.begin(), list.end(), [key](const VRayOSL::OSLQuery::Parameter & param) {
-		return !stricmp(key, param.name);
+		return !stricmp(key, param.name.c_str());
 	});
 }
 
@@ -169,7 +169,7 @@ void parseMetadata(const VRayOSL::OSLQuery::Parameter *param, typename OSLNodeBa
 	if (widgetItem != notFound) {
 		if (   param->type.aggregate == TypeDesc::SCALAR
 			&& param->type.basetype == TypeDesc::INT
-			&& !stricmp(widgetItem->sdefault[0], "mapper")) {
+			&& !stricmp(widgetItem->sdefault[0].c_str(), "mapper")) {
 
 			// mapper needs options string which is in this format:  key1:value1|key2:value2|key3:value3
 			auto mapperItem = findMetaParam(param->metadata, "options");
@@ -179,9 +179,9 @@ void parseMetadata(const VRayOSL::OSLQuery::Parameter *param, typename OSLNodeBa
 				// save the string default, which is the formatted string with keys and values
 				info.stringDefault = mapperItem->sdefault[0];
 			}
-		} else if (!stricmp(widgetItem->sdefault[0], "checkBox")) {
+		} else if (!stricmp(widgetItem->sdefault[0].c_str(), "checkBox")) {
 			info.widget = Widget::Checkbox;
-		} else if (!stricmp(widgetItem->sdefault[0], "string")) {
+		} else if (!stricmp(widgetItem->sdefault[0].c_str(), "string")) {
 			info.widget = Widget::String;
 		}
 	}
@@ -260,7 +260,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 	using namespace OIIO;
 	using namespace VRayOSL;
 
-	QString osoCode;
+	std::string osoCode;
 	if (needCompile) {
 		OSLCompiler * compiler = OSLCompiler::create();
 		OSLCompilerInput settings;
@@ -385,7 +385,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 	const int oslParamCount = sizeof(oslParams) / sizeof(oslParams[0]);
 	// add osl-code specific params
 	for (int c = 0; c < OSL_PARAM_TYPE_COUNT; c++) {
-		oslParams[c + 2] = OSL_PARAM_TYPE_LIST[c];
+		oslParams[c + 2] = OSL_PARAM_TYPE_LIST[c].c_str();
 	}
 
 	int paramIdx = 1;
@@ -416,11 +416,11 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		}
 
 		// Set the param name in string field becasue we cant change labels of params
-		self->setStringInst(UT_String(param.name, param.name.length()),
+		self->setStringInst(UT_String(param.name.c_str(), param.name.length()),
 			CH_StringMeaning::CH_STRING_LITERAL, "osl#label", &paramIdx, 0, 0);
 
 		// show only the type this param is
-		const QString & oslParamName = mapTypeToParam<MTL>(param);
+		const std::string & oslParamName = mapTypeToParam<MTL>(param);
 
 		if (!oslParamName.empty()) {
 			char paramName[256] = {0};
@@ -434,7 +434,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 
 
 			// the appropriate param for the type
-			sprintf(paramName, "osl%d%s", paramIdx, oslParamName);
+			sprintf(paramName, "osl%d%s", paramIdx, oslParamName.c_str());
 			if (!self->setVisibleState(paramName, true)) {
 				Log::getLog().warning("Failed to show %s", paramName);
 			}
@@ -451,9 +451,9 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 					break;
 				case VOP_TYPE_INTEGER:
 					if (param.widget == ParamInfo::Menu) {
-						const QString & menuParamItems = paramName + QString("_items");
+						const std::string & menuParamItems = paramName + std::string("_items");
 						// set osl#menu_param_items to the items string
-						self->setString(UT_String(param.stringDefault, true), CH_STRING_LITERAL, menuParamItems, 0, 0);
+						self->setString(UT_String(param.stringDefault.c_str(), true), CH_STRING_LITERAL, menuParamItems.c_str(), 0, 0);
 					} else {
 						self->setInt(paramName, 0, 0, param.numberDefault[0]);
 					}
@@ -464,7 +464,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 				case VOP_TYPE_STRING:
 					// if metadata widget is String, this is not input
 					if (param.widget == ParamInfo::String) {
-						self->setString(UT_String(param.stringDefault, true), CH_STRING_LITERAL, paramName, 0, 0);
+						self->setString(UT_String(param.stringDefault.c_str(), true), CH_STRING_LITERAL, paramName, 0, 0);
 					}
 					break;
 				}
@@ -481,7 +481,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 template <bool MTL>
 const char * OSLNodeBase<MTL>::getOutputName() const
 {
-	strcpy(m_outputNameBuff, m_outputName);
+	strcpy(m_outputNameBuff, m_outputName.c_str());
 	return m_outputNameBuff;
 }
 
@@ -514,7 +514,7 @@ const char* OSLNodeBase<MTL>::inputLabel(unsigned idx) const
 	const int socketIndex = idx - numBaseInputs;
 	updateParamsIfNeeded();
 	if (socketIndex < m_inputList.size()) {
-		return m_inputList[socketIndex];
+		return m_inputList[socketIndex].c_str();
 	} else {
 		Log::getLog().warning("inputLabel(%d [%d]) out of range", idx, socketIndex);
 	}
@@ -690,7 +690,7 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 			return PluginResult::PluginResultError;
 		}
 		const QString & oslCodePath = oslCodeFile.fileName();
-		pluginDesc.add(Attrs::PluginAttr("shader_file", oslCodePath.toStdString()));
+		pluginDesc.add(Attrs::PluginAttr("shader_file", oslCodePath));
 	} else {
 		UT_String oslPath;
 		evalString(oslPath, "osl_file", 0, 0);
@@ -699,10 +699,10 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 
 	if (MTL) {
 		// TODO: if output is not closure, we can insert MTL single here
-		pluginDesc.add(Attrs::PluginAttr("output_closure", m_outputName));
+		pluginDesc.add(Attrs::PluginAttr("output_closure", m_outputName.c_str()));
 	} else {
 		// TODO: TexOSL supports output_alpha also
-		pluginDesc.add(Attrs::PluginAttr("output_color", m_outputName));
+		pluginDesc.add(Attrs::PluginAttr("output_color", m_outputName.c_str()));
 	}
 	VRay::ValueList oslParams;
 	int inputIdx = 0;
@@ -710,11 +710,11 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 		const int paramIdx = c + 1;
 		oslParams.push_back(VRay::Value(m_paramList[c].name));
 
-		const QString & paramTypeName = mapTypeToParam<MTL>(m_paramList[c]);
+		const std::string & paramTypeName = mapTypeToParam<MTL>(m_paramList[c]);
 		if (paramTypeName.empty()) {
 			continue;
 		}
-		const QString & paramName = "osl#" + paramTypeName;
+		const std::string & paramName = "osl#" + paramTypeName;
 		VRay::Value paramValue;
 		switch (m_paramList[c].type) {
 		case VOP_TYPE_COLOR:
@@ -723,7 +723,7 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 		case VOP_TYPE_NORMAL: {
 				VRay::FloatList list; // OSL param is always list
 				for (int vi = 0; vi < 3; vi++) {
-					list.push_back(evalFloatInst(paramName, &paramIdx, vi, t));
+					list.push_back(evalFloatInst(paramName.c_str(), &paramIdx, vi, t));
 				}
 				paramValue = VRay::Value(list);
 			}
@@ -734,33 +734,33 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 			// as it was obtained from code
 			if (m_paramList[c].widget == ParamInfo::Menu) {
 				UT_String stringVal;
-				evalStringInst(paramName, &paramIdx, stringVal, 0, t);
+				evalStringInst(paramName.c_str(), &paramIdx, stringVal, 0, t);
 				if (stringVal.isInteger(1)) {
 					value = stringVal.toInt();
 				} else {
-					value = evalIntInst(paramName, &paramIdx, 0, t);
+					value = evalIntInst(paramName.c_str(), &paramIdx, 0, t);
 				}
 
 			} else {
-				value = evalIntInst(paramName, &paramIdx, 0, t);
+				value = evalIntInst(paramName.c_str(), &paramIdx, 0, t);
 			}
 			paramValue = VRay::Value(value);
 
 			break;
 		}
 		case VOP_TYPE_FLOAT:
-			paramValue = VRay::Value(static_cast<float>(evalFloatInst(paramName, &paramIdx, 0, t)));
+			paramValue = VRay::Value(static_cast<float>(evalFloatInst(paramName.c_str(), &paramIdx, 0, t)));
 			break;
 		case VOP_TYPE_STRING:
 			// if widget is String, this is not input
 			if (m_paramList[c].widget == ParamInfo::String) {
 				UT_String stringVal;
-				evalStringInst(paramName, &paramIdx, stringVal, 0, t);
+				evalStringInst(paramName.c_str(), &paramIdx, stringVal, 0, t);
 				paramValue = VRay::Value(stringVal.nonNullBuffer());
 			} else {
 				// TODO: if exporting .vrscene file, appsdk will export empty element here which is incorrect for .vrscene
 				//       it is possible to patch this by setting some dummy plugin that will return always black (to preserve default OSL behaviour)
-				paramValue = VRay::Value(exporter.exportConnectedVop(this, UT_String(m_inputList[inputIdx++], true), parentContext));
+				paramValue = VRay::Value(exporter.exportConnectedVop(this, UT_String(m_inputList[inputIdx++].c_str(), true), parentContext));
 			}
 			break;
 		}

@@ -11,6 +11,8 @@
 
 #include "vfh_phx_utils.h"
 
+#ifdef CGR_HAS_AUR
+
 #include <utils.h>
 #include <misc.h>
 
@@ -104,3 +106,5 @@ void VRayForHoudini::PhxAnimUtils::hou2PhxPattern(QString &path)
 		path.replace(houFramePattern, phxPattern);
 	}
 }
+
+#endif // CGR_HAS_AUR

@@ -111,9 +111,12 @@ protected:
 	/// Read ramp data from UT_IStream
 	bool                       loadRamps(UT_IStream & is);
 
+	typedef QSharedPointer<RampContext> RampContextPtr;
+	typedef QMap<QString, RampContextPtr> RampContexts;
+
 	/// Maps property name to ramp data, but since we can have a curve and color ramp in same window.
 	/// Some properties might map to one context.
-	QMap<QString, QSharedPointer<RampContext>> m_ramps;
+	RampContexts m_ramps;
 
 	/// Maps property name to ramp type, so we know what data to get from RampContext.
 	QMap<QString, AurRamps::RampType> m_rampTypes;

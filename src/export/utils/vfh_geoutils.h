@@ -53,7 +53,7 @@ struct MapVertexHash {
 typedef std::unordered_set<MapVertex, MapVertexHash> VertexSet;
 
 struct CharStringTable
-	: VUtils::Table<VRay::VUtils::CharString, 1>
+	: QStringList
 {
 	VRay::VUtils::CharStringRefList toRefList() const;
 };
@@ -69,10 +69,6 @@ struct MapChannel {
 		mapChannelTypeString,
 #endif
 	};
-
-	MapChannel() = default;
-	MapChannel(const MapChannel &other);
-	~MapChannel() = default;
 
 	MapChannelType type = mapChannelTypeVertex;
 

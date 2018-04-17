@@ -23,6 +23,20 @@ const char VFH_ATTRIB_OBJECTID[] = "vray_objectID";
 const char VFH_ATTRIB_ANIM_OFFSET[] = "anim_offset";
 const char VFH_ATTR_SHOP_MATERIAL_STYLESHEET[] = "shop_materialstylesheet";
 
+/// Resolves OP_Node path. 
+/// @param node Attribute owner.
+/// @param attrName Attribute name.
+/// @param t Time.
+/// @returns Resolved path.
+UT_String getOpPathFromAttr(const OP_Node &node, const char *attrName, fpreal t=0.0);
+
+/// Resolves OP_Node path. 
+/// @param node Attribute owner.
+/// @param attrName Attribute name.
+/// @param t Time.
+/// @returns Resolved path.
+UT_String getOpPathFromAttr(const OP_Node &node, const QString &attrName, fpreal t=0.0);
+
 /// Resolves OP_Node from path. 
 /// @param node Attribute owner.
 /// @param path Path.

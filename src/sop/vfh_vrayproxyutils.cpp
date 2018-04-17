@@ -335,12 +335,12 @@ GU_DetailHandle VRayForHoudini::getVRayProxyDetail(const VRayProxyRefKey &option
 
 	VRayProxyCacheMan::iterator it = theCacheMan.find(filePath);
 	if (it != theCacheMan.end()) {
-		return it.data().getDetail(options);
+		return it.value().getDetail(options);
 	}
 
 	VRayProxyCache &cache = theCacheMan[filePath];
 	if (!cache.open(filePath)) {
-		theCacheMan.erase(filePath);
+		theCacheMan.remove(filePath);
 		return GU_DetailHandle();
 	}
 
@@ -350,7 +350,7 @@ GU_DetailHandle VRayForHoudini::getVRayProxyDetail(const VRayProxyRefKey &option
 bool VRayForHoudini::clearVRayProxyCache(const char *filepath)
 {
 	UT_AutoLock lock(theLock);
-	return theCacheMan.erase(filepath);
+	return theCacheMan.remove(filepath);
 }
 
 bool VRayForHoudini::getVRayProxyBoundingBox(const VRayProxyRefKey &options, UT_BoundingBox &box)
@@ -364,13 +364,13 @@ bool VRayForHoudini::getVRayProxyBoundingBox(const VRayProxyRefKey &options, UT_
 	
 	int res;
 	if (it != theCacheMan.end()) {
-		res = it.data().getBBox(box);
+		res = it.value().getBBox(box);
 	}
 	else {
 		// build a mesh, get bbox from that
 		VRayProxyCache &cache = theCacheMan[options.filePath.ptr()];
 		if (!cache.open(options.filePath.ptr())) {
-			theCacheMan.erase(options.filePath.ptr());
+			theCacheMan.remove(options.filePath.ptr());
 			res = false;
 		}
 		else {
@@ -392,7 +392,13 @@ int VRayProxyCache::open(const char *filepath)
 	}
 
 	meshFile = VUtils::newDefaultMeshFile(path.ptr());
-	if (!(meshFile && meshFile->init(path.ptr()))) {
+	if (!meshFile) {
+		Log::getLog().error("VRayProxy: Can't allocate MeshFile \"%s\"", filepath);
+		freeMem();
+		return false;
+	}
+
+	if (meshFile->init(path.ptr()).error()) {
 		Log::getLog().error("VRayProxy: Can't open file \"%s\"", filepath);
 		freeMem();
 		return false;

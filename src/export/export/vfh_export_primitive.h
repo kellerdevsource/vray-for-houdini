@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_EXPORT_PRIMITIVE_H
 
 #include "vfh_vray.h"
+#include "vfh_typedefs.h"
 #include "vfh_material_override.h"
 #include "vfh_plugin_attrs.h"
 
@@ -20,8 +21,6 @@
 #include <GU/GU_PrimPacked.h>
 
 namespace VRayForHoudini {
-
-typedef VUtils::HashSet<VRay::Plugin> PluginSet;
 
 enum ObjectIDTypes {
 	objectIdUndefined = -1,

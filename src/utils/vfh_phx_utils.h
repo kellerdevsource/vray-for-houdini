@@ -12,6 +12,8 @@
 #ifndef VFH_PHX_CHANNELS_UTILS_H
 #define VFH_PHX_CHANNELS_UTILS_H
 
+#ifdef CGR_HAS_AUR
+
 #include <QString>
 #include <QRegularExpression>
 #include <UT/UT_StringArray.h>
@@ -102,4 +104,5 @@ void hou2PhxPattern(QString& path);
 } // namespace PhxAnimUtils
 } // namespace VRayForHoudini
 
+#endif // CGR_HAS_AUR
 #endif // VFH_PHX_CHANNELS_UTILS_H

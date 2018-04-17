@@ -11,6 +11,7 @@
 #ifdef CGR_HAS_AUR
 
 #include "vfh_log.h"
+#include "vfh_defines.h"
 #include "vfh_attr_utils.h"
 #include "vfh_phx_utils.h"
 #include "gu_volumegridref.h"

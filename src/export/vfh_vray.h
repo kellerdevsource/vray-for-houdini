@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_VRAY_H
 
 #include <QMap>
+#include <QSet>
 #include <QStringBuilder>
 
 #include <SYS/SYS_Types.h>

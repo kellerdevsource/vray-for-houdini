@@ -10,13 +10,11 @@
 
 #include "vfh_export_primitive.h"
 #include "vfh_exporter.h"
-#include "vfh_attr_utils.h"
 #include "vfh_op_utils.h"
 
 #include "gu_volumegridref.h"
 
 #include "vop/vop_node_base.h"
-#include "vop/material/vop_MaterialOutput.h"
 #include "vop/material/vop_PhoenixSim.h"
 
 #include <GU/GU_PrimPacked.h>
@@ -27,7 +25,6 @@
 #include <GU/GU_PrimVolume.h>
 #include <GU/GU_Detail.h>
 #include <GA/GA_SaveMap.h>
-#include <GA/GA_Names.h>
 
 using namespace VRayForHoudini;
 
@@ -41,13 +38,19 @@ namespace {
 /// methods called on INVALID wrapper will return default (0/1) initialized data
 struct VolumeProxy {
 	/// Create a proxy from a primitive, could be nyllptr or not supported primitive
-	VolumeProxy(const GEO_Primitive *prim): m_prim(prim), m_vol(nullptr), m_vdb(nullptr) {
-		if (!prim) {
+	explicit VolumeProxy(const GEO_Primitive *prim)
+		: m_vdb(nullptr)
+		, m_vol(nullptr)
+		, m_prim(prim)
+	{
+		if (!prim)
 			return;
-		} else if (prim->getTypeId() == GEO_PRIMVOLUME) {
-			m_vol = dynamic_cast<const GEO_PrimVolume *>(m_prim);
-		} else if (prim->getTypeId() == GEO_PRIMVDB) {
-			m_vdb = dynamic_cast<const GEO_PrimVDB *>(m_prim);
+
+		if (prim->getTypeId() == GEO_PRIMVOLUME) {
+			m_vol = static_cast<const GEO_PrimVolume*>(m_prim);
+		}
+		else if (prim->getTypeId() == GEO_PRIMVDB) {
+			m_vdb = static_cast<const GEO_PrimVDB*>(m_prim);
 		}
 	};
 
@@ -56,7 +59,8 @@ struct VolumeProxy {
 	void getRes(int res[3]) const {
 		if (m_vol) {
 			m_vol->getRes(res[0], res[1], res[2]);
-		} else if (m_vdb) {
+		}
+		else if (m_vdb) {
 			m_vdb->getRes(res[0], res[1], res[2]);
 		}
 	}
@@ -85,10 +89,10 @@ struct VolumeProxy {
 		};
 
 		if (m_vdb) {
-			auto fGrid = openvdb::gridConstPtrCast<openvdb::FloatGrid>(m_vdb->getGridPtr());
-			if (!fGrid) {
+			const auto fGrid = openvdb::gridConstPtrCast<openvdb::FloatGrid>(m_vdb->getGridPtr());
+			if (!fGrid)
 				return;
-			}
+
 			auto readHandle = fGrid->getConstAccessor();
 			for (int x = 0; x < res[0]; ++x) {
 				for (int y = 0; y < res[1]; ++y) {
@@ -99,8 +103,9 @@ struct VolumeProxy {
 					}
 				}
 			}
-		} else if (m_vol) {
-			UT_VoxelArrayReadHandleF vh = m_vol->getVoxelHandle();
+		}
+		else if (m_vol) {
+			const UT_VoxelArrayReadHandleF vh = m_vol->getVoxelHandle();
 			for (int x = 0; x < res[0]; ++x) {
 				for (int y = 0; y < res[1]; ++y) {
 					for (int z = 0; z < res[2]; ++z) {
@@ -118,7 +123,8 @@ struct VolumeProxy {
 	UT_Vector3 getBaryCenter() const {
 		if (m_vol) {
 			return m_vol->baryCenter();
-		} else if (m_vdb) {
+		}
+		if (m_vdb) {
 			return m_vdb->baryCenter();
 		}
 		return UT_Vector3(0, 0, 0);
@@ -370,11 +376,13 @@ VRay::Plugin VolumeExporter::exportVRayVolumeGridRef(OBJ_Node &objNode, const GU
 	const VRayVolumeGridRef *vrayVolumeGridRef = UTverify_cast<const VRayVolumeGridRef*>(prim.implementation());
 	const int primID = vrayVolumeGridRef->getOptions().hash();
 
-	Attrs::PluginDesc phxCache(boost::str(phxCacheNameFmt % primID % objNode.getName().buffer()),
-							   "PhxShaderCache");
-	pluginExporter.setAttrsFromUTOptions(phxCache, opts);
+	Attrs::PluginDesc phxCache(SL("PhxShaderCache|") % QString::number(primID) % SL("@") % objNode.getName().buffer(),
+	                           SL("PhxShaderCache"));
+	if (pluginExporter.setAttrsFromUTOptions(phxCache, opts)) {
+		return pluginExporter.exportPlugin(phxCache);
+	}
 
-	return pluginExporter.exportPlugin(phxCache);
+	return VRay::Plugin();
 }
 
 void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet)
@@ -408,8 +416,8 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 
 	VOP::NodeBase &phxSimVopNode = static_cast<VOP::NodeBase&>(*simVop);
 
-	Attrs::PluginDesc phxSim(boost::str(phxSimNameFmt % primID % objNode.getName().buffer()),
-							 "PhxShaderSim");
+	Attrs::PluginDesc phxSim(SL("PhxShaderSim|") % QString::number(primID) % objNode.getName().buffer(),
+	                         SL("PhxShaderSim"));
 
 	phxSimVopNode.asPluginDesc(phxSim, pluginExporter);
 
@@ -418,10 +426,10 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 	// Handle VOP overrides if any
 	pluginExporter.setAttrsFromSHOPOverrides(phxSim, *simVop);
 
-	phxSim.add(Attrs::PluginAttr("node_transform", tm));
-	phxSim.add(Attrs::PluginAttr("cache", cachePlugin));
+	phxSim.add(Attrs::PluginAttr(SL("node_transform"), tm));
+	phxSim.add(Attrs::PluginAttr(SL("cache"), cachePlugin));
 
-	const auto rendModeAttr = phxSim.get(QString("_vray_render_mode"));
+	const auto rendModeAttr = phxSim.get(SL("_vray_render_mode"));
 	UT_ASSERT_MSG(rendModeAttr, "Trying to export PhxShaderSim without setting it's _vray_render_mode.");
 
 	VRay::Plugin overwriteSim = pluginExporter.exportPlugin(phxSim);
@@ -437,30 +445,34 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 		else {
 			const bool isMesh = rendMode == RMode::Mesh;
 
-			const char *wrapperType = isMesh ? "PhxShaderSimMesh" : "PhxShaderSimGeom";
-			const char *wrapperPrefix = isMesh ? "Mesh" : "Geom";
-			Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(simVop, wrapperPrefix, cachePlugin.getName()), wrapperType);
-			phxWrapper.add(Attrs::PluginAttr("phoenix_sim", overwriteSim));
-			VRay::Plugin phxWrapperPlugin = pluginExporter.exportPlugin(phxWrapper);
+			const QString &wrapperType = isMesh ? SL("PhxShaderSimMesh") : SL("PhxShaderSimGeom");
+			const QString &wrapperPrefix = isMesh ? SL("Mesh") : SL("Geom");
 
+			Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(*simVop, wrapperPrefix, cachePlugin.getName()),
+			                             wrapperType);
+			phxWrapper.add(Attrs::PluginAttr(SL("phoenix_sim"), overwriteSim));
+
+			VRay::Plugin phxWrapperPlugin = pluginExporter.exportPlugin(phxWrapper);
 			if (!isMesh) {
 				// make static mesh that wraps the geom plugin
-				Attrs::PluginDesc meshWrapper(VRayExporter::getPluginName(simVop, "Mesh", cachePlugin.getName()), "GeomStaticMesh");
-				meshWrapper.add(Attrs::PluginAttr("static_mesh", phxWrapperPlugin));
+				Attrs::PluginDesc meshWrapper(VRayExporter::getPluginName(*simVop, SL("Mesh"), cachePlugin.getName()),
+				                              SL("GeomStaticMesh"));
+				meshWrapper.add(Attrs::PluginAttr(SL("static_mesh"), phxWrapperPlugin));
 
-				const auto dynGeomAttr = phxSim.get(QString("_vray_dynamic_geometry"));
+				const auto dynGeomAttr = phxSim.get(SL("_vray_dynamic_geometry"));
 				UT_ASSERT_MSG(dynGeomAttr, "Exporting PhxShaderSim inside PhxShaderSimGeom with missing _vray_dynamic_geometry");
 				const bool dynamic_geometry = dynGeomAttr ? dynGeomAttr->paramValue.valInt : false;
 
-				meshWrapper.add(Attrs::PluginAttr("dynamic_geometry", dynamic_geometry));
+				meshWrapper.add(Attrs::PluginAttr(SL("dynamic_geometry"), dynamic_geometry));
 				phxWrapperPlugin = pluginExporter.exportPlugin(meshWrapper);
 			}
 
-			Attrs::PluginDesc node(VRayExporter::getPluginName(simVop, "Node", cachePlugin.getName()), "Node");
-			node.add(Attrs::PluginAttr("geometry", phxWrapperPlugin));
-			node.add(Attrs::PluginAttr("visible", true));
-			node.add(Attrs::PluginAttr("transform", VRay::Transform(1)));
-			node.add(Attrs::PluginAttr("material", pluginExporter.exportDefaultMaterial()));
+			Attrs::PluginDesc node(VRayExporter::getPluginName(*simVop, SL("Node"), cachePlugin.getName()),
+			                       SL("Node"));
+			node.add(Attrs::PluginAttr(SL("geometry"), phxWrapperPlugin));
+			node.add(Attrs::PluginAttr(SL("visible"), true));
+			node.add(Attrs::PluginAttr(SL("transform"), VRay::Transform(1)));
+			node.add(Attrs::PluginAttr(SL("material"), pluginExporter.exportDefaultMaterial()));
 			pluginExporter.exportPlugin(node);
 		}
 	}

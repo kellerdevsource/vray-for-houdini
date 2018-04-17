@@ -11,9 +11,12 @@
 #ifndef VRAY_FOR_HOUDINI_TYPEDEFS_H
 #define VRAY_FOR_HOUDINI_TYPEDEFS_H
 
-#include <QSet>
+#include "vfh_vray.h"
+
+#include <SYS/SYS_Types.h>
 
 typedef QSet<QString> StringSet;
-typedef QSet<float> FloatSet;
+typedef QSet<fpreal> FloatSet;
+typedef QList<VRay::Plugin> PluginSet;
 
 #endif // VRAY_FOR_HOUDINI_TYPEDEFS_H

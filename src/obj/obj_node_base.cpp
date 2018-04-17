@@ -39,7 +39,7 @@ PRM_Template* OBJ::VRayClipper::GetPrmTemplate()
 OP::VRayNode::PluginResult OBJ::VRayClipper::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter& /*exporter*/, ExportContext* /*parentContext*/)
 {
 	pluginDesc.pluginID   = pluginID;
-	pluginDesc.pluginName = VRayExporter::getPluginName(this, "");
+	pluginDesc.pluginName = VRayExporter::getPluginName(*this);
 
 	return OP::VRayNode::PluginResultContinue;
 }
@@ -114,7 +114,7 @@ template<VRayPluginID PluginID>
 OP::VRayNode::PluginResult LightNodeBase<PluginID>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter& /*exporter*/, ExportContext* /*parentContext*/)
 {
 	pluginDesc.pluginID   = pluginID;
-	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+	pluginDesc.pluginName = VRayExporter::getPluginName(*this);
 
 	return OP::VRayNode::PluginResultContinue;
 }
@@ -212,7 +212,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 		VRayExporter::getObjTransform(this, exporter.getContext());
 
 	pluginDesc.pluginID = pluginID;
-	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+	pluginDesc.pluginName = VRayExporter::getPluginName(*this);
 
 	if (geomList.count()) {
 		const PrimitiveItem &item = geomList[0];
@@ -223,7 +223,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 		const PrimitiveItem &item = geomList[i];
 
 		const QString meshLightName =
-			pluginDesc.pluginName + "|" + std::to_string(i) + "|" + item.geometry.getName();
+			pluginDesc.pluginName % SL("|") % QString::number(i) + SL("|") + item.geometry.getName();
 
 		Attrs::PluginDesc meshLightDesc(meshLightName, pluginID);
 		if (!fillLightPluginDesc(meshLightDesc, *this, item, objTm)) {
@@ -241,7 +241,7 @@ template<>
 OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::SunLight>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
 {
 	pluginDesc.pluginID   = pluginID;
-	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+	pluginDesc.pluginName = VRayExporter::getPluginName(*this);
 
 	pluginDesc.add(Attrs::PluginAttr("up_vector", VRay::Vector(0.f,1.f,0.f)));
 
@@ -254,34 +254,34 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::SunLight>::asPluginDesc(A
 		}
 	}
 
-	return OP::VRayNode::PluginResultContinue;
+	return PluginResultContinue;
 }
 
-static boost::format fmtToggle("use_%s_tex");
-static boost::format fmtTex("%s_tex");
-static boost::format fmtTexColorSpace("%s_tex_color_space");
+static const QString fmtToggle("use_%1_tex");
+static const QString fmtTex("%1_tex");
+static const QString fmtTexColorSpace("%1_tex_color_space");
 
 static VRay::Plugin exportAttributeFromPathAuto(VRayExporter &exporter,
                                                 const OP_Node &node,
-                                                const char *attrName,
+                                                const QString &attrName,
                                                 VRayExporter::DefaultMappingType mappingType,
                                                 Attrs::PluginDesc &pluginDesc)
 {
-	const QString toggleAttrName(str(fmtToggle % attrName));
-	const QString texAttrName(str(fmtTex % attrName));
-	const QString texColorSpaceAttrName(str(fmtTexColorSpace % attrName));
+	const QString toggleAttrName(fmtToggle.arg(attrName));
+	const QString texAttrName(fmtTex.arg(attrName));
+	const QString texColorSpaceAttrName(fmtTexColorSpace.arg(attrName));
 
 	const OP_Context &ctx = exporter.getContext();
 	const fpreal t = ctx.getTime();
 
-	if (!node.evalInt(toggleAttrName, 0, t))
+	if (!node.evalInt(_toChar(toggleAttrName), 0, t))
 		return VRay::Plugin();
 
 	UT_String texPath;
-	node.evalString(texPath, texAttrName, 0, t);
+	node.evalString(texPath, _toChar(texAttrName), 0, t);
 
 	const BitmapBufferColorSpace colorSpace =
-		static_cast<BitmapBufferColorSpace>(Parm::getParmEnum(node, texColorSpaceAttrName, bitmapBufferColorSpaceLinear, 0.0));
+		static_cast<BitmapBufferColorSpace>(Parm::getParmEnum(node, _toChar(texColorSpaceAttrName), bitmapBufferColorSpaceLinear, 0.0));
 
 	const VRay::Plugin texPlugin = exporter.exportNodeFromPathWithDefaultMapping(texPath, mappingType, colorSpace);
 	if (texPlugin.isNotEmpty()) {
@@ -295,13 +295,13 @@ template<>
 OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightDome>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
 {
 	pluginDesc.pluginID = pluginID;
-	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+	pluginDesc.pluginName = VRayExporter::getPluginName(*this);
 	
 	const VRayExporter::DefaultMappingType domeMapping = VRayExporter::defaultMappingSpherical;
 
-	const VRay::Plugin domeTex = exportAttributeFromPathAuto(exporter, *this, "dome", domeMapping, pluginDesc);
+	const VRay::Plugin domeTex = exportAttributeFromPathAuto(exporter, *this, SL("dome"), domeMapping, pluginDesc);
 	if (domeTex.isEmpty()) {
-		pluginDesc.add(Attrs::PluginAttr("use_dome_tex", false));
+		pluginDesc.add(Attrs::PluginAttr(SL("use_dome_tex"), false));
 	}
 
 	exportAttributeFromPathAuto(exporter, *this, "color",       domeMapping, pluginDesc);
@@ -317,7 +317,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightRectangle>::asPlugin
 	const fpreal t = exporter.getContext().getTime();
 
 	pluginDesc.pluginID = pluginID;
-	pluginDesc.pluginName = VRayExporter::getPluginName(this);
+	pluginDesc.pluginName = VRayExporter::getPluginName(*this);
 
 	const VRayExporter::DefaultMappingType rectMapping = VRayExporter::defaultMappingChannel;
 
@@ -330,17 +330,14 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightRectangle>::asPlugin
 		const int clipTexAlpha = evalInt("use_rect_tex_alpha_clip", 0, 0.0);
 		const float texAlphaOverride = evalFloat("tex_alpha", 0, t);
 
-		static boost::format fmtPrefix("%s|%s");
-
-		Attrs::PluginDesc applyAlphaDesc(str(fmtPrefix % "AlphaCombine" % rectTex.getName()),
-											"TexAColorOp");
-
+		Attrs::PluginDesc applyAlphaDesc(SL("AlphaCombine|") % rectTex.getName(),
+		                                 SL("TexAColorOp"));
 		if (!clipTexAlpha) {
 			applyAlphaDesc.add(Attrs::PluginAttr("color_a", rectTex));
 		}
 		else {
-			Attrs::PluginDesc clipAlphaDesc(str(fmtPrefix % "AlphaClip" % rectTex.getName()),
-											"TexAColorOp");
+			Attrs::PluginDesc clipAlphaDesc(SL("AlphaClip|") % rectTex.getName(),
+											SL("TexAColorOp"));
 			clipAlphaDesc.add(Attrs::PluginAttr("mode", 0));
 			clipAlphaDesc.add(Attrs::PluginAttr("color_a", rectTex));
 			if (useTexAlpha) {

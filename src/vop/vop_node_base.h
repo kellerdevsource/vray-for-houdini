@@ -13,6 +13,7 @@
 #ifndef VRAY_FOR_HOUDINI_VOP_NODE_BASE_H
 #define VRAY_FOR_HOUDINI_VOP_NODE_BASE_H
 
+#include "vfh_defines.h"
 #include "op/op_node_base.h"
 
 #include <OP/OP_Input.h>
@@ -84,19 +85,27 @@ protected:
 	void getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &voptypes) VRAY_OVERRIDE;
 	bool willAutoconvertInputType(int input_idx) VRAY_OVERRIDE;
 
-	/// Returns labed for the soket.
+	/// Creates label for the socket.
 	/// @param socketIndex 0 based socket index.
 	/// @param nameFormat Label format.
-	const char *getCreateSocketLabel(int socketIndex, const char *nameFormat) const;
+	/// @param ... Format argments.
+	const char *getCreateSocketLabel(int socketIndex, const char *nameFormat, ...) const;
+
+	/// Creates token for the socket.
+	/// @param socketIndex 0 based socket index.
+	/// @param nameFormat Label format.
+	/// @param ... Format argments.
+	const char *getCreateSocketToken(int socketIndex, const char *nameFormat, ...) const;
 
 private:
+	typedef QMap<int, QString> IndexToString;
+
 	/// Storage for dynamically generated socket labels.
-	mutable UT_StringArray socketLabels;
+	mutable IndexToString socketLabels;
 
-	bool                      hasPluginInfo() const;
-
-}; // NodeBase
-
+	/// Storage for dynamically generated socket tokens.
+	mutable IndexToString socketTokens;
+};
 
 #define NODE_BASE_DEF(OpPluginType, OpPluginID) \
 class OpPluginID: \
@@ -110,7 +119,7 @@ public: \
 protected: \
 	void setPluginType() VRAY_OVERRIDE { \
 		pluginType = VRayPluginType::OpPluginType; \
-		pluginID = STRINGIZE(OpPluginID); \
+		pluginID = SL(STRINGIZE(OpPluginID)); \
 		if (pluginType == VRayPluginType::BRDF || \
 			pluginType == VRayPluginType::MATERIAL) \
 		{ \

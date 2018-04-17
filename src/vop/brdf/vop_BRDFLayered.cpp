@@ -30,21 +30,20 @@ void VOP::BRDFLayered::setPluginType()
 
 const char* VOP::BRDFLayered::inputLabel(unsigned idx) const
 {
-	int numBaseInputs = VOP::NodeBase::orderedInputs();
+	const int numBaseInputs = VOP::NodeBase::orderedInputs();
 
 	if (idx < numBaseInputs) {
 		return VOP::NodeBase::inputLabel(idx);
 	}
-	else {
-		const int socketIndex = idx - numBaseInputs;
-		const int inputHumanIndex = ((socketIndex) / 2) + 1;
 
-		const QString &label = (socketIndex % 2)
-								   ? boost::str(boost::format("Weight %i") % inputHumanIndex)
-								   : boost::str(boost::format("BRDF %i")   % inputHumanIndex);
+	const int socketIndex = idx - numBaseInputs;
+	const int inputHumanIndex = socketIndex / 2 + 1;
 
-		return label;
+	if (socketIndex % 2) {
+		return getCreateSocketLabel(socketIndex, "Weight %i", inputHumanIndex);
 	}
+
+	return getCreateSocketLabel(socketIndex, "BRDF %i", inputHumanIndex);
 }
 
 
@@ -62,8 +61,7 @@ void VOP::BRDFLayered::getOutputNameSubclass(UT_String &name, int idx) const
 
 void VOP::BRDFLayered::getInputNameSubclass(UT_String &in, int idx) const
 {
-	int numBaseInputs = VOP::NodeBase::orderedInputs();
-
+	const int numBaseInputs = VOP::NodeBase::orderedInputs();
 	if (idx < numBaseInputs) {
 		VOP::NodeBase::getInputNameSubclass(in, idx);
 	}
@@ -72,10 +70,10 @@ void VOP::BRDFLayered::getInputNameSubclass(UT_String &in, int idx) const
 		const int inputHumanIndex = ((socketIndex) / 2) + 1;
 
 		if (socketIndex % 2) {
-			in = boost::str(boost::format("weight_%i") % inputHumanIndex);
+			in = getCreateSocketToken(socketIndex, "weight_%i", inputHumanIndex);
 		}
 		else {
-			in = boost::str(boost::format("brdf_%i") % inputHumanIndex);
+			in = getCreateSocketToken(socketIndex, "brdf_%i", inputHumanIndex);
 		}
 	}
 }
@@ -89,9 +87,9 @@ int VOP::BRDFLayered::getInputFromName(const UT_String &in) const
 
 int VOP::BRDFLayered::getInputFromNameSubclass(const UT_String &in) const
 {
-	int numInputs = VOP::NodeBase::orderedInputs();
-	int inIdx = 0;
+	const int numInputs = VOP::NodeBase::orderedInputs();
 
+	int inIdx;
 	if (in.startsWith("brdf_")) {
 		int idx;
 		sscanf(in.buffer(), "brdf_%i", &idx);
@@ -105,14 +103,14 @@ int VOP::BRDFLayered::getInputFromNameSubclass(const UT_String &in) const
 	else {
 		inIdx = VOP::NodeBase::getInputFromNameSubclass(in);
 	}
+
 	return inIdx;
 }
 
 
 void VOP::BRDFLayered::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 {
-	int numBaseInputs = VOP::NodeBase::orderedInputs();
-
+	const int numBaseInputs = VOP::NodeBase::orderedInputs();
 	if (idx < numBaseInputs) {
 		VOP::NodeBase::getInputTypeInfoSubclass(type_info, idx);
 	}
@@ -186,8 +184,7 @@ bool VOP::BRDFLayered::willAutoconvertInputType(int idx)
 int VOP::BRDFLayered::customInputsCount() const
 {
 	// One socket for BRDF and one for Weight
-	int numCustomInputs = evalInt("brdf_count", 0, 0.0) * 2;
-
+	const int numCustomInputs = evalInt("brdf_count", 0, 0.0) * 2;
 	return numCustomInputs;
 }
 
@@ -227,22 +224,21 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 	VRay::ValueList weights;
 
 	for (int i = 1; i <= brdf_count; ++i) {
-		const QString &paramPrefix = boost::str(boost::format("@%i") % i);
-
-		const QString &brdfSockName = boost::str(boost::format("brdf_%i") % i);
+		const QString &paramPrefix = SL("@%1").arg(QString::number(i));
+		const QString &brdfSockName = SL("brdf_%1").arg(QString::number(i));
 
 		OP_Node *brdf_node = VRayExporter::getConnectedNode(this, brdfSockName);
 		if (NOT(brdf_node)) {
 			Log::getLog().warning("Node \"%s\": BRDF node is not connected to \"%s\", ignoring...",
-					   getName().buffer(), brdfSockName);
+			                      getName().buffer(), _toChar(brdfSockName));
 		}
 		else {
-			const QString &weightSockName = boost::str(boost::format("weight_%i") % i);
+			const QString weightSockName = SL("weight_%1").arg(QString::number(i));
 
 			VRay::Plugin brdf_plugin = exporter.exportVop(brdf_node, parentContext);
 			if (brdf_plugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export BRDF node connected to \"%s\", ignoring...",
-							getName().buffer(), brdfSockName);
+				                    getName().buffer(), _toChar(brdfSockName));
 			}
 			else {
 				VRay::Plugin weight_plugin = VRay::Plugin();
@@ -255,35 +251,35 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 				else {
 					const fpreal weight_value = evalFloatInst("brdf#weight", &i, 0, t);
 
-					Attrs::PluginDesc weight_tex(VRayExporter::getPluginName(this, paramPrefix), "TexAColor");
-					weight_tex.add(Attrs::PluginAttr("texture", weight_value, weight_value, weight_value, 1.0f));
+					Attrs::PluginDesc weight_tex(VRayExporter::getPluginName(*this, paramPrefix),
+					                             SL("TexAColor"));
+					weight_tex.add(Attrs::PluginAttr(SL("texture"), weight_value, weight_value, weight_value, 1.0f));
 
 					weight_plugin = exporter.exportPlugin(weight_tex);
 				}
 
 				if (weight_plugin.isEmpty()) {
 					Log::getLog().error("Node \"%s\": Failed to export BRDF weight node connected to \"%s\", ignoring...",
-								getName().buffer(), brdfSockName);
+								getName().buffer(), _toChar(brdfSockName));
 				}
 				else {
-					// convert weight plugin
+					// Convert weight plugin.
 					exporter.convertInputPlugin(weight_plugin, pluginDesc, this, VOP_TYPE_FLOAT, weightSockName);
-					// convert brdf plugin
-					exporter.convertInputPlugin(brdf_plugin, pluginDesc, this, VOP_TYPE_BSDF, brdfSockName);
-
-					brdfs.push_back(VRay::Value(brdf_plugin));
 					weights.push_back(VRay::Value(weight_plugin));
+
+					// Convert BRDF plugin.
+					exporter.convertInputPlugin(brdf_plugin, pluginDesc, this, VOP_TYPE_BSDF, brdfSockName);
+					brdfs.push_back(VRay::Value(brdf_plugin));
 				}
 			}
 		}
 	}
 
-	if (NOT(brdfs.size())) {
-		return PluginResult::PluginResultError;
-	}
+	if (!brdfs.size())
+		return PluginResultError;
 
-	pluginDesc.add(Attrs::PluginAttr("brdfs", brdfs));
-	pluginDesc.add(Attrs::PluginAttr("weights", weights));
+	pluginDesc.add(Attrs::PluginAttr(SL("brdfs"), brdfs));
+	pluginDesc.add(Attrs::PluginAttr(SL("weights"), weights));
 
-	return PluginResult::PluginResultContinue;
+	return PluginResultContinue;
 }

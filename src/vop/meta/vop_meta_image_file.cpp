@@ -27,7 +27,7 @@ typedef std::map<MetaImageFile::UVWGenType, MetaImageFile::UVWGenSocketsTable> U
 static UVWGenSocketsMap uvwGenInputsMap;
 
 // NOTE: Keep in sync with MetaImageFile::UVWGenType.
-static const UT_String uvwGenPluginIDs[] = {
+static const QString uvwGenPluginIDs[] = {
 	"UVWGenMayaPlace2dTexture",
 	"UVWGenEnvironment",
 	"UVWGenExplicit",
@@ -127,21 +127,21 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 	const UVWGenSocketsTable &selectedUVWGen = getUVWGenInputs();
 
 	const UVWGenType current = getUVWGenType();
-	const UT_String &selectedUVWGenName = uvwGenPluginIDs[current];
+	const QString selectedUVWGenName = uvwGenPluginIDs[current];
 
 	Attrs::PluginDesc selectedUVPluginDesc(VRayExporter::getPluginName(*this, selectedUVWGenName), selectedUVWGenName);
 
 	for (const UVWGenSocket &it : selectedUVWGen) {
 		const QString &inputName = it.label;
 
-		const int idx = getInputFromName(inputName);
+		const int idx = getInputFromName(_toChar(inputName));
 
 		OP_Node *connectedInput = getInput(idx);
 		if (connectedInput) {
 			const VRay::Plugin connectedPlugin = exporter.exportVop(connectedInput, parentContext);
 			if (connectedPlugin.isNotEmpty()) {
 				const Parm::SocketDesc *fromSocketInfo = VRayExporter::getConnectedOutputType(this, inputName);
-				selectedUVPluginDesc.add(Attrs::PluginAttr(inputName, connectedPlugin, fromSocketInfo->attrName.ptr()));
+				selectedUVPluginDesc.add(Attrs::PluginAttr(inputName, connectedPlugin, fromSocketInfo->attrName));
 			}
 		}
 	}
@@ -154,7 +154,7 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 		selectedUVPluginDesc.add(Attrs::PluginAttr("uvw_matrix", uvwTm));
 	}
 
-	exporter.setAttrsFromOpNodePrms(selectedUVPluginDesc, this, boost::str(Parm::FmtPrefix % selectedUVWGenName.buffer()));
+	exporter.setAttrsFromOpNodePrms(selectedUVPluginDesc, this, selectedUVWGenName % SL("_"));
 
 	Attrs::PluginDesc bitmapBufferDesc;
 	bitmapBufferDesc.pluginName = VRayExporter::getPluginName(*this, "BitmapBuffer");

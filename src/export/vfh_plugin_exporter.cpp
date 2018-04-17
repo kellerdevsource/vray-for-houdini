@@ -429,11 +429,11 @@ void VRayPluginRenderer::removePlugin(const QString &pluginName) const
 {
 	vassert(m_vray);
 
-	m_vray->removePlugin(pluginName);
+	m_vray->removePlugin(_toChar(pluginName));
 
 	const VRay::Error err = m_vray->getLastError();
 	if (err.getCode() != VRay::SUCCESS) {
-		Log::getLog().debug("Error removing plugin \"%s\": %s", pluginName, err.toString());
+		Log::getLog().debug("Error removing plugin \"%s\": %s", _toChar(pluginName), err.toString());
 	}
 }
 
@@ -445,9 +445,9 @@ int VRayPluginRenderer::exportScene(const QString &filepath, VRay::VRayExportSet
 		Log::getLog().error("Export to the *.vrscene files is not allowed in Houdini Indie");
 	}
 	else if (m_vray) {
-		Log::getLog().info("Starting export to \"%s\"...", filepath);
+		Log::getLog().info("Starting export to \"%s\"...", _toChar(filepath));
 
-		res = m_vray->exportScene(filepath, settings);
+		res = m_vray->exportScene(_toChar(filepath), settings);
 
 		VRay::Error err = m_vray->getLastError();
 		if (err != VRay::SUCCESS) {

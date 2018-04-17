@@ -59,6 +59,10 @@ struct SettingsWrapper {
 		return !(*this == other);
 	}
 
+	bool operator <(const SettingsWrapper &other) const {
+		return *this != other;
+	}
+
 	VrsceneSettings settings;
 	int flipAxis;
 };
@@ -115,9 +119,10 @@ public:
 			rvalue.clearDetail = true;
 			return GU_DetailHandle();
 		}
+		const VrsceneSceneInfo &sceneInfo = vrsceneDesc->getSceneInfo();
 
 		rvalue.shouldFlip = rvalue.flipAxis == FlipAxisMode::flipZY ||
-		                    rvalue.flipAxis == FlipAxisMode::automatic && vrsceneDesc->getUpAxis() == vrsceneUpAxisZ;
+		                    rvalue.flipAxis == FlipAxisMode::automatic && sceneInfo.getUpAxis() == vrsceneUpAxisZ;
 
 		return build(vrsceneDesc, rvalue.shouldFlip, frame, rvalue);
 	}

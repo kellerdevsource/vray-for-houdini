@@ -42,21 +42,25 @@ struct VRayProxyRefKey {
 	int animLength = 100;
 	int previewFaces = 10000;
 
-	bool operator== (const VRayProxyRefKey & other) const {
-		return (filePath == other.filePath &&
-			lod == other.lod &&
-			MemberFloatEq(f) &&
-			animType == other.animType &&
-			MemberFloatEq(animOffset) &&
-			MemberFloatEq(animSpeed) &&
-			animOverride == other.animOverride &&
-			animStart == other.animStart &&
-			animLength == other.animLength &&
-			previewFaces == other.previewFaces);
+	bool operator ==(const VRayProxyRefKey &other) const {
+		return filePath == other.filePath &&
+		       lod == other.lod &&
+		       MemberFloatEq(f) &&
+		       animType == other.animType &&
+		       MemberFloatEq(animOffset) &&
+		       MemberFloatEq(animSpeed) &&
+		       animOverride == other.animOverride &&
+		       animStart == other.animStart &&
+		       animLength == other.animLength &&
+		       previewFaces == other.previewFaces;
 	}
 
-	bool operator!=(const VRayProxyRefKey &other) const {
+	bool operator !=(const VRayProxyRefKey &other) const {
 		return !(*this == other);
+	}
+
+	bool operator <(const VRayProxyRefKey &other) const {
+		return *this != other;
 	}
 
 	/// Checks for difference between two instances,

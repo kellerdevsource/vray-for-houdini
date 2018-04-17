@@ -22,6 +22,7 @@ using namespace VRayForHoudini;
 /// A typedef for render elements array.
 typedef std::vector<VRay::RenderElement> RenderElementsList;
 
+static const QString colorPass("C");
 static ImdisplayThread imdisplayThread;
 
 static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int x, int y)
@@ -39,14 +40,14 @@ static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int 
 
 	PlaneImages planes;
 
-	TileImage *rgbaImage = new TileImage(image, "C");
+	TileImage *rgbaImage = new TileImage(image, colorPass);
 	rgbaImage->setRegion(region);
 	planes.append(rgbaImage);
 
 	const VRay::RenderElements &reMan = renderer.getRenderElements();
 	const RenderElementsList &reList = reMan.getAllByType(VRay::RenderElement::NONE);
 	for (const VRay::RenderElement &re : reList) {
-		TileImage *renderElementImage = new TileImage(re.getImage(&region), re.getName());
+		TileImage *renderElementImage = new TileImage(re.getImage(&region), re.getName().c_str());
 		renderElementImage->setRegion(region);
 
 		planes.append(renderElementImage);
@@ -97,12 +98,12 @@ void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer, const char *rop
 	ImageHeaderMessage *imageHeaderMsg = new ImageHeaderMessage();
 	imageHeaderMsg->imageWidth = rendererOptions.imageWidth;
 	imageHeaderMsg->imageHeight = rendererOptions.imageHeight;
-	imageHeaderMsg->planeNames.append("C");
+	imageHeaderMsg->planeNames.append(colorPass);
 	imageHeaderMsg->ropName = ropName;
 
 	const VRay::RenderElements &reMan = renderer.getRenderElements();
 	for (const VRay::RenderElement &re : reMan.getAllByType(VRay::RenderElement::NONE)) {
-		imageHeaderMsg->planeNames.append(re.getName());
+		imageHeaderMsg->planeNames.append(re.getName().c_str());
 	}
 
 	imdisplayThread.add(imageHeaderMsg);

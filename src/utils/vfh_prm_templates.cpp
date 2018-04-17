@@ -239,18 +239,19 @@ bool Parm::addPrmTemplateForPlugin(const QString &pluginID, Parm::PRMList &prmLi
 	return true;
 }
 
+typedef QMap<QString, Parm::PRMList> PRMListMap;
+
+static PRMListMap prmListMap;
 
 Parm::PRMList* Parm::generatePrmTemplate(const QString &pluginID)
 {
-	typedef std::unordered_map<QString, PRMList> PRMListMap;
-	static PRMListMap prmListMap;
+	const PRMListMap::iterator it = prmListMap.find(pluginID);
+	if (it != prmListMap.end())
+		return &it.value();
 
-	if (prmListMap.count(pluginID) == 0) {
-		PRMList &prmList = prmListMap[pluginID];
-		addPrmTemplateForPlugin(pluginID, prmList);
-	}
+	PRMList &prmList = prmListMap[pluginID];
 
-	PRMList &prmList = prmListMap.at(pluginID);
+	addPrmTemplateForPlugin(pluginID, prmList);
 
 	return &prmList;
 }

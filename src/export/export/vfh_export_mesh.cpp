@@ -762,8 +762,8 @@ VRay::Plugin MeshExporter::getMaterial()
 		const MHash mtlIdListHash = getMaterialIdListHash(face_mtlIDs);
 
 		if (!objExproter.getPluginFromCache(mtlIdListHash, texExtMaterialID)) {
-			Attrs::PluginDesc texExtMaterialIDDesc(boost::str(texExtMaterialIDFmt % mtlIdListHash % objNode.getName().buffer()),
-												   "TexExtMaterialID");
+			Attrs::PluginDesc texExtMaterialIDDesc(SL("TexExtMaterialID|") % QString::number(mtlIdListHash) % SL("@") % objNode.getName().buffer(),
+												   SL("TexExtMaterialID"));
 			texExtMaterialIDDesc.add(Attrs::PluginAttr("ids_list", face_mtlIDs));
 
 			texExtMaterialID = pluginExporter.exportPlugin(texExtMaterialIDDesc);
@@ -774,8 +774,8 @@ VRay::Plugin MeshExporter::getMaterial()
 		const MHash mtlMultiIdHash = mtlIdListHash ^ primID;
 
 		if (!objExproter.getPluginFromCache(mtlMultiIdHash, objectMaterial)) {
-			Attrs::PluginDesc mtlMulti(boost::str(mtlMultiFmt % mtlMultiIdHash % objNode.getName().buffer()),
-									   "MtlMulti");
+			Attrs::PluginDesc mtlMulti(SL("MtlMulti|") % QString::number(mtlMultiIdHash) % SL("@") % objNode.getName().buffer(),
+									   SL("MtlMulti"));
 			mtlMulti.add(Attrs::PluginAttr("mtls_list", materialList));
 			mtlMulti.add(Attrs::PluginAttr("ids_list", idsList));
 			mtlMulti.add(Attrs::PluginAttr("mtlid_gen", texExtMaterialID));
@@ -823,8 +823,8 @@ VRay::Plugin MeshExporter::exportExtMapChannels(const MapChannels &mapChannelOve
 
 	VRay::Plugin texExtMapChannels;
 	if (!objExproter.getPluginFromCache(mapChannelsHash, texExtMapChannels)) {
-		Attrs::PluginDesc extMapChannels(boost::str(extMapChannelFmt % mapChannelsHash % objNode.getName().buffer()),
-											"ExtMapChannels");
+		Attrs::PluginDesc extMapChannels(SL("ExtMapChannels|") % QString::number(mapChannelsHash) % SL("@") % objNode.getName().buffer(),
+		                                 SL("ExtMapChannels"));
 		extMapChannels.add(Attrs::PluginAttr("map_channels", map_channels));
 
 		texExtMapChannels = pluginExporter.exportPlugin(extMapChannels);

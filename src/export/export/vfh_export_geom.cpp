@@ -99,8 +99,8 @@ static const UT_String vrayPluginTypeNode = "Node";
 
 static const UT_String vrayUserAttrSceneName = "VRay_Scene_Node_Name";
 
-static const QLatin1String attrCd("Cd");
-static const QLatin1String attrIntensity("intensity");
+static const QString attrCd("Cd");
+static const QString attrIntensity("intensity");
 
 /// Identity transform.
 static VRay::Transform identityTm(1);
@@ -171,9 +171,7 @@ static int getPluginFromCacheImpl(ContainerType &container, const KeyType &key, 
 template <typename ContainerType, typename KeyType>
 static void addPluginToCacheImpl(ContainerType &container, const KeyType &key, VRay::Plugin &plugin)
 {
-	vassert(key);
 	vassert(container.find(key) == container.end());
-
 	container.insert(key, plugin);
 }
 
@@ -524,6 +522,11 @@ int ObjectExporter::getPluginFromCache(const char *key, VRay::Plugin &plugin) co
 	return getPluginFromCacheImpl(pluginCache.op, key, plugin);
 }
 
+int ObjectExporter::getPluginFromCache(const QString &key, VRay::Plugin &plugin) const
+{
+	return getPluginFromCacheImpl(pluginCache.op, key, plugin);
+}
+
 int ObjectExporter::getPluginFromCache(const OP_Node &opNode, VRay::Plugin &plugin) const
 {
 	const UT_StringHolder &opKey = getKeyFromOpNode(opNode);
@@ -546,6 +549,11 @@ void ObjectExporter::addPrimPluginToCache(int key, VRay::Plugin &plugin)
 }
 
 void ObjectExporter::addPluginToCache(const char *key, VRay::Plugin &plugin)
+{
+	addPluginToCacheImpl(pluginCache.op, key, plugin);
+}
+
+void ObjectExporter::addPluginToCache(const QString &key, VRay::Plugin &plugin)
 {
 	addPluginToCacheImpl(pluginCache.op, key, plugin);
 }
@@ -593,8 +601,8 @@ void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &it
 		UT_ASSERT(false && "Unsupported volume primitive type!");
 	}
 
-	FOR_IT(PluginSet, pIt, volumePlugins) {
-		addGenerated(objNode, pIt.key());
+	for (const VRay::Plugin &plugin : volumePlugins) {
+		addGenerated(objNode, plugin);
 	}
 #endif
 }
@@ -1752,8 +1760,8 @@ VRay::Plugin ObjectExporter::exportPointParticles(OBJ_Node &objNode, const GU_De
 		}
 	}
 
-	Attrs::PluginDesc partDesc(VRayExporter::getPluginName(&objNode, "GeomParticleSystem"),
-							   "GeomParticleSystem");
+	Attrs::PluginDesc partDesc(VRayExporter::getPluginName(objNode, SL("GeomParticleSystem")),
+	                           SL("GeomParticleSystem"));
 	partDesc.add(Attrs::PluginAttr("positions", positions));
 	partDesc.add(Attrs::PluginAttr("render_type", renderType));
 	if (velocities.size()) {
@@ -2099,7 +2107,7 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 			const QString overrideName = it.key();
 			const MtlOverrideItem &overrideItem = it.value();
 
-			if (overrideName == attrCd.buffer()) {
+			if (overrideName == attrCd) {
 				if (overrideItem.getType() == MtlOverrideItem::itemTypeVector) {
 					pluginDesc.add(Attrs::PluginAttr("color_tex",
 					                                          overrideItem.valueVector[0],
@@ -2107,7 +2115,7 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 					                                          overrideItem.valueVector[2]));
 				}
 			}
-			else if (overrideName == attrIntensity.buffer()) {
+			else if (overrideName == attrIntensity) {
 				if (overrideItem.getType() == MtlOverrideItem::itemTypeDouble) {
 					pluginDesc.add(Attrs::PluginAttr("intensity_tex",
 					                                          overrideItem.valueDouble));
@@ -2217,7 +2225,7 @@ void ObjectExporter::addGenerated(OP_Node &opNode, VRay::Plugin plugin)
 	const UT_StringHolder &key = getKeyFromOpNode(opNode);
 
 	PluginSet &pluginsSet = pluginCache.generated[key.buffer()];
-	pluginsSet.insert(plugin);
+	pluginsSet.append(plugin);
 }
 
 void ObjectExporter::removeGenerated(const char *key)
@@ -2229,8 +2237,8 @@ void ObjectExporter::removeGenerated(const char *key)
 
 	PluginSet &pluginsSet = cIt.value();
 
-	FOR_IT (PluginSet, pIt, pluginsSet) {
-		pluginExporter.removePlugin(pIt.key());
+	for (const VRay::Plugin &plugin : pluginsSet) {
+		pluginExporter.removePlugin(plugin);
 	}
 
 	pluginCache.generated.erase(cIt);

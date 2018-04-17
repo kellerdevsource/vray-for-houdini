@@ -97,7 +97,7 @@ static float getLensShift(const OBJ_Node &camera, OP_Context &context)
 
 PhysicalCameraMode VRayExporter::usePhysicalCamera(const OBJ_Node &camera) const
 {
-	static const QString paramUsePhysCam("CameraPhysical_use");
+	static const char paramUsePhysCam[] = "CameraPhysical_use";
 
 	PhysicalCameraMode physCamMode = PhysicalCameraMode::modeNone;
 
@@ -575,13 +575,13 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 
 		// Need to remove plugins only for RT session.
 		if (isRtSession && !m_viewParams.firstExport) {
-			vray.removePlugin(viewPluginRenderView);
-			vray.removePlugin(viewPluginSettingsCamera);
-			vray.removePlugin(viewPluginSettingsCameraDof);
-			vray.removePlugin(viewPluginSettingsMotionBlur);
-			vray.removePlugin(viewPluginStereoSettings);
-			vray.removePlugin(viewPluginCameraPhysical);
-			vray.removePlugin(viewPluginCameraDefault);
+			vray.removePlugin(_toChar(viewPluginRenderView));
+			vray.removePlugin(_toChar(viewPluginSettingsCamera));
+			vray.removePlugin(_toChar(viewPluginSettingsCameraDof));
+			vray.removePlugin(_toChar(viewPluginSettingsMotionBlur));
+			vray.removePlugin(_toChar(viewPluginStereoSettings));
+			vray.removePlugin(_toChar(viewPluginCameraPhysical));
+			vray.removePlugin(_toChar(viewPluginCameraDefault));
 		}
 
 		if (viewParams.useCameraPhysical != PhysicalCameraMode::modeNone) {
@@ -610,8 +610,8 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		if (physCamChanged) {
 			Log::getLog().debug("VRayExporter::exportView: Updating PhysicalCamera...");
 
-			vray.removePlugin(viewPluginCameraPhysical);
-			vray.removePlugin(viewPluginRenderView);
+			vray.removePlugin(_toChar(viewPluginCameraPhysical));
+			vray.removePlugin(_toChar(viewPluginRenderView));
 
 			vray.setCamera(exportPhysicalCamera(*this, viewParams));
 		}

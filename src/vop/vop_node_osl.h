@@ -33,12 +33,12 @@ public:
 			String, ///< string (readonly, and not plugin input)
 		};
 
-		QString name; ///< The name of the parameter
+		std::string name; ///< The name of the parameter
 		VOP_Type type; ///< VOP_Type of the parameter (color, vector, point, normal, float, int or string)
 		WidgetType widget; ///< If metadata is present in source, this will hold the type
 		bool validDefault; ///< True if the default value is taken from code
 		double numberDefault[3]; ///< stores (r,g,b) or (x,y,z) or (float) or (int)
-		QString stringDefault; ///< stores the string default value
+		std::string stringDefault; ///< stores the string default value
 	};
 
 	typedef std::vector<ParamInfo> OSLParamList;
@@ -110,11 +110,11 @@ protected:
 
 protected:
 	Hash::MHash m_codeHash; ///< Hash of the OSL code
-	std::vector<QString> m_inputList; ///< Names of all inputs (string params)
+	std::vector<std::string> m_inputList; ///< Names of all inputs (string params)
 	OSLParamList m_paramList; ///< All params from OSL code (inputs and params)
 
 	// TODO: support more than one 1 output?
-	QString m_outputName; ///< The output color parameter name
+	std::string m_outputName; ///< The output color parameter name
 	mutable char m_outputNameBuff[1024]; ///< Buffer containing the output parameter name, used so we have pointer that will not move
 };
 

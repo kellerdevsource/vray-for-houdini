@@ -8,6 +8,7 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#if 0
 #ifndef VRAY_FOR_HOUDINI_LRU_CACHE_H
 #define VRAY_FOR_HOUDINI_LRU_CACHE_H
 
@@ -606,3 +607,4 @@ private:
 }  // namespace VRayForHoudini
 
 #endif // VRAY_FOR_HOUDINI_LRU_CACHE_H
+#endif // 0

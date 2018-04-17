@@ -20,6 +20,8 @@
 
 using namespace VRayForHoudini;
 
+static const QString clayMaterial("Mtl@Clay");
+
 void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
 	if (!csect.tryEnter())
@@ -51,17 +53,19 @@ VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
 	const VOP_Type vopType = vopNode->getShaderType();
 	if (vopType == VOP_TYPE_BSDF) {
 		// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly.
-		Attrs::PluginDesc mtlPluginDesc(getPluginName(vopNode, "MtlSingle"), "MtlSingleBRDF");
-		mtlPluginDesc.add(Attrs::PluginAttr("brdf", material));
-		mtlPluginDesc.add(Attrs::PluginAttr("scene_name", getSceneName(*vopNode)));
+		Attrs::PluginDesc mtlPluginDesc(getPluginName(*vopNode, SL("MtlSingle")),
+		                                SL("MtlSingleBRDF"));
+		mtlPluginDesc.add(Attrs::PluginAttr(SL("brdf"), material));
+		mtlPluginDesc.add(Attrs::PluginAttr(SL("scene_name"), getSceneName(*vopNode)));
 		material = exportPlugin(mtlPluginDesc);
 	}
 
 	if (material.isNotEmpty() && isInteractive()) {
 		// Wrap material into MtlRenderStats to always have the same material name.
 		// Used when rewiring materials when running interactive RT session.
-		Attrs::PluginDesc pluginDesc(getPluginName(vopNode, "MtlStats"), "MtlRenderStats");
-		pluginDesc.add(Attrs::PluginAttr("base_mtl", material));
+		Attrs::PluginDesc pluginDesc(getPluginName(*vopNode, SL("MtlStats")),
+		                             SL("MtlRenderStats"));
+		pluginDesc.add(Attrs::PluginAttr(SL("base_mtl"), material));
 		material = exportPlugin(pluginDesc);
 	}
 
@@ -112,15 +116,13 @@ VRay::Plugin VRayExporter::exportDefaultMaterial()
 {
 	VRay::Plugin material;
 
-	static const char clayMaterial[] = "Mtl@Clay";
-
 	if (!objectExporter.getPluginFromCache(clayMaterial, material)) {
-		Attrs::PluginDesc brdfDesc("BRDFDiffuse@Clay", "BRDFDiffuse");
-		brdfDesc.add(Attrs::PluginAttr("color", 0.5f, 0.5f, 0.5f));
+		Attrs::PluginDesc brdfDesc(SL("BRDFDiffuse@Clay"), SL("BRDFDiffuse"));
+		brdfDesc.add(Attrs::PluginAttr(SL("color"), 0.5f, 0.5f, 0.5f));
 
-		Attrs::PluginDesc mtlDesc(clayMaterial, "MtlSingleBRDF");
-		mtlDesc.add(Attrs::PluginAttr("brdf", exportPlugin(brdfDesc)));
-		mtlDesc.add(Attrs::PluginAttr("scene_name", getSceneName("DEFAULT_MATERIAL")));
+		Attrs::PluginDesc mtlDesc(clayMaterial, SL("MtlSingleBRDF"));
+		mtlDesc.add(Attrs::PluginAttr(SL("brdf"), exportPlugin(brdfDesc)));
+		mtlDesc.add(Attrs::PluginAttr(SL("scene_name"), getSceneName("DEFAULT_MATERIAL")));
 		material = exportPlugin(mtlDesc);
 
 		objectExporter.addPluginToCache(clayMaterial, material);
@@ -192,7 +194,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			case Parm::eInt:
 			case Parm::eTextureInt:
 			{
-				Attrs::PluginDesc mtlOverrideDesc(VRayExporter::getPluginName(&vopNode, attrName), "TexUserScalar");
+				Attrs::PluginDesc mtlOverrideDesc(getPluginName(vopNode, attrName), SL("TexUserScalar"));
 				mtlOverrideDesc.add(Attrs::PluginAttr("default_value", creator->evalInt(prm, 0, t)));
 				mtlOverrideDesc.add(Attrs::PluginAttr("user_attribute", prm->getToken()));
 
@@ -204,7 +206,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			case Parm::eFloat:
 			case Parm::eTextureFloat:
 			{
-				Attrs::PluginDesc mtlOverrideDesc(VRayExporter::getPluginName(&vopNode, attrName), "TexUserScalar");
+				Attrs::PluginDesc mtlOverrideDesc(getPluginName(vopNode, attrName), SL("TexUserScalar"));
 				mtlOverrideDesc.add(Attrs::PluginAttr("default_value", creator->evalFloat(prm, 0, t)));
 				mtlOverrideDesc.add(Attrs::PluginAttr("user_attribute", prm->getToken()));
 
@@ -217,7 +219,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			case Parm::eAColor:
 			case Parm::eTextureColor:
 			{
-				Attrs::PluginDesc mtlOverrideDesc(VRayExporter::getPluginName(&vopNode, attrName), "TexUserColor");
+				Attrs::PluginDesc mtlOverrideDesc(getPluginName(vopNode, attrName), SL("TexUserColor"));
 
 				Attrs::PluginAttr attr("default_color", Attrs::PluginAttr::AttrTypeAColor);
 				for (int i = 0; i < std::min(prm->getVectorSize(), 4); ++i) {

@@ -160,12 +160,12 @@ int VRayExporter::fillCopNodeBitmapBuffer(COP2_Node &copNode, Attrs::PluginDesc 
 		}
 	}
 
-	rawBitmapBuffer.add(PluginAttr("pixels", pixels));
-	rawBitmapBuffer.add(PluginAttr("pixels_type", pixelFormat));
-	rawBitmapBuffer.add(PluginAttr("width", w));
-	rawBitmapBuffer.add(PluginAttr("height", h));
-	rawBitmapBuffer.add(PluginAttr("color_space", bitmapBufferColorSpace));
-	rawBitmapBuffer.add(PluginAttr("gamma", bitmapBufferGamma));
+	rawBitmapBuffer.add(PluginAttr(SL("pixels"), pixels));
+	rawBitmapBuffer.add(PluginAttr(SL("pixels_type"), pixelFormat));
+	rawBitmapBuffer.add(PluginAttr(SL("width"), w));
+	rawBitmapBuffer.add(PluginAttr(SL("height"), h));
+	rawBitmapBuffer.add(PluginAttr(SL("color_space"), bitmapBufferColorSpace));
+	rawBitmapBuffer.add(PluginAttr(SL("gamma"), bitmapBufferGamma));
 
 	return 1;
 }
@@ -174,7 +174,8 @@ VRay::Plugin VRayExporter::exportCopNodeBitmapBuffer(COP2_Node &copNode)
 {
 	VRay::Plugin res;
 
-	Attrs::PluginDesc rawBitmapBuffer(getPluginName(&copNode, "RawBitmapBuffer"), "RawBitmapBuffer");
+	Attrs::PluginDesc rawBitmapBuffer(getPluginName(copNode, SL("RawBitmapBuffer")),
+	                                  SL("RawBitmapBuffer"));
 	if (fillCopNodeBitmapBuffer(copNode, rawBitmapBuffer)) {
 		res = exportPlugin(rawBitmapBuffer);
 	}
@@ -186,13 +187,13 @@ void VRayExporter::fillDefaultMappingDesc(DefaultMappingType mappingType, Attrs:
 {
 	switch (mappingType) {
 		case defaultMappingChannel: {
-			uvwgenDesc.pluginID = "UVWGenChannel";
-			uvwgenDesc.add(PluginAttr("uvw_channel", 0));
+			uvwgenDesc.pluginID = SL("UVWGenChannel");
+			uvwgenDesc.add(PluginAttr(SL("uvw_channel"), 0));
 			break;
 		}
 		case defaultMappingChannelName: {
-			uvwgenDesc.pluginID = "UVWGenMayaPlace2dTexture";
-			uvwgenDesc.add(PluginAttr("uv_set_name", "uv"));
+			uvwgenDesc.pluginID = SL("UVWGenMayaPlace2dTexture");
+			uvwgenDesc.add(PluginAttr(SL("uv_set_name"), SL("uv")));
 			break;
 		}
 		case defaultMappingSpherical: {
@@ -200,15 +201,15 @@ void VRayExporter::fillDefaultMappingDesc(DefaultMappingType mappingType, Attrs:
 			VUtils::swap(uvwTm[1], uvwTm[2]);
 			uvwTm[2].y = -uvwTm[2].y;
 
-			uvwgenDesc.pluginID = "UVWGenEnvironment";
-			uvwgenDesc.add(PluginAttr("mapping_type", "spherical"));
-			uvwgenDesc.add(PluginAttr("uvw_matrix", uvwTm));
+			uvwgenDesc.pluginID = SL("UVWGenEnvironment");
+			uvwgenDesc.add(PluginAttr(SL("mapping_type"), SL("spherical")));
+			uvwgenDesc.add(PluginAttr(SL("uvw_matrix"), uvwTm));
 			break;
 		}
 		case defaultMappingTriPlanar: {
-			uvwgenDesc.pluginID = "UVWGenProjection";
-			uvwgenDesc.add(PluginAttr("type", 6));
-			uvwgenDesc.add(PluginAttr("object_space", true));
+			uvwgenDesc.pluginID = SL("UVWGenProjection");
+			uvwgenDesc.add(PluginAttr(SL("type"), 6));
+			uvwgenDesc.add(PluginAttr(SL("object_space"), true));
 			break;
 		}
 		default:
@@ -230,17 +231,17 @@ VRay::Plugin VRayExporter::exportCopNodeWithDefaultMapping(COP2_Node &copNode, D
 
 		switch (mappingType) {
 			case defaultMappingChannel: {
-				uvwgenDesc.pluginName = getPluginName(&copNode, "UVWGenChannel");
+				uvwgenDesc.pluginName = getPluginName(copNode, SL("UVWGenChannel"));
 				uvwgen = exportPlugin(uvwgenDesc);
 				break;
 			}
 			case defaultMappingChannelName: {
-				uvwgenDesc.pluginName = getPluginName(&copNode, "UVWGenMayaPlace2dTexture");
+				uvwgenDesc.pluginName = getPluginName(copNode, SL("UVWGenMayaPlace2dTexture"));
 				uvwgen = exportPlugin(uvwgenDesc);
 				break;
 			}
 			case defaultMappingSpherical: {
-				uvwgenDesc.pluginName = getPluginName(&copNode, "UVWGenEnvironment");
+				uvwgenDesc.pluginName = getPluginName(copNode, SL("UVWGenEnvironment"));
 				uvwgen = exportPlugin(uvwgenDesc);
 				break;
 			}
@@ -249,10 +250,10 @@ VRay::Plugin VRayExporter::exportCopNodeWithDefaultMapping(COP2_Node &copNode, D
 		}
 
 		if (uvwgen.isNotEmpty()) {
-			Attrs::PluginDesc texBitmapDesc(getPluginName(&copNode, "TexBitmap"),
-											"TexBitmap");
-			texBitmapDesc.add(PluginAttr("bitmap", bitmapBuffer));
-			texBitmapDesc.add(PluginAttr("uvwgen", uvwgen));
+			Attrs::PluginDesc texBitmapDesc(getPluginName(copNode, SL("TexBitmap")),
+											SL("TexBitmap"));
+			texBitmapDesc.add(PluginAttr(SL("bitmap"), bitmapBuffer));
+			texBitmapDesc.add(PluginAttr(SL("uvwgen"), uvwgen));
 
 			res = exportPlugin(texBitmapDesc);
 		}
@@ -264,10 +265,10 @@ VRay::Plugin VRayExporter::exportCopNodeWithDefaultMapping(COP2_Node &copNode, D
 VRay::Plugin VRayExporter::exportFileTextureBitmapBuffer(const UT_String &filePath, BitmapBufferColorSpace colorSpace)
 {
 	Attrs::PluginDesc bitmapBufferDesc(SL("BitmapBuffer|") % QString::number(VUtils::hashlittle(filePath.buffer(), filePath.length())),
-									   "BitmapBuffer");
+									   SL("BitmapBuffer"));
 
-	bitmapBufferDesc.add(PluginAttr("color_space", colorSpace));
-	bitmapBufferDesc.add(PluginAttr("file", filePath));
+	bitmapBufferDesc.add(PluginAttr(SL("color_space"), colorSpace));
+	bitmapBufferDesc.add(PluginAttr(SL("file"), filePath));
 
 	return exportPlugin(bitmapBufferDesc);
 }
@@ -285,9 +286,9 @@ VRay::Plugin VRayExporter::exportFileTextureWithDefaultMapping(const UT_String &
 		const VRay::Plugin uvwgen = exportPlugin(uvwgenDesc);
 		if (uvwgen.isNotEmpty()) {
 			Attrs::PluginDesc texBitmapDesc(SL("TexBitmap|") % bitmapBuffer.getName(),
-											"TexBitmap");
-			texBitmapDesc.add(PluginAttr("bitmap", bitmapBuffer));
-			texBitmapDesc.add(PluginAttr("uvwgen", uvwgen));
+											SL("TexBitmap"));
+			texBitmapDesc.add(PluginAttr(SL("bitmap"), bitmapBuffer));
+			texBitmapDesc.add(PluginAttr(SL("uvwgen"), uvwgen));
 
 			res = exportPlugin(texBitmapDesc);
 		}

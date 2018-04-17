@@ -19,7 +19,6 @@
 
 #include <UT/UT_IStream.h>
 #include <OP/OP_SaveFlags.h>
-#include <OP/OP_Director.h>
 #include <SOP/SOP_Node.h>
 #include <PRM/PRM_RampUtils.h>
 #include <HOM/HOM_Ramp.h>
@@ -28,14 +27,11 @@
 #include <GU/GU_PrimPacked.h>
 #include <GU/GU_Detail.h>
 
-#include <utility>
-
 #include <QWidget>
 
 using namespace AurRamps;
-using namespace std;
 
-static const map<string, map<string, string>> RAMP_ATTRIBUTE_NAMES = {
+static const QMap<QString, QMap<QString, QString>> RAMP_ATTRIBUTE_NAMES = {
 	{"elum_curve",{
 		{"values", "elum_values"},
 		{"positions", "elum_positions"},
@@ -65,41 +61,43 @@ static const map<string, map<string, string>> RAMP_ATTRIBUTE_NAMES = {
 namespace VRayForHoudini {
 namespace VOP {
 
-/// RampHandler will implement all AurRams handlers interfaces
-struct RampHandler: public ChangeHandler, public ColorPickerHandler {
-	RampHandler(RampContext * ctx = nullptr): m_ctx(ctx) {}
+/// RampHandler will implement all AurRams handlers interfaces.
+struct RampHandler
+	: ChangeHandler
+	, ColorPickerHandler
+{
+	explicit RampHandler(RampContext *ctx = nullptr)
+		: m_ctx(ctx)
+	{}
 
-	/// ChangeHandler overrides
-
+	// From ChangeHandler.
 	/// Called by Ramps lib when the curve part of the UI is edited
 	/// @param curve - the ui that triggered the change
 	/// @param editReason - how the curve was edited
-	virtual void OnEditCurveDiagram(RampUi & curve, OnEditType editReason);
+	void OnEditCurveDiagram(RampUi & curve, OnEditType editReason) VRAY_OVERRIDE;
 
 	/// Called by Ramps lib when the color ramp part of the UI is edited
 	/// @param curve - the ui that triggered the change
 	/// @param editReason - how the curve was edited
-	virtual void OnEditColorGradient(RampUi & curve, OnEditType editReason);
+	void OnEditColorGradient(RampUi & curve, OnEditType editReason) VRAY_OVERRIDE;
 
 	/// Called by Ramps lib when the window is about to be closed either by user action or by calling close() on ui
-	virtual void OnWindowDie();
+	void OnWindowDie() VRAY_OVERRIDE;
 
-	/// ColorPickerHandler overrides
-
+	// From ColorPickerHandler.
 	/// @param curve - the ui that triggered the picker creation
 	/// @param prefered[in] - the prefered starting color of the picker
-	virtual void Create(RampUi & curve, float prefered[3])
-	{
+	void Create(RampUi & curve, float prefered[3]) VRAY_OVERRIDE {
 		float result[3];
-		bool canceled = curve.defaultColorPicker(prefered, result);
+		const bool canceled = curve.defaultColorPicker(prefered, result);
 		curve.setSelectedPointsColor(result, canceled);
 	}
 
 	/// Called by Ramps lib when the color picker needs to be closed
-	virtual void Destroy() {}
+	void Destroy() VRAY_OVERRIDE {}
 
 	/// Holds the current context that this handler is attached to
-	RampContext * m_ctx;
+	RampContext *m_ctx;
 };
 
 /// Singe frame data for either color or curve ramp
@@ -135,7 +133,7 @@ struct RampContext {
 
 	/// Constructs empty context with None type for ramps
 	/// @param type - the type of the data inside the context
-	RampContext(AurRamps::RampType type = AurRamps::RampType_None)
+	explicit RampContext(AurRamps::RampType type = AurRamps::RampType_None)
 		: m_ui(nullptr)
 		, m_freeUi(false)
 		, m_uiType(type)
@@ -143,8 +141,8 @@ struct RampContext {
 	{
 		for (int c = 0; c < CHANNEL_COUNT; ++c) {
 			for (int r = AurRamps::RampType_Curve; r <= AurRamps::RampType_Color; ++r) {
-				auto type = static_cast<AurRamps::RampType>(r);
-				m_data[c][rampTypeToIdx(type)].m_type = type;
+				const auto currentType = static_cast<AurRamps::RampType>(r);
+				m_data[c][rampTypeToIdx(type)].m_type = currentType;
 			}
 		}
 		memset(m_minMax.data(), 0, m_minMax.size() * sizeof(m_minMax[0]));
@@ -178,6 +176,8 @@ struct RampContext {
 			case CHANNEL_SMOKE: return GridChannels::ChSm;
 			case CHANNEL_SPEED: return GridChannels::ChSp;
 			case CHANNEL_FUEL: return GridChannels::ChFl;
+			case CHANNEL_DISABLED: break;
+			default: break;
 		}
 		return GridChannels::ChReserved;
 	}
@@ -361,11 +361,15 @@ void addColorPoint(RampData & data, float x, float r, float g, float b, MultiCur
 
 void PhxShaderSim::clearRampData()
 {
-	const int chanCount = RampContext::CHANNEL_COUNT;
-	for (auto & ramp : m_ramps) {
+	for (RampContexts::const_iterator it = m_ramps.begin(); it != m_ramps.end(); ++it) {
+		const QString &rampName = it.key();
+		const RampContextPtr &ramp = it.value();
+
+		const int chanCount = RampContext::CHANNEL_COUNT;
 		for (int c = 0; c < chanCount; c++) {
-			const auto type = m_rampTypes[ramp.first];
-			auto & data = ramp.second->data(type, static_cast<RampContext::RampChannel>(c + 1));
+			const RampType type = m_rampTypes[rampName];
+
+			auto & data = ramp->data(type, static_cast<RampContext::RampChannel>(c + 1));
 			data.m_xS.clear();
 			data.m_yS.clear();
 			data.m_interps.clear();
@@ -424,7 +428,6 @@ void PhxShaderSim::setRampDefaults()
 
 int PhxShaderSim::setPresetTypeCB(void *data, int index, fpreal64 time, const PRM_Template *tplate)
 {
-	const int chanCount = RampContext::CHANNEL_COUNT;
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
 
 	UT_String presetName;
@@ -517,8 +520,9 @@ int PhxShaderSim::setPresetTypeCB(void *data, int index, fpreal64 time, const PR
 int PhxShaderSim::rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Template *tplate)
 {
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
+
 	// this is they ramp key (two ramps could share same key -> they are merge in one window)
-	const string token = tplate->getSparePtr()->getValue("vray_ramp_depend");
+	const QString token(tplate->getSparePtr()->getValue("vray_ramp_depend"));
 
 	auto ctx = simNode->m_ramps[token];
 	const auto chan = static_cast<RampContext::RampChannel>(index);
@@ -544,14 +548,13 @@ void PhxShaderSim::loadDataRanges()
 {
 	const char * token = "selectedSopPath";
 	const VRayVolumeGridRef::MinMaxPair zeroMinMax = {0, 0};
+
 	// zero out all min/max ranges
-	for (auto &rampIter : m_ramps) {
-		if (auto ramp = rampIter.second) {
-			for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
-				ramp->m_minMax[c] = zeroMinMax;
-			}
-			ramp->refreshUi();
+	for (auto &ramp : m_ramps) {
+		for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
+			ramp->m_minMax[c] = zeroMinMax;
 		}
+		ramp->refreshUi();
 	}
 
 	SOP_Node *cacheSop = getSOPNodeFromAttr(*this, token);
@@ -572,7 +575,7 @@ void PhxShaderSim::loadDataRanges()
 	const GA_Primitive *volumePrim = nullptr;
 	// check all primities if we have a VRayVolumeGridRef
 	for (int c = 0; c < primCount; ++c) {
-		auto prim = primList.get(c);
+		const auto prim = primList.get(c);
 		if (prim && prim->getTypeId() == VRayVolumeGridRef::typeId()) {
 			volumePrim = prim;
 			break;
@@ -588,13 +591,11 @@ void PhxShaderSim::loadDataRanges()
 	const auto *impl = reinterpret_cast<const VRayVolumeGridRef*>(packedPrim->implementation());
 	const auto &ranges = impl->getChannelDataRanges();
 
-	for (auto &rampIter : m_ramps) {
-		if (auto ramp = rampIter.second) {
-			for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
-				ramp->m_minMax[c] = ranges[RampContext::rampChannelToPhxChannel(static_cast<RampContext::RampChannel>(c + 1))];
-			}
-			ramp->refreshUi();
+	for (auto &ramp : m_ramps) {
+		for (int c = 0; c < RampContext::CHANNEL_COUNT; c++) {
+			ramp->m_minMax[c] = ranges[RampContext::rampChannelToPhxChannel(static_cast<RampContext::RampChannel>(c + 1))];
 		}
+		ramp->refreshUi();
 	}
 }
 
@@ -609,7 +610,7 @@ int PhxShaderSim::rampButtonClickCB(void *data, int, fpreal64, const PRM_Templat
 	static auto app = AurRamps::getQtGUI(nullptr);
 #endif // WIN32
 
-	const string token = tplate->getToken();
+	const QString token(tplate->getToken());
 
 	auto simNode = reinterpret_cast<PhxShaderSim*>(data);
 	simNode->loadDataRanges();
@@ -730,14 +731,14 @@ PhxShaderSim::PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *en
 			const auto mergeRamp = spareData->getValue("vray_ramp_merge");
 			const auto token = parm.getToken();
 			if (token && typeString) {
-				std::shared_ptr<RampContext> ctx;
+				RampContextPtr ctx;
 
 				// try to find the ramp we should merge with
 				// if it is already created - use it's context
 				if (mergeRamp) {
 					auto mergeCtx = m_ramps.find(mergeRamp);
 					if (mergeCtx != m_ramps.end()) {
-						ctx = mergeCtx->second;
+						ctx = mergeCtx.value();
 						// attach ref with our token
 						m_ramps[token] = ctx;
 					}
@@ -774,22 +775,25 @@ void PhxShaderSim::onLoadSetActiveChannels(bool fromUi)
 			if (rampToken) {
 				auto ramp = m_ramps.find(rampToken);
 				if (ramp != m_ramps.end()) {
-					if (!ramp->second) {
+					if (!ramp.value()) {
 						Log::getLog().error("Missing context for \"%s\"!", rampToken);
-					} else {
+					}
+					else {
 						int idx = -1;
 						if (fromUi) {
 							idx = evalInt(parm.getToken(), 0, 0);
-						} else {
-							if (auto factDefaults = parm.getFactoryDefaults()) {
+						}
+						else {
+							if (const PRM_Default *factDefaults = parm.getFactoryDefaults()) {
 								idx = factDefaults->getOrdinal();
 							}
 						}
+
 						if (!RampContext::isValidChannel(static_cast<RampContext::RampChannel>(idx))) {
 							idx = RampContext::CHANNEL_TEMPERATURE;
 						}
 
-						ramp->second->setActiveChannel(static_cast<RampContext::RampChannel>(idx));
+						ramp.value()->setActiveChannel(static_cast<RampContext::RampChannel>(idx));
 					}
 				}
 			}
@@ -804,7 +808,7 @@ void PhxShaderSim::finishedLoadingNetwork(bool is_child_call)
 }
 
 
-bool PhxShaderSim::savePresetContents(ostream &os)
+bool PhxShaderSim::savePresetContents(std::ostream &os)
 {
 	os << SAVE_TOKEN << SAVE_SEPARATOR;
 	return saveRamps(os) && VOP_Node::savePresetContents(os);
@@ -815,13 +819,13 @@ bool PhxShaderSim::loadPresetContents(const char *tok, UT_IStream &is)
 {
 	if (!strcmp(tok, SAVE_TOKEN)) {
 		return loadRamps(is);
-	} else {
-		return VOP_Node::loadPresetContents(tok, is);
 	}
+
+	return VOP_Node::loadPresetContents(tok, is);
 }
 
 
-OP_ERROR PhxShaderSim::saveIntrinsic(ostream &os, const OP_SaveFlags &sflags)
+OP_ERROR PhxShaderSim::saveIntrinsic(std::ostream &os, const OP_SaveFlags &sflags)
 {
 	os << SAVE_TOKEN << SAVE_SEPARATOR;
 	saveRamps(os);
@@ -851,19 +855,21 @@ bool PhxShaderSim::saveRamps(std::ostream & os)
 {
 	os << static_cast<int>(m_ramps.size()) << SAVE_SEPARATOR;
 
-	for (const auto & ramp : m_ramps) {
-		if (!ramp.second) {
+	for (RampContexts::const_iterator it = m_ramps.begin(); it != m_ramps.end(); ++it) {
+		const QString &rampName = it.key();
+		const RampContextPtr &ramp = it.value();
+		if (!ramp) {
 			continue;
 		}
 
-		const auto type = m_rampTypes[ramp.first];
-		os << ramp.first << SAVE_SEPARATOR; // token
+		const auto type = m_rampTypes[rampName];
+		os << _toChar(rampName) << SAVE_SEPARATOR; // token
 		os << static_cast<int>(type) << SAVE_SEPARATOR; // type
 
-		os << static_cast<int>(ramp.second->getActiveChannel()) << SAVE_SEPARATOR; // active channel
+		os << static_cast<int>(ramp->getActiveChannel()) << SAVE_SEPARATOR; // active channel
 
-		for (int c = 0; c < RampContext::CHANNEL_COUNT; ++c) {
-			const auto & data = ramp.second->m_data[c][RampContext::rampTypeToIdx(type)];
+		for (int chanIdx = 0; chanIdx < RampContext::CHANNEL_COUNT; ++chanIdx) {
+			const auto & data = ramp->m_data[chanIdx][RampContext::rampTypeToIdx(type)];
 			const int pointCount = data.m_xS.size();
 
 			os << pointCount << SAVE_SEPARATOR; // point count
@@ -878,8 +884,8 @@ bool PhxShaderSim::saveRamps(std::ostream & os)
 			}
 
 			if (type == RampType_Curve) {
-				for (int c = 0; c < pointCount; ++c) {
-					os << static_cast<int>(data.m_interps[c]) << SAVE_SEPARATOR; // interpolations
+				for (int pointIdx = 0; pointIdx < pointCount; ++pointIdx) {
+					os << static_cast<int>(data.m_interps[pointIdx]) << SAVE_SEPARATOR; // interpolations
 				}
 			}
 		}
@@ -892,9 +898,11 @@ bool PhxShaderSim::saveRamps(std::ostream & os)
 bool PhxShaderSim::loadRamps(UT_IStream & is)
 {
 	bool success = true;
-	const char * expectedStr= "", * expressionStr = "";
 
-// Try to read some data and check if we read the appropriate amount
+	const char* expectedStr = "";
+	const char* expressionStr = "";
+
+	// Try to read some data and check if we read the appropriate amount
 #define readSome(declare, expected, expression)                       \
 	declare;                                                          \
 	if ((expected) != (expression)) {                                 \
@@ -907,19 +915,19 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 
 	readSome(int rampCount, 1, is.read(&rampCount));
 	for (int c = 0; c < rampCount && success; ++c) {
-		readSome(string rampName, 1, is.read(rampName));
+		readSome(std::string rampName, 1, is.read(rampName));
 
-		auto ramp = m_ramps.find(rampName);
+		auto ramp = m_ramps.find(rampName.c_str());
 		// if we dont have the expected ramp in object we still have to read trogh the data to enable
 		// loading of other ramps from the file
-		if (ramp == m_ramps.end() || !ramp->second) {
+		if (ramp == m_ramps.end() || !ramp.value()) {
 			Log::getLog().error("Ramp name \"%s\" not expected - discarding data!");
 		}
 
 		readSome(RampType type, 1, is.read(reinterpret_cast<int*>(&type)));
 		readSome(RampContext::RampChannel activeChan, 1, is.read(reinterpret_cast<int*>(&activeChan)));
-		if (ramp != m_ramps.end() && ramp->second) {
-			ramp->second->setActiveChannel(activeChan);
+		if (ramp != m_ramps.end() && ramp.value()) {
+			ramp.value()->setActiveChannel(activeChan);
 		}
 
 		for (int r = 0; r < RampContext::CHANNEL_COUNT; ++r) {
@@ -940,11 +948,11 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 				std::fill(data.m_interps.begin(), data.m_interps.end(), AurRamps::MCPT_Linear);
 			}
 
-			if (ramp != m_ramps.end() && ramp->second) {
-				if (!(ramp->second->m_uiType & type)) {
+			if (ramp != m_ramps.end() && ramp.value()) {
+				if (!(ramp.value()->m_uiType & type)) {
 					Log::getLog().error("Ramp name \"%s\" has unexpected type [%d]- discarding data!", rampName, static_cast<int>(type));
 				} else {
-					ramp->second->m_data[r][RampContext::rampTypeToIdx(type)] = data;
+					ramp.value()->m_data[r][RampContext::rampTypeToIdx(type)] = data;
 				}
 			}
 		}
@@ -959,9 +967,9 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 	if (!success) {
 		Log::getLog().error("Error reading \"%s\" expecting %s", expressionStr, expectedStr);
 		return false;
-	} else {
-		return true;
 	}
+
+	return true;
 }
 
 
@@ -975,10 +983,8 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 {
 	const auto t = exporter.getContext().getTime();
 
-	RenderMode rendMode;
-
 	// renderMode
-	rendMode = static_cast<RenderMode>(evalInt("renderMode", 0, t));
+	const RenderMode rendMode = static_cast<RenderMode>(evalInt("renderMode", 0, t));
 	pluginDesc.add(Attrs::PluginAttr("geommode", rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface));
 	pluginDesc.add(Attrs::PluginAttr("mesher", rendMode == Mesh));
 	pluginDesc.add(Attrs::PluginAttr("rendsolid", rendMode == Isosurface));
@@ -986,43 +992,44 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 
 	// TODO: find a better way to pass these
 	// add these so we know later in what to wrap this sim
-	Attrs::PluginAttr attrRendMode("_vray_render_mode", Attrs::PluginAttr::AttrTypeIgnore);
+	Attrs::PluginAttr attrRendMode(SL("_vray_render_mode"), Attrs::PluginAttr::AttrTypeIgnore);
 	attrRendMode.paramValue.valInt = static_cast<int>(rendMode);
 	pluginDesc.add(attrRendMode);
 
 	// in geom mode, this will be property for the geom plugin generated for the sim
 	const bool dynamic_geometry = evalInt("dynamic_geometry", 0, t) == 1;
-	Attrs::PluginAttr attrDynGeom("_vray_dynamic_geometry", Attrs::PluginAttr::AttrTypeIgnore);
+
+	const Attrs::PluginAttr attrDynGeom(SL("_vray_dynamic_geometry"), Attrs::PluginAttr::AttrTypeIgnore);
 	attrRendMode.paramValue.valInt = dynamic_geometry;
 	pluginDesc.add(attrDynGeom);
-
 
 	const auto primVal = evalInt("pmprimary", 0, t);
 	const bool enableProb = (exporter.isInteractive() && primVal) || primVal == 2;
 	pluginDesc.add(Attrs::PluginAttr("pmprimary", enableProb));
 
 	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID);
-	if (NOT(pluginInfo)) {
+	if (!pluginInfo) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
 							this->getName().buffer(), pluginDesc.pluginID);
 	}
 	else {
-		// export ramp data
-		for (const auto & ramp : m_ramps) {
-			if (!ramp.second) {
+		// Export ramp data.
+		for (RampContexts::const_iterator it = m_ramps.begin(); it != m_ramps.end(); ++it) {
+			const QString &rampToken = it.key();
+			const RampContextPtr &ramp = it.value();
+			if (!ramp) {
 				continue;
 			}
-
-			const QString &rampToken = ramp.first;
 
 			const bool hasRampToken = RAMP_ATTRIBUTE_NAMES.find(rampToken) != RAMP_ATTRIBUTE_NAMES.end();
 			if (!hasRampToken) {
 				Log::getLog().error("Node \"%s\": Plugin \"%s\" missing description for \"%s\"",
 					this->getName().buffer(), pluginDesc.pluginID, rampToken);
-			} else {
-				const auto & attrNames = RAMP_ATTRIBUTE_NAMES.at(rampToken);
+			}
+			else {
+				const auto & attrNames = RAMP_ATTRIBUTE_NAMES[rampToken];
 
-				const auto &data = ramp.second->data(m_rampTypes[rampToken]);
+				const auto &data = ramp->data(m_rampTypes[rampToken]);
 				const auto pointCount = data.m_xS.size();
 
 				if (data.m_type == AurRamps::RampType_Color) {
@@ -1031,19 +1038,20 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 						colorList[c] = VRay::Color(data.m_yS[c * 3 + 0], data.m_yS[c * 3 + 1], data.m_yS[c * 3 + 2]);
 					}
 
-					pluginDesc.add(Attrs::PluginAttr(attrNames.at("positions"), data.m_xS));
-					pluginDesc.add(Attrs::PluginAttr(attrNames.at("colors"), colorList));
+					pluginDesc.add(Attrs::PluginAttr(attrNames["positions"], data.m_xS));
+					pluginDesc.add(Attrs::PluginAttr(attrNames["colors"], colorList));
 					// color interpolations are not supported - export linear
-					pluginDesc.add(Attrs::PluginAttr(attrNames.at("interpolations"), VRay::IntList(pointCount, static_cast<int>(Texture::VRAY_InterpolationType::Linear))));
-				} else if (data.m_type == AurRamps::RampType_Curve) {
-					pluginDesc.add(Attrs::PluginAttr(attrNames.at("values"), data.m_yS));
-					pluginDesc.add(Attrs::PluginAttr(attrNames.at("positions"), data.m_xS));
+					pluginDesc.add(Attrs::PluginAttr(attrNames["interpolations"], VRay::IntList(pointCount, static_cast<int>(Texture::VRAY_InterpolationType::Linear))));
+				}
+				else if (data.m_type == AurRamps::RampType_Curve) {
+					pluginDesc.add(Attrs::PluginAttr(attrNames["values"], data.m_yS));
+					pluginDesc.add(Attrs::PluginAttr(attrNames["positions"], data.m_xS));
 
 					VRay::IntList interpolations(pointCount);
 					// exporter expects ints instead of enums
 					memcpy(interpolations.data(), data.m_interps.data(), pointCount * sizeof(int));
 
-					pluginDesc.add(Attrs::PluginAttr(attrNames.at("interpolations"), interpolations));
+					pluginDesc.add(Attrs::PluginAttr(attrNames["interpolations"], interpolations));
 				}
 			}
 		}

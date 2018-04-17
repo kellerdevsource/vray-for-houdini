@@ -8,6 +8,7 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_defines.h"
 #include "vfh_attr_utils.h"
 #include "vfh_log.h"
 
@@ -17,6 +18,28 @@ using namespace VRayForHoudini;
 
 /// Relative path resolver.
 static OP_ExprFindOp findOp;
+
+UT_String getOpPathFromAttr(const OP_Node &node, const char *attrName, fpreal t)
+{
+	UT_String value;
+
+	if (!value.startsWith(OPREF_PREFIX)) {
+		node.evalString(value, attrName, 0, t);
+	}
+	else {
+		int pi = 0;
+		int opId = 0;
+		fpreal opTime = 0.0;
+		const_cast<OP_Node&>(node).evalOpPathString(value, attrName, pi, 0, t, opId, opTime);
+	}
+
+	return value;
+}
+
+UT_String getOpPathFromAttr(const OP_Node &node, const QString &attrName, fpreal t)
+{
+	return getOpPathFromAttr(node, _toChar(attrName), t);
+}
 
 OP_Node* getOpNodeFromPath(const OP_Node &node, const char *path, fpreal t)
 {
@@ -28,18 +51,7 @@ OP_Node* getOpNodeFromPath(const OP_Node &node, const char *path, fpreal t)
 
 OP_Node* getOpNodeFromAttr(const OP_Node &node, const char *attrName, fpreal t)
 {
-	UT_String value;
-
-	if (!value.startsWith(OPREF_PREFIX)) {
-		node.evalString(value, attrName, 0, t);
-	}
-	else {
-		int pi = 0;
-		int op_id = 0;
-		fpreal op_time = 0.0;
-		const_cast<OP_Node&>(node).evalOpPathString(value, attrName, pi, 0, t, op_id, op_time);
-	}
-
+	const UT_String &value = getOpPathFromAttr(node, attrName, t);
 	if (!value.isstring())
 		return nullptr;
 
