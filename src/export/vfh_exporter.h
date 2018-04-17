@@ -112,20 +112,6 @@ typedef VUtils::StringHashMap<PluginSet> StringPluginSetHashMap;
 typedef VUtils::StringHashMap<VRay::Plugin> StringPluginMap;
 typedef VUtils::HashMap<VRay::Plugin, OP_NodeList> PluginNodeListMap;
 typedef VUtils::Table<VRay::Plugin> PluginTable;
-
-struct PluginTableWrapper {
-	PluginTable pluginTable;
-	PluginTableWrapper& operator=(const PluginTableWrapper &other) {
-		pluginTable.copy(other.pluginTable);
-		return *this;
-	}
-
-	PluginTableWrapper& operator=(const PluginTable &other) {
-		pluginTable.copy(other);
-		return *this;
-	}
-};
-
 typedef VUtils::Table<PluginTable*> PluginTables;
 
 struct ConnectedPluginInfo {
@@ -217,11 +203,8 @@ public:
 	void exportScene();
 
 	/// Export light linker plugin
-	/// @param pluginMap[in] A String Hash Map of Light node names and plugins that relate to them
-	/// @param shadowMap[in] A Hash Map between Plugin and OP_NodeList, contains all geometries
-	/// @param lightMap[in] A String Hash Map between Light node names and their exported plugins
 	/// that cast shadows from the given light plugin
-	void exportLightLinker(const StringPluginSetHashMap &pluginMap, const PluginNodeListMap &shadowMap, const StringPluginMap &lightMap, const StringPluginSetHashMap &instancedLights);
+	void exportLightLinker();
 
 	/// Export global renderer settings - color mapping, gi, irradiance cache, etc.
 	/// This is called once when a render session is initililzed.
@@ -643,12 +626,6 @@ public:
 	const GSTY_BundleMap &getBundleMap() const { return bundleMap.getBundleMap(); }
 
 private:
-
-	/// Fill the map for SettingsLightLinker plugin list with given node if it is lit
-	/// @param exportedNode[in] Plugin of type Node that has been already exported
-	/// @param node[in] OP_Node from which light mask data shall be obtained
-	/// @param map[out] Map in which the information regarding the plugins is stored
-	void fillLightLinkerGeomMap(OBJ_Geometry &node, StringPluginSetHashMap &map);
 
 	/// Export V-Ray material from VOP node.
 	/// @param node VOP node.

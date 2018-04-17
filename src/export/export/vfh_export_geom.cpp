@@ -2171,7 +2171,11 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 	pluginDesc.pluginName = boost::str(objGeomNameFmt % "Light" % getDetailID() % objLight.getName().buffer());
 
-	return pluginExporter.exportPlugin(pluginDesc);
+	VRay::Plugin &lightPlugin = pluginExporter.exportPlugin(pluginDesc);
+
+	pluginCache.exportedLightsCache[objLight.getFullPath().buffer()].insert(lightPlugin);
+
+	return lightPlugin;
 }
 
 VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop)
@@ -2185,7 +2189,23 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop
 	const VRay::Plugin geometry = exportGeometry(objNode, specificSop);
 	// May be NULL if geometry was not re-exported during RT sessions.
 	if (geometry) {
+		OBJ_Geometry *geomNode = objNode.castToOBJGeometry();
+		if (geomNode) {
+			OP_NodeList list;
+			geomNode->getLightMaskObjects(list, ctx.getTime());
+			const ObjectExporter::GeomNodeCache *nodeMap = getExportedNodes(*geomNode);
+			if (nodeMap) {
+				for (const OP_Node *maskNode : list) {
+					for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *nodeMap) {
+						const VRay::Plugin &plugin = it.data();
+						if (plugin)
+							pluginCache.litObjects[maskNode->getFullPath().buffer()].insert(plugin);
+					}
+				}
+			}
+		}
 		nodeDesc.add(PluginAttr("geometry", geometry));
+		ctx.getTime();
 	}
 	nodeDesc.add(PluginAttr("material", pluginExporter.exportDefaultMaterial()));
 	nodeDesc.add(PluginAttr("transform", VRayExporter::getObjTransform(&objNode, ctx)));
@@ -2295,8 +2315,10 @@ ObjectExporter::GeomNodeCache* ObjectExporter::getExportedNodes(const OBJ_Node &
 	return it != pluginCache.instancerNodesMap.end() ? &it.data() : nullptr;
 }
 
-PluginSet* ObjectExporter::getGenerated(const char *key) {
-	OpPluginGenCache::iterator it = pluginCache.generated.find(key);
+ObjectExporter::StringPluginSetHashMap* ObjectExporter::getExportedLights() {
+	return &pluginCache.exportedLightsCache;
+}
 
-	return it != pluginCache.generated.end() ? &it.data() : nullptr;
+ObjectExporter::StringPluginSetHashMap* ObjectExporter::getLitObjects() {
+	return &pluginCache.litObjects;
 }

@@ -1971,10 +1971,6 @@ void VRayExporter::exportScene()
 	objectExporter.clearOpDepPluginCache();
 	objectExporter.clearPrimPluginCache();
 
-	StringPluginSetHashMap pluginMap;
-	PluginNodeListMap shadowMap;
-	StringPluginSetHashMap instancedLights;
-
 	// export geometry nodes
 	OP_Bundle *activeGeo = getActiveGeometryBundle(*m_rop, m_context.getTime());
 	if (activeGeo) {
@@ -1982,23 +1978,6 @@ void VRayExporter::exportScene()
 			OP_Node *node = activeGeo->getNode(i);
 			if (node) {
 				exportObject(node);
-				OP_Operator *nodeOperator = node->getOperator();
-				if (nodeOperator && nodeOperator->getName().contains("instance", false)) {
-					UT_String instanceFullPath;
-					node->evalString(instanceFullPath, "instancepath", 0, getContext().getTime());
-					if (instanceFullPath.isstring()) {
-						const PluginSet *lights = objectExporter.getGenerated(node->getFullPath().buffer());
-						if (lights)
-							instancedLights[instanceFullPath.buffer()] = *lights;
-					}
-				}
-				OBJ_Node *objNode = node->castToOBJNode();
-				if (objNode) {
-					OBJ_Geometry *geom = objNode->castToOBJGeometry();
-					if (geom) {
-						fillLightLinkerGeomMap(*geom, pluginMap);
-					}
-				}
 			}
 		}
 	}
@@ -2012,26 +1991,12 @@ void VRayExporter::exportScene()
 		for (int i = 0; i < activeLights->entries(); ++i) {
 			OBJ_Node *objNode = CAST_OBJNODE(activeLights->getNode(i));
 			if (objNode) {
-				const VRay::Plugin &exportedLight = exportObject(objNode);
-				if (exportedLight) {
-					lightMap[objNode->getFullPath().buffer()] = exportedLight;
-					OBJ_Light *lightNode = objNode->castToOBJLight();
-					if (lightNode) {
-						OP_Bundle *bundle = lightNode->getShadowMaskBundle(getContext().getTime());
-						if (bundle) {
-							OP_NodeList list;
-							bundle->getMembers(list);
-							shadowMap[exportedLight] = list;
-						}
-					}
-				}
+				exportObject(objNode);
 			}
 		}
 	}
 
-	if (pluginMap.size() || shadowMap.size()) {
-		exportLightLinker(pluginMap, shadowMap, lightMap, instancedLights);
-	}
+	exportLightLinker();
 
 	UT_String env_network_path;
 	m_rop->evalString(env_network_path, "render_network_environment", 0, 0.0f);
@@ -2865,87 +2830,80 @@ void VRayExporter::VfhBundleMap::freeMem()
 	bundles.clear();
 }
 
-void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap,
-	const PluginNodeListMap &shadowMap,
-	const StringPluginMap &lightMap,
-	const StringPluginSetHashMap &instancedLights)
+void VRayExporter::exportLightLinker()
 {
-	if ((pluginMap.empty() || lightMap.empty()) && shadowMap.empty())
-		return;
-
 	PluginTables lightTables;
 	PluginTables shadowTables;
+	const ObjectExporter::StringPluginSetHashMap &exportedLights = *objectExporter.getExportedLights();
+	const ObjectExporter::StringPluginSetHashMap &litObjects = *objectExporter.getLitObjects();
 
-	// fill the List of Lights and nodes they illuminate
-	for(StringPluginSetHashMap::const_iterator::DereferenceType &pluginSetMapIterator : pluginMap)
-	{
-		const PluginSet &pluginSet = pluginSetMapIterator.data();
+	// I have the lit objects which contain the full path of the light and a set of objects lit by that light
+	for (ObjectExporter::StringPluginSetHashMap::const_iterator::DereferenceType &lightSet : exportedLights) {
+		const PluginSet &pluginSet = lightSet.data();
 		PluginTable *lightTable = new PluginTable();
-		StringPluginMap::const_iterator lightMapIterator = lightMap.find(pluginSetMapIterator.key());
-		if (lightMapIterator != lightMap.end()) {
-			const VRay::Plugin &lightPlugin = lightMapIterator.data();
-			if (lightPlugin) {
-				*lightTable += lightPlugin;
-				for (const VRay::Plugin &plugin : pluginSet) {
-					if (plugin) {
-						*lightTable += plugin;
-					}
-				}
-				lightTables += lightTable;
-				// check if the light is instanced and export all instances if yes
-				StringPluginSetHashMap::const_iterator &instanceIt = instancedLights.find(pluginSetMapIterator.key());
-				if (instanceIt != instancedLights.end()) {
-					const PluginSet &pluginSet = instanceIt.data();
-					for (const VRay::Plugin &lightPlugin : pluginSet) {
-						(*lightTable)[0] = lightPlugin;
-						lightTables += lightTable;
-					}
-				}
-			}
-		}
-		else {
-			StringPluginSetHashMap::const_iterator &instanceIt = instancedLights.find(pluginSetMapIterator.key());
-			if (instanceIt != instancedLights.end()) {
-				*lightTable += VRay::Plugin();
-				const PluginSet &pluginSet = pluginSetMapIterator.data();
-				for (const VRay::Plugin &plugin : pluginSet) {
-					if (plugin)
-						*lightTable += plugin;
-				}
-				for (const VRay::Plugin &lightPlugin : instanceIt.data()) {
-					PluginTable *lightPluginTable = new PluginTable();
-					lightPluginTable->copy(*lightTable);
-					(*lightPluginTable)[0] = lightPlugin;
-					lightTables += lightPluginTable;
-				}
-			}
-		}
-	}
 
-	// Add any lights that don't illuminate anything
-	if (lightMap.size() > lightTables.count()) {
-		for (StringPluginMap::const_iterator::DereferenceType lightMapIt : lightMap) {
-			if (pluginMap.find(lightMapIt.key()) == pluginMap.end()) {
-				PluginTable *lightTable = new PluginTable();
-				StringPluginSetHashMap::const_iterator &instancedLightsIt = instancedLights.find(lightMapIt.key());
-				if (instancedLightsIt == instancedLights.end()) {
-					*lightTable += lightMapIt.data();
-					lightTables += lightTable;
-				}
-				else {
-					const PluginSet &pluginSet = instancedLightsIt.data();
-					for (const VRay::Plugin &lightPlugin : pluginSet) {
-						PluginTable *lightPluginTable = new PluginTable();
-						lightPluginTable->copy(*lightTable);
-						if (lightTable->empty())
-							*lightPluginTable += lightPlugin;
-						else
-							(*lightPluginTable)[0] = lightPlugin;
-						lightTables += lightPluginTable;
+		*lightTable += VRay::Plugin();
+
+		StringPluginSetHashMap::const_iterator it = litObjects.find(lightSet.key());
+		if (it != litObjects.end()) {
+			const PluginSet &geomSet = it.data();
+			for (const VRay::Plugin &geom : geomSet) {
+				if (geom)
+					*lightTable += geom;
+			}
+		}
+
+		for (const VRay::Plugin &light : pluginSet) {
+			PluginTable *lightPluginTable = new PluginTable();
+			lightPluginTable->copy(*lightTable);
+			(*lightPluginTable)[0] = light;
+			lightTables += lightPluginTable;
+		}
+
+		delete lightTable;
+
+		// shadow part ---
+		PluginTable *shadowTable = new PluginTable();
+		*shadowTable += VRay::Plugin();
+
+		OP_Node *opNodeTest = OPgetDirector()->findNode(lightSet.key());// get the light node
+		if (opNodeTest) {
+			OBJ_Node* objNodeTest = opNodeTest->castToOBJNode();
+			if (objNodeTest) {
+				OBJ_Light *lightNode = objNodeTest->castToOBJLight();
+				if (lightNode) {
+					OP_Bundle *bundle = lightNode->getShadowMaskBundle(getContext().getTime());
+					if (bundle) {
+						OP_NodeList list;
+						bundle->getMembers(list);
+
+						for (OP_Node *node : list) {
+							if (node) {
+								OBJ_Node *objNodeShadow = node->castToOBJNode();
+								if (objNodeShadow) {
+									ObjectExporter::GeomNodeCache const * cache = objectExporter.getExportedNodes(*objNodeShadow);
+									if (cache) {
+										for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *cache) {
+											const VRay::Plugin &plugin = it.data();
+											if (plugin)
+												*shadowTable += plugin;
+										}
+									}
+								}
+							}
+						}
 					}
 				}
 			}
 		}
+
+		for (const VRay::Plugin &light : pluginSet) {
+			PluginTable *shadowPluginTable = new PluginTable();
+			shadowPluginTable->copy(*shadowTable);
+			(*shadowPluginTable)[0] = light;
+			shadowTables += shadowPluginTable;
+		}
+		delete shadowTable;
 	}
 
 	const int lightTablesSize = lightTables.count();
@@ -2958,110 +2916,13 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap,
 		for (const VRay::Plugin &plugin : *pluginList) {
 			lightList[listAt++] = VRay::VUtils::Value(plugin);
 		}
+		delete pluginList;
 		lightLists[i].setList(lightList);
 	}
 
 	VRay::VUtils::IntRefList lightInclusivityList(lightTablesSize);
 	for (int i = 0; i < lightTablesSize; i++) {
 		lightInclusivityList[i] = 1;
-	}
-
-	// Fill list of Lights and which objects cast shadows from them
-	for (PluginNodeListMap::const_iterator::DereferenceType objList : shadowMap) {
-		const OP_NodeList &list = objList.data();
-		PluginTable *shadowTable = new PluginTable();
-
-		PluginSet const *instancedLightsSet = nullptr;
-		*shadowTable += objList.key();
-		if (list.size()) {
-			for (OP_Node *node : list) {
-				if (node) {
-					instancedLightsSet = objectExporter.getGenerated(node->getFullPath().buffer());
-					OBJ_Node *objNode = node->castToOBJNode();
-					if (objNode) {
-						const ObjectExporter::GeomNodeCache *nodeMap = objectExporter.getExportedNodes(*objNode);
-						if (nodeMap) {
-							for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *nodeMap) {
-								const VRay::Plugin &plugin = it.data();
-								if (plugin) {
-									*shadowTable += plugin;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		else {
-			for (StringPluginMap::const_iterator::DereferenceType light : lightMap) {
-				if (light.data() == objList.key()) {
-					StringPluginSetHashMap::const_iterator instanceIt = instancedLights.find(light.key());
-					if (instanceIt != instancedLights.end()) {
-						instancedLightsSet = &instanceIt.data();
-					}
-				}
-			}
-		}
-		shadowTables += shadowTable;
-		// if the light has been instanced, add it's instances as well
-		if (!instancedLightsSet) {
-			for (const VRay::Plugin &lightInstance : *instancedLightsSet) {
-				PluginTable *shadowPluginTable = new PluginTable();
-				shadowPluginTable->copy(*shadowTable);
-				(*shadowPluginTable)[0] = lightInstance;
-				shadowTables += shadowPluginTable;
-			}
-		}
-	}
-
-	for (StringPluginSetHashMap::const_iterator::DereferenceType &instancedLightIt : instancedLights) {
-		const StringPluginMap::const_iterator &lightMapIt = lightMap.find(instancedLightIt.key());
-		if (lightMapIt == lightMap.end()) {
-			PluginTable *pluginTable = new PluginTable();
-
-			*pluginTable += VRay::Plugin();
-			OP_Node *opNode = OPgetDirector()->findNode(instancedLightIt.key());
-			if (opNode) {
-				OBJ_Node *objNode = opNode->castToOBJNode();
-				if (objNode) {
-					OBJ_Light *objLight = objNode->castToOBJLight();
-					if (objLight) {
-						OP_Bundle *bundle = objLight->getShadowMaskBundle(getContext().getTime());
-						if (bundle) {
-							OP_NodeList list;
-							bundle->getMembers(list);
-							for (OP_Node *shadowedNode : list) {
-								if (shadowedNode) {
-									OBJ_Node *shadowedNodeObj = shadowedNode->castToOBJNode();
-									if (shadowedNodeObj) {
-										const ObjectExporter::GeomNodeCache *nodeMap = objectExporter.getExportedNodes(*shadowedNodeObj);
-										if (nodeMap) {
-											for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *nodeMap) {
-												const VRay::Plugin &plugin = it.data();
-												if (plugin) {
-													*pluginTable += plugin;
-												}
-											}
-										}
-									}
-								}
-							}
-
-							for (const VRay::Plugin &plugin : instancedLightIt.data()) {
-								if (plugin) {
-									PluginTable *newPluginTable = new PluginTable();
-									newPluginTable->copy(*pluginTable);
-									(*newPluginTable)[0] = plugin;
-
-									shadowTables += newPluginTable;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
 	}
 
 	const int shadowTablesSize = shadowTables.count();
@@ -3079,7 +2940,7 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap,
 		for (const VRay::Plugin &plugin : *shadowPluginsList) {
 			shadowList[listAt++] = VRay::VUtils::Value(plugin);
 		}
-
+		delete shadowPluginsList;
 		shadowLists[i].setList(shadowList);
 	}
 
@@ -3091,24 +2952,4 @@ void VRayExporter::exportLightLinker(const StringPluginSetHashMap &pluginMap,
 	lightLinkerDesc.addAttribute(Attrs::PluginAttr("include_exclude_shadow_flags", shadowInclusivityList));
 
 	exportPlugin(lightLinkerDesc);
-}
-
-void VRayExporter::fillLightLinkerGeomMap(OBJ_Geometry &node, StringPluginSetHashMap &map)
-{
-	OP_NodeList list;
-	node.getLightMaskObjects(list, getContext().getTime());
-
-	if (list.isEmpty())
-		return;
-
-	const ObjectExporter::GeomNodeCache *nodeMap = objectExporter.getExportedNodes(node);
-	if (nodeMap) {
-		for (const OP_Node *maskNode : list) {
-			for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *nodeMap) {
-				const VRay::Plugin &plugin = it.data();
-				if (plugin)
-					map[maskNode->getFullPath().buffer()].insert(plugin);
-			}
-		}
-	}
 }
