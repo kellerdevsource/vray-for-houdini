@@ -81,17 +81,6 @@ static bool pathContainFramePattern(const QString &path)
 	return path.contains(framePattern);
 }
 
-static UT_String getDefaultMapping(const char *cachePath)
-{
-	UT_String defMapping("");
-
-	char buff[PhxChannelsUtils::MAX_CHAN_MAP_LEN];
-	if (1 == aurGenerateDefaultChannelMappings(buff, PhxChannelsUtils::MAX_CHAN_MAP_LEN, cachePath)) {
-		defMapping = UT_String(buff, true);
-	}
-
-	return defMapping;
-}
 
 struct IAurPointerDeleter {
     static void cleanup(IAur *pointer) {
@@ -278,64 +267,6 @@ int VRayVolumeGridRef::detailRebuild()
 	return res;
 }
 
-void VRayVolumeGridRef::buildMapping()
-{
-	using namespace PhxChannelsUtils;
-
-	const QString loadPath = getCurrentPath();
-	if (loadPath.isEmpty())
-		return;
-
-	UT_String chanMap = "";
-
-	// Aur caches don't need any mappings.
-	if (loadPath.endsWith(".aur")) {
-		setPhxChannelMap(UT_StringArray());
-	}
-	else {
-		UT_StringArray channels;
-		getPhxChannelMap(channels);
-
-		// will hold names so we can use pointers to them
-		std::vector<UT_String> names;
-		std::vector<int> ids;
-		for (int c = 0; c < CHANNEL_COUNT; ++c) {
-			const ChannelInfo &chan = chInfo[c];
-
-			UT_String value(UT_String::ALWAYS_DEEP);
-
-			const int64 res = getOptions().hasOption(chan.propName)
-				? getOptions().getOptionI(chan.propName) - 1
-				: -1;
-
-			if (res >= 0 && res < channels.size()) {
-				value = channels(res);
-				if (value != "" && value != "0") {
-					names.push_back(value);
-					ids.push_back(static_cast<int>(chan));
-				}
-			}
-		}
-
-		const char *inputNames[CHANNEL_COUNT] = { 0 };
-		for (int c = 0; c < names.size(); ++c) {
-			inputNames[c] = names[c].c_str();
-		}
-
-		char usrchmap[MAX_CHAN_MAP_LEN] = { 0, };
-		if (1 == aurComposeChannelMappingsString(usrchmap, MAX_CHAN_MAP_LEN, ids.data(), const_cast<char * const *>(inputNames), names.size())) {
-			chanMap = usrchmap;
-		}
-
-		// user made no mappings - get default
-		if (chanMap.equal("")) {
-			chanMap = getDefaultMapping(_toChar(loadPath));
-		}
-	}
-	
-	setUsrchmap(chanMap.buffer());
-}
-
 QString VRayVolumeGridRef::getCurrentPath() const
 {
 	QString loadPath = getCachePath();
@@ -395,8 +326,6 @@ int VRayVolumeGridRef::updateFrom(const UT_Options &options)
 	const int updateRes = VRayBaseRef::updateFrom(options);
 #endif
 	if (updateRes || m_channelDirty) {
-		buildMapping();
-
 #ifdef HDK_16_5
 		prim->transformDirty();
 		prim->attributeDirty();
