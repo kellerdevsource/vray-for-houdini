@@ -2173,7 +2173,7 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 	VRay::Plugin &lightPlugin = pluginExporter.exportPlugin(pluginDesc);
 
-	pluginCache.exportedLightsCache[objLight.getFullPath().buffer()].insert(lightPlugin);
+	pluginCache.exportedLightsCache[objLight.castToOBJNode()].insert(lightPlugin);
 
 	return lightPlugin;
 }
@@ -2199,13 +2199,12 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop
 					for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *nodeMap) {
 						const VRay::Plugin &plugin = it.data();
 						if (plugin)
-							pluginCache.litObjects[maskNode->getFullPath().buffer()].insert(plugin);
+							pluginCache.litObjects[maskNode->castToOBJNode()].insert(plugin);
 					}
 				}
 			}
 		}
 		nodeDesc.add(PluginAttr("geometry", geometry));
-		ctx.getTime();
 	}
 	nodeDesc.add(PluginAttr("material", pluginExporter.exportDefaultMaterial()));
 	nodeDesc.add(PluginAttr("transform", VRayExporter::getObjTransform(&objNode, ctx)));
@@ -2315,10 +2314,10 @@ ObjectExporter::GeomNodeCache* ObjectExporter::getExportedNodes(const OBJ_Node &
 	return it != pluginCache.instancerNodesMap.end() ? &it.data() : nullptr;
 }
 
-ObjectExporter::StringPluginSetHashMap* ObjectExporter::getExportedLights() {
+ObjectExporter::ObjNodePluginSetMap* ObjectExporter::getExportedLights() {
 	return &pluginCache.exportedLightsCache;
 }
 
-ObjectExporter::StringPluginSetHashMap* ObjectExporter::getLitObjects() {
+ObjectExporter::ObjNodePluginSetMap* ObjectExporter::getLitObjects() {
 	return &pluginCache.litObjects;
 }

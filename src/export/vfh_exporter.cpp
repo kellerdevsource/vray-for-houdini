@@ -1982,7 +1982,6 @@ void VRayExporter::exportScene()
 		}
 	}
 
-	StringPluginMap lightMap;
 	OP_Bundle *activeLights = getActiveLightsBundle(*m_rop, m_context.getTime());
 	if (!activeLights || activeLights->entries() <= 0) {
 		exportDefaultHeadlight();
@@ -2834,64 +2833,48 @@ void VRayExporter::exportLightLinker()
 {
 	PluginTables lightTables;
 	PluginTables shadowTables;
-	const ObjectExporter::StringPluginSetHashMap &exportedLights = *objectExporter.getExportedLights();
-	const ObjectExporter::StringPluginSetHashMap &litObjects = *objectExporter.getLitObjects();
+	const ObjectExporter::ObjNodePluginSetMap &exportedLights = *objectExporter.getExportedLights();
+	const ObjectExporter::ObjNodePluginSetMap &litObjects = *objectExporter.getLitObjects();
 
-	// I have the lit objects which contain the full path of the light and a set of objects lit by that light
-	for (ObjectExporter::StringPluginSetHashMap::const_iterator::DereferenceType &lightSet : exportedLights) {
+	for (ObjectExporter::ObjNodePluginSetMap::const_iterator::DereferenceType &lightSet : exportedLights) {
 		const PluginSet &pluginSet = lightSet.data();
-		PluginTable *lightTable = new PluginTable();
+		PluginTable lightTable;
 
-		*lightTable += VRay::Plugin();
+		lightTable += VRay::Plugin();
 
-		StringPluginSetHashMap::const_iterator it = litObjects.find(lightSet.key());
+		ObjectExporter::ObjNodePluginSetMap::const_iterator it = litObjects.find(lightSet.key());
 		if (it != litObjects.end()) {
 			const PluginSet &geomSet = it.data();
 			for (const VRay::Plugin &geom : geomSet) {
 				if (geom)
-					*lightTable += geom;
+					lightTable += geom;
 			}
 		}
 
 		for (const VRay::Plugin &light : pluginSet) {
 			PluginTable *lightPluginTable = new PluginTable();
-			lightPluginTable->copy(*lightTable);
+			lightPluginTable->copy(lightTable);
 			(*lightPluginTable)[0] = light;
 			lightTables += lightPluginTable;
 		}
 
-		delete lightTable;
-
 		// shadow part ---
-		PluginTable *shadowTable = new PluginTable();
-		*shadowTable += VRay::Plugin();
+		PluginTable shadowTable;
+		shadowTable += VRay::Plugin();
 
-		OP_Node *opNodeTest = OPgetDirector()->findNode(lightSet.key());// get the light node
-		if (opNodeTest) {
-			OBJ_Node* objNodeTest = opNodeTest->castToOBJNode();
-			if (objNodeTest) {
-				OBJ_Light *lightNode = objNodeTest->castToOBJLight();
-				if (lightNode) {
-					OP_Bundle *bundle = lightNode->getShadowMaskBundle(getContext().getTime());
-					if (bundle) {
-						OP_NodeList list;
-						bundle->getMembers(list);
-
-						for (OP_Node *node : list) {
-							if (node) {
-								OBJ_Node *objNodeShadow = node->castToOBJNode();
-								if (objNodeShadow) {
-									ObjectExporter::GeomNodeCache const * cache = objectExporter.getExportedNodes(*objNodeShadow);
-									if (cache) {
-										for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *cache) {
-											const VRay::Plugin &plugin = it.data();
-											if (plugin)
-												*shadowTable += plugin;
-										}
-									}
-								}
-							}
-						}
+		OBJ_Light *lightNode = lightSet.key()->castToOBJLight();
+		if (lightNode) {
+			OP_Bundle *bundle = lightNode->getShadowMaskBundle(getContext().getTime());
+			OP_NodeList list;
+			bundle->getMembers(list);
+			for (OP_Node *node : list) {
+				OBJ_Node *objNodeShadow = node->castToOBJNode();
+				ObjectExporter::GeomNodeCache const * cache = objectExporter.getExportedNodes(*objNodeShadow);
+				if (cache) {
+					for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *cache) {
+						const VRay::Plugin &plugin = it.data();
+						if (plugin)
+							shadowTable += plugin;
 					}
 				}
 			}
@@ -2899,11 +2882,10 @@ void VRayExporter::exportLightLinker()
 
 		for (const VRay::Plugin &light : pluginSet) {
 			PluginTable *shadowPluginTable = new PluginTable();
-			shadowPluginTable->copy(*shadowTable);
+			shadowPluginTable->copy(shadowTable);
 			(*shadowPluginTable)[0] = light;
 			shadowTables += shadowPluginTable;
 		}
-		delete shadowTable;
 	}
 
 	const int lightTablesSize = lightTables.count();

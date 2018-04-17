@@ -145,8 +145,7 @@ class ObjectExporter
 public:
 	typedef VUtils::StringHashMap<VRay::Plugin> GeomNodeCache;
 	typedef VUtils::HashMap<const OBJ_Node*, GeomNodeCache> NodeMap;
-	typedef VUtils::HashMap<OBJ_Light*, PluginSet> LightToPluginSetMap;
-	typedef VUtils::StringHashMap<PluginSet> StringPluginSetHashMap;
+	typedef VUtils::HashMap<OBJ_Node*, PluginSet> ObjNodePluginSetMap;
 
 	explicit ObjectExporter(VRayExporter &pluginExporter);
 
@@ -351,9 +350,9 @@ public:
 	/// @returns true if the map has been set, false otherwise
 	ObjectExporter::GeomNodeCache* getExportedNodes(const OBJ_Node &node);
 
-	ObjectExporter::StringPluginSetHashMap* getExportedLights();
+	ObjectExporter::ObjNodePluginSetMap* getExportedLights();
 
-	ObjectExporter::StringPluginSetHashMap* getLitObjects();
+	ObjectExporter::ObjNodePluginSetMap* getLitObjects();
 
 private:
 	/// Push context frame when exporting nested object.
@@ -411,9 +410,9 @@ private:
 		/// Plugin cache by data hash.
 		HashPluginCache hashCache;
 
-		StringPluginSetHashMap exportedLightsCache;
+		ObjNodePluginSetMap exportedLightsCache;
 
-		StringPluginSetHashMap litObjects;
+		ObjNodePluginSetMap litObjects;
 	} pluginCache;
 
 	/// Primitive export context stack.
