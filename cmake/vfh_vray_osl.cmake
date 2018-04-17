@@ -17,6 +17,7 @@ macro(use_vray_osl)
 							"-DSDK_PATH=<VFH dependencies location>\n"
 							)
 	endif()
+	message_array("Using OSL" VRayOSL_INCLUDES)
 
 	include_directories(${VRayOSL_INCLUDES})
 	link_directories(${VRayOSL_LIBRARIES})
@@ -29,9 +30,7 @@ macro(link_with_vray_osl _name)
 		                  vrayoslcomp_s
 		                  vrayopenimageio_s)
 	else()
-		set(VRAY_OSL_LIBS vrayoslquery
-		                  vrayoslexec
-		                  vrayoslcomp
+		set(VRAY_OSL_LIBS vrayosl
 		                  vrayopenimageio)
 	endif()
 
