@@ -286,6 +286,8 @@ void ObjectExporter::clearPrimPluginCache()
 	pluginCache.polyMaterial.clear();
 	pluginCache.hashCache.clear();
 	pluginCache.instancerNodesMap.clear();
+	pluginCache.exportedLightsCache.clear();
+	pluginCache.litObjects.clear();
 }
 
 SubdivInfo ObjectExporter::getSubdivInfoFromMatNode(OP_Node &matNode)

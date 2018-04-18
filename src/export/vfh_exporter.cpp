@@ -2831,15 +2831,19 @@ void VRayExporter::VfhBundleMap::freeMem()
 
 void VRayExporter::exportLightLinker()
 {
+	ObjectExporter::ObjNodePluginSetMap *exportedLightsPtr = objectExporter.getExportedLights();
+	ObjectExporter::ObjNodePluginSetMap *litObjectsPtr = objectExporter.getLitObjects();
+	if (!exportedLightsPtr || !litObjectsPtr)
+		return;
+
 	PluginTables lightTables;
 	PluginTables shadowTables;
-	const ObjectExporter::ObjNodePluginSetMap &exportedLights = *objectExporter.getExportedLights();
-	const ObjectExporter::ObjNodePluginSetMap &litObjects = *objectExporter.getLitObjects();
+	const ObjectExporter::ObjNodePluginSetMap &exportedLights = *exportedLightsPtr;
+	const ObjectExporter::ObjNodePluginSetMap &litObjects = *litObjectsPtr;
 
 	for (ObjectExporter::ObjNodePluginSetMap::const_iterator::DereferenceType &lightSet : exportedLights) {
 		const PluginSet &pluginSet = lightSet.data();
 		PluginTable lightTable;
-
 		lightTable += VRay::Plugin();
 
 		ObjectExporter::ObjNodePluginSetMap::const_iterator it = litObjects.find(lightSet.key());
@@ -2858,7 +2862,6 @@ void VRayExporter::exportLightLinker()
 			lightTables += lightPluginTable;
 		}
 
-		// shadow part ---
 		PluginTable shadowTable;
 		shadowTable += VRay::Plugin();
 

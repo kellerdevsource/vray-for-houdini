@@ -350,8 +350,12 @@ public:
 	/// @returns true if the map has been set, false otherwise
 	ObjectExporter::GeomNodeCache* getExportedNodes(const OBJ_Node &node);
 
+	/// Get map of all exported lights, including any instanced lights
+	/// @returns Pointer to the cache of exported lights
 	ObjectExporter::ObjNodePluginSetMap* getExportedLights();
 
+	/// Get map of all exported lights and the plugins they illuminate
+	/// @returns Pointer to the cache of lit objects
 	ObjectExporter::ObjNodePluginSetMap* getLitObjects();
 
 private:
@@ -410,8 +414,10 @@ private:
 		/// Plugin cache by data hash.
 		HashPluginCache hashCache;
 
+		/// Map of light node and lights exported from aforementioned light node
 		ObjNodePluginSetMap exportedLightsCache;
 
+		/// Map of light node and plugins that it illuminates
 		ObjNodePluginSetMap litObjects;
 	} pluginCache;
 
