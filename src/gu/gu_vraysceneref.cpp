@@ -9,8 +9,8 @@
 //
 
 #include "vfh_vray.h"
-#include "vfh_defines.h"
 #include "vfh_log.h"
+#include "vfh_defines.h"
 #include "vfh_hashes.h"
 #include "vfh_gu_cache.h"
 
@@ -21,90 +21,20 @@
 #include <GU/GU_PrimPoly.h>
 #include <GU/GU_PackedContext.h>
 #include <GU/GU_PackedGeometry.h>
-#include "../export/vfh_export_view.h"
 
 using namespace VRayForHoudini;
 using namespace VUtils::Vrscene::Preview;
 
-enum class FlipAxisMode {
-	none = 0,  ///< No flipping
-	automatic, ///< Gets the flipping from the vrscene description
-	flipZY     ///< Force the scene to flip the Z and Y axis
-};
-
 /// *.vrscene preview data manager.
-static VrsceneDescManager vrsceneMan(NULL);
-
-struct SettingsWrapper {
-	SettingsWrapper()
-		: flipAxis(0)
-	{}
-
-	SettingsWrapper(const VrsceneSettings &other)
-		: settings(other)
-		, flipAxis(0)
-	{}
-
-	SettingsWrapper(const VrsceneSettings &other, bool flip)
-		: settings(other)
-		, flipAxis(flip)
-	{}
-
-	bool operator ==(const SettingsWrapper &other) const {
-		return settings == other.settings &&
-		       flipAxis == other.flipAxis;
-	}
-
-	bool operator !=(const SettingsWrapper &other) const {
-		return !(*this == other);
-	}
-
-	bool operator <(const SettingsWrapper &other) const {
-		return *this != other;
-	}
-
-	VrsceneSettings settings;
-	int flipAxis;
-};
-
-struct VrsceneSettingsHasher {
-	uint32 operator()(const SettingsWrapper &key) const {
-#pragma pack(push, 1)
-		struct SettingsKey {
-			int usePreview;
-			int previewFacesCount;
-			int minPreviewFaces;
-			int masPreviewFaces;
-			int previewType;
-			uint32 previewFlags;
-			int shouldFlip;
-		} settingsKey = { key.settings.usePreview
-			, key.settings.previewFacesCount
-			, key.settings.minPreviewFaces
-			, key.settings.maxPreviewFaces
-			, key.settings.previewType
-			, key.settings.previewFlags
-			, key.flipAxis
-		};
-#pragma pack(pop)
-
-		Hash::MHash data;
-		Hash::MurmurHash3_x86_32(&settingsKey, sizeof(SettingsKey), 42, &data);
-		return data;
-	}
-};
+VrsceneDescManager VRayForHoudini::vrsceneMan(NULL);
 
 struct ReturnSettings {
 	explicit ReturnSettings(UT_BoundingBox &box)
 		: box(box)
-		, shouldFlip(false)
-		, flipAxis(FlipAxisMode::none)
 		, clearDetail(false)
 	{}
 
 	UT_BoundingBox &box;
-	bool shouldFlip;
-	FlipAxisMode flipAxis;
 	bool clearDetail;
 };
 
@@ -114,31 +44,43 @@ class VrsceneDescBuilder
 public:
 	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const SettingsWrapper &settings, fpreal frame, ReturnSettings &rvalue) override {
 		VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(filepath, &settings.settings);
-
 		if (!vrsceneDesc) {
 			rvalue.clearDetail = true;
 			return GU_DetailHandle();
 		}
-		const VrsceneSceneInfo &sceneInfo = vrsceneDesc->getSceneInfo();
 
-		rvalue.shouldFlip = rvalue.flipAxis == FlipAxisMode::flipZY ||
-		                    rvalue.flipAxis == FlipAxisMode::automatic && sceneInfo.getUpAxis() == vrsceneUpAxisZ;
-
-		return build(vrsceneDesc, rvalue.shouldFlip, frame, rvalue);
+		return build(vrsceneDesc, settings, frame, rvalue);
 	}
 
-	void cleanResource(const VUtils::CharString &filepath) override {}
+	void cleanResource(const VUtils::CharString &filepath) override {
+		vrsceneMan.delVrsceneDesc(filepath);
+	}
 
 private:
-	static GU_DetailHandle build(VrsceneDesc *vrsceneDesc, int shouldFlip, const fpreal &t, ReturnSettings &rvalue) {
-		// Detail for the mesh
+	static GU_DetailHandle build(VrsceneDesc *vrsceneDesc, const SettingsWrapper &settings, const fpreal &t, ReturnSettings &retValue) {
 		GU_Detail *meshDetail = new GU_Detail();
 
 		int meshVertexOffset = 0;
-		rvalue.box.initBounds();
+		retValue.box.initBounds();
 
-		FOR_IT(VrsceneObjects, obIt, vrsceneDesc->m_objects) {
-			VrsceneObjectBase *ob = obIt.data();
+		QList<VrsceneObjectBase*> previewObjects;
+
+		if (settings.objectName.empty()) {
+			FOR_IT(VrsceneObjects, obIt, vrsceneDesc->m_objects) {
+				previewObjects.append(obIt.data());
+			}
+		}
+		else {
+			const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObject(settings.objectName.ptr());
+			if (sceneObject) {
+				const ObjectBaseTable &nodesTable = sceneObject->getObjectNodes();
+				for (const VrsceneObjectBase *ob : nodesTable) {
+					previewObjects.append(const_cast<VrsceneObjectBase*>(ob));
+				}
+			}
+		}
+
+		for (VrsceneObjectBase *ob : previewObjects) {
 			if (ob && ob->getType() == ObjectTypeNode) {
 				const VUtils::TraceTransform &tm = ob->getTransform(t);
 
@@ -156,22 +98,22 @@ private:
 					// Iterate through points by their offsets
 					for (int v = 0; v < vertices.count(); ++v, ++pointOffset) {
 						VUtils::Vector vert = tm * vertices[v];
-						if (shouldFlip) {
+						if (settings.flipAxis) {
 							vert = flipMatrixZY * vert;
 						}
 
 						const UT_Vector3 utVert(vert.x, vert.y, vert.z);
 
-						rvalue.box.enlargeBounds(utVert);
+						retValue.box.enlargeBounds(utVert);
 
 						meshDetail->setPos3(pointOffset, utVert);
 					}
 
 					for (int f = 0; f < faces.count(); f += 3) {
 						GU_PrimPoly *poly = GU_PrimPoly::build(meshDetail, 3, GU_POLY_CLOSED, 0);
-						for (int c = 0; c < 3; ++c) {
-							poly->setVertexPoint(c, meshVertexOffset + faces[f + c]);
-						}
+						poly->setVertexPoint(0, meshVertexOffset + faces[f + 0]);
+						poly->setVertexPoint(1, meshVertexOffset + faces[f + 1]);
+						poly->setVertexPoint(2, meshVertexOffset + faces[f + 2]);
 						poly->reverse();
 					}
 
@@ -193,7 +135,7 @@ private:
 };
 
 static VrsceneDescBuilder builder;
-static DetailCachePrototype<ReturnSettings, SettingsWrapper, VrsceneSettingsHasher> cache(builder);
+static DetailCachePrototype<ReturnSettings, SettingsWrapper> cache(builder);
 
 static SettingsWrapper getDefaultSettings() {
 	VrsceneSettings tempSettings;
@@ -201,22 +143,7 @@ static SettingsWrapper getDefaultSettings() {
 	tempSettings.previewFacesCount = 100000;
 	tempSettings.cacheSettings.cacheType = VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeNone;
 
-	return tempSettings;
-}
-
-/// Converts "flip_axis" saved as a string parameter to its corresponding
-/// FlipAxisMode enum value.
-/// @flipAxisModeS The value of the flip_axis parameter
-/// @returns The corresponding to flipAxisModeS enum value
-static FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
-{
-	FlipAxisMode mode = FlipAxisMode::none;
-
-	if (flipAxisModeS.isInteger()) {
-		mode = static_cast<FlipAxisMode>(flipAxisModeS.toInt());
-	}
-
-	return mode;
+	return SettingsWrapper(tempSettings);
 }
 
 typedef VRayBaseRefFactory<VRaySceneRef> VRaySceneRefFactory;
@@ -234,21 +161,19 @@ void VRaySceneRef::install(GA_PrimitiveFactory *primFactory)
 VRaySceneRef::VRaySceneRef() 
 	: vrsceneFile("")
 	, vrsSettings(getDefaultSettings().settings)
-	, shouldFlipAxis(false)
 {}
 
 VRaySceneRef::VRaySceneRef(const VRaySceneRef &src)
 	: VRaySceneRefBase(src)
 	, vrsceneFile(src.vrsceneFile)
 	, vrsSettings(src.vrsSettings)
-	, shouldFlipAxis(src.shouldFlipAxis)
 {
-	cache.registerInCache(vrsceneFile, SettingsWrapper(vrsSettings, shouldFlipAxis));
+	cache.registerInCache(vrsceneFile, getSettings());
 }
 
 VRaySceneRef::~VRaySceneRef()
 {
-	cache.unregister(vrsceneFile, SettingsWrapper(vrsSettings, shouldFlipAxis));
+	cache.unregister(vrsceneFile, getSettings());
 	if (!cache.isCached(vrsceneFile)) {
 		vrsceneMan.delVrsceneDesc(vrsceneFile);
 	}
@@ -275,6 +200,32 @@ bool VRaySceneRef::unpack(GU_Detail&) const
 	return false;
 }
 
+VRay::VUtils::CharStringRefList VRaySceneRef::getObjectNames() const
+{
+	const SettingsWrapper currentSettings(getSettings());
+
+	VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(getFilepath(), &currentSettings.settings);
+	if (!vrsceneDesc)
+		return VRay::VUtils::CharStringRefList();
+
+	VRay::VUtils::CharStringRefList namesList;
+
+	const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObject(currentSettings.objectName.ptr());
+	if (sceneObject) {
+		const ObjectBaseTable &nodesTable = sceneObject->getObjectNodes();
+		if (nodesTable.count()) {
+			namesList = VRay::VUtils::CharStringRefList(nodesTable.count());
+
+			for (int i = 0; i < nodesTable.count(); ++i) {
+				const VrsceneObjectBase *ob = nodesTable[i];
+				namesList[i].set(ob->getPluginName());
+			}
+		}
+	}
+
+	return namesList;
+}
+
 double VRaySceneRef::getFrame(fpreal t) const
 {
 	const int useAnimOverrides = getAnimOverride();
@@ -299,36 +250,43 @@ double VRaySceneRef::getFrame(fpreal t) const
 void VRaySceneRef::updateCacheRelatedVars() {
 	if (getCache()) {
 		if (vrsceneFile != getFilepath() ) {
-			cache.registerInCache(getFilepath(), SettingsWrapper(vrsSettings, shouldFlipAxis));
-			cache.unregister(vrsceneFile, SettingsWrapper(vrsSettings, shouldFlipAxis));
+			cache.registerInCache(getFilepath(), getSettings());
+			cache.unregister(vrsceneFile, getSettings());
 			vrsceneFile = getFilepath();
 		}
 	}
 	else {
 		if (!vrsceneFile.empty()) {
-			cache.unregister(vrsceneFile, SettingsWrapper(vrsSettings, shouldFlipAxis));
+			cache.unregister(vrsceneFile, getSettings());
 			vrsceneFile.clear();
 		}
 	}
+}
+
+SettingsWrapper VRaySceneRef::getSettings() const
+{
+	SettingsWrapper settings(vrsSettings);
+	settings.objectName = getObjectName();
+	settings.flipAxis = getShouldFlip();
+
+	return settings;
 }
 
 int VRaySceneRef::detailRebuild()
 {
 	updateCacheRelatedVars();
 
-	ReturnSettings update(m_bbox);
-	update.flipAxis = parseFlipAxisMode(getFlipAxis());
+	const SettingsWrapper cacheKey(getSettings());
 
-	m_detail = cache.getDetail(getFilepath(), SettingsWrapper(vrsSettings, shouldFlipAxis), getFrame(getCurrentFrame()), update);
+	ReturnSettings retValue(m_bbox);
+
+	m_detail = cache.getDetail(getFilepath(), cacheKey, getFrame(getCurrentFrame()), retValue);
 
 	int res;
-	if (!update.clearDetail && getAddNodes()) {
-		// Update flip axis intrinsic.
-		setShouldFlip(update.shouldFlip);
-		if (getCache() && shouldFlipAxis != update.shouldFlip) {
-			cache.registerInCache(vrsceneFile, SettingsWrapper(vrsSettings, update.shouldFlip));
-			cache.unregister(vrsceneFile, SettingsWrapper(vrsSettings, shouldFlipAxis));
-			shouldFlipAxis = update.shouldFlip;
+	if (!retValue.clearDetail && getAddNodes()) {
+		if (getCache()) {
+			cache.registerInCache(vrsceneFile, cacheKey);
+			cache.unregister(vrsceneFile, cacheKey);
 		}
 
 		res = m_detail.isValid();

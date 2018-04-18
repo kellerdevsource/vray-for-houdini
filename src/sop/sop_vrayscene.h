@@ -13,21 +13,22 @@
 #ifdef CGR_HAS_VRAYSCENE
 
 #include "sop_node_base.h"
+#include "vrscene_preview.h"
 
 namespace VRayForHoudini {
 namespace SOP {
 
-struct PrimWithOptions
-{
-	GU_PrimPacked *prim{nullptr};
-	OP_Options options;
+struct PrimWithOptions {
+	GU_PrimPacked *prim = nullptr;
+	UT_Options options;
 };
 
-typedef UT_ValArray<PrimWithOptions> PrimWithOptionsList;
+typedef QMap<QString, PrimWithOptions> PrimWithOptionsList;
 
 class VRayScene
 	: public NodePackedBase
-{
+	, public VUtils::Vrscene::Preview::EnumVrsceneSceneObject
+{ 
 public:
 	VRayScene(OP_Network *parent, const char *name, OP_Operator *entry);
 
@@ -41,8 +42,17 @@ protected:
 	void updatePrimitiveFromOptions(const OP_Options &options) VRAY_OVERRIDE;
 	void updatePrimitive(const OP_Context &context) VRAY_OVERRIDE;
 
+	// From EnumVrsceneSceneObject
+	int process(const VUtils::Vrscene::Preview::VrsceneSceneObject &object) VRAY_OVERRIDE;
+
 	/// Packed primitives list.
 	PrimWithOptionsList prims;
+
+	/// Update loading settings.
+	const VUtils::Vrscene::Preview::VrsceneSettings& getSettings();
+
+	/// Loading settings.
+	VUtils::Vrscene::Preview::VrsceneSettings settings;
 };
 
 } // namespace SOP

@@ -11,10 +11,9 @@
 #ifndef VRAY_FOR_HOUDINI_VFH_GU_CACHE_H
 #define VRAY_FOR_HOUDINI_VFH_GU_CACHE_H
 
-#include "hash_map.h"
+#include "vfh_hashes.h"
 
 #include <GU/GU_PackedGeometry.h>
-#include <FS/UT_DSO.h>
 
 template <typename key, typename ReturnValue>
 class DetailBuilder {
@@ -34,7 +33,7 @@ public:
 	virtual void cleanResource(const VUtils::CharString &filepath) = 0;
 };
 
-template <typename ReturnValue, typename T, typename KeyHash = VUtils::DefaultHash<T>, typename KeysEqual = VUtils::DefaultKeyCompare<T>>
+template <typename ReturnValue, typename T>
 class DetailCachePrototype
 {
 public:
@@ -63,7 +62,7 @@ public:
 		if (filepath.empty())
 			return;
 
-		detailCache[filepath.ptr()][settings].references += 1;
+		detailCache[filepath.ptr()][settings.getHash()].references += 1;
 	}
 
 	/// Method for unregistering a filepath and settings pair, decrements the reference
@@ -74,9 +73,11 @@ public:
 		if (filepath.empty())
 			return;
 
+		const auto keyHash = settings.getHash();
+
 		CacheElementMap &tempVal = detailCache[filepath.ptr()];
-		if (--tempVal[settings].references < 1) {
-			tempVal.remove(settings);
+		if (--tempVal[keyHash].references < 1) {
+			tempVal.remove(keyHash);
 			if (tempVal.isEmpty()) {
 				detailCache.remove(filepath.ptr());
 				detailBuilder.cleanResource(filepath.ptr());
@@ -116,7 +117,7 @@ public:
 			if (!gdpHndl.isValid()) {
 				gdpHndl = detailBuilder.buildDetail(filepath, settings, frame, rval);
 
-				detailCache[filepath.ptr()][settings].frameDetailMap.insert(getFrameKey(frame), gdpHndl);
+				detailCache[filepath.ptr()][settings.getHash()].frameDetailMap.insert(getFrameKey(frame), gdpHndl);
 			}
 		}
 
@@ -137,7 +138,7 @@ public:
 			return GU_DetailHandle();
 
 		const CacheElementMap &cacheElements = fIt.value();
-		const typename CacheElementMap::const_iterator ceIt = cacheElements.find(settings);
+		const typename CacheElementMap::const_iterator ceIt = cacheElements.find(settings.getHash());
 		if (ceIt == cacheElements.end())
 			return GU_DetailHandle();
 
@@ -196,7 +197,7 @@ private:
 		DetailMap frameDetailMap;
 	};
 
-	typedef QMap<T, CacheElement> CacheElementMap;
+	typedef QMap<VRayForHoudini::Hash::MHash, CacheElement> CacheElementMap;
 	typedef QMap<QString, CacheElementMap> DetailCacheMap;
 
 	/// Cache container.

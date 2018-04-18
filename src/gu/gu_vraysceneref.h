@@ -26,6 +26,71 @@ struct VrsceneDesc;
 
 namespace VRayForHoudini {
 
+extern VUtils::Vrscene::Preview::VrsceneDescManager vrsceneMan;
+
+struct SettingsWrapper {
+	SettingsWrapper()
+		: flipAxis(0)
+	{}
+
+	explicit SettingsWrapper(const VUtils::Vrscene::Preview::VrsceneSettings &other)
+		: settings(other)
+		, flipAxis(0)
+	{}
+
+	bool operator ==(const SettingsWrapper &other) const {
+		return settings == other.settings &&
+		       VUtils::isEqual(objectName, other.objectName) &&
+		       flipAxis == other.flipAxis;
+	}
+
+	bool operator !=(const SettingsWrapper &other) const {
+		return !(*this == other);
+	}
+
+	bool operator <(const SettingsWrapper &other) const {
+		return settings.previewFacesCount < other.settings.previewFacesCount;
+	}
+
+	Hash::MHash getHash() const {
+		Hash::MHash nameHash = 0;
+		if (!objectName.empty()) {
+			Hash::MurmurHash3_x86_32(objectName.ptr(), objectName.length(), 42, &nameHash);
+		}
+
+#pragma pack(push, 1)
+		struct SettingsKey {
+			int usePreview;
+			int previewFacesCount;
+			int minPreviewFaces;
+			int masPreviewFaces;
+			int previewType;
+			uint32 previewFlags;
+			int shouldFlip;
+			Hash::MHash nameHash;
+		} settingsKey = {
+			settings.usePreview,
+			settings.previewFacesCount,
+			settings.minPreviewFaces,
+			settings.maxPreviewFaces,
+			settings.previewType,
+			settings.previewFlags,
+			flipAxis,
+			nameHash
+		};
+#pragma pack(pop)
+
+		Hash::MHash keyHash;
+		Hash::MurmurHash3_x86_32(&settingsKey, sizeof(SettingsKey), 42, &keyHash);
+
+		return keyHash;
+	}
+	
+	VUtils::Vrscene::Preview::VrsceneSettings settings;
+	VUtils::CharString objectName;
+	int flipAxis;
+};
+
 /// VRayScene preview mesh implemented as a packed primitive.
 class VRaySceneRef
 	: public VRaySceneRefBase
@@ -43,6 +108,8 @@ public:
 	GU_PackedImpl *copy() const VRAY_OVERRIDE;
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
 
+	VRay::VUtils::CharStringRefList getObjectNames() const;
+
 private:
 	int detailRebuild() VRAY_OVERRIDE;
 
@@ -53,8 +120,10 @@ private:
 	void updateCacheRelatedVars();
 
 	VUtils::CharString vrsceneFile;
+
+	SettingsWrapper getSettings() const;
+
 	VUtils::Vrscene::Preview::VrsceneSettings vrsSettings;
-	bool shouldFlipAxis;
 };
 
 } // namespace VRayForHoudini

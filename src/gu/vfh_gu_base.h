@@ -18,6 +18,7 @@
 #include <GU/GU_PackedImpl.h>
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PrimPacked.h>
+#include <GT/GT_GEOPrimCollectPacked.h>
 #include <GT/GT_GEOAttributeFilter.h>
 #include <GT/GT_GEOPrimCollect.h>
 #include <GT/GT_GEOPrimPacked.h>
@@ -83,8 +84,10 @@ protected:
 	GU_DetailHandle m_detail;
 };
 
+typedef QMap<uint, GT_GEOOffsetList> DetailToPrimitive;
+
 struct VRayBaseRefCollectData
-	: GT_GEOPrimCollectOffsets
+	: GT_GEOPrimCollectData
 {
 	explicit VRayBaseRefCollectData(const GA_PrimitiveTypeId &typeId)
 		: myPrimTypeId(typeId)
@@ -93,18 +96,16 @@ struct VRayBaseRefCollectData
 	/// Returns VRayBaseRef packed primitive type ID.
 	GA_PrimitiveTypeId getMyTypeID() const;
 
-	/// Returns VRayBaseRef packed primitive.
-	const GU_PrimPacked *getMyPrim() const;
-
 	/// Sets VRayBaseRef packed primitive.
-	void setMyPrim(const GU_PrimPacked *value);
+	void addPrim(uint key, const GU_PrimPacked *value);
+
+	const DetailToPrimitive& getPrimitives() const;
 
 private:
-	/// VRayBaseRef packed primitive.
-	const GU_PrimPacked *myPrim = nullptr;
-
 	/// VRayBaseRef primitive type ID.
 	const GA_PrimitiveTypeId &myPrimTypeId;
+
+	DetailToPrimitive detailInstances;
 
 	VUTILS_DISABLE_COPY(VRayBaseRefCollectData)
 };

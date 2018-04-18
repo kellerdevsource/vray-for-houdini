@@ -23,35 +23,6 @@ typedef VRayBaseRefFactory<VRayProxyRef> VRayProxyRefFactory;
 static GA_PrimitiveTypeId theTypeId(-1);
 static VRayProxyRefFactory theFactory("VRayProxyRef");
 
-struct VRayProxyRefKeyHasher {
-	uint32 operator()(const VRayProxyRefKey &key) const {
-#pragma pack(push, 1)
-		struct SettingsKey {
-			int lod;
-			int frame;
-			int animType;
-			int animOffset;
-			int animSpeed;
-			int animOverride;
-			int animLength;
-			int numPreviewFaces;
-		} settingsKey = {
-			static_cast<int>(key.lod),
-			VUtils::fast_floor(key.f * 100.0),
-			key.animType,
-			VUtils::fast_floor(key.animOffset * 100.0),
-			VUtils::fast_floor(key.animSpeed * 100.0),
-			key.animOverride,
-			key.animLength,
-			key.previewFaces
-		};
-#pragma pack(pop)
-		Hash::MHash data;
-		Hash::MurmurHash3_x86_32(&settingsKey, sizeof(SettingsKey), 42, &data);
-		return data;
-	}
-};
-
 class VRayProxyRefKeyBuilder
 	: public DetailBuilder<VRayProxyRefKey, bool>
 {
@@ -66,7 +37,7 @@ public:
 };
 
 static VRayProxyRefKeyBuilder builder;
-static DetailCachePrototype<bool, VRayProxyRefKey, VRayProxyRefKeyHasher> cache(builder);
+static DetailCachePrototype<bool, VRayProxyRefKey> cache(builder);
 
 void VRayProxyRef::install(GA_PrimitiveFactory *primFactory)
 {

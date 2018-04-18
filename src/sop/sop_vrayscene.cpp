@@ -16,6 +16,28 @@
 
 using namespace VRayForHoudini;
 using namespace SOP;
+using namespace VUtils::Vrscene::Preview;
+
+enum class FlipAxisMode {
+	none = 0,  ///< No flipping.
+	automatic, ///< Gets the flipping from the vrscene description.
+	flipZY,    ///< Force the scene to flip the Z and Y axis.
+};
+
+/// Converts "flip_axis" saved as a string parameter to its corresponding
+/// FlipAxisMode enum value.
+/// @flipAxisModeS The value of the flip_axis parameter
+/// @returns The corresponding to flipAxisModeS enum value
+static FlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
+{
+	FlipAxisMode mode = FlipAxisMode::none;
+
+	if (flipAxisModeS.isInteger()) {
+		mode = static_cast<FlipAxisMode>(flipAxisModeS.toInt());
+	}
+
+	return mode;
+}
 
 VRayScene::VRayScene(OP_Network *parent, const char *name, OP_Operator *entry)
 	: NodePackedBase("VRaySceneRef", parent, name, entry)
@@ -24,7 +46,7 @@ VRayScene::VRayScene(OP_Network *parent, const char *name, OP_Operator *entry)
 void VRayScene::setPluginType()
 {
 	pluginType = VRayPluginType::GEOMETRY;
-	pluginID = "VRayScene";
+	pluginID = SL("VRayScene");
 }
 
 void VRayScene::setTimeDependent()
@@ -46,25 +68,53 @@ void VRayScene::setTimeDependent()
 	flags().setTimeDep(previewMeshAnimated);
 }
 
+static int offs = 0;
+
+int VRayScene::process(const VrsceneSceneObject &object)
+{
+	const VUtils::CharString objectName = object.getName();
+
+	PrimWithOptions &prim = prims[objectName.ptr()];
+	prim.options.setOptionS("object_name", object.getName().ptr());
+
+	prim.prim = GU_PrimPacked::build(*gdp, m_primType);
+	vassert(prim.prim);
+
+	GA_PrimitiveGroup *primGroup = gdp->newPrimitiveGroup(objectName.ptr());
+	primGroup->add(prim.prim);
+
+	// Set the location of the packed primitive point.
+	const UT_Vector3 pivot(0.0, 0.0, 0.0);
+	prim.prim->setPivot(pivot);
+
+	gdp->setPos3(prim.prim->getPointOffset(0), pivot);
+
+	return 1;
+}
+
 void VRayScene::getCreatePrimitive()
 {
+	prims.clear();
+
+	gdp->stashAll();
+
 	UT_String filePath;
 	evalString(filePath, "filepath", 0, 0.0);
 
-	try {
-		const VRay::ScenePreview::Settings settings;
-		VRay::ScenePreview scenePreview(filePath.buffer(), settings);
+	VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(filePath.buffer(), &getSettings());
+	if (vrsceneDesc) {
+		vrsceneDesc->enumSceneObjects(*this);
 	}
-	catch (...) {
-	}
+
+	gdp->destroyStashed();
 }
 
 void VRayScene::updatePrimitiveFromOptions(const OP_Options &options)
 {
 	for (PrimWithOptions &prim : prims) {
-		prim.options = options;
+		prim.options.merge(options);
 
-		GU_PackedImpl *primImpl = m_primPacked->implementation();
+		GU_PackedImpl *primImpl = prim.prim->implementation();
 		if (primImpl) {
 #ifdef HDK_16_5
 			primImpl->update(prim.prim, prim.options);
@@ -103,7 +153,34 @@ void VRayScene::updatePrimitive(const OP_Context &context)
 	primOptions.setOptionS("plugin_mapping", pluginMappings);
 	primOptions.setOptionF("current_frame", flags().getTimeDep() ? context.getFloatFrame() : 0.0f);
 
+	int shouldFlip = false;
+
+	UT_String filePath;
+	evalString(filePath, "filepath", 0, 0.0);
+	if (filePath.isstring()) {
+		VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(filePath.buffer(), &getSettings());
+		if (vrsceneDesc) {
+			const VrsceneSceneInfo &sceneInfo = vrsceneDesc->getSceneInfo();
+
+			UT_String flipAxisMode;
+			evalString(flipAxisMode, "flip_axis", 0, 0.0);
+
+			const FlipAxisMode flipAxis = parseFlipAxisMode(flipAxisMode);
+
+			shouldFlip = flipAxis == FlipAxisMode::flipZY ||
+			             (flipAxis == FlipAxisMode::automatic && sceneInfo.getUpAxis() == vrsceneUpAxisZ);
+		}
+	}
+
+	primOptions.setOptionI("should_flip", shouldFlip);
+
 	updatePrimitiveFromOptions(primOptions);
+}
+
+const VrsceneSettings &VRayScene::getSettings()
+{
+	// TODO: Fill settings from node attributes.
+	return settings;
 }
 
 #endif // CGR_HAS_VRAYSCENE

@@ -1700,6 +1700,25 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	}
 	pluginDesc.add(SL("transform"), fullTm);
 
+	PrimitiveItem item;
+	getPrimMaterial(item.primMaterial);
+
+	VUtils::CharString objectName = vraysceneref->getObjectName();
+	if (!objectName.empty()) {
+		const VRay::VUtils::CharStringRefList namesList = vraysceneref->getObjectNames();
+		if (namesList.count()) {
+			pluginDesc.add(Attrs::PluginAttr(SL("hidden_objects"), namesList));
+			pluginDesc.add(Attrs::PluginAttr(SL("hidden_objects_inclusive"), false));
+		}
+	}
+
+	if (item.primMaterial.matNode) {
+		const VRay::Plugin &materialOverride = pluginExporter.exportMaterial(item.primMaterial.matNode);
+		if (materialOverride.isNotEmpty()) {
+			pluginDesc.add(Attrs::PluginAttr(SL("material_override"), materialOverride));
+		}
+	}
+
 	if (options.getOptionI("use_overrides")) {
 		const UT_StringHolder &overrideSnippet = options.getOptionS("override_snippet");
 		const UT_StringHolder &overrideFilePath = options.getOptionS("override_filepath");
