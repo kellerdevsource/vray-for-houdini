@@ -2844,6 +2844,7 @@ void VRayExporter::exportLightLinker()
 	for (ObjectExporter::ObjNodePluginSetMap::const_iterator::DereferenceType &lightSet : exportedLights) {
 		const PluginSet &pluginSet = lightSet.data();
 		PluginTable lightTable;
+		// Add empty plugin as place holder for the light plugin at the start
 		lightTable += VRay::Plugin();
 
 		ObjectExporter::ObjNodePluginSetMap::const_iterator it = litObjects.find(lightSet.key());
@@ -2863,6 +2864,7 @@ void VRayExporter::exportLightLinker()
 		}
 
 		PluginTable shadowTable;
+		// Add empty plugin as place holder for the light plugin at the start
 		shadowTable += VRay::Plugin();
 
 		OBJ_Light *lightNode = lightSet.key()->castToOBJLight();
