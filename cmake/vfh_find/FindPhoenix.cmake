@@ -136,7 +136,6 @@ if(Phoenix_FOUND)
 	endforeach(loop_var)
 endif()
 
-set(Phoenix_FOUND  FALSE)
 if(NOT Phoenix_FOUND)
 	message(WARNING "Phoenix SDK NOT found!")
 
