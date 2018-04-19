@@ -97,14 +97,16 @@ void VRayScene::getCreatePrimitive()
 void VRayScene::updatePrimitiveFromOptions(const OP_Options &options)
 {
 	for (PrimWithOptions &prim : prims) {
-		prim.options.merge(options);
+		OP_Options primOptions;
+		primOptions.merge(options);
+		primOptions.merge(prim.options);
 
 		GU_PackedImpl *primImpl = prim.prim->implementation();
 		if (primImpl) {
 #ifdef HDK_16_5
-			primImpl->update(prim.prim, prim.options);
+			primImpl->update(prim.prim, primOptions);
 #else
-			primImpl->update(prim.options);
+			primImpl->update(primOptions);
 #endif
 		}
 	}

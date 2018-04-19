@@ -62,8 +62,15 @@ FORCEINLINE VRaySceneFlipAxisMode getFlipAxisMode(OP_Node &vraySceneSOP) {
 }
 
 struct PrimWithOptions {
+	PrimWithOptions() = default;
+	PrimWithOptions(const PrimWithOptions &other)
+		: prim(other.prim)
+	{
+		options.merge(other.options);
+	}
+
 	GU_PrimPacked *prim = nullptr;
-	UT_Options options;
+	OP_Options options;
 };
 
 typedef QMap<QString, PrimWithOptions> PrimWithOptionsList;

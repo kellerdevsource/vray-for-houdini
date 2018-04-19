@@ -29,24 +29,20 @@ namespace VRayForHoudini {
 extern VUtils::Vrscene::Preview::VrsceneDescManager vrsceneMan;
 
 struct SettingsWrapper {
-	SettingsWrapper()
-		: flipAxis(false)
+	SettingsWrapper() = default;
+
+	explicit SettingsWrapper(const VUtils::Vrscene::Preview::VrsceneSettings &settings)
+		: settings(settings)
 	{}
 
-	explicit SettingsWrapper(const VUtils::Vrscene::Preview::VrsceneSettings &other)
-		: settings(other)
-		, flipAxis(false)
-	{}
-
+	/// Returns current settings hash.
 	Hash::MHash getHash() const;
-
-	bool operator ==(const SettingsWrapper &other) const;
-	bool operator !=(const SettingsWrapper &other) const;
-	bool operator <(const SettingsWrapper &other) const;
 
 	VUtils::Vrscene::Preview::VrsceneSettings settings;
 	VUtils::CharString objectName;
-	int flipAxis;
+	int addNodes = true;
+	int addLights = true;
+	int flipAxis = false;
 };
 
 /// VRayScene preview mesh implemented as a packed primitive.
