@@ -154,23 +154,17 @@ void VRayBaseRefCollect::install(const GA_PrimitiveTypeId &typeId)
 	new VRayBaseRefCollect(typeId);
 }
 
-GT_GEOPrimCollectData *VRayBaseRefCollect::beginCollecting(const GT_GEODetailListHandle &geometry,
-                                                           const GT_RefineParms *parms) const
+GT_GEOPrimCollectData *VRayBaseRefCollect::beginCollecting(const GT_GEODetailListHandle & /*geometry*/,
+                                                           const GT_RefineParms * /*parms*/) const
 {
-#if 0
-	return GT_GEOPrimCollectPacked::beginCollecting(geometry, parms);
-#else
 	return new VRayBaseRefCollectData(typeId);
-#endif
 }
 
-GT_PrimitiveHandle VRayBaseRefCollect::collect(const GT_GEODetailListHandle &geometry, const GEO_Primitive * const *prim_list,
-                                               int nsegments, GT_GEOPrimCollectData *data) const
+GT_PrimitiveHandle VRayBaseRefCollect::collect(const GT_GEODetailListHandle & /*geometry*/,
+                                               const GEO_Primitive * const*prim_list,
+                                               int /*nsegments*/,
+                                               GT_GEOPrimCollectData *data) const
 {
-#if 0
-	GT_PrimitiveHandle hndl = GT_GEOPrimCollectPacked::collect(geometry, prim_list, nsegments, data);
-	return hndl;
-#else
 	VRayBaseRefCollectData &collectData =
 		*data->asPointer<VRayBaseRefCollectData>();
 
@@ -188,16 +182,11 @@ GT_PrimitiveHandle VRayBaseRefCollect::collect(const GT_GEODetailListHandle &geo
 	collectData.addPrim(packedHandle.hash(), curPrim);
 
 	return GT_PrimitiveHandle();
-#endif
 }
 
 GT_PrimitiveHandle VRayBaseRefCollect::endCollecting(const GT_GEODetailListHandle &geometry,
                                                      GT_GEOPrimCollectData *data) const
 {
-#if 0
-	GT_PrimitiveHandle hndl = GT_GEOPrimCollectPacked::endCollecting(geometry, data);
-	return hndl;
-#else
 	const GU_ConstDetailHandle gdh(geometry->getGeometry(0));
 
 	const GU_DetailHandleAutoReadLock rlock(gdh);
@@ -247,5 +236,4 @@ GT_PrimitiveHandle VRayBaseRefCollect::endCollecting(const GT_GEODetailListHandl
 	}
 
 	return GT_PrimitiveHandle(primCollect);
-#endif
 }
