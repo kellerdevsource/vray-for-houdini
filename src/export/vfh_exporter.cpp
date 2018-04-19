@@ -1977,6 +1977,11 @@ void VRayExporter::exportScene()
 		exportView();
 	}
 
+	if (sessionType == VfhSessionType::rt) {
+		// Add callback to OP Director so new nodes can be exported during RT Sessions
+		OPgetDirector()->addOpInterest(this, RtCallbackOPDirector);
+	}
+
 	bundleMap.init();
 
 	// Clear plugin caches.

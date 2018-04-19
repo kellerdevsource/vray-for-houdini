@@ -37,6 +37,44 @@ OP_Node* VRayExporter::getObjMaterial(OBJ_Node *objNode, fpreal t)
 	return objNode ? objNode->getMaterialNode(t) : nullptr;
 }
 
+void VRayExporter::RtCallbackOPDirector(OP_Node *caller, void *callee, OP_EventType type, void *data)
+{
+	if (!csect.tryEnter())
+		return;
+
+	Log::getLog().debug("RtCallbackOPDirector: %s from caller: \"%s\"", OPeventToString(type), caller->getFullPath().buffer());
+
+	if (type == OP_EventType::OP_UI_CURRENT_CHANGED) {
+		if (data) {
+			OP_Node *node = static_cast<OP_Node*>(data);
+			if (node) {
+				OBJ_Node* objNode = node->castToOBJNode();
+				if (objNode) {
+					VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+					ObjectExporter &objExporter = exporter.getObjectExporter();
+
+					// Clear caches, otherwise plugin will not be exported if it is deleted and recreated
+					objExporter.clearOpPluginCache();
+					objExporter.clearPrimPluginCache();
+
+					// Store current state
+					const int oldState = objExporter.getExportGeometry();
+					objExporter.setExportGeometry(1);
+
+					// Update node
+					objExporter.removeGenerated(*objNode);
+					exporter.exportObject(node);
+
+					// Restore state
+					objExporter.setExportGeometry(oldState);
+				}
+			}
+		}
+	}
+
+	csect.leave();
+}
+
 void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
 	if (!csect.tryEnter())
