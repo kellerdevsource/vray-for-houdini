@@ -42,7 +42,7 @@ void VRayExporter::RtCallbackOPDirector(OP_Node *caller, void *callee, OP_EventT
 	if (!csect.tryEnter())
 		return;
 
-	Log::getLog().debug("RtCallbackOPDirector: %s from caller: \"%s\"", OPeventToString(type), caller->getFullPath().buffer());
+	Log::getLog().debug("RtCallbackOPDirector: %s from caller: \"%s\"", OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_EventType::OP_UI_CURRENT_CHANGED && data) {
 		OBJ_Node* objNode = static_cast<OP_Node*>(data)->castToOBJNode();
@@ -54,16 +54,9 @@ void VRayExporter::RtCallbackOPDirector(OP_Node *caller, void *callee, OP_EventT
 			objExporter.clearOpPluginCache();
 			objExporter.clearPrimPluginCache();
 
-			// Store current state
-			const int oldState = objExporter.getExportGeometry();
-			objExporter.setExportGeometry(1);
-
 			// Update node
 			objExporter.removeGenerated(*objNode);
 			exporter.exportObject(objNode);
-
-			// Restore state
-			objExporter.setExportGeometry(oldState);
 		}
 	}
 
