@@ -102,7 +102,7 @@ protected:
 	/// Get the OSL code (either from the UI source field or from selected filepath)
 	/// @param oslCode [out] - the osl code will be put here
 	/// @param needCompile [out] - true if code is osl source and needs to be compiled
-	void getOSLCode(UT_String & oslCode, bool &needCompile) const;
+	void getOSLCode(QString &oslCode, bool &needCompile) const;
 
 	/// Get the name of the output color param
 	/// NOTE: Use this when the result pointer will be passed to houdini!!

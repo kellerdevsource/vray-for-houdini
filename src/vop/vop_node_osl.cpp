@@ -74,7 +74,7 @@ public:
 	virtual ~OSLErrorHandle()
 	{}
 
-	virtual void operator () (int errcode, const QString &msg)
+	virtual void operator () (int errcode, const std::string &msg)
 	{
 		const ErrCode code = static_cast<ErrCode>((0xff << 16) & errcode); // code is in high 16 bits
 		const int errorNo = ~(0xff << 16) & errcode;
@@ -82,24 +82,24 @@ public:
 
 		switch (code) {
 		case EH_INFO:
-			Log::getLog().info(errFormat, errorNo, msg);
+			Log::getLog().info(errFormat, errorNo, msg.c_str());
 			break;
 		case EH_WARNING:
-			Log::getLog().warning(errFormat, errorNo, msg);
+			Log::getLog().warning(errFormat, errorNo, msg.c_str());
 			break;
 		case EH_ERROR:
 		case EH_SEVERE:
-			Log::getLog().error(errFormat, errorNo, msg);
+			Log::getLog().error(errFormat, errorNo, msg.c_str());
 			break;
 		case EH_DEBUG:
-			Log::getLog().debug(errFormat, errorNo, msg);
+			Log::getLog().debug(errFormat, errorNo, msg.c_str());
 			break;
 		}
 	}
 } staticErrHandle;
 
 /// All osl params in OSL multiparam
-const QString OSL_PARAM_TYPE_LIST[] = {
+const std::array<const char *, 7> OSL_PARAM_TYPE_LIST = {
 	"color_param",
 	"vector_param",
 	"float_param",
@@ -110,14 +110,16 @@ const QString OSL_PARAM_TYPE_LIST[] = {
 };
 
 /// Env var reader for APPSDK_PATH
-VUtils::GetEnvVar APPSDK_PATH("VRAY_APPSDK", "");
-/// We ship the stdosl.h that comes with appsdk
-const QString stdOslPath = APPSDK_PATH.getValue().ptr() + QString("/bin/stdosl.h");
+VUtils::GetEnvVar VRAY_OSL_PATH("VRAY_OSL_PATH", "");
 
-const int OSL_PARAM_TYPE_COUNT = COUNT_OF(OSL_PARAM_TYPE_LIST);
+/// This should be passed as options to the compiler
+const std::string stdOslIncludeArg = "-I" + std::string(VRAY_OSL_PATH.getValue().ptr());
+
+/// This is passed as absolute path to the standard header
+const std::string stdOslPath = std::string(VRAY_OSL_PATH.getValue().ptr()) + "/stdosl.h";
 
 template <bool MTL>
-QString mapTypeToParam(const typename OSLNodeBase<MTL>::ParamInfo & info)
+const char * mapTypeToParam(const typename OSLNodeBase<MTL>::ParamInfo & info)
 {
 	// keep in-sync with OSL_PARAM_TYPE_LIST and vfh_osl_base.ds
 	switch (info.type) {
@@ -192,13 +194,15 @@ void parseMetadata(const VRayOSL::OSLQuery::Parameter *param, typename OSLNodeBa
 } // namespace
 
 template <bool MTL>
-void OSLNodeBase<MTL>::getOSLCode(UT_String & oslCode, bool &needCompile) const
+void OSLNodeBase<MTL>::getOSLCode(QString &oslCode, bool &needCompile) const
 {
 	UT_String oslSourceLocation;
 	evalString(oslSourceLocation, "osl_source", 0, 0.f);
 	if (oslSourceLocation == "OSL") {
-		evalString(oslCode, "osl_code", 0, 0.f);
+		UT_String utOslCode;
+		evalString(utOslCode, "osl_code", 0, 0.f);
 		needCompile = true;
+		oslCode = utOslCode.nonNullBuffer();
 	} else {
 		UT_String filePath;
 		evalString(filePath, "osl_file", 0, 0.f);
@@ -219,7 +223,7 @@ void OSLNodeBase<MTL>::getOSLCode(UT_String & oslCode, bool &needCompile) const
 			if (!data.size()) {
 				Log::getLog().error("Failed to read \"%s\" selected as osl source file", filePath.nonNullBuffer());
 			} else {
-				oslCode = UT_String(data.constData(), true, data.size());
+				oslCode = data;
 			}
 		}
 	}
@@ -230,7 +234,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 {
 	using namespace Hash;
 
-	UT_String oslCode;
+	QString oslCode;
 	bool needCompile = false;
 	getOSLCode(oslCode, needCompile);
 
@@ -241,12 +245,13 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 	}
 
 	MHash sourceHash;
-	MurmurHash3_x86_32(oslCode.buffer(), oslCode.length(), 42, &sourceHash);
+	MurmurHash3_x86_32(_toChar(oslCode), oslCode.length(), 42, &sourceHash);
 
 	// nothing changed since last run
 	if (sourceHash == m_codeHash) {
 		return;
 	}
+	// TODO: if we update hash here we won't try to compile the same code even if it fails
 
 	self->m_codeHash = 0;
 	self->m_paramList.clear();
@@ -265,7 +270,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 	std::string osoCode;
 	if (needCompile) {
 		OSLCompiler compiler{&staticErrHandle};
-		if (!compiler.compile_buffer(oslCode.nonNullBuffer(), osoCode, {}, _toChar(stdOslPath))) {
+		if (!compiler.compile_buffer(_toChar(oslCode), osoCode, { stdOslIncludeArg }, stdOslPath)) {
 			Log::getLog().error("Failed to compile OSL source.");
 			return;
 		}
@@ -343,7 +348,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 				// TODO: VOP_TYPE_STRUCT ?
 				info.type = VOP_TYPE_STRING;
 				if (param->validdefault) {
-					info.stringDefault = param->sdefault[0];
+					info.stringDefault = param->sdefault[0].c_str();
 				}
 				if (info.widget != ParamInfo::String) {
 					// if the metadata type is string, this means it is not plugin input so don't add to inputs
@@ -368,14 +373,14 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 	}
 
 	// label and seperator
-	const char * oslParams[OSL_PARAM_TYPE_COUNT + 2] = {
+	std::array<const char *, OSL_PARAM_TYPE_LIST.size() + 2> oslParams = {
 		"label",
 		"separator"
 	};
-	const int oslParamCount = sizeof(oslParams) / sizeof(oslParams[0]);
+
 	// add osl-code specific params
-	for (int c = 0; c < OSL_PARAM_TYPE_COUNT; c++) {
-		oslParams[c + 2] = _toChar(OSL_PARAM_TYPE_LIST[c]);
+	for (int c = 0; c < OSL_PARAM_TYPE_LIST.size(); c++) {
+		oslParams[c + 2] = OSL_PARAM_TYPE_LIST[c];
 	}
 
 	int paramIdx = 1;
@@ -389,7 +394,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		self->insertMultiParmItem("osl_input_params", paramIdx);
 
 		// Hide everything for paramIdx
-		for (int r = 0; r < oslParamCount; r++) {
+		for (int r = 0; r < oslParams.size(); r++) {
 			char paramName[256] = {0};
 			// Example param: osl3color_param
 			sprintf(paramName, "osl%d%s", paramIdx, oslParams[r]);
@@ -410,11 +415,11 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 			CH_StringMeaning::CH_STRING_LITERAL, "osl#label", &paramIdx, 0, 0);
 
 		// show only the type this param is
-		const QString & oslParamName = mapTypeToParam<MTL>(param);
+		const char * oslParamName = mapTypeToParam<MTL>(param);
 
-		if (!oslParamName.isEmpty()) {
+		if (oslParamName && *oslParamName) {
 			char paramName[256] = {0};
-			for (int f = 0; f < (oslParamCount - OSL_PARAM_TYPE_COUNT); f++) {
+			for (int f = 0; f < (oslParams.size() - OSL_PARAM_TYPE_LIST.size()); f++) {
 				// label and separator
 				sprintf(paramName, "osl%d%s", paramIdx, oslParams[f]);
 				if (!self->setVisibleState(paramName, true)) {
@@ -422,9 +427,8 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 				}
 			}
 
-
 			// the appropriate param for the type
-			sprintf(paramName, "osl%d%s", paramIdx, _toChar(oslParamName));
+			sprintf(paramName, "osl%d%s", paramIdx, oslParamName);
 			if (!self->setVisibleState(paramName, true)) {
 				Log::getLog().warning("Failed to show %s", paramName);
 			}
@@ -537,7 +541,7 @@ void OSLNodeBase<MTL>::getInputNameSubclass(UT_String &in, int idx) const
 		NodeBase::getInputNameSubclass(in, idx);
 	} else {
 		// name and label are the same
-		in = OSLNodeBase<MTL>::inputLabel(idx);
+		in = UT_String(OSLNodeBase<MTL>::inputLabel(idx), true);
 	}
 }
 
@@ -700,11 +704,11 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 		const int paramIdx = c + 1;
 		oslParams.push_back(VRay::Value(_toChar(m_paramList[c].name)));
 
-		const QString & paramTypeName = mapTypeToParam<MTL>(m_paramList[c]);
-		if (paramTypeName.isEmpty()) {
+		const char * paramTypeName = mapTypeToParam<MTL>(m_paramList[c]);
+		if (!*paramTypeName) {
 			continue;
 		}
-		const QString & paramName = "osl#" + paramTypeName;
+		const QString & paramName = QString("osl#") + paramTypeName;
 		VRay::Value paramValue;
 		switch (m_paramList[c].type) {
 		case VOP_TYPE_COLOR:
@@ -751,7 +755,7 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 				// TODO: if exporting .vrscene file, appsdk will export empty element here which is incorrect for .vrscene
 				//       it is possible to patch this by setting some dummy plugin that will return always black (to preserve default OSL behaviour)
 
-				// TODO: consider using QString in exportConnectedVop
+				// TODO: consider using std::string in exportConnectedVop
 				paramValue = VRay::Value(exporter.exportConnectedVop(this, UT_String(_toChar(m_inputList[inputIdx++]), true), parentContext));
 			}
 			break;
