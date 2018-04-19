@@ -62,8 +62,7 @@ public:
 	GU_PackedImpl *copy() const VRAY_OVERRIDE;
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
 
-	/// Returns Node plugin names list from the *.vrscene
-	/// this primitive is loading.
+	/// Collect plugin names list from the *.vrscene that this primitive is loading.
 	VRay::VUtils::CharStringRefList getObjectNames() const;
 
 private:

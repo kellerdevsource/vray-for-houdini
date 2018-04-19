@@ -235,8 +235,8 @@ private:
 		else {
 			const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObject(settings.objectName.ptr());
 			if (sceneObject) {
-				const ObjectBaseTable &nodesTable = sceneObject->getObjectNodes();
-				for (const VrsceneObjectBase *ob : nodesTable) {
+				const ObjectBaseTable &pluginTable = sceneObject->getObjectPlugins();
+				for (const VrsceneObjectBase *ob : pluginTable) {
 					previewObjects.append(const_cast<VrsceneObjectBase*>(ob));
 				}
 			}
@@ -363,12 +363,13 @@ VRay::VUtils::CharStringRefList VRaySceneRef::getObjectNames() const
 
 	const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObject(currentSettings.objectName.ptr());
 	if (sceneObject) {
-		const ObjectBaseTable &nodesTable = sceneObject->getObjectNodes();
-		if (nodesTable.count()) {
-			namesList = VRay::VUtils::CharStringRefList(nodesTable.count());
+		const ObjectBaseTable &pluginTable = sceneObject->getObjectPlugins();
+		const int numObjectPlugins = pluginTable.count();
+		if (numObjectPlugins) {
+			namesList = VRay::VUtils::CharStringRefList(numObjectPlugins);
 
-			for (int i = 0; i < nodesTable.count(); ++i) {
-				const VrsceneObjectBase *ob = nodesTable[i];
+			for (int i = 0; i < numObjectPlugins; ++i) {
+				const VrsceneObjectBase *ob = pluginTable[i];
 				namesList[i].set(ob->getPluginName());
 			}
 		}
@@ -406,30 +407,32 @@ SettingsWrapper VRaySceneRef::getSettings() const
 	settings.flipAxis = getShouldFlip();
 	settings.addNodes = getAddNodes();
 	settings.addLights = getAddLights();
-	settings.settings.usePreview = true;
-	settings.settings.previewFacesCount = 10000;
-	settings.settings.cacheSettings.cacheType = VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeNone;
+
+	// NOTE: Set cache type to VrsceneCacheTypeNone,
+	// because we'll cache constructed GU_Detail.
+	settings.settings.cacheSettings.cacheType =
+		VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeNone;
+
+	settings.settings.usePreview = getUsePreviewFaces();
+	settings.settings.previewFacesCount = getPreviewFaces();
+
 	return settings;
 }
 
 int VRaySceneRef::detailRebuild()
 {
-	const SettingsWrapper cacheKey(getSettings());
+	// TODO: Cached detail is not storing bbox so it'll be invalid!
+	// TODO: Rework cache registration / deregistration.
 
 	ReturnSettings retValue(m_bbox);
 
-	m_detail = cache.getDetail(getFilepath(), cacheKey, getFrame(getCurrentFrame()), retValue);
+	const SettingsWrapper cacheKey(getSettings());
+	const GU_DetailHandle detail = cache.getDetail(getFilepath(), cacheKey, getFrame(getCurrentFrame()), retValue);
 
-	// XXX: Rework cache registration / deregistration.
+	const int isDetailChanged = m_detail != detail;
 
-	int res;
-	if (!retValue.clearDetail) {
-		res = m_detail.isValid();
-	}
-	else {
-		detailClear();
-		res = true;
-	}
+	// Store new detail.
+	m_detail = detail;
 
-	return res;
+	return isDetailChanged;
 }

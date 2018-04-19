@@ -40,6 +40,19 @@
 
         VFH_PLUGIN_PARM_TOGGLE("VRayScene", "add_nodes", "Add Objects", "Add geometry from the included files", 1)
         VFH_PLUGIN_PARM_TOGGLE("VRayScene", "add_lights", "Add Lights", "Add lights from the included files", 1)
+    }
+
+    group {
+        name "vfhVRaySceneFolderPreview"
+        label "Viewport Preview"
+
+        VFH_UI_PARM_TOGGLE("use_preview_faces", "Use Preview Faces", "Use limited amount of preview faces", 1)
+        parm {
+            VFH_UI_PARM_INT_ATTRS("preview_faces", "Preview Faces", "The amount of preview faces to display", 100000)
+            VFH_DISABLE_WHEN_PARAM_FALSE("use_preview_faces")
+            range { 1000 100000 }
+        }
+
         VFH_UI_PARM_TOGGLE("animated_preview", "Animated Preview", "Update mesh based on selected frame", 0)
     }
 
