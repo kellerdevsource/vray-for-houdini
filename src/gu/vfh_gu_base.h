@@ -18,8 +18,6 @@
 #include <GU/GU_PackedImpl.h>
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PrimPacked.h>
-#include <GT/GT_GEOPrimCollectPacked.h>
-#include <GT/GT_GEOAttributeFilter.h>
 #include <GT/GT_GEOPrimCollect.h>
 #include <GT/GT_GEOPrimPacked.h>
 #include <GT/GT_PrimInstance.h>
@@ -52,7 +50,7 @@ public:
 	void update(const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
 #endif
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
-	GU_ConstDetailHandle getPackedDetail(GU_PackedContext *context = 0) const VRAY_OVERRIDE;
+	GU_ConstDetailHandle getPackedDetail(GU_PackedContext *context=nullptr) const VRAY_OVERRIDE;
 	int64 getMemoryUsage(bool inclusive) const VRAY_OVERRIDE;
 	void countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 
@@ -84,6 +82,9 @@ protected:
 	GU_DetailHandle m_detail;
 };
 
+/// Primitive collection sharing the same underlying detail.
+/// @tparam key Detail hash.
+/// @tparam value Primitives list.
 typedef QMap<uint, GT_GEOOffsetList> DetailToPrimitive;
 
 struct VRayBaseRefCollectData
@@ -99,12 +100,15 @@ struct VRayBaseRefCollectData
 	/// Sets VRayBaseRef packed primitive.
 	void addPrim(uint key, const GU_PrimPacked *value);
 
+	/// Get primitive collection sharing the same underlying detail.
 	const DetailToPrimitive& getPrimitives() const;
 
 private:
 	/// VRayBaseRef primitive type ID.
 	const GA_PrimitiveTypeId &myPrimTypeId;
 
+	/// Primitive collection based on sharing underlying detail.
+	/// We'll instance primitives sharing the same detail.
 	DetailToPrimitive detailInstances;
 
 	VUTILS_DISABLE_COPY(VRayBaseRefCollectData)

@@ -13,6 +13,7 @@
 
 #include <UT/UT_MemoryCounter.h>
 #include <GT/GT_PrimCollect.h>
+#include <GT/GT_GEOAttributeFilter.h>
 
 using namespace VRayForHoudini;
 
