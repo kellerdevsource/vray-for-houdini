@@ -44,31 +44,26 @@ void VRayExporter::RtCallbackOPDirector(OP_Node *caller, void *callee, OP_EventT
 
 	Log::getLog().debug("RtCallbackOPDirector: %s from caller: \"%s\"", OPeventToString(type), caller->getFullPath().buffer());
 
-	if (type == OP_EventType::OP_UI_CURRENT_CHANGED) {
-		if (data) {
-			OP_Node *node = static_cast<OP_Node*>(data);
-			if (node) {
-				OBJ_Node* objNode = node->castToOBJNode();
-				if (objNode) {
-					VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
-					ObjectExporter &objExporter = exporter.getObjectExporter();
+	if (type == OP_EventType::OP_UI_CURRENT_CHANGED && data) {
+		OBJ_Node* objNode = static_cast<OP_Node*>(data)->castToOBJNode();
+		if (objNode) {
+			VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+			ObjectExporter &objExporter = exporter.getObjectExporter();
 
-					// Clear caches, otherwise plugin will not be exported if it is deleted and recreated
-					objExporter.clearOpPluginCache();
-					objExporter.clearPrimPluginCache();
+			// Clear caches, otherwise plugin will not be exported if it is deleted and recreated
+			objExporter.clearOpPluginCache();
+			objExporter.clearPrimPluginCache();
 
-					// Store current state
-					const int oldState = objExporter.getExportGeometry();
-					objExporter.setExportGeometry(1);
+			// Store current state
+			const int oldState = objExporter.getExportGeometry();
+			objExporter.setExportGeometry(1);
 
-					// Update node
-					objExporter.removeGenerated(*objNode);
-					exporter.exportObject(node);
+			// Update node
+			objExporter.removeGenerated(*objNode);
+			exporter.exportObject(objNode);
 
-					// Restore state
-					objExporter.setExportGeometry(oldState);
-				}
-			}
+			// Restore state
+			objExporter.setExportGeometry(oldState);
 		}
 	}
 
