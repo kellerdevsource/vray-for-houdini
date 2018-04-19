@@ -9,9 +9,7 @@
 //
 
 #include "vfh_vray.h"
-#include "vfh_log.h"
 #include "vfh_defines.h"
-#include "vfh_hashes.h"
 #include "vfh_gu_cache.h"
 
 #include "gu_vraysceneref.h"
@@ -137,19 +135,63 @@ private:
 static VrsceneDescBuilder builder;
 static DetailCachePrototype<ReturnSettings, SettingsWrapper> cache(builder);
 
-static SettingsWrapper getDefaultSettings() {
-	VrsceneSettings tempSettings;
-	tempSettings.usePreview = true;
-	tempSettings.previewFacesCount = 100000;
-	tempSettings.cacheSettings.cacheType = VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeNone;
-
-	return SettingsWrapper(tempSettings);
-}
-
 typedef VRayBaseRefFactory<VRaySceneRef> VRaySceneRefFactory;
 
 static GA_PrimitiveTypeId theTypeId(-1);
 static VRaySceneRefFactory theFactory("VRaySceneRef");
+
+
+bool SettingsWrapper::operator==(const SettingsWrapper &other) const
+{
+	return settings == other.settings &&
+	       objectName == other.objectName &&
+	       flipAxis == other.flipAxis;
+}
+
+bool SettingsWrapper::operator!=(const SettingsWrapper &other) const
+{
+	return !(*this == other);
+}
+
+bool SettingsWrapper::operator<(const SettingsWrapper &other) const
+{
+	return settings.previewFacesCount < other.settings.previewFacesCount;
+}
+
+Hash::MHash SettingsWrapper::getHash() const
+{
+	Hash::MHash nameHash = 0;
+	if (!objectName.empty()) {
+		Hash::MurmurHash3_x86_32(objectName.ptr(), objectName.length(), 42, &nameHash);
+	}
+
+#pragma pack(push, 1)
+	struct SettingsKey {
+		int usePreview;
+		int previewFacesCount;
+		int minPreviewFaces;
+		int masPreviewFaces;
+		int previewType;
+		uint32 previewFlags;
+		int shouldFlip;
+		Hash::MHash nameHash;
+	} settingsKey = {
+		settings.usePreview,
+		settings.previewFacesCount,
+		settings.minPreviewFaces,
+		settings.maxPreviewFaces,
+		settings.previewType,
+		settings.previewFlags,
+		flipAxis,
+		nameHash
+	};
+#pragma pack(pop)
+
+	Hash::MHash keyHash;
+	Hash::MurmurHash3_x86_32(&settingsKey, sizeof(SettingsKey), 42, &keyHash);
+
+	return keyHash;
+}
 
 void VRaySceneRef::install(GA_PrimitiveFactory *primFactory)
 {
@@ -159,24 +201,18 @@ void VRaySceneRef::install(GA_PrimitiveFactory *primFactory)
 }
 
 VRaySceneRef::VRaySceneRef() 
-	: vrsceneFile("")
-	, vrsSettings(getDefaultSettings().settings)
 {}
 
 VRaySceneRef::VRaySceneRef(const VRaySceneRef &src)
 	: VRaySceneRefBase(src)
-	, vrsceneFile(src.vrsceneFile)
-	, vrsSettings(src.vrsSettings)
+	, filePath(src.filePath)
 {
-	cache.registerInCache(vrsceneFile, getSettings());
+	// TODO: Rework cache registration / deregistration.
 }
 
 VRaySceneRef::~VRaySceneRef()
 {
-	cache.unregister(vrsceneFile, getSettings());
-	if (!cache.isCached(vrsceneFile)) {
-		vrsceneMan.delVrsceneDesc(vrsceneFile);
-	}
+	// TODO: Rework cache registration / deregistration.
 }
 
 GA_PrimitiveTypeId VRaySceneRef::typeId()
@@ -235,60 +271,42 @@ double VRaySceneRef::getFrame(fpreal t) const
 			animLength = 100;
 		}
 
-		t = VUtils::calcFrameIndex(t,
-			static_cast<VUtils::MeshFileAnimType::Enum>(
-								   getAnimType()),
-								   getAnimStart(),
-								   animLength,
-								   getAnimOffset(),
-								   getAnimSpeed());
+		t = calcFrameIndex(
+			t,
+			static_cast<VUtils::MeshFileAnimType::Enum>(getAnimType()),
+			getAnimStart(),
+			animLength,
+			getAnimOffset(),
+			getAnimSpeed()
+		);
 	}
 
 	return t;
 }
 
-void VRaySceneRef::updateCacheRelatedVars() {
-	if (getCache()) {
-		if (vrsceneFile != getFilepath() ) {
-			cache.registerInCache(getFilepath(), getSettings());
-			cache.unregister(vrsceneFile, getSettings());
-			vrsceneFile = getFilepath();
-		}
-	}
-	else {
-		if (!vrsceneFile.empty()) {
-			cache.unregister(vrsceneFile, getSettings());
-			vrsceneFile.clear();
-		}
-	}
-}
-
 SettingsWrapper VRaySceneRef::getSettings() const
 {
-	SettingsWrapper settings(vrsSettings);
+	SettingsWrapper settings;
 	settings.objectName = getObjectName();
 	settings.flipAxis = getShouldFlip();
-
+	settings.settings.usePreview = true;
+	settings.settings.previewFacesCount = 10000;
+	settings.settings.cacheSettings.cacheType = VrsceneCacheSettings::VrsceneCacheType::VrsceneCacheTypeNone;
 	return settings;
 }
 
 int VRaySceneRef::detailRebuild()
 {
-	updateCacheRelatedVars();
-
 	const SettingsWrapper cacheKey(getSettings());
 
 	ReturnSettings retValue(m_bbox);
 
 	m_detail = cache.getDetail(getFilepath(), cacheKey, getFrame(getCurrentFrame()), retValue);
 
+	// XXX: Rework cache registration / deregistration.
+
 	int res;
 	if (!retValue.clearDetail && getAddNodes()) {
-		if (getCache()) {
-			cache.registerInCache(vrsceneFile, cacheKey);
-			cache.unregister(vrsceneFile, cacheKey);
-		}
-
 		res = m_detail.isValid();
 	}
 	else {

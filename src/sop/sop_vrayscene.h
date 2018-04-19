@@ -18,6 +18,49 @@
 namespace VRayForHoudini {
 namespace SOP {
 
+enum class VRaySceneAnimType {
+	loop = 0,
+	once,
+	pingPong,
+	still,
+};
+
+enum class VRaySceneFlipAxisMode {
+	none = 0,  ///< No flipping.
+	automatic, ///< Gets the flipping from the vrscene description.
+	flipZY,    ///< Force the scene to flip the Z and Y axis.
+};
+
+enum class VRaySceneObjectNameType {
+	sceneName = 0, ///< Scene object name parsed from "scene_name".
+	pluginName, ///< Node plugin name.
+};
+
+/// Converts "flip_axis" saved as a string parameter to its corresponding
+// FlipAxisMode enum value.
+/// @flipAxisModeS The value of the flip_axis parameter
+/// @returns The corresponding to flipAxisModeS enum value
+static VRaySceneFlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
+{
+	VRaySceneFlipAxisMode mode = VRaySceneFlipAxisMode::none;
+	if (flipAxisModeS.isInteger()) {
+		mode = static_cast<VRaySceneFlipAxisMode>(flipAxisModeS.toInt());
+	}
+
+	return mode;
+}
+
+/// Converts "flip_axis" saved as a string parameter to its corresponding
+/// VRaySceneFlipAxisMode enum value.
+/// @param vraySceneSOP VRayScene SOP node instance.
+/// @returns @a value as VRaySceneFlipAxisMode.
+FORCEINLINE VRaySceneFlipAxisMode getFlipAxisMode(OP_Node &vraySceneSOP) {
+	UT_String value;
+	vraySceneSOP.evalString(value, "flip_axis", 0, 0.0);
+
+	return parseFlipAxisMode(value);
+}
+
 struct PrimWithOptions {
 	GU_PrimPacked *prim = nullptr;
 	UT_Options options;
@@ -44,6 +87,8 @@ protected:
 
 	// From EnumVrsceneSceneObject
 	int process(const VUtils::Vrscene::Preview::VrsceneSceneObject &object) VRAY_OVERRIDE;
+
+	PrimWithOptions &createPrimitive(const QString &name);
 
 	/// Packed primitives list.
 	PrimWithOptionsList prims;

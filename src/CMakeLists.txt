@@ -262,6 +262,13 @@ function(vfh_generate_gu_options _libTarget _dsoTarget)
 		get_filename_component(CLASS_NAME ${jsonFile} NAME_WE)
 		set(FILE_OUT_NAME "vfh_${CLASS_NAME}Base.cpp")
 
+		execute_process(
+			COMMAND
+				${PYTHON_BIN} ${GU_SCRIPT} --hdk=${HOUDINI_VERSION} --jsonFile=${jsonFile} --outDir=${FILE_OUT_DIR}
+			WORKING_DIRECTORY
+				${FILE_OUT_DIR}
+		)
+
 		add_custom_command(
 			OUTPUT
 				${FILE_OUT_DIR}/${FILE_OUT_NAME}
