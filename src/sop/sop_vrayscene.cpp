@@ -56,6 +56,8 @@ PrimWithOptions& VRayScene::createPrimitive(const QString &name)
 	return prim;
 }
 
+#define VRAYSCENE_PRINT_HIERARCHY 0
+#if VRAYSCENE_PRINT_HIERARCHY
 static int indent = 0;
 
 static void enumSceneObjectChildren(const VrsceneSceneObject &object)
@@ -82,13 +84,16 @@ static void enumSceneObjectChildren(const VrsceneSceneObject &object)
 		}
 	}
 }
+#endif
 
 int VRayScene::process(const VrsceneSceneObject &object)
 {
 	const VUtils::CharString &objectName = object.getName();
 	const VUtils::CharString &objectPath = object.getPath();
 
-	// enumSceneObjectChildren(object);
+#if VRAYSCENE_PRINT_HIERARCHY
+	enumSceneObjectChildren(object);
+#endif
 
 	PrimWithOptions &prim = createPrimitive(objectName.ptr());
 	prim.options.setOptionS("object_name", objectName.ptr());
@@ -113,6 +118,7 @@ void VRayScene::getCreatePrimitive()
 
 	VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(filePath.buffer(), &getSettings());
 	if (vrsceneDesc) {
+		// Add top level object primitives.
 		vrsceneDesc->enumSceneObjects(*this);
 
 		// If no "scene_name" was found in the scene add a single primitive
