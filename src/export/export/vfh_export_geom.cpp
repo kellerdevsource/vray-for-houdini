@@ -1703,13 +1703,9 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	{
 		VRay::VUtils::CharStringRefList namesList;
 
-		const VUtils::CharString &objectName = vraySceneRef.getObjectName();
 		const VUtils::CharString &objectPath = vraySceneRef.getObjectPath();
 		if (!objectPath.empty()) {
 			namesList = vraySceneRef.getObjectNamesFromPath();
-		}
-		else if (!objectName.empty()) {
-			namesList = vraySceneRef.getObjectNames();
 		}
 
 		if (namesList.count()) {

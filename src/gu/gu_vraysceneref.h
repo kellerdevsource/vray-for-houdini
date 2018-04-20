@@ -41,7 +41,6 @@ struct SettingsWrapper {
 
 	SettingsWrapper(const SettingsWrapper &other)
 		: settings(other.settings)
-		, objectName(other.objectName)
 		, objectPath(other.objectPath)
 		, addNodes(other.addNodes)
 		, addLights(other.addLights)
@@ -54,7 +53,6 @@ struct SettingsWrapper {
 	Hash::MHash getHash() const;
 
 	VUtils::Vrscene::Preview::VrsceneSettings settings;
-	VUtils::CharString objectName;
 	VUtils::CharString objectPath;
 	int addNodes = true;
 	int addLights = true;
@@ -79,9 +77,6 @@ public:
 	GU_PackedFactory *getFactory() const VRAY_OVERRIDE;
 	GU_PackedImpl *copy() const VRAY_OVERRIDE;
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
-
-	/// Collect plugin names list from the *.vrscene that this primitive is loading.
-	VRay::VUtils::CharStringRefList getObjectNames() const;
 
 	/// Collect plugin names list from the *.vrscene that this primitive is loading.
 	VRay::VUtils::CharStringRefList getObjectNamesFromPath() const;

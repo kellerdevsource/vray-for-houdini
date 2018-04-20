@@ -11,7 +11,6 @@
 #include "vfh_vray.h"
 #include "vfh_defines.h"
 #include "vfh_gu_cache.h"
-#include "vfh_log.h"
 
 #include "gu_vraysceneref.h"
 
@@ -39,6 +38,28 @@ struct ReturnSettings {
 	UT_BoundingBox &box;
 	bool clearDetail;
 };
+
+/// A list of VrsceneObjectBase instances.
+typedef QList<VrsceneObjectBase*> VrsceneObjectBaseList;
+
+/// Recursively append VrsceneObjectBase from VrsceneSceneObjects children.
+/// @param object Scene object.
+/// @param[out] objectList VrsceneObjectBase list.
+static void appendVrsceneSceneObjectPlugins(const VrsceneSceneObject &object, VrsceneObjectBaseList &objectList)
+{
+	const ObjectBaseTable &plugins = object.getObjectPlugins();
+	const VrsceneSceneObjects &children = object.getChildren();
+
+	if (!children.empty()) {
+		FOR_CONST_IT(VrsceneSceneObjects, it, children) {
+			appendVrsceneSceneObjectPlugins(*it.data(), objectList);
+		}
+	}
+
+	for (const VrsceneObjectBase *ob : plugins) {
+		objectList.append(const_cast<VrsceneObjectBase*>(ob));
+	}
+}
 
 static void appendMesh(GU_Detail &gdp, VrsceneObjectBase &ob, int flipAxis, UT_BoundingBox &bbox, fpreal t)
 {
@@ -292,15 +313,6 @@ private:
 				}
 			}
 		}
-		else if (!settings.objectName.empty()) {
-			const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObject(settings.objectName);
-			if (sceneObject) {
-				const ObjectBaseTable &pluginTable = sceneObject->getObjectPlugins();
-				for (const VrsceneObjectBase *ob : pluginTable) {
-					previewObjects.append(const_cast<VrsceneObjectBase*>(ob));
-				}
-			}
-		}
 		else {
 			FOR_IT(VrsceneObjects, obIt, vrsceneDesc->m_objects) {
 				previewObjects.append(obIt.data());
@@ -335,9 +347,9 @@ static VRaySceneRefFactory theFactory("VRaySceneRef");
 
 Hash::MHash SettingsWrapper::getHash() const
 {
-	Hash::MHash nameHash = 0;
-	if (!objectName.empty()) {
-		Hash::MurmurHash3_x86_32(objectName.ptr(), objectName.length(), 42, &nameHash);
+	Hash::MHash objectPathHash = 0;
+	if (!objectPath.empty()) {
+		Hash::MurmurHash3_x86_32(objectPath.ptr(), objectPath.length(), 42, &objectPathHash);
 	}
 
 #pragma pack(push, 1)
@@ -351,7 +363,7 @@ Hash::MHash SettingsWrapper::getHash() const
 		int shouldFlip;
 		int addNodes;
 		int addLights;
-		Hash::MHash nameHash;
+		Hash::MHash objectPathHash;
 	} settingsKey = {
 		settings.usePreview,
 		settings.previewFacesCount,
@@ -362,7 +374,7 @@ Hash::MHash SettingsWrapper::getHash() const
 		flipAxis,
 		addNodes,
 		addLights,
-		nameHash
+		objectPathHash
 	};
 #pragma pack(pop)
 
@@ -433,25 +445,6 @@ bool VRaySceneRef::unpack(GU_Detail &destGdp) const
 	return true;
 }
 
-using namespace VUtils::Vrscene::Preview;
-
-typedef QList<VrsceneObjectBase*> VrsceneObjectBaseList;
-
-static void appendVrsceneSceneObjectPlugins(const VrsceneSceneObject &object, VrsceneObjectBaseList &objectList) {
-	const ObjectBaseTable &plugins = object.getObjectPlugins();
-	const VrsceneSceneObjects &children = object.getChildren();
-
-	if (!children.empty()) {
-		FOR_CONST_IT(VrsceneSceneObjects, it, children) {
-			appendVrsceneSceneObjectPlugins(*it.data(), objectList);
-		}
-	}
-
-	for (const VrsceneObjectBase *ob : plugins) {
-		objectList.append(const_cast<VrsceneObjectBase*>(ob));
-	}
-}
-
 VRay::VUtils::CharStringRefList VRaySceneRef::getObjectNamesFromPath() const
 {
 	const SettingsWrapper currentSettings(getSettings());
@@ -465,6 +458,8 @@ VRay::VUtils::CharStringRefList VRaySceneRef::getObjectNamesFromPath() const
 	const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObjectByPath(currentSettings.objectPath);
 	if (sceneObject) {
 		VrsceneObjectBaseList objectList;
+		objectList.reserve(1024);
+
 		appendVrsceneSceneObjectPlugins(*sceneObject, objectList);
 
 		const int numObjectPlugins = objectList.size();
@@ -473,33 +468,6 @@ VRay::VUtils::CharStringRefList VRaySceneRef::getObjectNamesFromPath() const
 
 			for (int i = 0; i < numObjectPlugins; ++i) {
 				const VrsceneObjectBase *ob = objectList[i];
-				namesList[i].set(ob->getPluginName());
-			}
-		}
-	}
-
-	return namesList;
-}
-
-VRay::VUtils::CharStringRefList VRaySceneRef::getObjectNames() const
-{
-	const SettingsWrapper currentSettings(getSettings());
-
-	VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(getFilepath(), &currentSettings.settings);
-	if (!vrsceneDesc)
-		return VRay::VUtils::CharStringRefList();
-
-	VRay::VUtils::CharStringRefList namesList;
-
-	const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObject(currentSettings.objectName);
-	if (sceneObject) {
-		const ObjectBaseTable &pluginTable = sceneObject->getObjectPlugins();
-		const int numObjectPlugins = pluginTable.count();
-		if (numObjectPlugins) {
-			namesList = VRay::VUtils::CharStringRefList(numObjectPlugins);
-
-			for (int i = 0; i < numObjectPlugins; ++i) {
-				const VrsceneObjectBase *ob = pluginTable[i];
 				namesList[i].set(ob->getPluginName());
 			}
 		}
@@ -533,7 +501,6 @@ double VRaySceneRef::getFrame(fpreal t) const
 SettingsWrapper VRaySceneRef::getSettings() const
 {
 	SettingsWrapper settings;
-	settings.objectName = getObjectName();
 	settings.objectPath = getObjectPath();
 	settings.flipAxis = getShouldFlip();
 	settings.addNodes = getAddNodes();
