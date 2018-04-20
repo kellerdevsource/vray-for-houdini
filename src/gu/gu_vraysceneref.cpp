@@ -494,6 +494,7 @@ VRay::VUtils::CharStringRefList VRaySceneRef::getObjectNamesFromPath() const
 
 	return namesList;
 }
+
 VRay::VUtils::CharStringRefList VRaySceneRef::getObjectNames() const
 {
 	const SettingsWrapper currentSettings(getSettings());
@@ -560,7 +561,6 @@ SettingsWrapper VRaySceneRef::getSettings() const
 	settings.settings.usePreview = getUsePreviewFaces();
 	settings.settings.previewFacesCount = getPreviewFaces();
 
-	settings.owner = const_cast<VRaySceneRef*>(this);
 	settings.options.merge(m_options);
 
 	return settings;

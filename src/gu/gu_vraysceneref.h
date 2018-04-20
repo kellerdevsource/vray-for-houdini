@@ -46,7 +46,6 @@ struct SettingsWrapper {
 		, addNodes(other.addNodes)
 		, addLights(other.addLights)
 		, flipAxis(other.flipAxis)
-		, owner(other.owner)
 	{
 		options.merge(other.options);
 	}
@@ -61,7 +60,6 @@ struct SettingsWrapper {
 	int addLights = true;
 	int flipAxis = false;
 
-	VRaySceneRef *owner = nullptr;
 	OP_Options options;
 };
 
