@@ -3,6 +3,7 @@
     "intrinsics" : [
         { "type": "CHAR", "name" : "filepath", "value" : "" },
         { "type": "CHAR", "name" : "object_name", "value" : "" },
+        { "type": "CHAR", "name" : "object_path", "value" : "" },
         { "type": "BOOL", "name" : "add_nodes", "value" : true },
         { "type": "BOOL", "name" : "add_lights", "value" : true },
         { "type": "BOOL", "name" : "use_preview_faces", "value" : true },

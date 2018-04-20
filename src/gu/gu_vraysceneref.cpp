@@ -11,6 +11,7 @@
 #include "vfh_vray.h"
 #include "vfh_defines.h"
 #include "vfh_gu_cache.h"
+#include "vfh_log.h"
 
 #include "gu_vraysceneref.h"
 
@@ -26,6 +27,8 @@ using namespace VUtils::Vrscene::Preview;
 
 /// *.vrscene preview data manager.
 VrsceneDescManager VRayForHoudini::vrsceneMan(NULL);
+
+static GA_PrimitiveTypeId theTypeId(-1);
 
 struct ReturnSettings {
 	explicit ReturnSettings(UT_BoundingBox &box)
@@ -201,6 +204,20 @@ static void appendObject(GU_Detail &gdp, VrsceneObjectBase &ob, const SettingsWr
 	}
 }
 
+/// Converts M4 to M3.
+/// @param m4 UT_Matrix4T matrix.
+template <typename S>
+FORCEINLINE UT_Matrix3T<S> toM3(const UT_Matrix4T<S> &m4)
+{
+	UT_Matrix3T<S> m3;
+    m3[0][0]=m4(0,0); m3[0][1]=m4(0,1); m3[0][2]=m4(0,2);
+    m3[1][0]=m4(1,0); m3[1][1]=m4(1,1); m3[1][2]=m4(1,2);
+    m3[2][0]=m4(2,0); m3[2][1]=m4(2,1); m3[2][2]=m4(2,2);
+    return m3;
+}
+
+static const char intrPackedFullTransform[] = "packedfulltransform";
+
 class VrsceneDescBuilder
 	: public DetailBuilder<SettingsWrapper, ReturnSettings>
 {
@@ -220,20 +237,77 @@ public:
 	}
 
 private:
+	typedef QList<VrsceneObjectBase*> VrsceneObjectBaseList;
+
+	static void appendVrsceneSceneObjectPlugins(const VrsceneSceneObject &object, VrsceneObjectBaseList &objectList) {
+		const ObjectBaseTable &plugins = object.getObjectPlugins();
+		const VrsceneSceneObjects &children = object.getChildren();
+
+		if (!children.empty()) {
+			FOR_CONST_IT(VrsceneSceneObjects, it, children) {
+				appendVrsceneSceneObjectPlugins(*it.data(), objectList);
+			}
+		}
+
+		for (const VrsceneObjectBase *ob : plugins) {
+			objectList.append(const_cast<VrsceneObjectBase*>(ob));
+		}
+	}
+
 	static GU_DetailHandle build(VrsceneDesc *vrsceneDesc, const SettingsWrapper &settings, const fpreal &t, ReturnSettings &retValue) {
-		GU_Detail *meshDetail = new GU_Detail();
+		GU_Detail *gdp = new GU_Detail();
 
 		retValue.box.initBounds();
 
-		QList<VrsceneObjectBase*> previewObjects;
+		VrsceneObjectBaseList previewObjects;
 
-		if (settings.objectName.empty()) {
-			FOR_IT(VrsceneObjects, obIt, vrsceneDesc->m_objects) {
-				previewObjects.append(obIt.data());
+		if (!settings.objectPath.empty()) {
+			const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObjectByPath(settings.objectPath);
+			if (sceneObject) {
+				const VrsceneSceneObjects &children = sceneObject->getChildren();
+				if (children.empty()) {
+					appendVrsceneSceneObjectPlugins(*sceneObject, previewObjects);
+				}
+				else {
+					FOR_CONST_IT(VrsceneSceneObjects, it, children) {
+						const VrsceneSceneObject &child = *it.data();
+
+						GU_PrimPacked *prim = GU_PrimPacked::build(*gdp, theTypeId);
+						vassert(prim);
+
+						// Set the location of the packed primitive point.
+						const UT_Vector3 pivot(0.0, 0.0, 0.0);
+						prim->setPivot(pivot);
+						gdp->setPos3(prim->getPointOffset(0), pivot);
+
+						// Add to named group.
+						const QStringList childPathChunks(QString(child.getPath().ptr()).split('/'));
+						for (QString childPathChunk : childPathChunks) {
+							// XXX: Check if more filtering must be done!
+							childPathChunk = childPathChunk.remove(':');
+
+							GA_PrimitiveGroup *primGroup = gdp->newPrimitiveGroup(_toChar(childPathChunk));
+							vassert(primGroup);
+
+							primGroup->add(prim);
+						}
+
+						// Update primitive.
+						VRaySceneRef *vraySceneRef = static_cast<VRaySceneRef*>(prim->implementation());
+						vassert(vraySceneRef);
+
+						UT_Options options;
+						options.merge(settings.options);
+						options.setOptionS("object_name", child.getName().ptr());
+						options.setOptionS("object_path", child.getPath().ptr());
+
+						vraySceneRef->update(prim, options);
+					}
+				}
 			}
 		}
-		else {
-			const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObject(settings.objectName.ptr());
+		else if (!settings.objectName.empty()) {
+			const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObject(settings.objectName);
 			if (sceneObject) {
 				const ObjectBaseTable &pluginTable = sceneObject->getObjectPlugins();
 				for (const VrsceneObjectBase *ob : pluginTable) {
@@ -241,16 +315,21 @@ private:
 				}
 			}
 		}
+		else {
+			FOR_IT(VrsceneObjects, obIt, vrsceneDesc->m_objects) {
+				previewObjects.append(obIt.data());
+			}
+		}
 
 		for (VrsceneObjectBase *ob : previewObjects) {
 			if (!ob)
 				continue;
 
-			appendObject(*meshDetail, *ob, settings, retValue.box, t);
+			appendObject(*gdp, *ob, settings, retValue.box, t);
 		}
 
 		GU_DetailHandle detail;
-		detail.allocateAndSet(meshDetail);
+		detail.allocateAndSet(gdp);
 
 		GU_Detail *gdpPacked = new GU_Detail;
 		GU_PackedGeometry::packGeometry(*gdpPacked, detail);
@@ -266,7 +345,6 @@ static DetailCachePrototype<ReturnSettings, SettingsWrapper> cache(builder);
 
 typedef VRayBaseRefFactory<VRaySceneRef> VRaySceneRefFactory;
 
-static GA_PrimitiveTypeId theTypeId(-1);
 static VRaySceneRefFactory theFactory("VRaySceneRef");
 
 Hash::MHash SettingsWrapper::getHash() const
@@ -345,12 +423,77 @@ GU_PackedImpl *VRaySceneRef::copy() const
 	return new VRaySceneRef(*this);
 }
 
-bool VRaySceneRef::unpack(GU_Detail&) const
+bool VRaySceneRef::unpack(GU_Detail &destGdp) const
 {
-	// This will show error and indicate that we don't support unpacking.
-	return false;
+	GU_DetailHandleAutoReadLock gdl(m_detail);
+	if (!gdl.isValid())
+		return false;
+
+	const GU_Detail &tempGdp = *gdl.getGdp();
+
+	for (GA_Iterator jt(tempGdp.getPrimitiveRange()); !jt.atEnd(); jt.advance()) {
+		const GEO_Primitive *prim = tempGdp.getGEOPrimitive(*jt);
+		if (prim && GU_PrimPacked::isPackedPrimitive(*prim)) {
+			GU_PrimPacked *primPacked = const_cast<GU_PrimPacked*>(static_cast<const GU_PrimPacked*>(prim));
+			if (primPacked->getTypeId() == GU_PackedGeometry::typeId()) {
+				GU_ConstDetailHandle packedGdp = primPacked->getPackedDetail();
+				if (packedGdp.isValid()) {
+					destGdp.copy(*packedGdp.gdp(), GEO_COPY_ADD);
+				}
+			}
+		}
+	}
+
+	return true;
 }
 
+using namespace VUtils::Vrscene::Preview;
+
+typedef QList<VrsceneObjectBase*> VrsceneObjectBaseList;
+
+static void appendVrsceneSceneObjectPlugins(const VrsceneSceneObject &object, VrsceneObjectBaseList &objectList) {
+	const ObjectBaseTable &plugins = object.getObjectPlugins();
+	const VrsceneSceneObjects &children = object.getChildren();
+
+	if (!children.empty()) {
+		FOR_CONST_IT(VrsceneSceneObjects, it, children) {
+			appendVrsceneSceneObjectPlugins(*it.data(), objectList);
+		}
+	}
+
+	for (const VrsceneObjectBase *ob : plugins) {
+		objectList.append(const_cast<VrsceneObjectBase*>(ob));
+	}
+}
+
+VRay::VUtils::CharStringRefList VRaySceneRef::getObjectNamesFromPath() const
+{
+	const SettingsWrapper currentSettings(getSettings());
+
+	VrsceneDesc *vrsceneDesc = vrsceneMan.getVrsceneDesc(getFilepath(), &currentSettings.settings);
+	if (!vrsceneDesc)
+		return VRay::VUtils::CharStringRefList();
+
+	VRay::VUtils::CharStringRefList namesList;
+
+	const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObjectByPath(currentSettings.objectPath);
+	if (sceneObject) {
+		VrsceneObjectBaseList objectList;
+		appendVrsceneSceneObjectPlugins(*sceneObject, objectList);
+
+		const int numObjectPlugins = objectList.size();
+		if (numObjectPlugins) {
+			namesList = VRay::VUtils::CharStringRefList(numObjectPlugins);
+
+			for (int i = 0; i < numObjectPlugins; ++i) {
+				const VrsceneObjectBase *ob = objectList[i];
+				namesList[i].set(ob->getPluginName());
+			}
+		}
+	}
+
+	return namesList;
+}
 VRay::VUtils::CharStringRefList VRaySceneRef::getObjectNames() const
 {
 	const SettingsWrapper currentSettings(getSettings());
@@ -361,7 +504,7 @@ VRay::VUtils::CharStringRefList VRaySceneRef::getObjectNames() const
 
 	VRay::VUtils::CharStringRefList namesList;
 
-	const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObject(currentSettings.objectName.ptr());
+	const VrsceneSceneObject *sceneObject = vrsceneDesc->getSceneObject(currentSettings.objectName);
 	if (sceneObject) {
 		const ObjectBaseTable &pluginTable = sceneObject->getObjectPlugins();
 		const int numObjectPlugins = pluginTable.count();
@@ -404,6 +547,7 @@ SettingsWrapper VRaySceneRef::getSettings() const
 {
 	SettingsWrapper settings;
 	settings.objectName = getObjectName();
+	settings.objectPath = getObjectPath();
 	settings.flipAxis = getShouldFlip();
 	settings.addNodes = getAddNodes();
 	settings.addLights = getAddLights();
@@ -415,6 +559,9 @@ SettingsWrapper VRaySceneRef::getSettings() const
 
 	settings.settings.usePreview = getUsePreviewFaces();
 	settings.settings.previewFacesCount = getPreviewFaces();
+
+	settings.owner = const_cast<VRaySceneRef*>(this);
+	settings.options.merge(m_options);
 
 	return settings;
 }

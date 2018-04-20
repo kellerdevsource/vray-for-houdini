@@ -1700,9 +1700,18 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	PrimitiveItem item;
 	getPrimMaterial(item.primMaterial);
 
-	VUtils::CharString objectName = vraySceneRef.getObjectName();
-	if (!objectName.empty()) {
-		const VRay::VUtils::CharStringRefList namesList = vraySceneRef.getObjectNames();
+	{
+		VRay::VUtils::CharStringRefList namesList;
+
+		const VUtils::CharString &objectName = vraySceneRef.getObjectName();
+		const VUtils::CharString &objectPath = vraySceneRef.getObjectPath();
+		if (!objectPath.empty()) {
+			namesList = vraySceneRef.getObjectNamesFromPath();
+		}
+		else if (!objectName.empty()) {
+			namesList = vraySceneRef.getObjectNames();
+		}
+
 		if (namesList.count()) {
 			pluginDesc.add(Attrs::PluginAttr(SL("hidden_objects"), namesList));
 			pluginDesc.add(Attrs::PluginAttr(SL("hidden_objects_inclusive"), false));

@@ -120,6 +120,8 @@ int VRayBaseRef::updateFrom(const UT_Options &options)
 	if (detailRebuild()) {
 #ifdef HDK_16_5
 		prim->topologyDirty();
+		prim->attributeDirty();
+		prim->transformDirty();
 #else
 		topologyDirty();
 #endif

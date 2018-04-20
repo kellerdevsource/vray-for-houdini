@@ -151,6 +151,7 @@
                 label "Op. Path #"
                 type oppath
                 default { "" }
+                parmtag { "cook_dependent" "1" }
                 VFH_DISABLE_WHEN_PARAM_FALSE("use_overrides")
             }
 
@@ -159,8 +160,11 @@
                 label "Plugin Name #"
                 type string
                 default { "" }
+                parmtag { "cook_dependent" "1" }
                 VFH_DISABLE_WHEN_PARAM_FALSE("use_overrides")
             }
+
+            parmtag { "cook_dependent" "1" }
 
             VFH_DISABLE_WHEN_PARAM_FALSE("use_overrides")
         }
@@ -171,7 +175,7 @@
             help "Runtime plugin parameter overrides. A string in vrscene format."
             type string
             default { "" }
-            parmtag { "cook_dependent" "0" }
+            parmtag { "cook_dependent" "1" }
             parmtag { "editor" "1" }
             parmtag { "vray_plugin" "VRayScene" }
             parmtag { "vray_pluginattr" "override_snippet" }
@@ -184,7 +188,7 @@
             help "Runtime plugin parameter overrides. A path to an override file in vrscene format."
             type file
             default { "" }
-            parmtag { "cook_dependent" "0" }
+            parmtag { "cook_dependent" "1" }
             parmtag { "filechooser_pattern" "*.vrscene" }
             parmtag { "vray_file_names" "V-Ray Scene, fileAssetOp=load, displayName=File Path" }
             parmtag { "vray_plugin" "VRayScene" }

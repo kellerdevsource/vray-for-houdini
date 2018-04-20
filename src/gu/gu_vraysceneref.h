@@ -14,6 +14,8 @@
 #include "vfh_includes.h"
 #include "vfh_VRaySceneRefBase.h"
 
+#include <OP/OP_Options.h>
+
 #include <vrscene_preview.h>
 
 namespace VUtils {
@@ -28,6 +30,8 @@ namespace VRayForHoudini {
 
 extern VUtils::Vrscene::Preview::VrsceneDescManager vrsceneMan;
 
+class VRaySceneRef;
+
 struct SettingsWrapper {
 	SettingsWrapper() = default;
 
@@ -35,14 +39,30 @@ struct SettingsWrapper {
 		: settings(settings)
 	{}
 
+	SettingsWrapper(const SettingsWrapper &other)
+		: settings(other.settings)
+		, objectName(other.objectName)
+		, objectPath(other.objectPath)
+		, addNodes(other.addNodes)
+		, addLights(other.addLights)
+		, flipAxis(other.flipAxis)
+		, owner(other.owner)
+	{
+		options.merge(other.options);
+	}
+
 	/// Returns current settings hash.
 	Hash::MHash getHash() const;
 
 	VUtils::Vrscene::Preview::VrsceneSettings settings;
 	VUtils::CharString objectName;
+	VUtils::CharString objectPath;
 	int addNodes = true;
 	int addLights = true;
 	int flipAxis = false;
+
+	VRaySceneRef *owner = nullptr;
+	OP_Options options;
 };
 
 /// VRayScene preview mesh implemented as a packed primitive.
@@ -64,6 +84,9 @@ public:
 
 	/// Collect plugin names list from the *.vrscene that this primitive is loading.
 	VRay::VUtils::CharStringRefList getObjectNames() const;
+
+	/// Collect plugin names list from the *.vrscene that this primitive is loading.
+	VRay::VUtils::CharStringRefList getObjectNamesFromPath() const;
 
 private:
 	int detailRebuild() VRAY_OVERRIDE;

@@ -56,12 +56,43 @@ PrimWithOptions& VRayScene::createPrimitive(const QString &name)
 	return prim;
 }
 
+static int indent = 0;
+
+static void enumSceneObjectChildren(const VrsceneSceneObject &object)
+{
+	const ObjectBaseTable &plugins = object.getObjectPlugins();
+	const VrsceneSceneObjects &children = object.getChildren();
+
+	if (!children.empty()) {
+		const QString indentStr(indent * 2, ' ');
+		printf("%s\"%s\" [%s]:\n", _toChar(indentStr), object.getName().ptr(), object.getPath().ptr());
+
+		FOR_CONST_IT(VrsceneSceneObjects, it, children) {
+			indent++;
+			enumSceneObjectChildren(*it.data());
+			indent--;
+		}
+	}
+	else if (plugins.count()) {
+		for (int i = 0; i < plugins.count(); ++i) {
+			const VrsceneObjectBase *plugin = plugins[i];
+
+			const QString indentStr(indent * 2, ' ');
+			printf("%s  %s\n", _toChar(indentStr), plugin->getName());
+		}
+	}
+}
+
 int VRayScene::process(const VrsceneSceneObject &object)
 {
-	const VUtils::CharString objectName = object.getName();
+	const VUtils::CharString &objectName = object.getName();
+	const VUtils::CharString &objectPath = object.getPath();
+
+	// enumSceneObjectChildren(object);
 
 	PrimWithOptions &prim = createPrimitive(objectName.ptr());
 	prim.options.setOptionS("object_name", objectName.ptr());
+	prim.options.setOptionS("object_path", objectPath.ptr());
 
 	GA_PrimitiveGroup *primGroup = gdp->newPrimitiveGroup(objectName.ptr());
 	vassert(primGroup);
