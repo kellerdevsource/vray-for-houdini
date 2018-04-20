@@ -427,6 +427,13 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 	const auto rendModeAttr = phxSim.get("_vray_render_mode");
 	UT_ASSERT_MSG(rendModeAttr, "Trying to export PhxShaderSim without setting it's _vray_render_mode.");
 
+	typedef VOP::PhxShaderSim::RenderMode RMode;
+
+	const auto rendMode = static_cast<RMode>(rendModeAttr->paramValue.valInt);
+	if (rendMode == RMode::Volumetric) {
+		phxSim.add(Attrs::PluginAttr("renderAsVolumetric", true));
+	}
+
 	VRay::Plugin overwriteSim = pluginExporter.exportPlugin(phxSim);
 	if (rendModeAttr && overwriteSim.isNotEmpty()) {
 		typedef VOP::PhxShaderSim::RenderMode RMode;
