@@ -204,20 +204,6 @@ static void appendObject(GU_Detail &gdp, VrsceneObjectBase &ob, const SettingsWr
 	}
 }
 
-/// Converts M4 to M3.
-/// @param m4 UT_Matrix4T matrix.
-template <typename S>
-FORCEINLINE UT_Matrix3T<S> toM3(const UT_Matrix4T<S> &m4)
-{
-	UT_Matrix3T<S> m3;
-    m3[0][0]=m4(0,0); m3[0][1]=m4(0,1); m3[0][2]=m4(0,2);
-    m3[1][0]=m4(1,0); m3[1][1]=m4(1,1); m3[1][2]=m4(1,2);
-    m3[2][0]=m4(2,0); m3[2][1]=m4(2,1); m3[2][2]=m4(2,2);
-    return m3;
-}
-
-static const char intrPackedFullTransform[] = "packedfulltransform";
-
 class VrsceneDescBuilder
 	: public DetailBuilder<SettingsWrapper, ReturnSettings>
 {
