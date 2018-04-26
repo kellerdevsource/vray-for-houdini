@@ -174,7 +174,7 @@ int isMeshLightSupportedGeometryType(const VRay::Plugin &geometry) {
 static int fillLightPluginDesc(Attrs::PluginDesc &pluginDesc, OP_Node &objLight, const PrimitiveItem &item, const VRay::Transform &objTm) {
 	if (item.geometry.isEmpty() || !isMeshLightSupportedGeometryType(item.geometry)) {
 		Log::getLog().warning("Unsupported geometry type for Mesh Light: %s ! Node name: %s",
-		                      item.geometry.getType(), pluginDesc.pluginName);
+		                      item.geometry.getType(), _toChar(pluginDesc.pluginName));
 		return 0;
 	}
 

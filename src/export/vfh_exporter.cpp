@@ -356,7 +356,7 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc,
 		}
 		else {
 			Log::getLog().error("Incorrect enum: %s.%s!",
-			                    pluginDesc.pluginID,
+			                    _toChar(pluginDesc.pluginID),
 			                    _toChar(attrDesc.attr));
 		}
 	}
@@ -556,7 +556,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID);
 	if (!pluginInfo) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
-							vopNode->getName().buffer(), pluginDesc.pluginID);
+							vopNode->getName().buffer(), _toChar(pluginDesc.pluginID));
 		return;
 	}
 
@@ -648,7 +648,7 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID);
 	if (!pluginInfo) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
-							opNode->getName().buffer(), pluginDesc.pluginID);
+							opNode->getName().buffer(), _toChar(pluginDesc.pluginID));
 	}
 	else {
 		FOR_CONST_IT (Parm::AttributeDescs, aIt, pluginInfo->attributes) {

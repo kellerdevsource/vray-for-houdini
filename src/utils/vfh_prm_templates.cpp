@@ -64,7 +64,7 @@ struct DsFilesLocations
 			return it.value();
 		}
 
-		Log::getLog().error("Requested .ds file is not found: \"%s\"!", fileName);
+		Log::getLog().error("Requested .ds file is not found: \"%s\"!", _toChar(fileName));
 
 		// vassert(false && "Requested .ds file is not found!");
 
@@ -261,7 +261,7 @@ PRM_Template* Parm::getPrmTemplate(const QString &pluginID)
 {
 	Parm::PRMList *prmList = generatePrmTemplate(pluginID);
 	if (!prmList) {
-		Log::getLog().warning("No parameter template generated for plugin %s.", pluginID);
+		Log::getLog().warning("No parameter template generated for plugin %s.", _toChar(pluginID));
 	}
 
 	return (prmList)? prmList->getPRMTemplate() : nullptr;

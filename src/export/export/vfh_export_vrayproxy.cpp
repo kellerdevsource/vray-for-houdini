@@ -247,7 +247,7 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 	const QString ply2vrmeshExe = "ply2vrmesh.bin";
 #endif
 
-	Log::getLog().debug("ply2vrmesh %s", arguments.join(" ").toStdString());
+	Log::getLog().debug("ply2vrmesh %s", _toChar(arguments.join(" ")));
 
 	QProcess ply2vrmesh;
 	ply2vrmesh.start(appsdkPath + "/bin/" + ply2vrmeshExe, arguments);
@@ -264,7 +264,7 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 	// We split this in lines since vfh_log has 1k max message size
 	const auto outLines = ply2vrmesh.readAll().split('\n');
 	for (const auto & line : outLines) {
-		Log::getLog().debug("pl2vrmesh: %s", line.toStdString());
+		Log::getLog().debug("pl2vrmesh: %s", line.toStdString().c_str());
 	}
 
 	// Keep the .vrscene file arround when debugging - usefull to check if it is missing data

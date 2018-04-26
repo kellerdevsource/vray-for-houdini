@@ -528,7 +528,7 @@ int PhxShaderSim::rampDropDownDependCB(void * data, int index, fpreal64 time, co
 	const auto chan = static_cast<RampContext::RampChannel>(index);
 
 	if (!ctx) {
-		Log::getLog().error("Missing context for \"%s\"!", token);
+		Log::getLog().error("Missing context for \"%s\"!", _toChar(token));
 		return 0;
 	}
 
@@ -618,7 +618,7 @@ int PhxShaderSim::rampButtonClickCB(void *data, int, fpreal64, const PRM_Templat
 
 	// this should not happen - calling callback on uninited context
 	if (!ctx) {
-		Log::getLog().error("Missing context for \"%s\"!", token);
+		Log::getLog().error("Missing context for \"%s\"!", _toChar(token));
 		return 0;
 	}
 
@@ -921,7 +921,7 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 		// if we dont have the expected ramp in object we still have to read trogh the data to enable
 		// loading of other ramps from the file
 		if (ramp == m_ramps.end() || !ramp.value()) {
-			Log::getLog().error("Ramp name \"%s\" not expected - discarding data!");
+			Log::getLog().error("Ramp name \"%s\" not expected - discarding data!", rampName.c_str());
 		}
 
 		readSome(RampType type, 1, is.read(reinterpret_cast<int*>(&type)));
@@ -950,7 +950,7 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 
 			if (ramp != m_ramps.end() && ramp.value()) {
 				if (!(ramp.value()->m_uiType & type)) {
-					Log::getLog().error("Ramp name \"%s\" has unexpected type [%d]- discarding data!", rampName, static_cast<int>(type));
+					Log::getLog().error("Ramp name \"%s\" has unexpected type [%d]- discarding data!", rampName.c_str(), static_cast<int>(type));
 				} else {
 					ramp.value()->m_data[r][RampContext::rampTypeToIdx(type)] = data;
 				}
@@ -1010,7 +1010,7 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID);
 	if (!pluginInfo) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
-							this->getName().buffer(), pluginDesc.pluginID);
+							this->getName().buffer(), _toChar(pluginDesc.pluginID));
 	}
 	else {
 		// Export ramp data.
@@ -1024,7 +1024,7 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 			const bool hasRampToken = RAMP_ATTRIBUTE_NAMES.find(rampToken) != RAMP_ATTRIBUTE_NAMES.end();
 			if (!hasRampToken) {
 				Log::getLog().error("Node \"%s\": Plugin \"%s\" missing description for \"%s\"",
-					this->getName().buffer(), pluginDesc.pluginID, rampToken);
+					this->getName().buffer(), _toChar(pluginDesc.pluginID), _toChar(rampToken));
 			}
 			else {
 				const auto & attrNames = RAMP_ATTRIBUTE_NAMES[rampToken];

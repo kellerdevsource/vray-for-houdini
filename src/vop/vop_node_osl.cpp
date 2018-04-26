@@ -661,7 +661,7 @@ template <bool MTL>
 OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	if (m_codeHash == 0) {
-		Log::getLog().warning("Exporting \"%s\" does not have valid OSL code.", getName());
+		Log::getLog().warning("Exporting \"%s\" does not have valid OSL code.", getName().nonNullBuffer());
 		return PluginResult::PluginResultContinue;
 	}
 	const fpreal t = exporter.getContext().getTime();

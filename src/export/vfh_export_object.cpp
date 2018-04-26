@@ -253,7 +253,7 @@ static void dumpType(OBJ_OBJECT_TYPE objType) {
 	if (objType & OBJ_STD_MUSCLE) { objTypeStr += "OBJ_STD_MUSCLE | "; }
 	if (objType & OBJ_STD_CAMSWITCH) { objTypeStr += "OBJ_STD_CAMSWITCH | "; }
 	if (objType & OBJ_ALL) {  objTypeStr += "OBJ_ALL"; }
-	Log::getLog().debug("OBJ_OBJECT_TYPE = %s", objTypeStr);
+	Log::getLog().debug("OBJ_OBJECT_TYPE = %s", _toChar(objTypeStr));
 }
 
 VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)

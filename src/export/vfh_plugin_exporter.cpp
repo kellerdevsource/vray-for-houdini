@@ -184,8 +184,8 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 		return VRay::Plugin();
 	}
 
-	VRay::Plugin plug = m_vray->getOrCreatePlugin(pluginDesc.pluginName.toStdString(),
-	                                              pluginDesc.pluginID.toStdString());
+	VRay::Plugin plug = m_vray->getOrCreatePlugin(_toChar(pluginDesc.pluginName),
+	                                              _toChar(pluginDesc.pluginID));
 	if (plug.isEmpty()) {
 		VRay::Error err = m_vray->getLastError();
 		if (err != VRay::SUCCESS) {
