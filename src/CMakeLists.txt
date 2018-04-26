@@ -344,6 +344,7 @@ VFH_SDK_ROOT=\"${SDK_PATH}\"
 VFH_SRC_ROOT=\"${CMAKE_SOURCE_DIR}\"
 
 VRAY_APPSDK=\"${_appsdk_root}\"
+VRAY_OSL_PATH=\"$\{VRAY_APPSDK\}/bin\"
 VRAY_UI_DS_PATH=\"$\{VFH_SRC_ROOT\}/deploy/ui\"
 VRAY_FOR_HOUDINI_AURA_LOADERS=\"$\{VFH_SDK_ROOT\}/phxsdk/qt5/vc14/lib\"
 
