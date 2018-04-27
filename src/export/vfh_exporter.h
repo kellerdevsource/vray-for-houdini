@@ -738,6 +738,7 @@ public:
 	static void RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_EventType type, void *data);
 	static void RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_EventType type, void *data);
+	static void RtCallbackOPDirector(OP_Node *caller, void *callee, OP_EventType type, void *data);
 
 	/// A lock for callbacks.
 	static VUtils::FastCriticalSection csect;
