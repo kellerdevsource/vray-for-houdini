@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -78,7 +78,7 @@ void PrimMaterial::appendOverrides(const MtlOverrideItems &items, OverrideAppend
 			}
 		}
 
-		overrides[it.key()] = it.data();
+		overrides[it.key()] = it.value();
 	}
 }
 
@@ -165,7 +165,7 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 					if (!primMaterial.matNode ||
 						mode == overrideMerge)
 					{
-						primMaterial.matNode = getOpNodeFromPath(stringVals[0].buffer());
+						primMaterial.matNode = OPgetDirector()->findNode(stringVals[0].buffer());
 					}
 				}
 			}
@@ -179,7 +179,7 @@ static void appendOverrideValues(const STY_OverrideValues &styOverrideValues, Pr
 				const STY_OptionEntryHandle &opt = value.second.myValue;
 
 				if (mode == overrideAppend) {
-					const MtlOverrideItems::const_iterator &moIt = primMaterial.overrides.find(attrName);
+					const MtlOverrideItems::const_iterator &moIt = primMaterial.overrides.find(attrName.buffer());
 					if (moIt != primMaterial.overrides.end())
 						continue;
 				}
@@ -259,7 +259,7 @@ void VRayForHoudini::appendMaterialOverrides(PrimMaterial &primMaterial,
 {
 	// There is already some top-level material assigned.
 	if (!primMaterial.matNode) {
-		primMaterial.matNode = getOpNodeFromPath(matPath, t);
+		primMaterial.matNode = OPgetDirector()->findNode(matPath.buffer());
 	}
 
 	if (primMaterial.matNode && !materialOnly) {

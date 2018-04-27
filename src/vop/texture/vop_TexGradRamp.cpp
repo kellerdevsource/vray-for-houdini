@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -25,7 +25,7 @@ void VOP::TexGradRamp::setPluginType()
 OP::VRayNode::PluginResult VOP::TexGradRamp::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	Texture::exportRampAttribute(exporter, pluginDesc, this,
-								 "ramp",
+								 SL("ramp"),
 								 "colors", "positions", "interpolation");
 	return OP::VRayNode::PluginResultContinue;
 }

@@ -176,6 +176,7 @@ groupsimple {
             parmtag { "vray_plugin" "SettingsIrradianceMap" }
             parmtag { "vray_pluginattr" "file" }
             parmtag { "vray_type" "string" }
+            parmtag { "vray_enabled_only" "1" }
             disablewhen "{ SettingsIrradianceMap_mode != 2 SettingsIrradianceMap_mode != 7 }"
         }
         parm {
@@ -195,7 +196,7 @@ groupsimple {
             name    "SettingsIrradianceMap_auto_save"
             label   "Auto Save"
             type    toggle
-            default { "1" }
+            default { "0" }
             help    "Automatically save the irradiance map to the specified file at the end of the rendering"
             range   { 0 1 }
             export  none
@@ -220,6 +221,7 @@ groupsimple {
             parmtag { "vray_plugin" "SettingsIrradianceMap" }
             parmtag { "vray_pluginattr" "auto_save_file" }
             parmtag { "vray_type" "string" }
+            parmtag { "vray_enabled_only" "1" }
             disablewhen "{ SettingsIrradianceMap_mode == 2 } { SettingsIrradianceMap_mode == 5 } { SettingsIrradianceMap_mode == 7 } { SettingsIrradianceMap_auto_save != 1 }"
         }
     }

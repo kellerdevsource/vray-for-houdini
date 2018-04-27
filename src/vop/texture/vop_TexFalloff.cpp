@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -11,40 +11,40 @@
 #include "vop_TexFalloff.h"
 #include "vfh_tex_utils.h"
 
-
 using namespace VRayForHoudini;
-
 
 void VOP::TexFalloff::setPluginType()
 {
 	pluginType = VRayPluginType::TEXTURE;
-	pluginID   = "TexFalloff";
+	pluginID   = SL("TexFalloff");
 }
 
-
-OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*)
 {
-	if (evalInt("use_blend_curve", 0, 0.0)) {
-		Attrs::PluginDesc subTexFalloffDesc(VRayExporter::getPluginName(this, "SubFalloff"), "TexFalloff");
-		subTexFalloffDesc.add(Attrs::PluginAttr("use_blend_input", false));
-		subTexFalloffDesc.add(Attrs::PluginAttr("blend_input", VRay::Plugin()));
+	if (!evalInt("use_blend_curve", 0, 0.0))
+		return PluginResultContinue;
 
-		VRay::Plugin subFalloffTex = exporter.exportPlugin(subTexFalloffDesc);
+	Attrs::PluginDesc subTexFalloffDesc(VRayExporter::getPluginName(*this, SL("SubFalloff")),
+		                                SL("TexFalloff"));
+	subTexFalloffDesc.add(Attrs::PluginAttr(SL("use_blend_input"), false));
+	subTexFalloffDesc.add(Attrs::PluginAttr(SL("blend_input"), VRay::Plugin()));
 
-		VRay::FloatList points;
-		VRay::IntList   types;
-		Texture::getCurveData(exporter, this, "curve", types, points, nullptr, true);
+	const VRay::Plugin subFalloffTex = exporter.exportPlugin(subTexFalloffDesc);
 
-		Attrs::PluginDesc texBezierCurveDesc(VRayExporter::getPluginName(this, "SubCurve"), "TexBezierCurve");
-		texBezierCurveDesc.add(Attrs::PluginAttr("input_float", subFalloffTex, "blend_output"));
-		texBezierCurveDesc.add(Attrs::PluginAttr("points", points));
-		texBezierCurveDesc.add(Attrs::PluginAttr("types", types));
+	VRay::FloatList points;
+	VRay::IntList   types;
+	Texture::getCurveData(exporter, this, SL("curve"), types, points, nullptr, true);
 
-		VRay::Plugin texBezierCurve = exporter.exportPlugin(texBezierCurveDesc);
+	Attrs::PluginDesc texBezierCurveDesc(VRayExporter::getPluginName(*this, SL("SubCurve")),
+		                                    SL("TexBezierCurve"));
+	texBezierCurveDesc.add(Attrs::PluginAttr(SL("input_float"), subFalloffTex, "blend_output"));
+	texBezierCurveDesc.add(Attrs::PluginAttr(SL("points"), points));
+	texBezierCurveDesc.add(Attrs::PluginAttr(SL("types"), types));
 
-		pluginDesc.add(Attrs::PluginAttr("use_blend_input", true));
-		pluginDesc.add(Attrs::PluginAttr("blend_input", texBezierCurve));
-	}
+	const VRay::Plugin texBezierCurve = exporter.exportPlugin(texBezierCurveDesc);
 
-	return OP::VRayNode::PluginResultContinue;
+	pluginDesc.add(Attrs::PluginAttr(SL("use_blend_input"), true));
+	pluginDesc.add(Attrs::PluginAttr(SL("blend_input"), texBezierCurve));
+
+	return PluginResultContinue;
 }

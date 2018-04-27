@@ -120,23 +120,20 @@
         parm {
             name  "units"
             label "Units"
+            help "Units for the intensity"
             type  string
-            default   { "0" }
-            help  "Units for the intensity (0 - default, 1 - lumens, 2 - lm/m/m/sr, 3 - watts, 4 - w/m/m/sr)"
-            menu  {
-                0 "Default"
-                1  "Lumens"
-                2   "Lm/m/m/sr"
-                3   "Watts"
-                4    "W/m/m/sr"
+            menu {
+                "0" "Default"
+                "1" "Lumens"
+                "2" "Lm/m/m/sr"
+                "3" "Watts"
+                "4" "W/m/m/sr"
             }
-            range { 0 1 }
-            export    none
-            parmtag   { "cook_dependent" "1" }
-            parmtag   { "vray_enumkeys" "0,1,2,3,4" }
-            parmtag   { "vray_plugin" "LightOmni" }
-            parmtag   { "vray_pluginattr" "units" }
-            parmtag   { "vray_type" "enum" }
+            default { "0" }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "LightOmni" }
+            parmtag { "vray_pluginattr" "units" }
+            parmtag { "vray_type" "enum" }
         }
         parm {
             name    "use_global_light_level"

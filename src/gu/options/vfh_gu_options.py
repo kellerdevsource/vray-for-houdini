@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2017, Chaos Software Ltd
+# Copyright (c) 2015-2018, Chaos Software Ltd
 #
 # V-Ray For Houdini
 #
@@ -194,7 +194,7 @@ def main(fileRoot, jsonFilePath):
 	cppFilePath = os.path.join(fileRoot, cppFileName)
 
 	classTmpl = """//
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -247,7 +247,7 @@ protected:
 """
 
 	classCppTmpl = r"""//
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //

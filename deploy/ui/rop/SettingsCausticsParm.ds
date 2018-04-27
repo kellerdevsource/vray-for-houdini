@@ -109,6 +109,7 @@ groupsimple {
         parmtag { "vray_plugin" "SettingsCaustics" }
         parmtag { "vray_pluginattr" "file" }
         parmtag { "vray_type" "string" }
+        parmtag { "vray_enabled_only" "1" }
         disablewhen "{ SettingsCaustics_mode != 1 }"
     }
 
@@ -130,7 +131,7 @@ groupsimple {
         name  "SettingsCaustics_auto_save"
         label "Auto Save"
         type  toggle
-        default { "1" }
+        default { "0" }
         help  "True to save the caustics photon map automatically at the end of the rendering"
         range { 0 1 }
         export  none
@@ -156,6 +157,7 @@ groupsimple {
         parmtag { "vray_plugin" "SettingsCaustics" }
         parmtag { "vray_pluginattr" "auto_save_file" }
         parmtag { "vray_type" "string" }
+        parmtag { "vray_enabled_only" "1" }
         disablewhen "{ SettingsCaustics_auto_save != 1 } { SettingsCaustics_mode == 1 }"
     }
 

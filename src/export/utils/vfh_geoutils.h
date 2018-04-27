@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -53,7 +53,7 @@ struct MapVertexHash {
 typedef std::unordered_set<MapVertex, MapVertexHash> VertexSet;
 
 struct CharStringTable
-	: VUtils::Table<VRay::VUtils::CharString, 1>
+	: QStringList
 {
 	VRay::VUtils::CharStringRefList toRefList() const;
 };
@@ -61,7 +61,7 @@ struct CharStringTable
 /// Helper structure to wrap relevant map channel properties
 struct MapChannel {
 	/// Maps string with its index in the strings table.
-	typedef VUtils::StringHashMap<int> StringToTableIndex;
+	typedef QMap<QString, int> StringToTableIndex;
 
 	enum MapChannelType {
 		mapChannelTypeVertex = 0,
@@ -69,10 +69,6 @@ struct MapChannel {
 		mapChannelTypeString,
 #endif
 	};
-
-	MapChannel() = default;
-	MapChannel(const MapChannel &other);
-	~MapChannel() = default;
 
 	MapChannelType type = mapChannelTypeVertex;
 
@@ -92,7 +88,7 @@ struct MapChannel {
 	StringToTableIndex stringToTableIndex;
 };
 
-typedef VUtils::StringHashMap<MapChannel> MapChannels;
+typedef QMap<QString, MapChannel> MapChannels;
 
 typedef UT_ValArray<const GEO_Primitive*> GEOPrimList;
 typedef UT_Array<const GA_Attribute*>     GEOAttribList;

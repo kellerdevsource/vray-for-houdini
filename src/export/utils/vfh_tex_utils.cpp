@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -8,50 +8,45 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <boost/format.hpp>
-
 #include "vfh_defines.h"
 #include "vfh_typedefs.h"
 #include "vfh_tex_utils.h"
 
-
 #define CGR_DEBUG_RAMPS  0
 #define CGR_MAX_NUM_POINTS 64
-
-
-static boost::format FmtPos("%s#pos");
-static boost::format FmtColor("%s#c");
-static boost::format FmtValue("%s#value");
-static boost::format FmtInterp("%s#interp");
-
 
 struct MyPoint {
 	float x;
 	float y;
 };
 
+static const QString FmtPos(SL("%1#pos"));
+static const QString FmtColor(SL("%1#c"));
+static const QString FmtValue(SL("%1#value"));
+static const QString FmtInterp(SL("%1#interp"));
+static const QString FmtColorPluginName(SL("%1|%2"));
 
 void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs::PluginDesc &pluginDesc, OP_Node *op_node,
-												  const std::string &rampAttrName,
-												  const std::string &colAttrName, const std::string &posAttrName, const std::string &typesAttrName,
-												  const bool asColor, const bool remapInterp)
+												  const QString &rampAttrName,
+												  const QString &colAttrName, const QString &posAttrName, const QString &typesAttrName,
+												  bool asColor, bool remapInterp)
 {
 	const fpreal &t = exporter.getContext().getTime();
 
-	const std::string &pluginName = VRayExporter::getPluginName(op_node, rampAttrName);
+	const QString &pluginName = VRayExporter::getPluginName(*op_node, rampAttrName);
 
-	int nPoints = op_node->evalInt(rampAttrName.c_str(), 0, 0.0f);
+	const int nPoints = op_node->evalInt(_toChar(rampAttrName), 0, 0.0f);
 
 #if CGR_DEBUG_RAMPS
 	Log::getLog().info("Ramp points: %i",
-			   nPoints);
+	                   nPoints);
 #endif
 
-	const bool needTypes = NOT(typesAttrName.empty());
+	const bool needTypes = !typesAttrName.isEmpty();
 
-	const std::string &prmPosName    = boost::str(FmtPos    % rampAttrName);
-	const std::string &prmColName    = boost::str(FmtColor  % rampAttrName);
-	const std::string &prmInterpName = boost::str(FmtInterp % rampAttrName);
+	const QString &prmPosName = FmtPos.arg(rampAttrName);
+	const QString &prmColName = FmtColor.arg(rampAttrName);
+	const QString &prmInterpName = FmtInterp.arg(rampAttrName);
 
 	VRay::ValueList colorPlugins;
 	VRay::ColorList colorList;
@@ -59,22 +54,20 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 	VRay::IntList   types;
 
 	for(int i = 1; i <= nPoints; i++) {
-		const float pos = (float)op_node->evalFloatInst(prmPosName.c_str(), &i, 0, t);
+		const float pos = op_node->evalFloatInst(_toChar(prmPosName), &i, 0, t);
 
-		const float colR = (float)op_node->evalFloatInst(prmColName.c_str(), &i, 0, t);
-		const float colG = (float)op_node->evalFloatInst(prmColName.c_str(), &i, 1, t);
-		const float colB = (float)op_node->evalFloatInst(prmColName.c_str(), &i, 2, t);
+		const float colR = op_node->evalFloatInst(_toChar(prmColName), &i, 0, t);
+		const float colG = op_node->evalFloatInst(_toChar(prmColName), &i, 1, t);
+		const float colB = op_node->evalFloatInst(_toChar(prmColName), &i, 2, t);
 
-		int interp = op_node->evalIntInst(prmInterpName.c_str(), &i, 0, t);
+		int interp = op_node->evalIntInst(_toChar(prmInterpName), &i, 0, t);
 		if (remapInterp) {
 			interp = static_cast<int>(mapToVray(static_cast<HOU_InterpolationType>(interp)));
 		}
 #if CGR_DEBUG_RAMPS
 		Log::getLog().info(" %.3f: Color(%.3f,%.3f,%.3f) [%i]",
-				   pos, colR, colG, colB, interp);
+		                   pos, colR, colG, colB, interp);
 #endif
-		const std::string &colPluginName = boost::str(boost::format("%sPos%i") % pluginName % i);
-
 		if (asColor) {
 			colorList.push_back(VRay::Color(colR, colG, colB));
 			positions.push_back(pos);
@@ -83,11 +76,13 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 			}
 		}
 		else {
-			Attrs::PluginDesc colPluginDesc(colPluginName, "TexAColor");
-			colPluginDesc.add(Attrs::PluginAttr("texture", Attrs::PluginAttr::AttrTypeAColor, colR, colG, colB, 1.0f));
+			const QString colPluginName(FmtColorPluginName.arg(pluginName).arg(QString::number(i)));
+
+			Attrs::PluginDesc colPluginDesc(colPluginName, SL("TexAColor"));
+			colPluginDesc.add(Attrs::PluginAttr(SL("texture"), Attrs::PluginAttr::AttrTypeAColor, colR, colG, colB, 1.0f));
 
 			VRay::Plugin colPlugin = exporter.exportPlugin(colPluginDesc);
-			if (colPlugin) {
+			if (colPlugin.isNotEmpty()) {
 				colorPlugins.push_back(VRay::Value(colPlugin));
 				positions.push_back(pos);
 				if (needTypes) {
@@ -111,31 +106,36 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 
 
 void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_node,
-										   const std::string &curveAttrName,
+										   const QString &curveAttrName,
 										   VRay::IntList &interpolations, VRay::FloatList &positions, VRay::FloatList *values,
 										   const bool needHandles, const bool remapInterp)
 {
 	const fpreal &t = exporter.getContext().getTime();
 
-	int numPoints = op_node->evalInt(curveAttrName.c_str(), 0, t);
+	const int numPoints = op_node->evalInt(_toChar(curveAttrName), 0, t);
 	if (NOT(numPoints))
 		return;
 
 	MyPoint point[CGR_MAX_NUM_POINTS];
 
-	const std::string &prmPosName    = boost::str(FmtPos    % curveAttrName);
-	const std::string &prmValName    = boost::str(FmtValue  % curveAttrName);
-	const std::string &prmInterpName = boost::str(FmtInterp % curveAttrName);
+	const QString &prmPosName    = FmtPos.arg(curveAttrName);
+	const QString &prmValName    = FmtValue.arg(curveAttrName);
+	const QString &prmInterpName = FmtInterp.arg(curveAttrName);
 
 	int p = 0;
 	for(int i = 1; i <= numPoints; ++i, ++p) {
-		const float pos    = (float)op_node->evalFloatInst(prmPosName.c_str(),    &i, 0, t);
-		const float val    = (float)op_node->evalFloatInst(prmValName.c_str(),    &i, 0, t);
-		int interp =                op_node->evalIntInst(prmInterpName.c_str(), &i, 0, t);
+		const float pos = op_node->evalFloatInst(_toChar(prmPosName), &i, 0, t);
+		const float val = op_node->evalFloatInst(_toChar(prmValName), &i, 0, t);
+		int interp      = op_node->evalIntInst(_toChar(prmInterpName), &i, 0, t);
 
-		if (NOT(needHandles)) {
+		if (!needHandles) {
 			positions.push_back(pos);
-			if (values) values->push_back(val); else positions.push_back(val);
+			if (values) {
+				values->push_back(val);
+			}
+			else {
+				positions.push_back(val);
+			}
 		}
 		else {
 			point[p].x = pos;
@@ -149,7 +149,7 @@ void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_n
 		interpolations.push_back(interp);
 	}
 
-	if (NOT(needHandles)) {
+	if (!needHandles) {
 		return;
 	}
 

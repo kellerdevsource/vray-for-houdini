@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -16,6 +16,7 @@
 #include <GU/GU_Detail.h>
 #include <GU/GU_DetailHandle.h>
 #include <GU/GU_PrimPoly.h>
+#include <GU/GU_PackedGeometry.h>
 
 using namespace VRayForHoudini;
 
@@ -100,12 +101,13 @@ static int addMeshVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel, int maxFac
 		int numPreviewFaces = 0;
 		int numPreviewVerts = 0;
 		
-		for (int i = 0; i < numFaces; ++i) {
-			const double ratio = double(maxFaces)/ double(faceChan->numElements);
-			int p0 = i * ratio;
-			int p1 = (i + 1) * ratio;
+		const double ratio = double(maxFaces)/ double(numFaces);
 
-			if ((p0 != p1) && (numPreviewFaces < maxFaces)) {
+		for (int i = 0; i < numFaces; ++i) {
+			const int p0 = i * ratio;
+			const int p1 = (i + 1) * ratio;
+
+			if (p0 != p1 && numPreviewFaces < maxFaces) {
 				for (int k = 0; k < 3; ++k) {
 					previewFacesRaw[numPreviewFaces * 3 + k] = numPreviewVerts;
 					previewVertsRaw[numPreviewVerts++] = verts[faces->v[i * 3 + k]];
@@ -120,11 +122,12 @@ static int addMeshVoxelData(GU_Detail &gdp, VUtils::MeshVoxel &voxel, int maxFac
 			gdp.setPos3(pointOffset+vertexIndex, UT_Vector3F(vert.x, vert.y, vert.z));
 		}
 
-		for (int faceIndex = 0; faceIndex < numPreviewFaces*3; faceIndex+=3) {
+		for (int faceIndex = 0; faceIndex < numPreviewFaces; ++faceIndex) {
 			GU_PrimPoly *poly = GU_PrimPoly::build(&gdp, 3, GU_POLY_CLOSED, 0);
-			for (int k = 0; k < 3; k++) {
-				poly->setVertexPoint(k, pointOffset + previewFacesRaw[faceIndex + k]);
-			}
+			poly->setVertexPoint(0, pointOffset + previewFacesRaw[faceIndex * 3 + 0]);
+			poly->setVertexPoint(1, pointOffset + previewFacesRaw[faceIndex * 3 + 1]);
+			poly->setVertexPoint(2, pointOffset + previewFacesRaw[faceIndex * 3 + 2]);
+			poly->reverse();
 		}
 	}
 
@@ -213,6 +216,7 @@ static VUtils::Box getBoundingBox(VUtils::MeshInterface &mi)
 	return bbox;
 }
 
+#if 0
 static Hash::MHash getBoundingBoxHash(VUtils::MeshInterface &mi)
 {
 	const VUtils::Box &bbox = getBoundingBox(mi);
@@ -258,6 +262,7 @@ static Hash::MHash getVoxelHash(VUtils::MeshInterface &mi, int voxelIndex)
 
 	return getVoxelHash(voxelRaii.getVoxel(), voxelFlags);
 }
+#endif
 
 /// Creates a box in detail.
 /// @param gdp Detail.
@@ -314,7 +319,7 @@ private:
 	VUtils::MeshFile *meshFile = nullptr;
 };
 
-typedef VUtils::StringHashMap<VRayProxyCache> VRayProxyCacheMan;
+typedef QMap<QString, VRayProxyCache> VRayProxyCacheMan;
 
 static UT_Lock theLock;
 static VRayProxyCacheMan theCacheMan;
@@ -330,12 +335,12 @@ GU_DetailHandle VRayForHoudini::getVRayProxyDetail(const VRayProxyRefKey &option
 
 	VRayProxyCacheMan::iterator it = theCacheMan.find(filePath);
 	if (it != theCacheMan.end()) {
-		return it.data().getDetail(options);
+		return it.value().getDetail(options);
 	}
 
 	VRayProxyCache &cache = theCacheMan[filePath];
 	if (!cache.open(filePath)) {
-		theCacheMan.erase(filePath);
+		theCacheMan.remove(filePath);
 		return GU_DetailHandle();
 	}
 
@@ -345,7 +350,7 @@ GU_DetailHandle VRayForHoudini::getVRayProxyDetail(const VRayProxyRefKey &option
 bool VRayForHoudini::clearVRayProxyCache(const char *filepath)
 {
 	UT_AutoLock lock(theLock);
-	return theCacheMan.erase(filepath);
+	return theCacheMan.remove(filepath);
 }
 
 bool VRayForHoudini::getVRayProxyBoundingBox(const VRayProxyRefKey &options, UT_BoundingBox &box)
@@ -355,17 +360,17 @@ bool VRayForHoudini::getVRayProxyBoundingBox(const VRayProxyRefKey &options, UT_
 	if (options.filePath.empty())
 		return false;
 	
-	int res = 0;
 	VRayProxyCacheMan::iterator it = theCacheMan.find(options.filePath.ptr());
 	
+	int res;
 	if (it != theCacheMan.end()) {
-		res = it.data().getBBox(box);
+		res = it.value().getBBox(box);
 	}
 	else {
 		// build a mesh, get bbox from that
 		VRayProxyCache &cache = theCacheMan[options.filePath.ptr()];
 		if (!cache.open(options.filePath.ptr())) {
-			theCacheMan.erase(options.filePath.ptr());
+			theCacheMan.remove(options.filePath.ptr());
 			res = false;
 		}
 		else {
@@ -387,7 +392,13 @@ int VRayProxyCache::open(const char *filepath)
 	}
 
 	meshFile = VUtils::newDefaultMeshFile(path.ptr());
-	if (!(meshFile && meshFile->init(path.ptr()))) {
+	if (!meshFile) {
+		Log::getLog().error("VRayProxy: Can't allocate MeshFile \"%s\"", filepath);
+		freeMem();
+		return false;
+	}
+
+	if (meshFile->init(path.ptr()).error()) {
 		Log::getLog().error("VRayProxy: Can't open file \"%s\"", filepath);
 		freeMem();
 		return false;
@@ -432,26 +443,31 @@ GU_DetailHandle VRayProxyCache::addDetail(const VRayProxyRefKey &options)
 
 	GU_Detail *gdp = new GU_Detail;
 
-	if (options.lod == LOD_BBOX) {
+	if (options.lod == VRayProxyPreviewType::bbox) {
 		addBoundingBoxData(*gdp, *meshFile);
 	}
 	else {
 		for (int voxelIndex = 0; voxelIndex < meshFile->getNumVoxels(); ++voxelIndex) {
 			const uint32 voxelFlags = meshFile->getVoxelFlags(voxelIndex);
-			if (options.lod == LOD_PREVIEW) {
+			if (options.lod == VRayProxyPreviewType::preview) {
 				if (voxelFlags & MVF_PREVIEW_VOXEL) {
 					addVoxelData(*gdp, *meshFile, voxelIndex, options.previewFaces, true);
 					break;
 				}
 			}
-			else if (options.lod == LOD_FULL) {
+			else if (options.lod == VRayProxyPreviewType::full) {
 				addVoxelData(*gdp, *meshFile, voxelIndex);
 			}
 		}
 	}
 
 	gdpHandle.allocateAndSet(gdp);
-	
+
+	GU_Detail *gdpPacked = new GU_Detail;
+	GU_PackedGeometry::packGeometry(*gdpPacked, gdpHandle);
+
+	gdpHandle.allocateAndSet(gdpPacked);
+
 	return gdpHandle;
 }
 

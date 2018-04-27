@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -45,7 +45,7 @@ public:
 	VRayPluginType getVRayPluginType() const { return pluginType; }
 
 	/// Get the V-Ray plugin name.
-	std::string getVRayPluginID() const { return pluginID; }
+	QString getVRayPluginID() const { return pluginID; }
 
 	/// Returns numeric internal plugin ID. Matches enum VRayPluginID.
 	int getPluginID() const { return pluginIntID; }
@@ -69,7 +69,7 @@ protected:
 	VRayPluginType pluginType;
 
 	/// The plugin type.
-	std::string pluginID;
+	QString pluginID;
 
 	/// Numeric internal plugin ID. Matches enum VRayPluginID.
 	int pluginIntID;

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -13,20 +13,21 @@
 
 #ifdef CGR_HAS_AUR
 
-#include <vfh_vray.h>
+#include <QSharedPointer>
+
+#include "vfh_vray.h"
 #include "vop_node_base.h"
 
-#include "ramps.h"
-#include <vector>
-#include <boost/unordered_map.hpp>
+// From Phoenix SDK.
+#include <ramps.h>
 
 namespace VRayForHoudini {
 namespace VOP {
 
 struct RampContext;
 
-class PhxShaderSim:
-		public VOP::NodeBase
+class PhxShaderSim
+	: public NodeBase
 {
 public:
 	enum RenderMode {
@@ -43,7 +44,7 @@ public:
 	virtual                   ~PhxShaderSim() {}
 
 	/// Called by Houdini when all nodes are loaded, this parses UI and sets proper state on m_ramps
-	virtual void               finishedLoadingNetwork(bool is_child_call=false) VRAY_OVERRIDE;
+	 void                      finishedLoadingNetwork(bool is_child_call=false) VRAY_OVERRIDE;
 
 	/// Called by Houdini when scene is saved
 	OP_ERROR                   saveIntrinsic(std::ostream &os, const OP_SaveFlags &sflags) VRAY_OVERRIDE;
@@ -106,16 +107,21 @@ protected:
 	/// Write ramp data to ostream *wuthot* writing the packet name
 	/// @retval - true on success
 	bool                       saveRamps(std::ostream & os);
+
 	/// Read ramp data from UT_IStream
 	bool                       loadRamps(UT_IStream & is);
 
-	/// Maps property name to ramp data, but since we can have a curve and color ramp in same window
-	/// Some properties might map to one context
-	boost::unordered_map<std::string, std::shared_ptr<RampContext>> m_ramps;
-	/// Maps property name to ramp type, so we know what data to get from RampContext
-	boost::unordered_map<std::string, AurRamps::RampType>           m_rampTypes;
+	typedef QSharedPointer<RampContext> RampContextPtr;
+	typedef QMap<QString, RampContextPtr> RampContexts;
 
-	virtual void               setPluginType() VRAY_OVERRIDE;
+	/// Maps property name to ramp data, but since we can have a curve and color ramp in same window.
+	/// Some properties might map to one context.
+	RampContexts m_ramps;
+
+	/// Maps property name to ramp type, so we know what data to get from RampContext.
+	QMap<QString, AurRamps::RampType> m_rampTypes;
+
+	void setPluginType() VRAY_OVERRIDE;
 };
 
 

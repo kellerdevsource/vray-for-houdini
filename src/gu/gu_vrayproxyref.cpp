@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -35,14 +35,15 @@ struct VRayProxyRefKeyHasher {
 			int animOverride;
 			int animLength;
 			int numPreviewFaces;
-		} settingsKey = { key.lod
-			, key.f
-			, key.animType
-			, key.animOffset
-			, key.animSpeed
-			, key.animOverride
-			, key.animLength
-			, key.previewFaces
+		} settingsKey = {
+			static_cast<int>(key.lod),
+			VUtils::fast_floor(key.f * 100.0),
+			key.animType,
+			VUtils::fast_floor(key.animOffset * 100.0),
+			VUtils::fast_floor(key.animSpeed * 100.0),
+			key.animOverride,
+			key.animLength,
+			key.previewFaces
 		};
 #pragma pack(pop)
 		Hash::MHash data;
@@ -62,7 +63,6 @@ public:
 	void cleanResource(const VUtils::CharString &filepath) override {
 		clearVRayProxyCache(filepath.ptr());
 	}
-
 };
 
 static VRayProxyRefKeyBuilder builder;
@@ -139,7 +139,7 @@ VRayProxyRefKey VRayProxyRef::getKey() const
 {
 	VRayProxyRefKey key;
 	key.filePath = getFile();
-	key.lod = static_cast<LOD>(getLod());
+	key.lod = static_cast<VRayProxyPreviewType>(getPreviewType());
 	key.f = getCurrentFrame();
 	key.animType = getAnimType();
 	key.animOffset = getAnimOffset();

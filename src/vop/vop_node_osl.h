@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -13,6 +13,7 @@
 
 #include "vop_node_base.h"
 
+#include <QString>
 
 namespace VRayForHoudini {
 namespace VOP {
@@ -33,15 +34,15 @@ public:
 			String, ///< string (readonly, and not plugin input)
 		};
 
-		std::string name; ///< The name of the parameter
+		QString name; ///< The name of the parameter
 		VOP_Type type; ///< VOP_Type of the parameter (color, vector, point, normal, float, int or string)
 		WidgetType widget; ///< If metadata is present in source, this will hold the type
 		bool validDefault; ///< True if the default value is taken from code
 		double numberDefault[3]; ///< stores (r,g,b) or (x,y,z) or (float) or (int)
-		std::string stringDefault; ///< stores the string default value
+		QString stringDefault; ///< stores the string default value
 	};
 
-	typedef std::vector<ParamInfo> OSLParamList;
+	typedef QVector<ParamInfo> OSLParamList;
 
 	OSLNodeBase(OP_Network *parent, const char *name, OP_Operator *entry)
 		: NodeBase(parent, name, entry), m_codeHash(0)
@@ -101,7 +102,7 @@ protected:
 	/// Get the OSL code (either from the UI source field or from selected filepath)
 	/// @param oslCode [out] - the osl code will be put here
 	/// @param needCompile [out] - true if code is osl source and needs to be compiled
-	void getOSLCode(UT_String & oslCode, bool &needCompile) const;
+	void getOSLCode(QString &oslCode, bool &needCompile) const;
 
 	/// Get the name of the output color param
 	/// NOTE: Use this when the result pointer will be passed to houdini!!
@@ -110,11 +111,11 @@ protected:
 
 protected:
 	Hash::MHash m_codeHash; ///< Hash of the OSL code
-	std::vector<std::string> m_inputList; ///< Names of all inputs (string params)
+	QVector<QString> m_inputList; ///< Names of all inputs (string params)
 	OSLParamList m_paramList; ///< All params from OSL code (inputs and params)
 
 	// TODO: support more than one 1 output?
-	std::string m_outputName; ///< The output color parameter name
+	QString m_outputName; ///< The output color parameter name
 	mutable char m_outputNameBuff[1024]; ///< Buffer containing the output parameter name, used so we have pointer that will not move
 };
 

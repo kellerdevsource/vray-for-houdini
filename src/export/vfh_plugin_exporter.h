@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -172,7 +172,7 @@ public:
 
 	/// Delete plugin with the given name
 	/// @param pluginName - plugin name
-	void removePlugin(const std::string &pluginName) const;
+	void removePlugin(const QString &pluginName) const;
 
 	/// Delete plugin.
 	/// @param plugin V-Ray plugin instance.
@@ -235,7 +235,7 @@ public:
 	/// file path must contain the name and extension of the destination file.
 	/// @param settings Additional options such as compression and file splitting
 	/// @retval 0 - no error
-	int exportScene(const std::string &filepath, VRay::VRayExportSettings &settings);
+	int exportScene(const QString &filepath, VRay::VRayExportSettings &settings);
 
 	/// Check if VRay::VRayRenderer is instantiated
 	bool isVRayInit() const { return !!m_vray; }

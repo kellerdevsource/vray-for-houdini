@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -38,15 +38,23 @@ static int cbClearCache(void *data, int index, fpreal t, const PRM_Template *tpl
 
 PRM_Template* SOP::VRayProxy::getPrmTemplate()
 {
-	PRM_Template *prmTemplate = Parm::getPrmTemplate("GeomMeshFile");
-	while (prmTemplate && prmTemplate->getType() != PRM_LIST_TERMINATOR) {
-		if (vutils_strcmp(prmTemplate->getToken(), "reload") == 0) {
-			prmTemplate->setCallback(cbClearCache);
+	static PRM_Template* myPrmList = nullptr;
+	if (myPrmList) {
+		return myPrmList;
+	}
+
+	myPrmList = Parm::getPrmTemplate("GeomMeshFile");
+
+	PRM_Template* prmIt = myPrmList;
+	while (prmIt && prmIt->getType() != PRM_LIST_TERMINATOR) {
+		if (vutils_strcmp(prmIt->getToken(), "reload") == 0) {
+			prmIt->setCallback(cbClearCache);
 			break;
 		}
-		prmTemplate++;
+		prmIt++;
 	}
-	return prmTemplate;
+
+	return myPrmList;
 }
 
 SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry)
@@ -65,7 +73,6 @@ SOP::VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *ent
 	// XXX: Is this still required?
 	// mySopFlags.setManagesDataIDs(true);
 }
-
 void SOP::VRayProxy::setPluginType()
 {
 	pluginType = VRayPluginType::GEOMETRY;
@@ -95,8 +102,27 @@ void SOP::VRayProxy::updatePrimitive(const OP_Context &context)
 	evalString(objectPath, "object_path", 0, 0.0);
 	primOptions.setOptionS("object_path", objectPath);
 
-	primOptions.setOptionI("lod", evalInt("loadtype", 0, 0.0));
+	primOptions.setOptionI("preview_type", evalInt("preview_type", 0, 0.0));
 	primOptions.setOptionF("current_frame", flags().getTimeDep() ? context.getFloatFrame() : 0.0f);
+
+	/* alembic_layers */ {
+		const int numFiles = evalInt("alembic_layers", 0, 0.0);
+		const int numFilesOffset = getParm("alembic_layers").getMultiStartOffset();
+
+		UT_StringArray layerFiles;
+		for (int i = 0; i < numFiles; ++i) {
+			const int multiIdx = numFilesOffset + i;
+
+			UT_String layerPath;
+			evalStringInst("alembic_layer#", &multiIdx, layerPath, 0, t);
+
+			if (layerPath.isstring()) {
+				layerFiles.append(layerPath);
+			}
+		}
+
+		primOptions.setOptionSArray("alembic_layers", layerFiles);
+	}
 	
 	updatePrimitiveFromOptions(primOptions);
 }

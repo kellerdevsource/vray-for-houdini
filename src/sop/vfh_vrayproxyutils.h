@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -23,16 +23,16 @@ namespace VRayForHoudini {
 /// Level of detail types for viewport display of .vrmesh geometry
 /// Proxy cache manager will load and cache only the data needed
 /// to display the corresponding level of detail
-enum LOD {
-	LOD_BBOX = 0, ///< Load and display bbox of the geometry
-	LOD_PREVIEW, ///< Load and display geometry in the preview voxel
-	LOD_FULL, ///< Load and display full geometry
+enum class VRayProxyPreviewType {
+	bbox = 0, ///< Load and display bbox of the geometry
+	preview, ///< Load and display geometry in the preview voxel
+	full, ///< Load and display full geometry
 };
 
 /// Proxy cache key.
 struct VRayProxyRefKey {
 	VUtils::CharString filePath;
-	LOD lod = LOD_PREVIEW;
+	VRayProxyPreviewType lod = VRayProxyPreviewType::preview;
 	fpreal f = 0;
 	int animType = 0;
 	fpreal64 animOffset = 0;
@@ -42,21 +42,25 @@ struct VRayProxyRefKey {
 	int animLength = 100;
 	int previewFaces = 10000;
 
-	bool operator== (const VRayProxyRefKey & other) const {
-		return (filePath == other.filePath &&
-			lod == other.lod &&
-			MemberFloatEq(f) &&
-			animType == other.animType &&
-			MemberFloatEq(animOffset) &&
-			MemberFloatEq(animSpeed) &&
-			animOverride == other.animOverride &&
-			animStart == other.animStart &&
-			animLength == other.animLength &&
-			previewFaces == other.previewFaces);
+	bool operator ==(const VRayProxyRefKey &other) const {
+		return filePath == other.filePath &&
+		       lod == other.lod &&
+		       MemberFloatEq(f) &&
+		       animType == other.animType &&
+		       MemberFloatEq(animOffset) &&
+		       MemberFloatEq(animSpeed) &&
+		       animOverride == other.animOverride &&
+		       animStart == other.animStart &&
+		       animLength == other.animLength &&
+		       previewFaces == other.previewFaces;
 	}
 
-	bool operator!=(const VRayProxyRefKey &other) const {
+	bool operator !=(const VRayProxyRefKey &other) const {
 		return !(*this == other);
+	}
+
+	bool operator <(const VRayProxyRefKey &other) const {
+		return *this != other;
 	}
 
 	/// Checks for difference between two instances,

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -7,6 +7,8 @@
 //
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
+
+#include "vfh_dso_version.h"
 
 #include "vfh_defines.h"
 #include "vfh_class_utils.h"
@@ -42,10 +44,6 @@
 #include <SHOP/SHOP_Node.h>
 #include <SHOP/SHOP_Operator.h>
 
-#ifndef MAKING_DSO
-#  define MAKING_DSO
-#endif
-#include <UT/UT_DSOVersion.h>
 #include <UT/UT_Exit.h>
 #include <UT/UT_IOTable.h>
 #include <GU/GU_Detail.h>
@@ -125,6 +123,12 @@ void unregister(void *)
 /// @param gafactory[out] - primitive factory for DSO defined primitives
 void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 {
+	// In batch render this function is called multiple times, so we manually check
+	// to make sure we register only once
+	static bool registered = false;
+	if (registered) {
+		return;
+	}
 #ifdef CGR_HAS_VRAYSCENE
 	VRaySceneRef::install(gafactory);
 #endif
@@ -134,6 +138,7 @@ void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 	VRayVolumeGridRef::install(gafactory);
 #endif
 	VRayPgYetiRef::install(gafactory);
+	registered = true;
 }
 
 
@@ -181,7 +186,7 @@ void newSopOperator(OP_OperatorTable *table)
 		}
 	}
 
-	VFH_ADD_SOP_GENERATOR(table, PhxShaderCache);
+	VFH_ADD_SOP_GENERATOR_CUSTOM(table, PhxShaderCache, PhxShaderCache::getPrmTemplate());
 #endif
 
 #ifdef CGR_HAS_VRAYSCENE

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -90,10 +90,11 @@ GA_Detail::IOStatus Vrmesh::fileLoad(GEO_Detail *geo, UT_IStream &stream, bool /
 	pack->setViewportLOD(GEO_VIEWPORT_FULL);
 
 	OP_Context context(CHgetEvalTime());
+
 	UT_Options options;
-	options.setOptionI("lod", LOD_PREVIEW)
-			.setOptionF("frame", context.getFloatFrame())
-			.setOptionS("file", filepath);
+	options.setOptionI("preview_type", static_cast<int>(VRayProxyPreviewType::preview));
+	options.setOptionF("frame", context.getFloatFrame());
+	options.setOptionS("file", filepath);
 
 	GU_PackedImpl *primImpl = pack->implementation();
 	if (primImpl) {

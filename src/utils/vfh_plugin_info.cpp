@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -8,23 +8,21 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_defines.h"
 #include "vfh_plugin_info.h"
 #include "vfh_prm_templates.h"
-#include "vfh_prm_globals.h"
-
-#include <hash_map.h>
 
 using namespace VRayForHoudini;
 using namespace Parm;
 
 /// A hash map for VOP types.
-typedef VUtils::StringHashMap<VOP_Type> VRayVopTypes;
+typedef QMap<QString, VOP_Type> VRayVopTypes;
 
 /// A hash map for parameters types.
-typedef VUtils::StringHashMap<ParmType> VRayParmTypes;
+typedef QMap<QString, ParmType> VRayParmTypes;
 
 /// A hash map type for plugins info storage.
-typedef VUtils::StringHashMap<VRayPluginInfo*> VRayPluginsInfo;
+typedef QMap<QString, VRayPluginInfo*> VRayPluginsInfo;
 
 /// A mapping between "vray_type" spare and VOP_Type.
 /// Used to set socket type.
@@ -40,7 +38,7 @@ static struct VRayPluginsInfoRAII
 {
 	~VRayPluginsInfoRAII() {
 		FOR_IT(VRayPluginsInfo, it, *this) {
-			delete it.data();
+			delete it.value();
 		}
 	}
 } pluginsInfo;
@@ -158,7 +156,7 @@ static void initSockets(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 		SocketDesc socketDesk;
 		socketDesk.label = parm->getLabel();
 		socketDesk.attrName = vrayPluginAttr;
-		socketDesk.attrType = vrayParmTypes[vrayType];
+		socketDesk.attrType = vrayParmTypes[vrayType.buffer()];
 		socketDesk.socketLabel = vraySocketLabel;
 		socketDesk.socketType  = vrayVopTypes[vrayType.buffer()];
 
@@ -226,11 +224,16 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 			attrDesc.attr = vrayPluginAttr;
 			attrDesc.flags = attrFlags;
 
+			const UT_String vrayEnabledBy(parmSpare->getValue("vray_enabled_only"));
+			if (vrayEnabledBy.isstring()) {
+				attrDesc.flags |= attrFlagEnabledOnly;
+			}
+
 			if (UTisstring(vrayEnumKeys)) {
 				attrDesc.value.type = eEnum;
 			}
 			else {
-				attrDesc.value.type = vrayParmTypes[vrayType];
+				attrDesc.value.type = vrayParmTypes[vrayType.buffer()];
 			}
 		}
 		else if (isCurve || isRamp) {
@@ -270,12 +273,12 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 	}
 }
 
-static VRayPluginInfo *generatePluginInfo(const std::string &pluginID)
+static VRayPluginInfo *generatePluginInfo(const QString &pluginID)
 {
 	VRayPluginInfo *pluginInfo = new VRayPluginInfo;
 
 	PRMList prmTemplates;
-	prmTemplates.addFromFile(pluginID.c_str());
+	prmTemplates.addFromFile(_toChar(pluginID));
 
 	initVRayTypeMaps();
 
@@ -287,21 +290,31 @@ static VRayPluginInfo *generatePluginInfo(const std::string &pluginID)
 
 bool VRayPluginInfo::hasAttribute(const tchar *attrName) const
 {
-	if (!UTisstring(attrName))
-		return false;
-	return attributes.find(attrName) != attributes.end();
+	return hasAttribute(QString(attrName));
 }
 
 const AttrDesc& VRayPluginInfo::getAttribute(const tchar *attrName) const
 {
-	return attributes.find(attrName).data();
+	return getAttribute(QString(attrName));
 }
 
-const VRayPluginInfo* Parm::getVRayPluginInfo(const char *pluginID)
+bool VRayPluginInfo::hasAttribute(const QString &attrName) const
+{
+	if (attrName.isEmpty())
+		return false;
+	return attributes.find(attrName) != attributes.end();
+}
+
+const AttrDesc& VRayPluginInfo::getAttribute(const QString &attrName) const
+{
+	return attributes.find(attrName).value();
+}
+
+const VRayPluginInfo* Parm::getVRayPluginInfo(const QString &pluginID)
 {
 	VRayPluginsInfo::iterator it = pluginsInfo.find(pluginID);
 	if (it == pluginsInfo.end()) {
 		it = pluginsInfo.insert(pluginID, generatePluginInfo(pluginID));
 	}
-	return it.data();
+	return it.value();
 }

@@ -100,7 +100,7 @@ import os
 import vfh.vfh_object_properties as vfh_object_properties
 import vfh.vfh_reload as vfh_reload
 
-vfh_reload.reload(vfh_object_properties)
+vfh_reload.reload_module(vfh_object_properties)
 
 geoList = filter(lambda item: item.type().category().typeName() == 'OBJ' and item.type().name() == 'geo', hou.selectedNodes())
 map(vfh_object_properties.addVRayDisplamentParams, geoList)
@@ -117,7 +117,7 @@ import os
 import vfh.vfh_object_properties as vfh_object_properties
 import vfh.vfh_reload as vfh_reload
 
-vfh_reload.reload(vfh_object_properties)
+vfh_reload.reload_module(vfh_object_properties)
 
 geoList = filter(lambda item: item.type().category().typeName() == 'OBJ' and item.type().name() == 'geo', hou.selectedNodes())
 map(vfh_object_properties.addVRayHairParams, geoList)
@@ -134,7 +134,7 @@ import os
 import vfh.vfh_object_properties as vfh_object_properties
 import vfh.vfh_reload as vfh_reload
 
-vfh_reload.reload(vfh_object_properties)
+vfh_reload.reload_module(vfh_object_properties)
 
 geoList = filter(lambda item: item.type().category().typeName() == 'OBJ' and item.type().name() == 'geo', hou.selectedNodes())
 map(vfh_object_properties.addVRayObjectProperties, geoList)

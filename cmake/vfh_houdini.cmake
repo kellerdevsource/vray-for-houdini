@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2017, Chaos Software Ltd
+# Copyright (c) 2015-2018, Chaos Software Ltd
 #
 # V-Ray For Houdini
 #
@@ -63,8 +63,8 @@ macro(use_houdini_sdk)
 		set(HOUDINI_FRAMEWORK_ROOT "/Library/Frameworks/Houdini.framework/Versions/${HOUDINI_VERSION}.${HOUDINI_VERSION_BUILD}")
 
 	elseif(WIN32)
-		set(USER_HOME "$ENV{HOME}")
-		if(USER_HOME STREQUAL "")
+		set(USER_HOME $ENV{HOME})
+		if(NOT USER_HOME)
 			set(USER_HOME "$ENV{USERPROFILE}/Documents")
 		endif()
 		file(TO_CMAKE_PATH "${USER_HOME}" USER_HOME)

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2017, Chaos Software Ltd
+# Copyright (c) 2015-2018, Chaos Software Ltd
 #
 # V-Ray For Houdini
 #
@@ -13,12 +13,20 @@ find_package(PackageHandleStandardArgs)
 # Full requested Houdini version (like "16.0.600").
 set(REQUESTED_HDK_VERSION ${HDK_FIND_VERSION_MAJOR}.${HDK_FIND_VERSION_MINOR}.${HDK_FIND_VERSION_PATCH})
 
-# HDK path in our internal SDK repository.
-set(VFH_SDK_HDK ${SDK_PATH}/hdk/${HDK_FIND_VERSION_MAJOR}.${HDK_FIND_VERSION_MINOR}/${HDK_FIND_VERSION_PATCH})
+if(USE_CONAN)
+	vfh_install_xpak(PAK "HDK" VERSION ${REQUESTED_HDK_VERSION})
+	set(VFH_SDK_HDK ${X_PAK}/HDK)
+else()
+	# HDK path in our internal SDK repository.
+	set(VFH_SDK_HDK ${SDK_PATH}/hdk/${HDK_FIND_VERSION_MAJOR}.${HDK_FIND_VERSION_MINOR}/${HDK_FIND_VERSION_PATCH})
 
-# Add Qt version to path
+	# Add Qt version to path
+	if(HDK_FIND_VERSION_MAJOR VERSION_GREATER 15)
+		set(VFH_SDK_HDK ${VFH_SDK_HDK}/qt${HOUDINI_QT_VERSION})
+	endif()
+endif()
+
 if(HDK_FIND_VERSION_MAJOR VERSION_GREATER 15)
-	set(VFH_SDK_HDK ${VFH_SDK_HDK}/qt${HOUDINI_QT_VERSION})
 	set(QT_TOOLS_PATH ${VFH_SDK_HDK}/bin)
 endif()
 

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -84,13 +84,6 @@ namespace VRayForHoudini {
 class VRayVolumeGridRef
 	: public VRayVolumeGridRefBase
 {
-	// These *must* match Phoenix values.
-	enum AnimationMode {
-		standard = 0,
-		directIndex = 1,
-		loop = 2,
-	};
-
 public:
 	typedef std::shared_ptr<IAur> CachePtr;
 
@@ -116,7 +109,6 @@ public:
 		UT_BoundingBox bbox;
 		DataRangeMap dataRange;
 	};
-	typedef Caches::LRUCache<VolumeCacheKey, VolumeCacheData, std::hash<VolumeCacheKey>, std::equal_to<VolumeCacheKey>, 10> VolumeCache;
 
 	/// Returns the primitive type ID.
 	static GA_PrimitiveTypeId typeId();
@@ -155,9 +147,6 @@ protected:
 	int detailRebuild() VRAY_OVERRIDE;
 
 private:
-	/// Sets fetch and evict callback.
-	void initDataCache() const;
-
 	/// Get all channels present in the current cache
 	UT_StringArray getCacheChannels() const;
 
@@ -165,13 +154,13 @@ private:
 	VolumeCacheKey genKey() const;
 
 	/// Get current cache frame based on current frame + cache play settings
-	int getFrame() const;
+	int evalCacheFrame() const;
 
 	/// Returns fully resolved cache load path.
 	QString getCurrentPath() const;
 
 	/// Gets resolution of cache (from UI)
-	int getResolution() const;
+	fpreal64 getResolution() const;
 
 	/// Gets count of voxels in cache (in full resolution)
 	/// @return - -1 if generated key is invalid
@@ -181,11 +170,6 @@ private:
 	/// @return - -1 if in full resolution, negative not equal to -1 if invalid key
 	i64 getCurrentCacheVoxelCount() const;
 
-	/// Build channel mapping, should be called after update to cache or ui mappings
-	void buildMapping();
-
-	/// Data cache used to cache last 10 volumes loaded, mutable (needs to be updated from const functions not changing other (immutable)members)
-	mutable VolumeCache m_dataCache;
 	mutable VolumeCacheData m_currentData;
 
 	/// True if channel mapping have changed since we last built them.

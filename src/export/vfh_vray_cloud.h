@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -128,6 +128,9 @@ private:
 /// Submits job to the V-Ray Cloud using command line V-Ray Cloud Client.
 /// @param job Job settings.
 int submitJob(const Job &job);
+
+/// Check if V-Ray Cloud Client is available at the system.
+int isClientAvailable();
 
 } // namespace Cloud
 } // namespace VRayForHoudini

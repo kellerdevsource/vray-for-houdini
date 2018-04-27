@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -26,7 +26,7 @@ const char* VOP::TexMulti::inputLabel(unsigned idx) const
 
 	const int socketIndex = idx - numBaseInputs + 1;
 	if (socketIndex >= 0) {
-		return getCreateSocketLabel(socketIndex, "Texture %i");
+		return getCreateSocketLabel(socketIndex, "Texture %i", socketIndex);
 	}
 
 	return NULL;
@@ -121,21 +121,21 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 	VRay::IntList textureIds;
 
 	for (int i = 1; i <= numTextures; ++i) {
-		QString texSockName = QString("tex_%1").arg(i);
+		QString texSockName = SL("tex_%1").arg(i);
 
-		OP_Node *texNode = VRayExporter::getConnectedNode(this, texSockName.toStdString());
+		OP_Node *texNode = VRayExporter::getConnectedNode(this, texSockName);
 		if (!texNode) {
 			Log::getLog().warning("Node \"%s\": Texture node is not connected to \"%s\", ignoring...",
 								  getName().buffer(), _toChar(texSockName));
 		}
 		else {
 			VRay::Plugin texPlugin = exporter.exportVop(texNode, parentContext);
-			if (!texPlugin) {
+			if (texPlugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
 									getName().buffer(), _toChar(texSockName));
 			}
 			else {
-				exporter.convertInputPlugin(texPlugin, pluginDesc, texNode, VOP_TYPE_COLOR, texSockName.toStdString().c_str());
+				exporter.convertInputPlugin(texPlugin, pluginDesc, texNode, VOP_TYPE_COLOR, texSockName);
 
 				textures.push_back(VRay::Value(texPlugin));
 				textureIds.push_back(i-1);
@@ -146,8 +146,8 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 	if (textures.empty())
 		return PluginResultError;
 
-	pluginDesc.addAttribute(Attrs::PluginAttr("textures_list", textures));
-	pluginDesc.addAttribute(Attrs::PluginAttr("ids_list", textureIds));
+	pluginDesc.add(Attrs::PluginAttr(SL("textures_list"), textures));
+	pluginDesc.add(Attrs::PluginAttr(SL("ids_list"), textureIds));
 
 	return PluginResultContinue;
 }

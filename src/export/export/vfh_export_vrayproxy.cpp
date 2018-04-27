@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -69,8 +69,10 @@ UT_String VRayProxyExportOptions::getFilepath(const SOP_Node &sop) const
 	if (NOT(m_exportAsSingle)) {
 		UT_String soppathSuffix;
 		sop.getFullPath(soppathSuffix);
+
 		soppathSuffix.forceAlphaNumeric();
 		soppathSuffix += ".vrmesh";
+
 		filepath.replaceSuffix(".vrmesh", soppathSuffix);
 	}
 
@@ -151,10 +153,11 @@ VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, c
 			if (sopNode) {
 				OBJ_Node *objNode = CAST_OBJNODE(sopNode->getParentNetwork());
 				if (objNode) {
-					if (!exporter.getObjectExporter().exportNode(*objNode, sopNode)) {
+					const VRay::Plugin &nodePlugin = exporter.getObjectExporter().exportNode(*objNode, sopNode);
+					if (nodePlugin.isEmpty()) {
 						err.setError(__FUNCTION__,
 							SOP_ERR_FILEGEO,
-							"Could not export \"%s\" as proxy.", sopNode->getName().c_str());
+							"Could not export \"%s\" as proxy.", sopNode->getName());
 					}
 				}
 			}
@@ -174,21 +177,21 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 	SOP_Node *sopNode = sopList(0);
 
 	UT_String vrmeshPath = m_options.getFilepath(*sopNode);
-	bool isAppendMode = m_options.isAppendMode();
+	const bool isAppendMode = m_options.isAppendMode();
 
 	FS_Info fsInfo(vrmeshPath);
-	if (   fsInfo.fileExists()
-		&& NOT(isAppendMode)
-		&& NOT(m_options.m_overwrite)
-		)
+	if (fsInfo.fileExists() &&
+		!isAppendMode &&
+		!m_options.m_overwrite)
 	{
 		err.setError(__FUNCTION__,
 					 ROP_FILE_EXISTS,
 					 "File already exists: %s", vrmeshPath.buffer());
 		return err;
 	}
-	std::string vrscenePath = vrmeshPath.toStdString();
-	vrscenePath.replace(vrscenePath.begin() + vrscenePath.rfind(".vrmesh"), vrscenePath.end(), ".vrscene");
+
+	QString vrscenePath(vrmeshPath.buffer());
+	vrscenePath = vrscenePath.replace(SL(".vrmesh"), SL(".vrscene"));
 
 	VRay::VRayExportSettings settings;
 	settings.compressed = true;
@@ -197,7 +200,7 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 	if (exporter.exportVrscene(vrscenePath, settings) != 0) {
 		err.setError(__FUNCTION__,
 		             ROP_SAVE_ERROR,
-		             "Failed to write intermediate file: %s", vrscenePath.c_str());
+		             "Failed to write intermediate file: %s", _toChar(vrscenePath));
 		return err;
 	}
 	exporter.getRenderer().reset();
@@ -212,7 +215,7 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 
 
 	QStringList arguments;
-	arguments << vrscenePath.c_str() << vrmeshPath.c_str()
+	arguments << vrscenePath << vrmeshPath.buffer()
 		<< "-vrsceneWholeScene"
 		<< "-facesPerVoxel" << QString::number(m_options.m_maxFacesPerVoxel > 0 ? m_options.m_maxFacesPerVoxel : INT_MAX)
 		<< "-previewFaces"  << QString::number(m_options.m_maxPreviewFaces)
@@ -233,18 +236,18 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 	const QString appsdkPath = QString(appsdkPathVar.getValue().ptr());
 	if (appsdkPath.isEmpty() || appsdkPath.isNull()) {
 		err.setError(__FUNCTION__,
-		             ROP_EXECUTE_ERROR, // TODO: any better code?
+		             ROP_EXECUTE_ERROR,
 			         "Missing env variable VFH_THREADED_LOGGER");
 		return err;
 	}
 
 #ifdef WIN32
-	QString ply2vrmeshExe = "ply2vrmesh.exe";
+	const QString ply2vrmeshExe = "ply2vrmesh.exe";
 #else
-	QString ply2vrmeshExe = "ply2vrmesh.bin";
+	const QString ply2vrmeshExe = "ply2vrmesh.bin";
 #endif
 
-	Log::getLog().debug("ply2vrmesh %s", arguments.join(" ").toStdString().c_str());
+	Log::getLog().debug("ply2vrmesh %s", arguments.join(" ").toStdString());
 
 	QProcess ply2vrmesh;
 	ply2vrmesh.start(appsdkPath + "/bin/" + ply2vrmeshExe, arguments);
@@ -261,13 +264,13 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 	// We split this in lines since vfh_log has 1k max message size
 	const auto outLines = ply2vrmesh.readAll().split('\n');
 	for (const auto & line : outLines) {
-		Log::getLog().debug("pl2vrmesh: %s", line.toStdString().c_str());
+		Log::getLog().debug("pl2vrmesh: %s", line.toStdString());
 	}
 
 	// Keep the .vrscene file arround when debugging - usefull to check if it is missing data
 	// or if the ply2vrmesh did not convert correctly
 #ifndef VFH_DEBUG
-	std::remove(vrscenePath.c_str());
+	std::remove(vrscenePath);
 #endif
 
 	return err;

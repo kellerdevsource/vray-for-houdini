@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2017, Chaos Software Ltd
+# Copyright (c) 2015-2018, Chaos Software Ltd
 #
 # V-Ray For Houdini
 #
@@ -14,7 +14,7 @@ import os
 from vfh import vfh_reload
 from vfh import vfh_ptg_utils
 
-vfh_reload.reload(vfh_ptg_utils)
+vfh_reload.reload_module(vfh_ptg_utils)
 
 VRAY_FOLDER = "V-Ray"
 DISPLACEMENT_FOLDER = (VRAY_FOLDER, "Displacement")

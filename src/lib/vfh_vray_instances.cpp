@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -160,16 +160,20 @@ int VRayForHoudini::newVRayInit()
 	int addDummyRenderer = false;
 	int vrayInitExist = false;
 
+	const bool hasUI = HOU::isUIAvailable();
+
 	if (vrayInstances.lock()) {
 		InstancesStorage *is = reinterpret_cast<InstancesStorage*>(vrayInstances.data());
 		if (is->vrayInit) {
 			vrayInitExist = true;
 		}
 		else {
-			initVFBTheme();
+			if (hasUI) {
+				initVFBTheme();
+			}
 
 			try {
-				is->vrayInit = new VRay::VRayInit(true);
+				is->vrayInit = new VRay::VRayInit(hasUI);
 			}
 			catch (VRay::VRayException &e) {
 				Log::getLog().error("Error initializing V-Ray AppSDK library:\n%s",

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2017, Chaos Software Ltd
+# Copyright (c) 2015-2018, Chaos Software Ltd
 #
 # V-Ray For Houdini
 #
@@ -26,7 +26,7 @@ option(BUILD_TESTING         "Enable build testing"           OFF)
 option(WITH_TESTS            "Run tests"                      OFF)
 option(WITH_TEST_APP         "Build AppSDK test applications" OFF)
 
-option(WITH_LAUNCHER         "Build development launcher"     OFF)
+option(USE_CONAN "Use internal Conan server for SDK" OFF)
 
 option(INSTALL_RELEASE "Install release build for distribution" OFF)
 if(INSTALL_RELEASE AND NOT "${CMAKE_BUILD_TYPE}" STREQUAL "Release" AND "${CMAKE_GENERATOR}" STREQUAL "Ninja")
@@ -53,6 +53,10 @@ endif()
 
 # Set install path
 set(INSTALL_RELEASE_PATH ${INSTALL_RELEASE_ROOT}/${INSTALL_RELEASE_SUBDIR})
+
+if(USE_CONAN)
+	include(vfh_xpak)
+endif()
 
 include(vfh_compiler)
 
@@ -82,10 +86,6 @@ if(WITH_VRAY_FOR_HOUDINI)
 		add_subdirectory(src/ipr)
 	endif()
 	add_subdirectory(src)
-	if(WITH_LAUNCHER)
-		add_subdirectory(launcher)
-		set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT "vray_for_houdini_launcher")
-	endif()
 endif()
 
 if(WITH_TESTS)

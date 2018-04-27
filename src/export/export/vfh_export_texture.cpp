@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -49,12 +49,7 @@ void VRayExporter::fillNodeTexSky(const OP_Node &opNode, Attrs::PluginDesc &plug
 		}
 	}
 	else {
-		UT_String sunOpPath;
-		opNode.evalString(sunOpPath, "sun", 0, 0.0);
-
-		if (sunOpPath.isstring()) {
-			sunOp = getOpNodeFromPath(sunOpPath);
-		}
+		sunOp = getOpNodeFromAttr(opNode, "sun");
 	}
 
 	if (sunOp) {
@@ -62,7 +57,7 @@ void VRayExporter::fillNodeTexSky(const OP_Node &opNode, Attrs::PluginDesc &plug
 
 		// A bit tricky; should work in this particular case since TexSky will be avaluated last.
 		if (getObjectExporter().getPluginFromCache(*sunOp, sunPlugin)) {
-			if (sunPlugin) {
+			if (sunPlugin.isNotEmpty()) {
 				pluginDesc.add(PluginAttr("sun", sunPlugin));
 			}
 		}

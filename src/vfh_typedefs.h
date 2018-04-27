@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -11,10 +11,12 @@
 #ifndef VRAY_FOR_HOUDINI_TYPEDEFS_H
 #define VRAY_FOR_HOUDINI_TYPEDEFS_H
 
-#include <set>
-#include <string>
+#include "vfh_vray.h"
 
-typedef std::set<std::string> StringSet;
-typedef std::set<float> FloatSet;
+#include <SYS/SYS_Types.h>
+
+typedef QSet<QString> StringSet;
+typedef QSet<fpreal> FloatSet;
+typedef QList<VRay::Plugin> PluginSet;
 
 #endif // VRAY_FOR_HOUDINI_TYPEDEFS_H

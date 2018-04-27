@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -21,7 +21,8 @@ VRayBaseRef::VRayBaseRef()
 }
 
 VRayBaseRef::VRayBaseRef(const VRayBaseRef &other)
-	: m_options(other.m_options)
+	: GU_PackedImpl(other)
+	, m_options(other.m_options)
 	, m_detail(other.m_detail)
 {}
 

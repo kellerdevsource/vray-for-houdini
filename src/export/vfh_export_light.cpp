@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -76,13 +76,13 @@ VRay::Plugin VRayExporter::exportDefaultHeadlight(bool update)
 
 	if (update) {
 		VRay::Plugin light = m_renderer.getPlugin(theHeadlightNameToken);
-		if (!light) {
+		if (light.isEmpty()) {
 			return VRay::Plugin();
 		}
 	}
 
 	Attrs::PluginDesc pluginDesc(theHeadlightNameToken.buffer(), "LightDirect");
-	pluginDesc.addAttribute(Attrs::PluginAttr("transform", m_viewParams.renderView.tm));
+	pluginDesc.add(Attrs::PluginAttr("transform", m_viewParams.renderView.tm));
 
 	return exportPlugin(pluginDesc);
 }

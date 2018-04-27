@@ -141,6 +141,7 @@ groupsimple {
             parmtag { "vray_plugin" "SettingsLightCache" }
             parmtag { "vray_pluginattr" "file" }
             parmtag { "vray_type" "string" }
+            parmtag { "vray_enabled_only" "1" }
             disablewhen " { SettingsLightCache_mode != 2 }"
         }
     }
@@ -191,6 +192,7 @@ groupsimple {
             parmtag   { "vray_plugin" "SettingsLightCache" }
             parmtag   { "vray_pluginattr" "auto_save_file" }
             parmtag   { "vray_type" "string" }
+            parmtag { "vray_enabled_only" "1" }
             disablewhen   " { SettingsLightCache_mode == 2 } { SettingsLightCache_auto_save != 1 }"
         }
     }

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2017, Chaos Software Ltd
+# Copyright (c) 2015-2018, Chaos Software Ltd
 #
 # V-Ray For Houdini
 #
@@ -16,7 +16,7 @@ from vfh import vfh_ptg_utils
 
 from pprint import pprint
 
-vfh_reload.reload(vfh_ptg_utils)
+vfh_reload.reload_module(vfh_ptg_utils)
 
 def _syncUiIPR(nodeDef):
     ptg = nodeDef.parmTemplateGroup()

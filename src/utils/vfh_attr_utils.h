@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -12,7 +12,6 @@
 #define VRAY_FOR_HOUDINI_VFH_ATTR_UTILS_H
 
 #include <OP/OP_Node.h>
-#include <OP/OP_Director.h>
 
 #include "vfh_vray.h"
 
@@ -24,56 +23,68 @@ const char VFH_ATTRIB_OBJECTID[] = "vray_objectID";
 const char VFH_ATTRIB_ANIM_OFFSET[] = "anim_offset";
 const char VFH_ATTR_SHOP_MATERIAL_STYLESHEET[] = "shop_materialstylesheet";
 
-/// Expands OP_Node path.
-/// @param path Path. May be changed if path has "op:/" syntax.
+/// Resolves OP_Node path. 
+/// @param node Attribute owner.
+/// @param attrName Attribute name.
 /// @param t Time.
-FORCEINLINE void expandOpNodePath(UT_String &path, fpreal t=0.0)
-{
-	if (path.startsWith(OPREF_PREFIX)) {
-#if 0
-		int op_id = 0;
-		fpreal op_time = 0.0;
-		OPgetDirector()->evalOpPathString(path, 0, 0, t, op_id, op_time);
-#endif
-	}
-}
+/// @returns Resolved path.
+UT_String getOpPathFromAttr(const OP_Node &node, const char *attrName, fpreal t=0.0);
 
-/// Returns OP_Node from path.
-/// @param path Path. May be changed if path has "op:/" syntax.
+/// Resolves OP_Node path. 
+/// @param node Attribute owner.
+/// @param attrName Attribute name.
 /// @param t Time.
-/// @returns OP_Node instance or NULL.
-FORCEINLINE OP_Node *getOpNodeFromPath(UT_String &path, fpreal t=0.0)
-{
-	expandOpNodePath(path, t);
-	return OPgetDirector()->findNode(path.buffer());
-}
+/// @returns Resolved path.
+UT_String getOpPathFromAttr(const OP_Node &node, const QString &attrName, fpreal t=0.0);
 
-/// Returns OP_Node from path.
+/// Resolves OP_Node from path. 
+/// @param node Attribute owner.
 /// @param path Path.
 /// @param t Time.
 /// @returns OP_Node instance or NULL.
-FORCEINLINE OP_Node *getOpNodeFromPath(const UT_String &path, fpreal t=0.0)
-{
-	UT_String newPath(path);
-	return getOpNodeFromPath(newPath, t);
-}
+OP_Node* getOpNodeFromPath(const OP_Node &node, const char *path, fpreal t=0.0);
 
-#define getCastOpNodeFromPath(PREFIX) \
-/*! Returns PREFIX##_Node from path. \
- * @param path Path. \
- * @param t Time. \
- * @returns PREFIX##_Node instance or NULL. \
- */ \
-FORCEINLINE PREFIX##_Node *get##PREFIX##NodeFromPath(const UT_String &path, fpreal t=0.0) \
-{ \
-	return CAST_##PREFIX##NODE(getOpNodeFromPath(path, t)); \
-}
+/// Resolves OP_Node from path attribute. 
+/// @param node Attribute owner.
+/// @param attrName Attribute name.
+/// @param t Time.
+/// @returns OP_Node instance or NULL.
+OP_Node* getOpNodeFromAttr(const OP_Node &node, const char *attrName, fpreal t=0.0);
 
-getCastOpNodeFromPath(OBJ)
-getCastOpNodeFromPath(SOP)
-getCastOpNodeFromPath(VOP)
-getCastOpNodeFromPath(COP2)
-getCastOpNodeFromPath(SHOP)
+/// Resolves OBJ_Node from path attribute. 
+/// @param node Attribute owner.
+/// @param attrName Attribute name.
+/// @param t Time.
+/// @returns OBJ_Node instance or NULL.
+OBJ_Node *getOBJNodeFromAttr(const OP_Node &node, const char *attrName, fpreal t = 0.0);
+
+/// Resolves SOP_Node from path attribute. 
+/// @param node Attribute owner.
+/// @param attrName Attribute name.
+/// @param t Time.
+/// @returns SOP_Node instance or NULL.
+SOP_Node *getSOPNodeFromAttr(const OP_Node &node, const char *attrName, fpreal t = 0.0);
+
+/// Resolves VOP_Node from path attribute. 
+/// @param node Attribute owner.
+/// @param attrName Attribute name.
+/// @param t Time.
+/// @returns VOP_Node instance or NULL.
+VOP_Node *getVOPNodeFromAttr(const OP_Node &node, const char *attrName, fpreal t = 0.0);
+
+/// Resolves COP2_Node from path attribute. 
+/// @param node Attribute owner.
+/// @param attrName Attribute name.
+/// @param t Time.
+/// @returns COP2_Node instance or NULL.
+COP2_Node *getCOP2NodeFromAttr(const OP_Node &node, const char *attrName, fpreal t = 0.0);
+
+/// Resolves SHOP_Node from path attribute. 
+/// @param node Attribute owner.
+/// @param attrName Attribute name.
+/// @param t Time.
+/// @returns SHOP_Node instance or NULL.
+SHOP_Node *getSHOPNodeFromAttr(const OP_Node &node, const char *attrName, fpreal t = 0.0);
 
 /// Converts M3 to M4 leaving the offset 0.0.
 /// @param m3 UT_Matrix3T matrix.
