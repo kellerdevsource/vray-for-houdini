@@ -29,7 +29,7 @@ void PhxShaderCache::channelsMenuGenerator(void *data, PRM_Name *choicenames, in
 		return;
 	}
 
-	UT_StringArray phxChannels = phxCache->getChannelsNames();
+	const UT_StringArray &phxChannels = phxCache->getChannelsNames(OPgetDirector()->getTime());
 		
 	choicenames[0].setTokenAndLabel("0", "None");
 	for (int idx = 0; idx < phxChannels.size(); ++idx) {
@@ -72,21 +72,33 @@ PhxShaderCache::PhxShaderCache(OP_Network *parent, const char *name, OP_Operator
 	, m_phxChannels()
 {}
 
-UT_StringArray & PhxShaderCache::getChannelsNames(fpreal t /*= -1.f*/) const
+const UT_StringArray &PhxShaderCache::getChannelsNames(fpreal t) const
 {
 	// Channels depend on the file not the time
 	if (!m_pathChanged || m_phxChannels.size() != 0) {
 		return m_phxChannels;
 	}
-	
-	// Default value is current time
-	t = (t >= 0.f) ? t : OPgetDirector()->getTime();
 
 	UT_StringHolder cachePath = evalCachePath(t, false);
 	m_phxChannels = PhxChannelsUtils::loadChannelsNames(cachePath);
 
 	m_pathChanged = false;
 	return m_phxChannels;
+}
+
+
+UT_String PhxShaderCache::getChannelsMapping(fpreal t)
+{
+	UT_StringHolder cachePath = evalCachePath(t, false);
+	int channelValue[PhxChannelsUtils::CHANNEL_COUNT];
+
+	for (int c = 0; c < PhxChannelsUtils::CHANNEL_COUNT; ++c) {
+		const PhxChannelsUtils::ChannelInfo &channel = PhxChannelsUtils::chInfo[c];
+		// -1 because of the 'None' value in the beginning of menu
+		channelValue[c] = evalInt(channel.propName, 0, t) - 1;
+	}
+
+	return PhxChannelsUtils::buildChannelsMapping(cachePath, channelValue);
 }
 
 bool PhxShaderCache::isSamePath(const OP_Options &options) const
@@ -175,8 +187,11 @@ void PhxShaderCache::updatePrimitive(const OP_Context &context)
 
 	primOptions.setOptionF("current_frame", isTimeDependent ? context.getFloatFrame() : 0.0);
 
-	UT_StringArray phxChanMap = getChannelsNames(t);
+	const UT_StringArray &phxChanMap = getChannelsNames(t);
 	primOptions.setOptionSArray("phx_channel_map", phxChanMap);
+
+	UT_String usrchmap = getChannelsMapping(t);
+	primOptions.setOptionS("usrchmap", usrchmap);
 
 	updatePrimitiveFromOptions(primOptions);
 }

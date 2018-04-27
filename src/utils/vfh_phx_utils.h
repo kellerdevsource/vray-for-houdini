@@ -60,7 +60,13 @@ static constexpr ChannelInfo chInfo[] = {
 static constexpr int CHANNEL_COUNT = COUNT_OF(chInfo) - 1;
 static constexpr int MAX_CHAN_MAP_LEN = 2048;
 
-UT_StringArray loadChannelsNames(const char* loadPath);
+/// Loads the channel names for @param cachePath
+UT_StringArray loadChannelsNames(const char* cachePath);
+
+/// The default channels mapping for the @param cachePath
+UT_String loadDefaultMapping(const char *cachePath);
+
+UT_String buildChannelsMapping(const char *cachePath, const int mappedChannels[MAX_CHAN_MAP_LEN]);
 
 } // namespace PhxChannelsUtils
 
@@ -91,15 +97,15 @@ static const QRegularExpression houFramePattern("\\$F[0-9]+");
 /// @retval The frame number that is needed
 int evalCacheFrame(fpreal frame, exint max_length, fpreal play_speed, exint anim_mode, fpreal t2f, exint play_at, exint load_nearest, exint read_offset);
 
-/// From a path with Phoenix frame pattern to a real file path
+/// From a cachePath with Phoenix frame pattern to a real file cachePath
 /// for example: from './vdb/hou-####.vdb' './vdb/hou-0013.vdb'
-/// @param path Path with some '#'s in it
+/// @param cachePath Path with some '#'s in it
 /// @param frame The number to replace the '#'s with
-void evalPhxPattern(QString &path, exint frame);
+void evalPhxPattern(QString &cachePath, exint frame);
 
 /// Replaces Houdini current frame pattern($F) with Phoenix FD current frame pattern(##) if found
-/// @param path Path with $F in it
-void hou2PhxPattern(QString& path);
+/// @param cachePath Path with $F in it
+void hou2PhxPattern(QString& cachePath);
 
 } // namespace PhxAnimUtils
 } // namespace VRayForHoudini

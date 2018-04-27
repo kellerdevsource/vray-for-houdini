@@ -170,9 +170,6 @@ private:
 	/// @return - -1 if in full resolution, negative not equal to -1 if invalid key
 	i64 getCurrentCacheVoxelCount() const;
 
-	/// Build channel mapping, should be called after update to cache or ui mappings
-	void buildMapping();
-
 	mutable VolumeCacheData m_currentData;
 
 	/// True if channel mapping have changed since we last built them.
