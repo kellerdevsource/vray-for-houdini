@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -7,6 +7,8 @@
 //
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
+
+#include "vfh_dso_version.h"
 
 #include "vfh_defines.h"
 #include "vfh_class_utils.h"
@@ -42,10 +44,6 @@
 #include <SHOP/SHOP_Node.h>
 #include <SHOP/SHOP_Operator.h>
 
-#ifndef MAKING_DSO
-#  define MAKING_DSO
-#endif
-#include <UT/UT_DSOVersion.h>
 #include <UT/UT_Exit.h>
 #include <UT/UT_IOTable.h>
 #include <GU/GU_Detail.h>

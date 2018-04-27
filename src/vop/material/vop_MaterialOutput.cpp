@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -16,7 +16,6 @@
 #include <OP/OP_Input.h>
 #include <UT/UT_Version.h>
 
-#include <boost/format.hpp>
 #include <unordered_set>
 
 using namespace VRayForHoudini;

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -90,7 +90,7 @@ struct MtlOverrideItem {
 	QString valueString;
 };
 
-typedef VUtils::StringHashMap<MtlOverrideItem> MtlOverrideItems;
+typedef QMap<QString, MtlOverrideItem> MtlOverrideItems;
 
 enum OverrideAppendMode {
 	overrideAppend = 0, ///< Append new keys only.

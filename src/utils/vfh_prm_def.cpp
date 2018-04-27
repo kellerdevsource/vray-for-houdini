@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -8,15 +8,10 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vfh_defines.h"
 #include "vfh_prm_def.h"
 
 using namespace VRayForHoudini;
-using namespace VRayForHoudini::Parm;
-
-boost::format Parm::FmtPrefix("%s_");
-boost::format Parm::FmtPrefixAuto("%s_%s");
-boost::format Parm::FmtPrefixManual("%s%s");
+using namespace Parm;
 
 bool Parm::isVRayParm(const PRM_Template *parm)
 {

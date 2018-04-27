@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -116,10 +116,10 @@ OP::VRayNode::PluginResult VOP::BRDFScanned::asPluginDesc(Attrs::PluginDesc &plu
 	VRay::IntList parmBlock;
 	VRay::ScannedMaterialLicenseError err;
 	if (VRay::encodeScannedMaterialParams(parms, parmBlock, err)) {
-		pluginDesc.addAttribute(Attrs::PluginAttr("param_block", parmBlock));
+		pluginDesc.add(Attrs::PluginAttr("param_block", parmBlock));
 	}
 	else {
-		pluginDesc.addAttribute(Attrs::PluginAttr("param_block", 0));
+		pluginDesc.add(Attrs::PluginAttr("param_block", 0));
 	}
 
 	return PluginResult::PluginResultContinue;

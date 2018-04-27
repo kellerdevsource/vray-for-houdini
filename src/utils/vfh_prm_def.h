@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -14,23 +14,11 @@
 #include "vfh_vray.h"
 #include "vfh_prm_defaults.h"
 
-#include <PRM/PRM_Name.h>
-#include <PRM/PRM_Shared.h>
-#include <PRM/PRM_ChoiceList.h>
-#include <PRM/PRM_Template.h>
-#include <PRM/PRM_Range.h>
-
 // For VOP_Type
 #include <VOP/VOP_Node.h>
 
-#include <boost/format.hpp>
-
 namespace VRayForHoudini {
 namespace Parm {
-
-extern boost::format FmtPrefix;
-extern boost::format FmtPrefixAuto;
-extern boost::format FmtPrefixManual;
 
 /// Type of parameter values
 enum ParmType {
@@ -78,16 +66,16 @@ enum ParmSubtype {
 struct ParmDefValue {
 	/// Descriptor for a color ramp param
 	struct ParmRampDesc {
-		std::string colors; ///< The name of the property for values
-		std::string positions; ///< The name of the property for positions
-		std::string interpolations; ///< The name of the property for interpolations
+		QString colors; ///< The name of the property for values
+		QString positions; ///< The name of the property for positions
+		QString interpolations; ///< The name of the property for interpolations
 	};
 
 	/// Descriptor for a curve param
 	struct ParmCurveDesc {
-		std::string positions; ///< The name of the property for positions
-		std::string values; ///< The name of the property for values
-		std::string interpolations; ///< The name of the property for itnerpolations
+		QString positions; ///< The name of the property for positions
+		QString values; ///< The name of the property for values
+		QString interpolations; ///< The name of the property for itnerpolations
 	};
 
 	ParmDefValue()
@@ -119,13 +107,13 @@ struct AttrDesc {
 	{}
 
 	/// Plugin attribute name.
-	VUtils::CharString attr;
+	QString attr;
 
 	/// UI label.
-	VUtils::CharString label;
+	QString label;
 
 	/// UI help.
-	VUtils::CharString desc;
+	QString desc;
 
 	/// Value type for this parameter.
 	ParmDefValue value;
@@ -134,32 +122,27 @@ struct AttrDesc {
 	uint32_t flags;
 };
 
-typedef VUtils::StringHashMap<AttrDesc> AttributeDescs;
+typedef QMap<QString, AttrDesc> AttributeDescs;
 
 struct SocketDesc {
-	SocketDesc()
-		: attrType(eUnknown)
-		, socketType(VOP_TYPE_UNDEF)
-	{}
-
 	/// UI label.
-	VUtils::CharString label;
+	QString label;
 
 	/// Plugin attribute name.
 	/// May be empty for the default outputs.
-	VUtils::CharString attrName;
+	QString attrName;
 
 	/// Plugin attribute type.
-	ParmType attrType;
+	ParmType attrType = eUnknown;
 
 	/// UI token.
-	VUtils::CharString socketLabel;
+	QString socketLabel;
 
 	/// Socket type.
-	VOP_Type socketType;
+	VOP_Type socketType = VOP_TYPE_UNDEF;
 };
 
-typedef VUtils::Table<SocketDesc, 10> VRayNodeSockets;
+typedef QList<SocketDesc> VRayNodeSockets;
 
 /// Returns true if current parameter template represents V-Ray Plugin parameter.
 /// @param prm PRM_Parm instance. May be nullptr.

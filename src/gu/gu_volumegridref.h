@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -169,9 +169,6 @@ private:
 	/// Gets count of voxels in cache (in current resolution)
 	/// @return - -1 if in full resolution, negative not equal to -1 if invalid key
 	i64 getCurrentCacheVoxelCount() const;
-
-	/// Build channel mapping, should be called after update to cache or ui mappings
-	void buildMapping();
 
 	mutable VolumeCacheData m_currentData;
 

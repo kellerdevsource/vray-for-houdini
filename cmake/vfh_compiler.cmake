@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2017, Chaos Software Ltd
+# Copyright (c) 2015-2018, Chaos Software Ltd
 #
 # V-Ray For Houdini
 #
@@ -7,8 +7,6 @@
 #
 # Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 #
-
-option(WITH_WARNINGS "Enable all warnings" OFF)
 
 if(APPLE)
 	set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9)
@@ -44,9 +42,7 @@ macro(set_compiler_flags)
 		set(CMAKE_CXX_FLAGS "/EHsc /GT /bigobj")
 
 		# Houdini specific warnings
-		if(NOT WITH_WARNINGS)
-			set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4355 /w14996")
-		endif()
+		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4355 /w14996")
 
 		# Enable multi core compilation
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -15,13 +15,13 @@
 
 using namespace VRayForHoudini;
 
-static const std::string viewPluginRenderView("vfhRenderView");
-static const std::string viewPluginSettingsCamera("vfhSettingsCamera");
-static const std::string viewPluginSettingsCameraDof("vfhSettingsCameraDof");
-static const std::string viewPluginSettingsMotionBlur("vfhSettingsMotionBlur");
-static const std::string viewPluginStereoSettings("vfhStereoSettings");
-static const std::string viewPluginCameraPhysical("vfhCameraPhysical");
-static const std::string viewPluginCameraDefault("vfhCameraDefault");
+static const QString viewPluginRenderView("vfhRenderView");
+static const QString viewPluginSettingsCamera("vfhSettingsCamera");
+static const QString viewPluginSettingsCameraDof("vfhSettingsCameraDof");
+static const QString viewPluginSettingsMotionBlur("vfhSettingsMotionBlur");
+static const QString viewPluginStereoSettings("vfhStereoSettings");
+static const QString viewPluginCameraPhysical("vfhCameraPhysical");
+static const QString viewPluginCameraDefault("vfhCameraDefault");
 
 float VRayForHoudini::getFov(float aperture, float focal)
 {
@@ -97,12 +97,12 @@ static float getLensShift(const OBJ_Node &camera, OP_Context &context)
 
 PhysicalCameraMode VRayExporter::usePhysicalCamera(const OBJ_Node &camera) const
 {
-	static const std::string paramUsePhysCam("CameraPhysical_use");
+	static const char paramUsePhysCam[] = "CameraPhysical_use";
 
 	PhysicalCameraMode physCamMode = PhysicalCameraMode::modeNone;
 
 	if (Parm::isParmExist(camera, paramUsePhysCam)) {
-		if (camera.evalInt(paramUsePhysCam.c_str(), 0, 0.0)) {
+		if (camera.evalInt(paramUsePhysCam, 0, 0.0)) {
 			physCamMode = PhysicalCameraMode::modeUser;
 		}
 	}
@@ -575,13 +575,13 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 
 		// Need to remove plugins only for RT session.
 		if (isRtSession && !m_viewParams.firstExport) {
-			vray.removePlugin(viewPluginRenderView);
-			vray.removePlugin(viewPluginSettingsCamera);
-			vray.removePlugin(viewPluginSettingsCameraDof);
-			vray.removePlugin(viewPluginSettingsMotionBlur);
-			vray.removePlugin(viewPluginStereoSettings);
-			vray.removePlugin(viewPluginCameraPhysical);
-			vray.removePlugin(viewPluginCameraDefault);
+			vray.removePlugin(_toChar(viewPluginRenderView));
+			vray.removePlugin(_toChar(viewPluginSettingsCamera));
+			vray.removePlugin(_toChar(viewPluginSettingsCameraDof));
+			vray.removePlugin(_toChar(viewPluginSettingsMotionBlur));
+			vray.removePlugin(_toChar(viewPluginStereoSettings));
+			vray.removePlugin(_toChar(viewPluginCameraPhysical));
+			vray.removePlugin(_toChar(viewPluginCameraDefault));
 		}
 
 		if (viewParams.useCameraPhysical != PhysicalCameraMode::modeNone) {
@@ -610,8 +610,8 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		if (physCamChanged) {
 			Log::getLog().debug("VRayExporter::exportView: Updating PhysicalCamera...");
 
-			vray.removePlugin(viewPluginCameraPhysical);
-			vray.removePlugin(viewPluginRenderView);
+			vray.removePlugin(_toChar(viewPluginCameraPhysical));
+			vray.removePlugin(_toChar(viewPluginRenderView));
 
 			vray.setCamera(exportPhysicalCamera(*this, viewParams));
 		}

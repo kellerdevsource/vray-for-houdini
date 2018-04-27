@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_EXPORT_GEOM_H
 
 #include "vfh_vray.h"
+#include "vfh_typedefs.h"
 #include "vfh_export_primitive.h"
 #include "vfh_geoutils.h"
 
@@ -137,11 +138,11 @@ class VRayExporter;
 class VRayRendererNode;
 class ObjectExporter
 {
-	typedef VUtils::StringHashMap<PluginSet> OpPluginGenCache;
-	typedef VUtils::StringHashMap<VRay::Plugin> OpPluginCache;
-	typedef VUtils::HashMap<int, VRay::Plugin> PrimPluginCache;
-	typedef VUtils::HashMap<Hash::MHash, VRay::Plugin> HashPluginCache;
-	typedef VUtils::StringHashMap<VRay::Plugin> GeomNodeCache;
+	typedef QMap<QString, PluginSet> OpPluginGenCache;
+	typedef QMap<QString, VRay::Plugin> OpPluginCache;
+	typedef QMap<QString, VRay::Plugin> GeomNodeCache;
+	typedef QMap<int, VRay::Plugin> PrimPluginCache;
+	typedef QMap<Hash::MHash, VRay::Plugin> HashPluginCache;
 
 public:
 	explicit ObjectExporter(VRayExporter &pluginExporter);
@@ -213,6 +214,9 @@ public:
 	int getPluginFromCache(const char *key, VRay::Plugin &plugin) const;
 	void addPluginToCache(const char *key, VRay::Plugin &plugin);
 
+	int getPluginFromCache(const QString &key, VRay::Plugin &plugin) const;
+	void addPluginToCache(const QString &key, VRay::Plugin &plugin);
+
 	int getPluginFromCache(const OP_Node &opNode, VRay::Plugin &plugin) const;
 	void addPluginToCache(OP_Node &opNode, VRay::Plugin &plugin);
 
@@ -256,13 +260,16 @@ public:
 	void exportDetail(OBJ_Node &objNode, const GU_Detail &gdp, const GA_Range &primRange=GA_Range());
 
 	/// Export point particles data.
+	/// @param objNode OBJ_Node instance.
 	/// @param gdp Detail.
 	/// @param pointsMode Point particles rendering mode.
 	/// @returns Geometry plugin.
 	VRay::Plugin exportPointParticles(OBJ_Node &objNode, const GU_Detail &gdp, VMRenderPoints pointsMode);
 
 	/// Export point particle instancer.
+	/// @param objNode OBJ_Node instance.
 	/// @param gdp Detail.
+	/// @param isInstanceNode Flag indicating we're exporting "instance" node.
 	/// @returns Geometry plugin.
 	void exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gdp, int isInstanceNode=false);
 
@@ -276,7 +283,7 @@ public:
 
 	/// Instancer works only with Node plugins. This method will wrap geometry into
 	/// the Node plugin if needed.
-	/// @param geometry Geometry plugin instance.
+	/// @param primItem Instancer item.
 	/// @returns Node plugin instance.
 	VRay::Plugin getNodeForInstancerGeometry(const PrimitiveItem &primItem);
 

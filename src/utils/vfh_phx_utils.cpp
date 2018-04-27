@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -10,6 +10,8 @@
 //
 
 #include "vfh_phx_utils.h"
+
+#ifdef CGR_HAS_AUR
 
 #include <utils.h>
 #include <misc.h>
@@ -147,3 +149,5 @@ void VRayForHoudini::PhxAnimUtils::hou2PhxPattern(QString &cachePath)
 		cachePath.replace(houFramePattern, phxPattern);
 	}
 }
+
+#endif // CGR_HAS_AUR

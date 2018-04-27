@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini Python IPR Module
 //
@@ -22,6 +22,7 @@ using namespace VRayForHoudini;
 /// A typedef for render elements array.
 typedef std::vector<VRay::RenderElement> RenderElementsList;
 
+static const QString colorPass("C");
 static ImdisplayThread imdisplayThread;
 
 static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int x, int y)
@@ -39,7 +40,7 @@ static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int 
 
 	PlaneImages planes;
 
-	TileImage *rgbaImage = new TileImage(image, "C");
+	TileImage *rgbaImage = new TileImage(image, colorPass);
 	rgbaImage->setRegion(region);
 	planes.append(rgbaImage);
 
@@ -97,7 +98,7 @@ void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer, const char *rop
 	ImageHeaderMessage *imageHeaderMsg = new ImageHeaderMessage();
 	imageHeaderMsg->imageWidth = rendererOptions.imageWidth;
 	imageHeaderMsg->imageHeight = rendererOptions.imageHeight;
-	imageHeaderMsg->planeNames.append("C");
+	imageHeaderMsg->planeNames.append(colorPass);
 	imageHeaderMsg->ropName = ropName;
 
 	const VRay::RenderElements &reMan = renderer.getRenderElements();

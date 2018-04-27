@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -10,6 +10,10 @@
 
 #ifndef VRAY_FOR_HOUDINI_VRAY_H
 #define VRAY_FOR_HOUDINI_VRAY_H
+
+#include <QMap>
+#include <QSet>
+#include <QStringBuilder>
 
 #include <SYS/SYS_Types.h>
 
@@ -62,5 +66,7 @@ FORCEINLINE VUtils::TraceTransform toVutilsTm(const VRay::Transform &tm)
 			),
 			VUtils::Vector(tm.offset.x, tm.offset.y, tm.offset.z));
 }
+
+#define SL(x) QStringLiteral(x)
 
 #endif // VRAY_FOR_HOUDINI_VRAY_H

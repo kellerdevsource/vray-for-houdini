@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -11,6 +11,8 @@
 
 #ifndef VFH_PHX_CHANNELS_UTILS_H
 #define VFH_PHX_CHANNELS_UTILS_H
+
+#ifdef CGR_HAS_AUR
 
 #include <QString>
 #include <QRegularExpression>
@@ -108,4 +110,5 @@ void hou2PhxPattern(QString& cachePath);
 } // namespace PhxAnimUtils
 } // namespace VRayForHoudini
 
+#endif // CGR_HAS_AUR
 #endif // VFH_PHX_CHANNELS_UTILS_H

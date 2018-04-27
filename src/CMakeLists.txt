@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015-2017, Chaos Software Ltd
+# Copyright (c) 2015-2018, Chaos Software Ltd
 #
 # V-Ray For Houdini
 #
@@ -175,6 +175,7 @@ set(HEADERS
 	vfh_defines.h
 	vfh_includes.h
 	vfh_typedefs.h
+	vfh_dso_version.h
 	vop/brdf/vop_brdf_def.h
 	vop/brdf/vop_BRDFLayered.h
 	vop/brdf/vop_BRDFScanned.h
@@ -344,6 +345,7 @@ VFH_SDK_ROOT=\"${SDK_PATH}\"
 VFH_SRC_ROOT=\"${CMAKE_SOURCE_DIR}\"
 
 VRAY_APPSDK=\"${_appsdk_root}\"
+VRAY_OSL_PATH=\"$\{VRAY_APPSDK\}/bin\"
 VRAY_UI_DS_PATH=\"$\{VFH_SRC_ROOT\}/deploy/ui\"
 VRAY_FOR_HOUDINI_AURA_LOADERS=\"$\{VFH_SDK_ROOT\}/phxsdk/qt5/vc14/lib\"
 

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -8,13 +8,12 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
+#include "vfh_defines.h"
 #include "vfh_geoutils.h"
 
 #include <GA/GA_AttributeFilter.h>
 
-
 using namespace VRayForHoudini;
-
 
 namespace {
 
@@ -113,19 +112,9 @@ VRay::VUtils::CharStringRefList CharStringTable::toRefList() const
 {
 	VRay::VUtils::CharStringRefList refList(count());
 	for (int i = 0; i < count(); ++i) {
-		refList[i] = (*this)[i];
+		refList[i] = _toChar((*this)[i]);
 	}
 	return refList;
-}
-
-MapChannel::MapChannel(const MapChannel &other)
-	: type(other.type)
-	, vertices(other.vertices)
-	, faces(other.faces)
-	, verticesSet(other.verticesSet)
-	, stringToTableIndex(other.stringToTableIndex)
-{
-	strings.copy(other.strings);
 }
 
 GA_AttributeFilter& VRayForHoudini::GEOgetV3AttribFilter()

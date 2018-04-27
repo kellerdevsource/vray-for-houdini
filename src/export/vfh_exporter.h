@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -110,7 +110,7 @@ struct OpInterestItem {
 typedef std::vector<OpInterestItem> CbItems;
 
 struct ConnectedPluginInfo {
-	explicit ConnectedPluginInfo(VRay::Plugin plugin = VRay::Plugin(), const std::string &output = "")
+	explicit ConnectedPluginInfo(VRay::Plugin plugin = VRay::Plugin(), const QString &output = "")
 		: plugin(plugin)
 		, output(output)
 	{}
@@ -119,7 +119,7 @@ struct ConnectedPluginInfo {
 	VRay::Plugin plugin;
 
 	/// Connected output. May be empty.
-	std::string output;
+	QString output;
 };
 
 /// Vfh main exporter. This is the main class responsible for translating
@@ -239,7 +239,7 @@ public:
 
 	/// Tries to set displacement texture from path attribute.
 	/// Otherwise texture connected to socket will be used if found.
-	int exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const std::string &parmNamePrefix);
+	int exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const QString &parmNamePrefix);
 
 	int exportDisplacementFromSubdivInfo(const SubdivInfo &subdivInfo, Attrs::PluginDesc &pluginDesc);
 
@@ -299,7 +299,7 @@ public:
 	};
 
 	/// Fills defualt settings for default mapping.
-	void fillDefaultMappingDesc(DefaultMappingType mappingType, Attrs::PluginDesc &uvwgenDesc);
+	static void fillDefaultMappingDesc(DefaultMappingType mappingType, Attrs::PluginDesc &uvwgenDesc);
 
 	/// Exports image texture from "op:" or file path.
 	/// @param path String value: file or node path.
@@ -343,13 +343,13 @@ public:
 	/// file path must contain the name and extension of the destination file.
 	/// @param settings - Additional options such as compression and file splitting
 	/// @retval 0 - no error
-	int exportVrscene(const std::string &filepath, VRay::VRayExportSettings &settings);
+	int exportVrscene(const QString &filepath, VRay::VRayExportSettings &settings);
 
 	/// Delete plugins created for the given OBJ node.
 	void removePlugin(OBJ_Node *node);
 
 	/// Delete plugin with the given name
-	void removePlugin(const std::string &pluginName);
+	void removePlugin(const QString &pluginName);
 
 	/// Delete plugin.
 	/// @param plugin V-Ray plugin instance.
@@ -468,24 +468,23 @@ public:
 	/// @param op_node[in] - VOP node
 	/// @param inputName[in] -  the input connection name
 	/// @retval the VOP input
-	static OP_Input* getConnectedInput(OP_Node *op_node, const std::string &inputName);
-	static OP_Node* getConnectedNode(OP_Node *op_node, const std::string &inputName);
+	static OP_Input* getConnectedInput(OP_Node *op_node, const QString &inputName);
+	static OP_Node* getConnectedNode(OP_Node *op_node, const QString &inputName);
 
 	/// Helper function to retrieve the connection type given an input connection name
 	/// @param op_node[in] - VOP node
 	/// @param inputName[in] -  the input connection name
 	/// @retval the connection type
-	static const Parm::SocketDesc* getConnectedOutputType(OP_Node *op_node, const std::string &inputName);
+	static const Parm::SocketDesc* getConnectedOutputType(OP_Node *op_node, const QString &inputName);
 
 	/// Helper functions to generate a plugin name for a given node
-	/// @param opNode[in] - the node
-	/// @param prefix[in] - name prefix
-	/// @param suffix[in] - name suffix
+	/// @param opNode Node instance.
+	/// @param prefix Optional prefix.
+	/// @param suffix Optional suffix.
 	/// @returns Plugin name.
-	static std::string getPluginName(OP_Node *opNode, const std::string &prefix="", const std::string &suffix="");
-	static std::string getPluginName(const OP_Node &opNode, const char *prefix);
-	static std::string getPluginName(OBJ_Node *objNode);
-	static std::string getPluginName(OBJ_Node &objNode);
+	static QString getPluginName(const OP_Node &opNode, const QString &prefix=SL(""), const QString &suffix=SL(""));
+
+	static QString getPluginName(OBJ_Node &objNode);
 
 	static VRay::VUtils::CharStringRefList getSceneName(const OP_Node &opNode, int primID=-1);
 	static VRay::VUtils::CharStringRefList getSceneName(const tchar *name);
@@ -524,7 +523,7 @@ public:
 	/// Obtain the first child node with given operator type
 	/// @param op_node[in] - parent node
 	/// @param op_type[in] - operator name
-	static OP_Node* FindChildNodeByType(OP_Node *op_node, const std::string &op_type);
+	static OP_Node* FindChildNodeByType(OP_Node *op_node, const QString &op_type);
 
 	/// Helper function to fill in plugin description attributes from UT_options
 	/// @param pluginDesc[out] - the plugin description
@@ -537,21 +536,21 @@ public:
 	/// @param parmDesc[in] - plugin attribute description
 	/// @param opNode[in] - the node
 	/// @param parmName[in] - parameter name
-	void setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const std::string &parmName) const;
+	void setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const QString &parmName) const;
 
 	/// Helper function to fill in plugin description attributes from matching node parameters
 	/// @param pluginDesc[out] - the plugin description
 	/// @param opNode[in] - the node
 	/// @param prefix[in] - common prefix for the name of related parameters
 	/// @param remapInterp[in] - whether to remap ramp interpotaion type (used for ramp parameters)
-	void setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const std::string &prefix="", bool remapInterp=false);
+	void setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const QString &prefix="", bool remapInterp=false);
 
 	/// Converts different socket types
 	/// @param[out] conPluginInfo - generated connection plugin info
 	/// @param[in] curSockInfo - the socket 
 	/// @param[in] fromSocketInfo - type of the connection
 	/// @param[in] pluginDesc - the plugin description
-	void autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const Parm::SocketDesc &curSockInfo, const Parm::SocketDesc *fromSocketInfo, Attrs::PluginDesc &pluginDesc);
+	void autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const Parm::SocketDesc &curSockInfo, const Parm::SocketDesc &fromSocketInfo, Attrs::PluginDesc &pluginDesc);
 
 	/// Converts the input plugin to plugin of socket type if needed
 	/// @param[out] inputPlugin - the plugin connected to the socket
@@ -559,7 +558,7 @@ public:
 	/// @param[in] node - current node
 	/// @param[in] socketType - socket type
 	/// @param[in] socketName - socket name
-	void convertInputPlugin(VRay::Plugin& inputPlugin, Attrs::PluginDesc &pluginDesc, OP_Node* node, VOP_Type socketType, const char* socketName);
+	void convertInputPlugin(VRay::Plugin& inputPlugin, Attrs::PluginDesc &pluginDesc, OP_Node* node, VOP_Type socketType, const QString &socketName);
 
 	/// Helper function to fill in plugin description attributes from VOP node connected inputs
 	/// @param pluginDesc[out] - the plugin description

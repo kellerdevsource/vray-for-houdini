@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -46,7 +46,7 @@ struct DsFilesLocations
 
 	/// Returns *.ds file location.
 	/// @param fileName *.ds file name. Could be without extension.
-	QString getFilePath(const char *fileName) {
+	QString getFilePath(const QString &fileName) {
 		initFilesMap();
 
 		QFileInfo requestedFileInfo(fileName);
@@ -123,13 +123,13 @@ private:
 	int initialized;
 } dsFilesLocations;
 
-int VRayForHoudini::Parm::isParmExist(const OP_Node &node, const std::string &attrName)
+int VRayForHoudini::Parm::isParmExist(const OP_Node &node, const QString &attrName)
 {
 	int parmExist = false;
 
 	const PRM_ParmList *parmList = node.getParmList();
 	if (parmList) {
-		const PRM_Parm *param = parmList->getParmPtr(attrName.c_str());
+		const PRM_Parm *param = parmList->getParmPtr(_toChar(attrName));
 		if (param) {
 			parmExist = true;
 		}
@@ -168,25 +168,25 @@ const PRM_Parm* VRayForHoudini::Parm::getParm(const OP_Node &node, const int ind
 }
 
 
-const PRM_Parm *VRayForHoudini::Parm::getParm(const OP_Node &node, const std::string &attrName)
+const PRM_Parm *VRayForHoudini::Parm::getParm(const OP_Node &node, const QString &attrName)
 {
 	const PRM_Parm *param = nullptr;
 
 	const PRM_ParmList *parmList = node.getParmList();
 	if (parmList) {
-		param = parmList->getParmPtr(attrName.c_str());
+		param = parmList->getParmPtr(_toChar(attrName));
 	}
 
 	return param;
 }
 
 
-int VRayForHoudini::Parm::getParmInt(const OP_Node &node, const std::string &attrName, fpreal t)
+int VRayForHoudini::Parm::getParmInt(const OP_Node &node, const QString &attrName, fpreal t)
 {
 	int value = 0;
 
 	if (isParmExist(node, attrName)) {
-		value = node.evalInt(attrName.c_str(), 0, t);
+		value = node.evalInt(_toChar(attrName), 0, t);
 	}
 
 	return value;
@@ -206,61 +206,62 @@ int Parm::getParmEnum(const OP_Node &opNode, const char *name, int defaultValue,
 	return value;
 }
 
-float VRayForHoudini::Parm::getParmFloat(const OP_Node &node, const std::string &attrName, fpreal t)
+float VRayForHoudini::Parm::getParmFloat(const OP_Node &node, const QString &attrName, fpreal t)
 {
 	float value = 0.0f;
 
 	if (isParmExist(node, attrName)) {
-		value = node.evalFloat(attrName.c_str(), 0, t);
+		value = node.evalFloat(_toChar(attrName), 0, t);
 	}
 
 	return value;
 }
 
 
-std::string Parm::expandUiPath(const char *filePath)
+QString Parm::expandUiPath(const QString &filePath)
 {
-	return dsFilesLocations.getFilePath(filePath).toStdString();
+	return dsFilesLocations.getFilePath(filePath);
 }
 
 
-bool Parm::addPrmTemplateForPlugin(const std::string &pluginID, Parm::PRMList &prmList)
+bool Parm::addPrmTemplateForPlugin(const QString &pluginID, Parm::PRMList &prmList)
 {
-	if (pluginID.empty()) {
+	if (pluginID.isEmpty()) {
 		return false;
 	}
 
-	const std::string dsfullpath = Parm::expandUiPath(pluginID.c_str());
-	if (dsfullpath.empty()) {
+	const QString dsfullpath = Parm::expandUiPath(pluginID);
+	if (dsfullpath.isEmpty()) {
 		return false;
 	}
 
-	prmList.addFromFile( dsfullpath.c_str() );
+	prmList.addFromFile( dsfullpath );
 	return true;
 }
 
+typedef QMap<QString, Parm::PRMList> PRMListMap;
 
-Parm::PRMList* Parm::generatePrmTemplate(const std::string &pluginID)
+static PRMListMap prmListMap;
+
+Parm::PRMList* Parm::generatePrmTemplate(const QString &pluginID)
 {
-	typedef std::unordered_map<std::string, PRMList> PRMListMap;
-	static PRMListMap prmListMap;
+	const PRMListMap::iterator it = prmListMap.find(pluginID);
+	if (it != prmListMap.end())
+		return &it.value();
 
-	if (prmListMap.count(pluginID) == 0) {
-		PRMList &prmList = prmListMap[pluginID];
-		addPrmTemplateForPlugin(pluginID, prmList);
-	}
+	PRMList &prmList = prmListMap[pluginID];
 
-	PRMList &prmList = prmListMap.at(pluginID);
+	addPrmTemplateForPlugin(pluginID, prmList);
 
 	return &prmList;
 }
 
 
-PRM_Template* Parm::getPrmTemplate(const std::string &pluginID)
+PRM_Template* Parm::getPrmTemplate(const QString &pluginID)
 {
 	Parm::PRMList *prmList = generatePrmTemplate(pluginID);
 	if (!prmList) {
-		Log::getLog().warning("No parameter template generated for plugin %s.", pluginID.c_str());
+		Log::getLog().warning("No parameter template generated for plugin %s.", pluginID);
 	}
 
 	return (prmList)? prmList->getPRMTemplate() : nullptr;
@@ -310,20 +311,15 @@ void Parm::PRMList::setCookDependent(PRM_Template tmpl[], bool recook)
 
 void Parm::PRMList::renamePRMTemplate(PRM_Template tmpl[], const char *prefix)
 {
-	if (   !tmpl
-		|| !UTisstring(prefix))
-	{
+	if (!tmpl || !UTisstring(prefix))
 		return;
-	}
-
-	static boost::format prmname("%s_%s");
 
 	for (int i = 0; tmpl[i].getType() != PRM_LIST_TERMINATOR; ++i) {
 		if (tmpl[i].getType() != PRM_SWITCHER) {
 			PRM_Name *name = tmpl[i].getNamePtr();
 			if (name) {
-				const std::string prmtoken = boost::str(prmname % prefix % name->getToken()) ;
-				name->setToken(prmtoken.c_str());
+				const QString prmtoken = QString("%1_%2").arg(prefix).arg(name->getToken());
+				name->setToken(_toChar(prmtoken));
 				name->harden();
 			}
 		}
@@ -331,9 +327,6 @@ void Parm::PRMList::renamePRMTemplate(PRM_Template tmpl[], const char *prefix)
 }
 
 
-/////////                         VfhPRMList definition
-///
-///
 Parm::PRMList::PRMList():
 	m_prmVec(1)
 {
@@ -443,7 +436,7 @@ Parm::PRMList& Parm::PRMList::addFolder(const char *label)
 }
 
 
-Parm::PRMList& Parm::PRMList::addFromFile(const char *dsFileName)
+Parm::PRMList& Parm::PRMList::addFromFile(const QString &dsFileName)
 {
 	const QString &dsFilePath = dsFilesLocations.getFilePath(dsFileName);
 	const DsFilesLocations::DsIncludePaths &incPaths = dsFilesLocations.getIncludePaths();
@@ -537,13 +530,14 @@ Parm::PRMList& Parm::PRMList::addFromPRMTemplate(const PRM_Template tmpl[])
 				if (tmpl[idx].getType() == PRM_SWITCHER) {
 					// add entry for the switcher in our switcher list
 					m_switcherList.emplace_back(this->size());
-					SwitcherInfo &swinfo = m_switcherList.back();
-					swinfo.m_folders.reserve(tmpl[idx].getVectorSize());
 
-					PRM_Default *prmdeflist = tmpl[idx].getFactoryDefaults();
+					SwitcherInfo &curSwitcherInfo = m_switcherList.back();
+					curSwitcherInfo.m_folders.reserve(tmpl[idx].getVectorSize());
+
+					PRM_Default *curPrmDef = tmpl[idx].getFactoryDefaults();
 					for (int j = 0; j < tmpl[idx].getVectorSize(); ++j) {
-						PRM_Default &prmdef = prmdeflist[j];
-						swinfo.m_folders.emplace_back(prmdef.getOrdinal(), prmdef.getString());
+						const PRM_Default &prmdef = curPrmDef[j];
+						curSwitcherInfo.m_folders.emplace_back(prmdef.getOrdinal(), prmdef.getString());
 					}
 				}
 				// add the parameter
@@ -761,8 +755,8 @@ Parm::PRMFactory::PRMFactory(const PRM_Type &type, const char *token, const char
 }
 
 
-Parm::PRMFactory::PRMFactory(const PRM_Type &type, const std::string &token, const std::string &label):
-	m_prm(new PImplPRM(token.c_str(), label.c_str()))
+Parm::PRMFactory::PRMFactory(const PRM_Type &type, const QString &token, const QString &label):
+	m_prm(new PImplPRM(_toChar(token), _toChar(label)))
 {
 	m_prm->type = type;
 }
@@ -775,8 +769,8 @@ Parm::PRMFactory::PRMFactory(const PRM_MultiType &multiType, const char *token, 
 }
 
 
-Parm::PRMFactory::PRMFactory(const PRM_MultiType &multiType, const std::string &token, const std::string &label):
-	m_prm(new PImplPRM(token.c_str(), label.c_str()))
+Parm::PRMFactory::PRMFactory(const PRM_MultiType &multiType, const QString &token, const QString &label):
+	m_prm(new PImplPRM(_toChar(token), _toChar(label)))
 {
 	m_prm->multiType = multiType;
 }
@@ -810,10 +804,9 @@ Parm::PRMFactory& Parm::PRMFactory::setName(const char *token, const char *label
 }
 
 
-Parm::PRMFactory& Parm::PRMFactory::setName(const std::string &token, const std::string &label)
+Parm::PRMFactory& Parm::PRMFactory::setName(const QString &token, const QString &label)
 {
-	m_prm->setName(token.c_str(), label.c_str());
-	return *this;
+	return setName(_toChar(token), _toChar(label));
 }
 
 
@@ -845,9 +838,9 @@ Parm::PRMFactory& Parm::PRMFactory::setDefault(fpreal f, const char *s, CH_Strin
 }
 
 
-Parm::PRMFactory& Parm::PRMFactory::setDefault(const std::string &s, CH_StringMeaning meaning)
+Parm::PRMFactory& Parm::PRMFactory::setDefault(const QString &s, CH_StringMeaning meaning)
 {
-	m_prm->defaults = createPRMDefaut(0.0, ::strdup(s.c_str()), meaning);
+	m_prm->defaults = createPRMDefaut(0.0, ::strdup(_toChar(s)), meaning);
 	return *this;
 }
 

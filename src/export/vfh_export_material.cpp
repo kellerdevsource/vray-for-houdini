@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -19,6 +19,8 @@
 #include <OP/OP_Options.h>
 
 using namespace VRayForHoudini;
+
+static const QString clayMaterial("Mtl@Clay");
 
 void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
@@ -51,17 +53,19 @@ VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
 	const VOP_Type vopType = vopNode->getShaderType();
 	if (vopType == VOP_TYPE_BSDF) {
 		// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly.
-		Attrs::PluginDesc mtlPluginDesc(getPluginName(vopNode, "MtlSingle"), "MtlSingleBRDF");
-		mtlPluginDesc.addAttribute(Attrs::PluginAttr("brdf", material));
-		mtlPluginDesc.addAttribute(Attrs::PluginAttr("scene_name", getSceneName(*vopNode)));
+		Attrs::PluginDesc mtlPluginDesc(getPluginName(*vopNode, SL("MtlSingle")),
+		                                SL("MtlSingleBRDF"));
+		mtlPluginDesc.add(Attrs::PluginAttr(SL("brdf"), material));
+		mtlPluginDesc.add(Attrs::PluginAttr(SL("scene_name"), getSceneName(*vopNode)));
 		material = exportPlugin(mtlPluginDesc);
 	}
 
 	if (material.isNotEmpty() && isInteractive()) {
 		// Wrap material into MtlRenderStats to always have the same material name.
 		// Used when rewiring materials when running interactive RT session.
-		Attrs::PluginDesc pluginDesc(getPluginName(vopNode, "MtlStats"), "MtlRenderStats");
-		pluginDesc.addAttribute(Attrs::PluginAttr("base_mtl", material));
+		Attrs::PluginDesc pluginDesc(getPluginName(*vopNode, SL("MtlStats")),
+		                             SL("MtlRenderStats"));
+		pluginDesc.add(Attrs::PluginAttr(SL("base_mtl"), material));
 		material = exportPlugin(pluginDesc);
 	}
 
@@ -112,15 +116,13 @@ VRay::Plugin VRayExporter::exportDefaultMaterial()
 {
 	VRay::Plugin material;
 
-	static const char clayMaterial[] = "Mtl@Clay";
-
 	if (!objectExporter.getPluginFromCache(clayMaterial, material)) {
-		Attrs::PluginDesc brdfDesc("BRDFDiffuse@Clay", "BRDFDiffuse");
-		brdfDesc.addAttribute(Attrs::PluginAttr("color", 0.5f, 0.5f, 0.5f));
+		Attrs::PluginDesc brdfDesc(SL("BRDFDiffuse@Clay"), SL("BRDFDiffuse"));
+		brdfDesc.add(Attrs::PluginAttr(SL("color"), 0.5f, 0.5f, 0.5f));
 
-		Attrs::PluginDesc mtlDesc(clayMaterial, "MtlSingleBRDF");
-		mtlDesc.addAttribute(Attrs::PluginAttr("brdf", exportPlugin(brdfDesc)));
-		mtlDesc.addAttribute(Attrs::PluginAttr("scene_name", getSceneName("DEFAULT_MATERIAL")));
+		Attrs::PluginDesc mtlDesc(clayMaterial, SL("MtlSingleBRDF"));
+		mtlDesc.add(Attrs::PluginAttr(SL("brdf"), exportPlugin(brdfDesc)));
+		mtlDesc.add(Attrs::PluginAttr(SL("scene_name"), getSceneName("DEFAULT_MATERIAL")));
 		material = exportPlugin(mtlDesc);
 
 		objectExporter.addPluginToCache(clayMaterial, material);
@@ -137,7 +139,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 		return;
 	}
 
-	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID.c_str());
+	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID);
 	if (!pluginInfo) {
 		return;
 	}
@@ -154,10 +156,11 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 
 		UT_String inpName;
 		vopNode.getInputName(inpName, inpidx);
-		const std::string attrName = inpName.toStdString();
+
+		const QString attrName(inpName.buffer());
 		// plugin doesn't have such attribute or
 		// it has already been exported
-		if (!pluginInfo->hasAttribute(attrName.c_str()) ||
+		if (!pluginInfo->hasAttribute(attrName) ||
 			pluginDesc.contains(attrName))
 		{
 			continue;
@@ -177,38 +180,38 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 
 			const VRay::Plugin opPlugin = exportNodeFromPath(path);
 			if (opPlugin.isNotEmpty()) {
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, opPlugin));
+				pluginDesc.add(Attrs::PluginAttr(attrName, opPlugin));
 			}
 		}
 
 		if (!prmType.isFloatType())
 			continue;
 
-		const Parm::AttrDesc &attrDesc = pluginInfo->getAttribute(attrName.c_str());
+		const Parm::AttrDesc &attrDesc = pluginInfo->getAttribute(attrName);
 		switch (attrDesc.value.type) {
 			case Parm::eBool:
 			case Parm::eEnum:
 			case Parm::eInt:
 			case Parm::eTextureInt:
 			{
-				Attrs::PluginDesc mtlOverrideDesc(VRayExporter::getPluginName(&vopNode, attrName), "TexUserScalar");
-				mtlOverrideDesc.addAttribute(Attrs::PluginAttr("default_value", creator->evalInt(prm, 0, t)));
-				mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", prm->getToken()));
+				Attrs::PluginDesc mtlOverrideDesc(getPluginName(vopNode, attrName), SL("TexUserScalar"));
+				mtlOverrideDesc.add(Attrs::PluginAttr("default_value", creator->evalInt(prm, 0, t)));
+				mtlOverrideDesc.add(Attrs::PluginAttr("user_attribute", prm->getToken()));
 
 				VRay::Plugin overridePlg = exportPlugin(mtlOverrideDesc);
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, overridePlg, "scalar"));
+				pluginDesc.add(Attrs::PluginAttr(attrName, overridePlg, "scalar"));
 
 				break;
 			}
 			case Parm::eFloat:
 			case Parm::eTextureFloat:
 			{
-				Attrs::PluginDesc mtlOverrideDesc(VRayExporter::getPluginName(&vopNode, attrName), "TexUserScalar");
-				mtlOverrideDesc.addAttribute(Attrs::PluginAttr("default_value", creator->evalFloat(prm, 0, t)));
-				mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", prm->getToken()));
+				Attrs::PluginDesc mtlOverrideDesc(getPluginName(vopNode, attrName), SL("TexUserScalar"));
+				mtlOverrideDesc.add(Attrs::PluginAttr("default_value", creator->evalFloat(prm, 0, t)));
+				mtlOverrideDesc.add(Attrs::PluginAttr("user_attribute", prm->getToken()));
 
 				VRay::Plugin overridePlg = exportPlugin(mtlOverrideDesc);
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, overridePlg, "scalar"));
+				pluginDesc.add(Attrs::PluginAttr(attrName, overridePlg, "scalar"));
 
 				break;
 			}
@@ -216,20 +219,20 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			case Parm::eAColor:
 			case Parm::eTextureColor:
 			{
-				Attrs::PluginDesc mtlOverrideDesc(VRayExporter::getPluginName(&vopNode, attrName), "TexUserColor");
+				Attrs::PluginDesc mtlOverrideDesc(getPluginName(vopNode, attrName), SL("TexUserColor"));
 
 				Attrs::PluginAttr attr("default_color", Attrs::PluginAttr::AttrTypeAColor);
 				for (int i = 0; i < std::min(prm->getVectorSize(), 4); ++i) {
 					attr.paramValue.valVector[i] = creator->evalFloat(prm, i, t);
 				}
-				mtlOverrideDesc.addAttribute(attr);
-				mtlOverrideDesc.addAttribute(Attrs::PluginAttr("user_attribute", prm->getToken()));
+				mtlOverrideDesc.add(attr);
+				mtlOverrideDesc.add(Attrs::PluginAttr("user_attribute", prm->getToken()));
 
 				// Set priority to user attribute.
-				mtlOverrideDesc.addAttribute(Attrs::PluginAttr("attribute_priority", 1));
+				mtlOverrideDesc.add(Attrs::PluginAttr("attribute_priority", 1));
 
 				VRay::Plugin mtlOverridePlg = exportPlugin(mtlOverrideDesc);
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, mtlOverridePlg, "color"));
+				pluginDesc.add(Attrs::PluginAttr(attrName, mtlOverridePlg, "color"));
 
 				break;
 			}
@@ -240,7 +243,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 					v[i] = creator->evalFloat(prm->getToken(), i, t);
 				}
 
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, v));
+				pluginDesc.add(Attrs::PluginAttr(attrName, v));
 				break;
 			}
 			case Parm::eMatrix:
@@ -253,7 +256,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 					m[i][j] = creator->evalFloat(prm->getToken(), k, t);
 				}
 
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, m));
+				pluginDesc.add(Attrs::PluginAttr(attrName, m));
 				break;
 			}
 			case Parm::eTransform:
@@ -275,7 +278,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 					}
 				}
 
-				pluginDesc.addAttribute(Attrs::PluginAttr(attrName, tm));
+				pluginDesc.add(Attrs::PluginAttr(attrName, tm));
 				break;
 			}
 			default:

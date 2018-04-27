@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -30,7 +30,7 @@ VOP_Type VOP::NodeBase::getShaderType() const
 
 bool VOP::NodeBase::updateParmsFlags()
 {
-	bool changed = VOP_Node::updateParmsFlags();
+	const bool changed = VOP_Node::updateParmsFlags();
 	return changed;
 }
 
@@ -48,20 +48,20 @@ const char* VOP::NodeBase::inputLabel(unsigned idx) const
 {
 	if (idx >= pluginInfo->inputs.count())
 		return nullptr;
-	return pluginInfo->inputs[idx].socketLabel.ptr();
+	return _toChar(pluginInfo->inputs[idx].socketLabel);
 }
 
 void VOP::NodeBase::getInputNameSubclass(UT_String &name, int idx) const
 {
 	if (idx < 0 || idx >= pluginInfo->inputs.count())
 		return;
-	name = pluginInfo->inputs[idx].socketLabel.ptr();
+	name = _toChar(pluginInfo->inputs[idx].socketLabel);
 }
 
 int VOP::NodeBase::getInputFromNameSubclass(const UT_String &name) const
 {
 	for (int i = 0; i < pluginInfo->inputs.count(); ++i) {
-		if (name.equal(pluginInfo->inputs[i].socketLabel.ptr())) {
+		if (name.equal(_toChar(pluginInfo->inputs[i].socketLabel))) {
 			return i;
 		}
 	}
@@ -167,20 +167,20 @@ const char* VOP::NodeBase::outputLabel(unsigned idx) const
 	if (idx >= pluginInfo->outputs.count())
 		return nullptr;
 
-	return pluginInfo->outputs[idx].socketLabel.ptr();
+	return _toChar(pluginInfo->outputs[idx].socketLabel);
 }
 
 void VOP::NodeBase::getOutputNameSubclass(UT_String &name, int idx) const
 {
 	if (idx < 0 || idx >= pluginInfo->outputs.count())
 		return;
-	name = pluginInfo->outputs[idx].socketLabel.ptr();
+	name = _toChar(pluginInfo->outputs[idx].socketLabel);
 }
 
 int VOP::NodeBase::getOutputFromName(const UT_String &name) const
 {
 	for (int i = 0; i < pluginInfo->outputs.count(); ++i) {
-		if (name.equal(pluginInfo->outputs[i].socketLabel.ptr())) {
+		if (name.equal(_toChar(pluginInfo->outputs[i].socketLabel))) {
 			return i;
 		}
 	}
@@ -194,20 +194,28 @@ void VOP::NodeBase::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 	type_info.setType(pluginInfo->outputs[idx].socketType);
 }
 
-const char *VOP::NodeBase::getCreateSocketLabel(int socketIndex, const char *nameFormat) const
+const char *VOP::NodeBase::getCreateSocketLabel(int socketIndex, const char *format, ...) const
 {
-	if (socketIndex >= socketLabels.size())
-		socketLabels.resize(socketIndex + 1);
+	va_list args;
+	va_start(args, format);
 
-	UT_StringHolder &label = socketLabels[socketIndex];
-#ifdef HDK_16_5
-	if (label.isEmpty())
-#else
-	if (label == "")
-#endif
-	{
-		label.sprintf(nameFormat, socketIndex);
-	}
+	QString &label = socketLabels[socketIndex];
+	label.vsprintf(format, args);
 
-	return label.buffer();
+	va_end(args);
+
+	return _toChar(label);
+}
+
+const char *VOP::NodeBase::getCreateSocketToken(int socketIndex, const char *format, ...) const
+{
+	va_list args;
+	va_start(args, format);
+
+	QString &label = socketLabels[socketIndex];
+	label.vsprintf(format, args);
+
+	va_end(args);
+
+	return _toChar(label);
 }

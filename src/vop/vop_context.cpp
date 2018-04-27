@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -8,33 +8,29 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include "vop_context.h"
+#include "vfh_typedefs.h"
 #include "vfh_defines.h"
+
+#include "vop_context.h"
 
 #include <SHOP/SHOP_Operator.h>
 #include <VOP/VOP_Operator.h>
 #include <VOP/VOP_OperatorInfo.h>
 #include <VOP/VOP_LanguageContextTypeList.h>
 #include <VOP/VOP_ExportedParmsManager.h>
-#include <UT/UT_Version.h>
-
 
 using namespace VRayForHoudini;
-
 
 static PRM_Template templates[] = {
 	PRM_Template()
 };
 
-
-VOP::VRayVOPContextOPFilter::VRayVOPContextOPFilter()
-{
-	m_allowedVOPs.insert("parameter");
-	m_allowedVOPs.insert("switch");
-	m_allowedVOPs.insert("null");
-	m_allowedVOPs.insert("makexform");
-}
-
+static const StringSet vrayVopAllowedTypes = {
+	"parameter",
+	"switch",
+	"null",
+	"makexform",
+};
 
 bool VOP::VRayVOPContextOPFilter::allowOperatorAsChild(OP_Operator *op)
 {
@@ -43,7 +39,7 @@ bool VOP::VRayVOPContextOPFilter::allowOperatorAsChild(OP_Operator *op)
 
 	bool res = false;
 	res |= info ? info->getVopnetMask().startsWith("VRay") : false;
-	res |= bool(m_allowedVOPs.count(op->getName().buffer()));
+	res |= bool(vrayVopAllowedTypes.contains(op->getName().buffer()));
 
 	return res;
 }

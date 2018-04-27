@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015-2017, Chaos Software Ltd
+// Copyright (c) 2015-2018, Chaos Software Ltd
 //
 // V-Ray For Houdini
 //
@@ -9,8 +9,6 @@
 //
 
 #include "vop_TexLayeredMax.h"
-
-#include <boost/format.hpp>
 
 using namespace VRayForHoudini;
 
