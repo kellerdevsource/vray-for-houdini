@@ -175,6 +175,7 @@ set(HEADERS
 	vfh_defines.h
 	vfh_includes.h
 	vfh_typedefs.h
+	vfh_dso_version.h
 	vop/brdf/vop_brdf_def.h
 	vop/brdf/vop_BRDFLayered.h
 	vop/brdf/vop_BRDFScanned.h
