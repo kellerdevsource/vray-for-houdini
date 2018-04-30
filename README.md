@@ -56,7 +56,7 @@ Building From Source
 
 * Compiler:
 
-    - Windows: MSVC 2015
+    - Windows: MSVC 2017
     - Linux: GCC 4.8.x
     - OS X: Any available
 
