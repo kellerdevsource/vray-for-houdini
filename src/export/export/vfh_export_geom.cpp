@@ -2190,9 +2190,10 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 	pluginDesc.pluginName = SL("Light|") % QString::number(getDetailID()) % SL("@") % objLight.getName().buffer();
 
-	VRay::Plugin &lightPlugin = pluginExporter.exportPlugin(pluginDesc);
-
-	pluginCache.exportedLightsCache[objLight.castToOBJNode()].insert(lightPlugin);
+	const VRay::Plugin &lightPlugin = pluginExporter.exportPlugin(pluginDesc);
+	if (lightPlugin.isNotEmpty()) {
+		pluginCache.exportedLightsCache[objLight.castToOBJNode()].append(lightPlugin);
+	}
 
 	return lightPlugin;
 }
@@ -2212,13 +2213,13 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop
 		if (geomNode) {
 			OP_NodeList list;
 			geomNode->getLightMaskObjects(list, ctx.getTime());
-			const ObjectExporter::GeomNodeCache *nodeMap = getExportedNodes(*geomNode);
+			const GeomNodeCache *nodeMap = getExportedNodes(*geomNode);
 			if (nodeMap) {
 				for (const OP_Node *maskNode : list) {
-					for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *nodeMap) {
-						const VRay::Plugin &plugin = it.data();
-						if (plugin)
-							pluginCache.litObjects[maskNode->castToOBJNode()].insert(plugin);
+					for (const auto &plugin : *nodeMap) {
+						if (plugin.isNotEmpty()) {
+							pluginCache.litObjects[maskNode->castToOBJNode()].append(plugin);
+						}
 					}
 				}
 			}
@@ -2247,7 +2248,7 @@ void ObjectExporter::addGenerated(OP_Node &opNode, VRay::Plugin plugin)
 	const UT_StringHolder &key = getKeyFromOpNode(opNode);
 
 	PluginSet &pluginsSet = pluginCache.generated[key.buffer()];
-	pluginsSet.insert(plugin);
+	pluginsSet.append(plugin);
 }
 
 void ObjectExporter::removeGenerated(const char *key)
@@ -2328,9 +2329,9 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 
 ObjectExporter::GeomNodeCache* ObjectExporter::getExportedNodes(const OBJ_Node &node)
 {
-	ObjectExporter::NodeMap::iterator it = pluginCache.instancerNodesMap.find(&node);
+	NodeMap::iterator it = pluginCache.instancerNodesMap.find(&node);
 
-	return it != pluginCache.instancerNodesMap.end() ? &it.data() : nullptr;
+	return it != pluginCache.instancerNodesMap.end() ? &it.value() : nullptr;
 }
 
 ObjectExporter::ObjNodePluginSetMap* ObjectExporter::getExportedLights() {

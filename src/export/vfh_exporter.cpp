@@ -2806,18 +2806,19 @@ void VRayExporter::exportLightLinker()
 	const ObjectExporter::ObjNodePluginSetMap &exportedLights = *exportedLightsPtr;
 	const ObjectExporter::ObjNodePluginSetMap &litObjects = *litObjectsPtr;
 
-	for (ObjectExporter::ObjNodePluginSetMap::const_iterator::DereferenceType &lightSet : exportedLights) {
-		const PluginSet &pluginSet = lightSet.data();
+	FOR_CONST_IT (ObjectExporter::ObjNodePluginSetMap, lightSet, exportedLights) {
+		const PluginSet &pluginSet = lightSet.value();
 		PluginTable lightTable;
 		// Add empty plugin as place holder for the light plugin at the start
 		lightTable += VRay::Plugin();
 
 		ObjectExporter::ObjNodePluginSetMap::const_iterator it = litObjects.find(lightSet.key());
 		if (it != litObjects.end()) {
-			const PluginSet &geomSet = it.data();
+			const PluginSet &geomSet = it.value();
 			for (const VRay::Plugin &geom : geomSet) {
-				if (geom)
+				if (geom.isNotEmpty()) {
 					lightTable += geom;
+				}
 			}
 		}
 
@@ -2841,10 +2842,10 @@ void VRayExporter::exportLightLinker()
 				OBJ_Node *objNodeShadow = node->castToOBJNode();
 				ObjectExporter::GeomNodeCache const * cache = objectExporter.getExportedNodes(*objNodeShadow);
 				if (cache) {
-					for (ObjectExporter::GeomNodeCache::const_iterator::DereferenceType it : *cache) {
-						const VRay::Plugin &plugin = it.data();
-						if (plugin)
+					for (const VRay::Plugin &plugin : *cache) {
+						if (plugin.isNotEmpty()) {
 							shadowTable += plugin;
+						}
 					}
 				}
 			}
@@ -2896,12 +2897,12 @@ void VRayExporter::exportLightLinker()
 		shadowLists[i].setList(shadowList);
 	}
 
-	Attrs::PluginDesc lightLinkerDesc("settings_lightlinker", "SettingsLightLinker");
-
-	lightLinkerDesc.addAttribute(Attrs::PluginAttr("ignored_lights", lightLists));
-	lightLinkerDesc.addAttribute(Attrs::PluginAttr("ignored_shadow_lights", shadowLists));
-	lightLinkerDesc.addAttribute(Attrs::PluginAttr("include_exclude_light_flags", lightInclusivityList));
-	lightLinkerDesc.addAttribute(Attrs::PluginAttr("include_exclude_shadow_flags", shadowInclusivityList));
+	Attrs::PluginDesc lightLinkerDesc(SL("settingsLightLinker"),
+	                                  SL("SettingsLightLinker"));
+	lightLinkerDesc.add(Attrs::PluginAttr(SL("ignored_lights"), lightLists));
+	lightLinkerDesc.add(Attrs::PluginAttr(SL("ignored_shadow_lights"), shadowLists));
+	lightLinkerDesc.add(Attrs::PluginAttr(SL("include_exclude_light_flags"), lightInclusivityList));
+	lightLinkerDesc.add(Attrs::PluginAttr(SL("include_exclude_shadow_flags"), shadowInclusivityList));
 
 	exportPlugin(lightLinkerDesc);
 }

@@ -150,7 +150,7 @@ public:
 	///        for example when running Houdini in non-GUI mode
 	/// @param reInit[in] - true to re-create the V-Ray renderer instance
 	///        otherwise it only resets the existing instance
-	/// @retval true on success
+	/// @returns true on success
 	int initRenderer(int hasUI, int reInit);
 
 	/// Prepare for scene export and clear cached data from previous invocations
@@ -239,11 +239,11 @@ public:
 	void exportEnd();
 
 	/// Export OBJ_geometry node
-	/// @retval V-Ray plugin created for that node
+	/// @returns V-Ray plugin created for that node
 	VRay::Plugin exportObject(OP_Node *opNode);
 
 	/// Export VRayClipper node
-	/// @retval V-Ray plugin created for that node
+	/// @returns V-Ray plugin created for that node
 	VRay::Plugin exportVRayClipper(OBJ_Node &clipperNode);
 
 	/// Tries to set displacement texture from path attribute.
@@ -256,7 +256,7 @@ public:
 	/// @param obj_node[in] - the OBJ_Geometry node owner of displacement/subdivision
 	///        render properties
 	/// @param geomPlugin[in] - geometry to displace/subdivide
-	/// @retval V-Ray displacement/subdivision plugin
+	/// @returns V-Ray displacement/subdivision plugin
 	VRay::Plugin exportDisplacement(OBJ_Node &obj_node, const VRay::Plugin &geomPlugin, const SubdivInfo &subdivInfo);
 
 	/// Export VOP node
@@ -266,7 +266,7 @@ public:
 
 	/// Export Make transform VOP node
 	/// @param rotate Rotate the transformation matrix so that Y-axis is up.
-	/// @retval V-Ray transform for that node
+	/// @returns V-Ray transform for that node
 	VRay::Transform exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr, bool rotate = false);
 
 	/// Export V-Ray material from SHOP network or VOP node.
@@ -277,12 +277,12 @@ public:
 	/// Export the default light created when there are no lights in the scene
 	/// NOTE: will use the m_viewParams.renderView.tm for tm of the headlight - it must be set (exportView) before callign this method
 	/// @param update[in] - flags whether this is called from IPR callback
-	/// @retval V-Ray plugin for default light
+	/// @returns V-Ray plugin for default light
 	VRay::Plugin exportDefaultHeadlight(bool update = false);
 
 	/// Export defaull V-Ray material. This is used when no valid material is found
 	/// for the object
-	/// @retval V-Ray plugin for default material
+	/// @returns V-Ray plugin for default material
 	VRay::Plugin exportDefaultMaterial();
 
 	/// Exports node from "op:" or file path.
@@ -338,7 +338,7 @@ public:
 
 	/// Create or update a plugin from a plugin description
 	/// @param pluginDesc - plugin description with relevant properties set
-	/// @retval invalid Plugin object if not successul
+	/// @returns invalid Plugin object if not successul
 	virtual VRay::Plugin exportPlugin(const Attrs::PluginDesc &pluginDesc);
 
 	/// Update a plugin properties from a plugin description
@@ -351,7 +351,7 @@ public:
 	/// @param filepath - The path to the file where the scene will be exported. The
 	/// file path must contain the name and extension of the destination file.
 	/// @param settings - Additional options such as compression and file splitting
-	/// @retval 0 - no error
+	/// @returns 0 - no error
 	int exportVrscene(const QString &filepath, VRay::VRayExportSettings &settings);
 
 	/// Delete plugins created for the given OBJ node.
@@ -368,7 +368,7 @@ public:
 	/// the work mode of the exporter- export vrscene, render or both
 	/// @param locked[in] - when true this will force the current thread to block
 	///        until rendering is done. By default this is a non-blocking call
-	/// @retval 0 - no error
+	/// @returns 0 - no error
 	int renderFrame(int locked=false);
 
 	/// Start rendering an animation sequence.
@@ -377,7 +377,7 @@ public:
 	/// @param step[in] - animation time step
 	/// @param locked[in] - when true this will force the current thread to block
 	///        until rendering is done. By default this is a non-blocking call
-	/// @retval 0 - no error
+	/// @returns 0 - no error
 	int renderSequence(int start, int end, int step, int locked=false);
 
 	void clearKeyFrames(double toTime);
@@ -476,14 +476,14 @@ public:
 	/// Helper functions to retrieve the input node given an input connection name
 	/// @param op_node[in] - VOP node
 	/// @param inputName[in] -  the input connection name
-	/// @retval the VOP input
+	/// @returns the VOP input
 	static OP_Input* getConnectedInput(OP_Node *op_node, const QString &inputName);
 	static OP_Node* getConnectedNode(OP_Node *op_node, const QString &inputName);
 
 	/// Helper function to retrieve the connection type given an input connection name
 	/// @param op_node[in] - VOP node
 	/// @param inputName[in] -  the input connection name
-	/// @retval the connection type
+	/// @returns the connection type
 	static const Parm::SocketDesc* getConnectedOutputType(OP_Node *op_node, const QString &inputName);
 
 	/// Helper functions to generate a plugin name for a given node
@@ -500,13 +500,13 @@ public:
 
 	/// Helper function to get the active camera from a given ROP node
 	/// @param rop[in] - the ROP node
-	/// @retval the active camera
+	/// @returns the active camera
 	static OBJ_Node* getCamera(const OP_Node *rop);
 
 	/// Helper function to get material for an OBJ_Geometry node
 	/// @param obj[in] - the OBJ node
 	/// @param t[in] - evaluation time for the paremeter
-	/// @retval the SHOP node
+	/// @returns the SHOP node
 	static OP_Node *getObjMaterial(OBJ_Node *objNode, fpreal t=0.0);
 
 	/// Helper function to get OBJ node transform as VRay::Transform
@@ -537,7 +537,7 @@ public:
 	/// Helper function to fill in plugin description attributes from UT_options
 	/// @param pluginDesc[out] - the plugin description
 	/// @param options[in] - UT_Options map that holds attribute values
-	/// @retval true on success
+	/// @returns true on success
 	bool setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT_Options &options) const;
 
 	/// Helper function to fill in single plugin description attribute from a node parameter
@@ -581,7 +581,7 @@ public:
 	/// @param inpidx[in] - input index
 	/// @param inputName[in] - input connection name
 	/// @param parentContext - not used
-	/// @retval VRay::Plugin for the input VOP or invalid plugin on error
+	/// @returns VRay::Plugin for the input VOP or invalid plugin on error
 	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, int inpidx, ExportContext *parentContext = nullptr);
 	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
 
