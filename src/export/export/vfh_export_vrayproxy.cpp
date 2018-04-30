@@ -25,6 +25,8 @@
 #include <QStringList>
 #include <CH/CH_Segment.h>
 
+#include <cstdio>
+
 using namespace VRayForHoudini;
 
 VRayProxyExportOptions::VRayProxyExportOptions()
@@ -157,7 +159,7 @@ VUtils::ErrorCode VRayProxyExporter::doExport(VRayProxyExportOptions &options, c
 					if (nodePlugin.isEmpty()) {
 						err.setError(__FUNCTION__,
 							SOP_ERR_FILEGEO,
-							"Could not export \"%s\" as proxy.", sopNode->getName());
+							"Could not export \"%s\" as proxy.", sopNode->getName().nonNullBuffer());
 					}
 				}
 			}
@@ -270,7 +272,7 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 	// Keep the .vrscene file arround when debugging - usefull to check if it is missing data
 	// or if the ply2vrmesh did not convert correctly
 #ifndef VFH_DEBUG
-	std::remove(vrscenePath);
+	std::remove(_toChar(vrscenePath));
 #endif
 
 	return err;

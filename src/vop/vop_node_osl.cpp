@@ -293,14 +293,14 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		if (param->isoutput) {
 			if (param->isclosure) {
 				if (MTL) {
-					self->m_outputName = param->name;
+					self->m_outputName = param->name.c_str();
 				} else {
 					Log::getLog().warning("TexOSL \"%s\" does not support closure color as output parameter (%s)", this->getName().nonNullBuffer(), param->name);
 				}
 			} else {
 
 				if (param->type.vecsemantics == TypeDesc::COLOR) {
-					self->m_outputName = param->name;
+					self->m_outputName = param->name.c_str();
 				} else {
 					Log::getLog().warning("TexOSL \"%s\" supports only color as output parameter (%s)", this->getName().nonNullBuffer(), param->name);
 				}
