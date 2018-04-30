@@ -1,3 +1,5 @@
+#include "vfh_light_common.ds"
+
 {
     name  LightMesh
     label "Mesh Light"
@@ -366,6 +368,7 @@
             parmtag { "vray_pluginattr" "shadowBias" }
             parmtag { "vray_type" "float" }
         }
+        VRAY_SHADOW_MASK_PARM
     }
 
     groupcollapsible {

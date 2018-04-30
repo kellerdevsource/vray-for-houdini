@@ -1,3 +1,5 @@
+#include "vfh_light_common.ds"
+
 {
     name    LightSpot
     label   "Spot"
@@ -509,6 +511,7 @@
             parmtag { "vray_pluginattr" "shadowSubdivs" }
             parmtag { "vray_type" "int" }
         }
+        VRAY_SHADOW_MASK_PARM
     }
 
     groupcollapsible {

@@ -138,13 +138,15 @@ class VRayExporter;
 class VRayRendererNode;
 class ObjectExporter
 {
+public:
 	typedef QMap<QString, PluginSet> OpPluginGenCache;
 	typedef QMap<QString, VRay::Plugin> OpPluginCache;
 	typedef QMap<QString, VRay::Plugin> GeomNodeCache;
 	typedef QMap<int, VRay::Plugin> PrimPluginCache;
 	typedef QMap<Hash::MHash, VRay::Plugin> HashPluginCache;
+	typedef QMap<const OBJ_Node*, GeomNodeCache> NodeMap;
+	typedef QMap<OBJ_Node*, PluginSet> ObjNodePluginSetMap;
 
-public:
 	explicit ObjectExporter(VRayExporter &pluginExporter);
 
 	/// Clears OBJ plugin cache.
@@ -285,7 +287,7 @@ public:
 	/// the Node plugin if needed.
 	/// @param primItem Instancer item.
 	/// @returns Node plugin instance.
-	VRay::Plugin getNodeForInstancerGeometry(const PrimitiveItem &primItem);
+	VRay::Plugin getNodeForInstancerGeometry(const PrimitiveItem &primItem, const OBJ_Node &objNode);
 
 	/// Export object geometry.
 	/// @returns Geometry plugin.
@@ -348,6 +350,20 @@ public:
 	/// @returns Node plugin.
 	VRay::Plugin exportNode(OBJ_Node &objNode, SOP_Node *specificSop = nullptr);
 
+	/// Get map of all exported instanced Node plugins with OBJ_Node keys
+	/// @param node[in] OBJ_Node from which the plugins have been exported
+	/// @param map[out] Map of all nodes that have been exported for the given node
+	/// @returns true if the map has been set, false otherwise
+	ObjectExporter::GeomNodeCache* getExportedNodes(const OBJ_Node &node);
+
+	/// Get map of all exported lights, including any instanced lights
+	/// @returns Pointer to the cache of exported lights
+	ObjectExporter::ObjNodePluginSetMap* getExportedLights();
+
+	/// Get map of all exported lights and the plugins they illuminate
+	/// @returns Pointer to the cache of lit objects
+	ObjectExporter::ObjNodePluginSetMap* getLitObjects();
+
 private:
 	/// Push context frame when exporting nested object.
 	void pushContext(const PrimContext &value) { primContextStack.push(value); }
@@ -395,7 +411,7 @@ private:
 		HashPluginCache polyMapChannels;
 
 		/// Wrapper nodes cache for Instancer plugin.
-		GeomNodeCache instancerNodeWrapper;
+		NodeMap instancerNodesMap;
 
 		/// Maps OP_Node with generated set of plugins for
 		/// non directly instancable object.
@@ -403,6 +419,12 @@ private:
 
 		/// Plugin cache by data hash.
 		HashPluginCache hashCache;
+
+		/// Map of light node and lights exported from aforementioned light node
+		ObjNodePluginSetMap exportedLightsCache;
+
+		/// Map of light node and plugins that it illuminates
+		ObjNodePluginSetMap litObjects;
 	} pluginCache;
 
 	/// Primitive export context stack.

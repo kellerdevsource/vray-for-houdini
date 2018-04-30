@@ -1,0 +1,11 @@
+#define VRAY_SHADOW_MASK_PARM \
+parm { \
+    name shadowmask \
+    label "Shadow Mask" \
+    type oplist \
+    parmtag { spare_category FOLDER } \
+    default { "*" } \
+    parmtag { opfilter "!!OBJ/GEOMETRY!!" } \
+    parmtag { opexpand "1" } \
+    parmtag { oprelative "/obj" } \
+}

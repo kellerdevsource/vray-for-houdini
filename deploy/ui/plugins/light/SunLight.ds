@@ -1,3 +1,5 @@
+#include "vfh_light_common.ds"
+
 {
     name    SunLight
     label   "Sun"
@@ -276,6 +278,7 @@
             parmtag { "vray_pluginattr" "shadow_subdivs" }
             parmtag { "vray_type" "int" }
         }
+        VRAY_SHADOW_MASK_PARM
     }
 
     groupcollapsible {

@@ -279,7 +279,9 @@ void ObjectExporter::clearPrimPluginCache()
 	pluginCache.polyMapChannels.clear();
 	pluginCache.polyMaterial.clear();
 	pluginCache.hashCache.clear();
-	pluginCache.instancerNodeWrapper.clear();
+	pluginCache.instancerNodesMap.clear();
+	pluginCache.exportedLightsCache.clear();
+	pluginCache.litObjects.clear();
 }
 
 SubdivInfo ObjectExporter::getSubdivInfoFromMatNode(OP_Node &matNode)
@@ -404,7 +406,7 @@ int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 	return bundle->contains(&objNode, false);
 }
 
-VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &primItem)
+VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &primItem, const OBJ_Node &objNode)
 {
 	if (primItem.geometry.isEmpty()) {
 		return VRay::Plugin();
@@ -415,8 +417,9 @@ VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &pr
 		return primItem.geometry;
 	}
 
-	GeomNodeCache::iterator gnIt = pluginCache.instancerNodeWrapper.find(primItem.geometry.getName());
-	if (gnIt != pluginCache.instancerNodeWrapper.end()) {
+	GeomNodeCache &cache = pluginCache.instancerNodesMap[&objNode];
+	GeomNodeCache::iterator gnIt = cache.find(primItem.geometry.getName());
+	if (gnIt != cache.end()) {
 		return gnIt.value();
 	}
 
@@ -434,7 +437,7 @@ VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &pr
 	VRay::Plugin node = pluginExporter.exportPlugin(nodeDesc);
 	vassert(node.isNotEmpty());
 
-	pluginCache.instancerNodeWrapper.insert(primItem.geometry.getName(), node);
+	cache.insert(primItem.geometry.getName(), node);
 
 	return node;
 }
@@ -981,8 +984,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 			material = pluginExporter.exportPlugin(mtlStatsDesc);
 		}
 
-		// Instancer works only with Node plugins.
-		const VRay::Plugin node = getNodeForInstancerGeometry(primItem);
+		const VRay::Plugin node = getNodeForInstancerGeometry(primItem, objNode);
 
 		uint32_t additional_params_flags = 0;
 		if (primItem.objectID != objectIdUndefined) {
@@ -2188,7 +2190,12 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 	pluginDesc.pluginName = SL("Light|") % QString::number(getDetailID()) % SL("@") % objLight.getName().buffer();
 
-	return pluginExporter.exportPlugin(pluginDesc);
+	const VRay::Plugin &lightPlugin = pluginExporter.exportPlugin(pluginDesc);
+	if (lightPlugin.isNotEmpty()) {
+		pluginCache.exportedLightsCache[objLight.castToOBJNode()].append(lightPlugin);
+	}
+
+	return lightPlugin;
 }
 
 VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop)
@@ -2202,6 +2209,22 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop
 	const VRay::Plugin geometry = exportGeometry(objNode, specificSop);
 	// May be NULL if geometry was not re-exported during RT sessions.
 	if (geometry.isNotEmpty()) {
+		OBJ_Geometry *geomNode = objNode.castToOBJGeometry();
+		if (geomNode) {
+			OP_NodeList list;
+			geomNode->getLightMaskObjects(list, ctx.getTime());
+			const GeomNodeCache *nodeMap = getExportedNodes(*geomNode);
+			if (nodeMap) {
+				for (const OP_Node *maskNode : list) {
+					for (const auto &plugin : *nodeMap) {
+						if (plugin.isNotEmpty()) {
+							pluginCache.litObjects[maskNode->castToOBJNode()].append(plugin);
+						}
+					}
+				}
+			}
+		}
+
 		nodeDesc.add(PluginAttr("geometry", geometry));
 	}
 	nodeDesc.add(PluginAttr("material", pluginExporter.exportDefaultMaterial()));
@@ -2302,4 +2325,19 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 	}
 
 	return plugin;
+}
+
+ObjectExporter::GeomNodeCache* ObjectExporter::getExportedNodes(const OBJ_Node &node)
+{
+	NodeMap::iterator it = pluginCache.instancerNodesMap.find(&node);
+
+	return it != pluginCache.instancerNodesMap.end() ? &it.value() : nullptr;
+}
+
+ObjectExporter::ObjNodePluginSetMap* ObjectExporter::getExportedLights() {
+	return &pluginCache.exportedLightsCache;
+}
+
+ObjectExporter::ObjNodePluginSetMap* ObjectExporter::getLitObjects() {
+	return &pluginCache.litObjects;
 }

@@ -1,3 +1,5 @@
+#include "vfh_light_common.ds"
+
 {
     name    LightIES
     label   "IES"
@@ -319,6 +321,7 @@
             parmtag { "vray_pluginattr" "shadowSubdivs" }
             parmtag { "vray_type" "int" }
         }
+        VRAY_SHADOW_MASK_PARM
     }
 
     groupcollapsible {
