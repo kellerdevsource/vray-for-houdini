@@ -37,8 +37,8 @@ def setup_msvc_2017(sdkPath):
         'LIB' : [
             "{KDRIVE}/msvs2015/PlatformSDK/Lib/winv6.3/um/x64",
             "{KDRIVE}/msvs2015/PlatformSDK/Lib/ucrt/x64",
-            "{KDRIVE}/msvs2017/atlmfc/lib/amd64",
-            "{KDRIVE}/msvs2017/lib/amd64",
+            "{KDRIVE}/msvs2017/atlmfc/lib/x64",
+            "{KDRIVE}/msvs2017/lib/x64",
         ],
 
         'PATH' : [
