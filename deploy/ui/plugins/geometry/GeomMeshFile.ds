@@ -611,6 +611,7 @@
             multiparm {
                 name "alembic_layers"
                 label "File Layers"
+                parmtag { "cook_dependent" "1" }
 
                 parm {
                     name "alembic_layer#"
@@ -619,6 +620,7 @@
                     default { "" }
                     parmtag { "filechooser_mode" "read" }
                     parmtag { "filechooser_pattern" "*.abc" }
+                    parmtag { "cook_dependent" "1" }
                 }
             }
         }
