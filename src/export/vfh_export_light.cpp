@@ -39,6 +39,13 @@ void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType t
 		}
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED: {
+			ObjectExporter &objExporter = exporter.getObjectExporter();
+
+			// Otherwise we won't update plugin.
+			objExporter.clearOpPluginCache();
+			objExporter.clearPrimPluginCache();
+
+			// Update light
 			exporter.exportObject(objNode);
 			break;
 		}
