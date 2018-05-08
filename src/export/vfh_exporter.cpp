@@ -643,84 +643,89 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 }
 
 
-void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, const QString &prefix, bool remapInterp)
+void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, const QString &prefix,
+                                          bool remapInterp)
 {
 	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID);
 	if (!pluginInfo) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
-							opNode->getName().buffer(), _toChar(pluginDesc.pluginID));
+		                    opNode->getName().buffer(), _toChar(pluginDesc.pluginID));
 	}
 	else {
 		FOR_CONST_IT (Parm::AttributeDescs, aIt, pluginInfo->attributes) {
-			const QString attrName = aIt.key();
 			const Parm::AttrDesc &attrDesc = aIt.value();
+			const QString &attrName = attrDesc.attr;
 
-			if (!(pluginDesc.contains(attrName) || attrDesc.flags & Parm::attrFlagCustomHandling)) {
-				const QString &parmName = prefix % attrDesc.attr;
+			if (pluginDesc.contains(attrName) || attrDesc.flags & Parm::attrFlagCustomHandling) {
+				continue;
+			}
 
-				const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
-				if (parm) {
-					if (attrDesc.flags & Parm::attrFlagEnabledOnly) {
-						if (!parm->getEnableState() || !parm->getVisibleState()) {
-							continue;
-						}
+			const QString &parmName = prefix % attrName;
+
+			Log::getLog().debug("parmName = %s", _toChar(parmName));
+
+			const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
+			if (parm) {
+				if (attrDesc.flags & Parm::attrFlagEnabledOnly) {
+					if (!parm->getEnableState() || !parm->getVisibleState()) {
+						continue;
 					}
 				}
+			}
 
-				const bool isTextureAttr = attrDesc.value.type >= Parm::eTextureColor &&
-				                           attrDesc.value.type <= Parm::eTextureTransform;
+			const bool isTextureAttr = attrDesc.value.type >= Parm::eTextureColor &&
+			                           attrDesc.value.type <= Parm::eTextureTransform;
 
-				if (isTextureAttr && parm && parm->getType().isStringType()) {
-					const UT_String &opPath = getOpPathFromAttr(*opNode, parm->getToken());
+			if (isTextureAttr && parm && parm->getType().isStringType()) {
+				const UT_String &opPath = getOpPathFromAttr(*opNode, parm->getToken());
 
-					const VRay::Plugin opPlugin = exportNodeFromPath(opPath);
-					if (opPlugin.isNotEmpty()) {
-						pluginDesc.add(Attrs::PluginAttr(attrName, opPlugin));
+				const VRay::Plugin opPlugin = exportNodeFromPath(opPath);
+				if (opPlugin.isNotEmpty()) {
+					pluginDesc.add(Attrs::PluginAttr(attrName, opPlugin));
+				}
+			}
+			else if (!(attrDesc.flags & Parm::attrFlagLinkedOnly)) {
+				if (attrDesc.value.type == Parm::eRamp) {
+					static StringSet rampColorAsPluginList;
+					if (rampColorAsPluginList.empty()) {
+						// TODO: Move to attribute description
+						rampColorAsPluginList.insert(SL("PhxShaderSim"));
+					}
+
+					const bool asColorList = rampColorAsPluginList.contains(pluginDesc.pluginID);
+
+					Texture::exportRampAttribute(*this, pluginDesc, opNode,
+					                             /* Houdini ramp attr */ parmName,
+					                             /* V-Ray attr: colors */ attrDesc.value.colorRampInfo.colors,
+					                             /* V-Ray attr: pos    */ attrDesc.value.colorRampInfo.positions,
+					                             /* V-Ray attr: interp */ attrDesc.value.colorRampInfo.interpolations,
+					                             /* As color list not plugin */ asColorList,
+					                             /* Remap to vray interpolations*/ remapInterp);
+
+					pluginDesc.add(Attrs::PluginAttr(attrName, Attrs::PluginAttr::AttrTypeIgnore));
+				}
+				else if (attrDesc.value.type == Parm::eCurve) {
+					VRay::IntList interpolations;
+					VRay::FloatList positions;
+					VRay::FloatList values;
+					VRay::FloatList *valuesPtr = attrDesc.value.curveRampInfo.values.isEmpty() ? nullptr : &values;
+
+					Texture::getCurveData(*this, opNode,
+					                      /* Houdini curve attr */ parmName,
+					                      /* V-Ray attr: interp */ interpolations,
+					                      /* V-Ray attr: x      */ positions,
+					                      /* V-Ray attr: y      */ valuesPtr,
+					                      /* Don't need handles */ false,
+					                      /* Remap to vray interpolations*/ remapInterp);
+
+					pluginDesc.add(Attrs::PluginAttr(attrDesc.value.curveRampInfo.interpolations, interpolations));
+					pluginDesc.add(Attrs::PluginAttr(attrDesc.value.curveRampInfo.positions, positions));
+					if (valuesPtr) {
+						pluginDesc.add(Attrs::PluginAttr(attrDesc.value.curveRampInfo.values, values));
 					}
 				}
-				else if (!(attrDesc.flags & Parm::attrFlagLinkedOnly)) {
-					if (attrDesc.value.type == Parm::eRamp) {
-						static StringSet rampColorAsPluginList;
-						if (rampColorAsPluginList.empty()) {
-							// TODO: Move to attribute description
-							rampColorAsPluginList.insert(SL("PhxShaderSim"));
-						}
-
-						const bool asColorList = rampColorAsPluginList.contains(pluginDesc.pluginID);
-
-						Texture::exportRampAttribute(*this, pluginDesc, opNode,
-													 /* Houdini ramp attr */ parmName,
-													 /* V-Ray attr: colors */ attrDesc.value.colorRampInfo.colors,
-													 /* V-Ray attr: pos    */ attrDesc.value.colorRampInfo.positions,
-													 /* V-Ray attr: interp */ attrDesc.value.colorRampInfo.interpolations,
-													 /* As color list not plugin */ asColorList,
-													 /* Remap to vray interpolations*/ remapInterp);
-
-						pluginDesc.add(Attrs::PluginAttr(attrName, Attrs::PluginAttr::AttrTypeIgnore));
-					}
-					else if (attrDesc.value.type == Parm::eCurve) {
-						VRay::IntList    interpolations;
-						VRay::FloatList  positions;
-						VRay::FloatList  values;
-						VRay::FloatList *valuesPtr = attrDesc.value.curveRampInfo.values.isEmpty() ? nullptr : &values;
-
-						Texture::getCurveData(*this, opNode,
-											  /* Houdini curve attr */ parmName,
-											  /* V-Ray attr: interp */ interpolations,
-											  /* V-Ray attr: x      */ positions,
-											  /* V-Ray attr: y      */ valuesPtr,
-											  /* Don't need handles */ false,
-											  /* Remap to vray interpolations*/ remapInterp);
-
-						pluginDesc.add(Attrs::PluginAttr(attrDesc.value.curveRampInfo.interpolations, interpolations));
-						pluginDesc.add(Attrs::PluginAttr(attrDesc.value.curveRampInfo.positions,      positions));
-						if (valuesPtr) {
-							pluginDesc.add(Attrs::PluginAttr(attrDesc.value.curveRampInfo.values,     values));
-						}
-					}
-					else {
-						setAttrValueFromOpNodePrm(pluginDesc, attrDesc, *opNode, parmName);
-					}
+				else {
+					setAttrValueFromOpNodePrm(pluginDesc, attrDesc, *opNode, parmName);
 				}
 			}
 		}
@@ -735,17 +740,17 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 		return false;
 
 	FOR_CONST_IT (Parm::AttributeDescs, aIt, pluginInfo->attributes) {
-		const QString attrName = aIt.key();
+		const Parm::AttrDesc &attrDesc = aIt.value();
+
+		const QString &attrName = attrDesc.attr;
 		const char *attrNameChar = _toChar(attrName);
 
 		if (!options.hasOption(attrNameChar) || pluginDesc.contains(attrName)) {
 			continue;
 		}
 
-		const Parm::AttrDesc &attrDesc = aIt.value();
-
 		Attrs::PluginAttr attr;
-		attr.paramName = attrDesc.attr;
+		attr.paramName = attrName;
 
 		if (attrDesc.value.type == Parm::eBool ||
 		    attrDesc.value.type == Parm::eInt ||
@@ -867,8 +872,8 @@ static void fillSettingsRegionsGenerator(OP_Node &rop, Attrs::PluginDesc &plugin
 		bucketH = rop.evalInt("SettingsRegionsGenerator_yc", 0, 0.0);
 	}
 
-	pluginDesc.add(Attrs::PluginAttr("xc", bucketW));
-	pluginDesc.add(Attrs::PluginAttr("yc", bucketH));
+	pluginDesc.add(Attrs::PluginAttr(SL("xc"), bucketW));
+	pluginDesc.add(Attrs::PluginAttr(SL("yc"), bucketH));
 }
 
 static void fillSettingsImageSampler(OP_Node &rop, Attrs::PluginDesc &pluginDesc)
