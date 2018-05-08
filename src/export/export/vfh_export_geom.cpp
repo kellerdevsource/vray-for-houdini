@@ -70,6 +70,29 @@ static struct PrimPackedTypeIDs {
 		initialized = true;
 	}
 
+	/// Checks if primitive will be exported as VolumeGrid.
+	bool isVolumePrim(const GA_PrimitiveTypeId &primTypeID) const {
+		return primTypeID == vrayVolumeGridRef ||
+		       primTypeID == GEO_PRIMVOLUME ||
+		       primTypeID == GEO_PRIMVDB;
+	}
+
+	/// Checks if primitive could be used directly as Instancer2 particle geometry.
+	bool isInstancerParticlePrim(const GA_PrimitiveTypeId &primTypeID) const {
+		return primTypeID == alembicRef ||
+		       primTypeID == vrayProxyRef ||
+		       primTypeID == geomPlaneRef ||
+		       primTypeID == pgYetiRef;
+	}
+
+	/// Checks if primitive will be exported as polygon / hair geometry.
+	static bool isGeometryPrim(const GA_PrimitiveTypeId &primTypeID) {
+		return primTypeID == GEO_PRIMPOLYSOUP ||
+		       primTypeID == GEO_PRIMPOLY ||
+		       primTypeID == GEO_PRIMNURBCURVE ||
+		       primTypeID == GEO_PRIMBEZCURVE;
+	}
+
 private:
 	int initialized{false};
 
@@ -649,17 +672,15 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 		const GA_PrimitiveTypeId &primTypeID = prim->getTypeId();
 
-		if (primTypeID == GEO_PRIMPOLYSOUP ||
-		    primTypeID == GEO_PRIMPOLY ||
-		    primTypeID == GEO_PRIMNURBCURVE ||
-		    primTypeID == GEO_PRIMBEZCURVE) {
+		if (primPackedTypeIDs.isGeometryPrim(primTypeID)) {
 			continue;
 		}
 
 		const bool isPackedPrim = GU_PrimPacked::isPackedPrimitive(*prim);
-		const bool isVolumePrim = primTypeID == primPackedTypeIDs.vrayVolumeGridRef ||
-								  primTypeID == GEO_PRIMVOLUME ||
-								  primTypeID == GEO_PRIMVDB;
+		const bool isVolumePrim = primPackedTypeIDs.isVolumePrim(primTypeID);
+
+		// If this primitive could be used directly in Instancer2 we'll export only local transform.
+		const int isInstancerParticlePrim = primPackedTypeIDs.isInstancerParticlePrim(primTypeID);
 
 		const STY_Styler &primStyler = getStylerForPrimitive(objStyler, *prim);
 
@@ -705,7 +726,15 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 				else {
 					primPacked.getFullTransform4(tm4);
 				}
-				item.tm = item.tm * utMatrixToVRayTransform(tm4);
+
+				if (isInstancerParticlePrim) {
+					// Could use local transform, because will be exported as a Instancer2 particle.
+					item.tm = utMatrixToVRayTransform(tm4);
+				}
+				else {
+					// Need final transform, because will be exported as a separate plugin.
+					item.tm = item.tm * utMatrixToVRayTransform(tm4);
+				}
 			}
 
 			// Point attributes for packed instancing.
@@ -1939,16 +1968,16 @@ static VRay::Transform getPointInstanceTM(const GU_Detail &gdp, const PointInsta
 
 void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gdp, int isInstanceNode)
 {
-	GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
+	const GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
 
-	GA_ROHandleS instanceHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instance"));
-	GA_ROHandleS instancePathHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instancepath"));
+	const GA_ROHandleS instanceHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instance"));
+	const GA_ROHandleS instancePathHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instancepath"));
 
-	GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_POINT, VFH_ATTR_MATERIAL_STYLESHEET));
-	GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_POINT, VFH_ATTR_MATERIAL_OVERRIDE));
-	GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_POINT, GA_Names::shop_materialpath));
+	const GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_POINT, VFH_ATTR_MATERIAL_STYLESHEET));
+	const GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_POINT, VFH_ATTR_MATERIAL_OVERRIDE));
+	const GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_POINT, GA_Names::shop_materialpath));
 
-	PointInstanceAttrs pointInstanceAttrs(gdp);
+	const PointInstanceAttrs pointInstanceAttrs(gdp);
 	MtlOverrideAttrExporter attrExp(gdp);
 
 	const GA_Size numPoints = gdp.getNumPoints();
