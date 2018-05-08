@@ -2307,7 +2307,9 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 
 		plugin = exportLight(*objLight);
 
-		addPluginToCache(objNode, plugin);
+		if (!getPluginFromCache(objNode, plugin)) {
+			addPluginToCache(objNode, plugin);
+		}
 
 		OP_Node *objGen = getGenerator();
 		if (objGen) {
