@@ -1780,8 +1780,8 @@ static QString ObjectTypeToString(const OBJ_OBJECT_TYPE &ob_type)
 void VRayExporter::resetOpCallbacks()
 {
 	for (auto const &item : m_opRegCallbacks) {
-		if (item.op_node->hasOpInterest(this, item.cb)) {
-			item.op_node->removeOpInterest(this, item.cb);
+		if (item.op_node->hasOpInterest(item.cb_data, item.cb)) {
+			item.op_node->removeOpInterest(item.cb_data, item.cb);
 		}
 	}
 
@@ -1938,7 +1938,7 @@ void VRayExporter::exportScene()
 
 	if (sessionType == VfhSessionType::rt) {
 		// Add callback to OP Director so new nodes can be exported during RT Sessions
-		OPgetDirector()->addOpInterest(this, RtCallbackOPDirector);
+		addOpCallback(OPgetDirector(), RtCallbackOPDirector);
 	}
 
 	bundleMap.init();

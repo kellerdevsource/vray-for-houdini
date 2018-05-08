@@ -42,19 +42,21 @@ void VRayExporter::RtCallbackOPDirector(OP_Node *caller, void *callee, OP_EventT
 
 	Log::getLog().debug("RtCallbackOPDirector: %s from caller: \"%s\"", OPeventToString(type), caller->getName().buffer());
 
-	if (type == OP_EventType::OP_UI_CURRENT_CHANGED && data) {
-		OBJ_Node* objNode = static_cast<OP_Node*>(data)->castToOBJNode();
-		if (objNode) {
-			VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
-			ObjectExporter &objExporter = exporter.getObjectExporter();
+	if (type == OP_UI_CURRENT_CHANGED) {
+		if (data) {
+			OBJ_Node* objNode = static_cast<OP_Node*>(data)->castToOBJNode();
+			if (objNode) {
+				VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+				ObjectExporter &objExporter = exporter.getObjectExporter();
 
-			// Clear caches, otherwise plugin will not be exported if it is deleted and recreated
-			objExporter.clearOpPluginCache();
-			objExporter.clearPrimPluginCache();
+				// Clear caches, otherwise plugin will not be exported if it is deleted and recreated
+				objExporter.clearOpPluginCache();
+				objExporter.clearPrimPluginCache();
 
-			// Update node
-			objExporter.removeGenerated(*objNode);
-			exporter.exportObject(objNode);
+				// Update node
+				objExporter.removeGenerated(*objNode);
+				exporter.exportObject(objNode);
+			}
 		}
 	}
 
