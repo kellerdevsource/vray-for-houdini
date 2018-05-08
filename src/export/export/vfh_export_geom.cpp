@@ -1982,6 +1982,8 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 
 	const GA_Size numPoints = gdp.getNumPoints();
 
+	PrimitiveItems pointInstancerItems;
+
 	int validPointIdx = 0;
 	for (GA_Index i = 0; i < numPoints; ++i) {
 		const GA_Offset pointOffset = gdp.pointOffset(i);
@@ -2019,7 +2021,7 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 		PrimitiveItem item;
 
 		// Use offset as ID.
-		item.primID = gdp.getUniqueId() ^ pointOffset;
+		item.primID = objNode.getUniqueId() ^ gdp.getUniqueId() ^ pointOffset;
 
 		// Particle transform.
 		item.tm = getPointInstanceTM(gdp, pointInstanceAttrs, pointOffset);
@@ -2037,11 +2039,13 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 
 		const bool isLight = bool(instaceObjNode->castToOBJLight());
 		if (!isLight && item.geometry.isNotEmpty()) {
-			instancerItems += item;
+			pointInstancerItems += item;
 		}
 
 		++validPointIdx;
 	}
+
+	instancerItems += pointInstancerItems;
 }
 
 void ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
