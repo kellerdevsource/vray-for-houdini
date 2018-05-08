@@ -37,6 +37,8 @@ OP_Node* VRayExporter::getObjMaterial(OBJ_Node *objNode, fpreal t)
 
 void VRayExporter::RtCallbackOPDirector(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	// XXX: OP_UI_CURRENT_CHANGED is emitted almost for everthing.
+#if 0
 	if (!csect.tryEnter())
 		return;
 
@@ -61,6 +63,7 @@ void VRayExporter::RtCallbackOPDirector(OP_Node *caller, void *callee, OP_EventT
 	}
 
 	csect.leave();
+#endif
 }
 
 void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data)
