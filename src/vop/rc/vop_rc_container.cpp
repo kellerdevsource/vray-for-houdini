@@ -81,7 +81,7 @@ OP::VRayNode::PluginResult VOP::RenderChannelsContainer::asPluginDesc(Attrs::Plu
 	const int channels_count = nInputs();
 
 	for (int i = 1; i <= channels_count; ++i) {
-		const QString &chanSockName = SL("chan_%i").arg(QString::number(i));
+		const QString &chanSockName = SL("chan_%1").arg(QString::number(i));
 
 		OP_Node *chan_node = VRayExporter::getConnectedNode(this, chanSockName);
 		if (!chan_node) {

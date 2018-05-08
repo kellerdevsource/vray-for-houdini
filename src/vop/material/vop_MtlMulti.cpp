@@ -177,7 +177,7 @@ OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &plugin
 	VRay::IntList   ids_list;
 
 	for (int i = 1; i <= mtls_count; ++i) {
-		const QString mtlSockName = SL("mtl_%i").arg(i);
+		const QString mtlSockName = SL("mtl_%1").arg(i);
 
 		OP_Node *mtl_node = VRayExporter::getConnectedNode(this, mtlSockName);
 		if (!mtl_node) {
