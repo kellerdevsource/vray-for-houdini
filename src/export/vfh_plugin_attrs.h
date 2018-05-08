@@ -100,7 +100,7 @@ struct PluginAttr {
 		paramValue.valPluginOutput = output;
 	}
 
-	PluginAttr(const QString &attrName, const AttrType &attrType, const float &a, const float &b, const float &c, const float &d=0.0f) {
+	PluginAttr(const QString &attrName, const AttrType &attrType, float a, float b, float c, float d=0.0f) {
 		paramName = attrName;
 		paramType = attrType;
 		paramValue.valVector[0] = a;
@@ -109,7 +109,7 @@ struct PluginAttr {
 		paramValue.valVector[3] = d;
 	}
 
-	PluginAttr(const QString &attrName, const float &a, const float &b, const float &c, const float &d=1.0f) {
+	PluginAttr(const QString &attrName, float a, float b, float c, float d=1.0f) {
 		paramName = attrName;
 		paramType = AttrTypeAColor;
 		paramValue.valVector[0] = a;
@@ -127,31 +127,31 @@ struct PluginAttr {
 		paramValue.valVector[3] = 1.0f;
 	}
 
-	PluginAttr(const QString &attrName, const int &attrValue) {
+	PluginAttr(const QString &attrName, int attrValue) {
 		paramName = attrName;
 		paramType = AttrTypeInt;
 		paramValue.valInt = attrValue;
 	}
 
-	PluginAttr(const QString &attrName, const exint &attrValue) {
+	PluginAttr(const QString &attrName, exint attrValue) {
 		paramName = attrName;
 		paramType = AttrTypeInt;
 		paramValue.valInt = static_cast<int>(attrValue);
 	}
 
-	PluginAttr(const QString &attrName, const bool &attrValue) {
+	PluginAttr(const QString &attrName, bool attrValue) {
 		paramName = attrName;
 		paramType = AttrTypeInt;
 		paramValue.valInt = attrValue;
 	}
 
-	PluginAttr(const QString &attrName, const float &attrValue) {
+	PluginAttr(const QString &attrName, float attrValue) {
 		paramName = attrName;
 		paramType = AttrTypeFloat;
 		paramValue.valFloat = attrValue;
 	}
 
-	PluginAttr(const QString &attrName, const fpreal &attrValue) {
+	PluginAttr(const QString &attrName, fpreal attrValue) {
 		paramName = attrName;
 		paramType = AttrTypeFloat;
 		paramValue.valFloat = attrValue;
