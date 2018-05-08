@@ -1967,13 +1967,25 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 		else if (isInstanceNode) {
 			objNode.evalString(instanceObjectPath, "instancepath", 0, ctx.getTime());
 		}
-		UT_ASSERT_MSG(instanceObjectPath.length(), "Instance object path is not set!");
+
+		if (!instanceObjectPath.isstring()) {
+			Log::getLog().error("\"%s\": Instance object path is not set!", objNode.getFullPath().buffer());
+			continue;
+		}
 
 		OP_Node *instaceOpNode = getOpNodeFromPath(objNode, instanceObjectPath, ctx.getTime());
-		UT_ASSERT_MSG(instanceObjectPath, "Instance object is not found!");
+		if (!instaceOpNode) {
+			Log::getLog().error("\"%s\": Instance object \"%s\" is not found!",
+			                    objNode.getFullPath().buffer(), instanceObjectPath.buffer());
+			continue;
+		}
 
 		OBJ_Node *instaceObjNode = CAST_OBJNODE(instaceOpNode);
-		UT_ASSERT_MSG(instaceObjNode, "Instance object is not an OBJ node!");
+		if (!instaceObjNode) {
+			Log::getLog().error("\"%s\": Instance object is not an OBJ node!",
+			                    objNode.getFullPath().buffer());
+			continue;
+		}
 
 		PrimitiveItem item;
 
@@ -1994,7 +2006,7 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 		item.geometry = pluginExporter.exportObject(instaceObjNode);
 		popContext();
 
-		const int isLight = !!instaceObjNode->castToOBJLight();
+		const bool isLight = bool(instaceObjNode->castToOBJLight());
 		if (!isLight && item.geometry.isNotEmpty()) {
 			instancerItems += item;
 		}
