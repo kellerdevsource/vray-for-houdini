@@ -662,8 +662,6 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 
 			const QString &parmName = prefix % attrName;
 
-			Log::getLog().debug("parmName = %s", _toChar(parmName));
-
 			const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
 			if (parm) {
 				if (attrDesc.flags & Parm::attrFlagEnabledOnly) {
