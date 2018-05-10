@@ -403,7 +403,7 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 
 	OP_Node *phxSimNode = getPhoenixShaderSimNode(matNode);
 	if (!phxSimNode) {
-		Log::getLog().error("Can't find PhxShaderSim node for %s",
+		Log::getLog().error("Volume shader is not assigned for volume %s",
 							objNode.getName().buffer());
 		return;
 	}
