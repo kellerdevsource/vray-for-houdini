@@ -666,9 +666,6 @@ void VRayExporter::exportView()
 	Log::getLog().debug("VRayExporter::exportView(\"%s\")",
 	                    camera->getName().buffer());
 
-	addOpCallback(camera, onCameraChange);
-	addOpCallback(m_rop, onCameraChange);
-
 	ViewParams viewParams;
 	fillViewParamsFromCameraNode(*camera, viewParams);
 	fillViewParamsFromRopNode(*m_rop, viewParams);
@@ -683,6 +680,9 @@ void VRayExporter::exportView()
 	}
 
 	exportView(viewParams);
+
+	addOpCallback(camera, onCameraChange);
+	addOpCallback(m_rop, onCameraChange);
 }
 
 int ViewParams::changedParams(const ViewParams &other) const

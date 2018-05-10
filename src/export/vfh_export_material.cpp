@@ -81,8 +81,6 @@ VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 			VOP_Node *vopNode = CAST_VOPNODE(matNode);
 			SHOP_Node *shopNode = CAST_SHOPNODE(matNode);
 			if (vopNode) {
-				addOpCallback(matNode, RtCallbackSurfaceShop);
-
 				material = exportMaterial(vopNode);
 			}
 			else if (shopNode) {
@@ -93,11 +91,13 @@ VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 				else {
 					OP_Node *materialNode = getVRayNodeFromOp(*matNode, "Material");
 					if (materialNode) {
-						addOpCallback(matNode, RtCallbackSurfaceShop);
-
 						material = exportMaterial(CAST_VOPNODE(materialNode));
 					}
 				}
+			}
+
+			if (material.isNotEmpty()) {
+				addOpCallback(matNode, RtCallbackSurfaceShop);
 			}
 
 			objectExporter.addPluginToCache(*matNode, material);

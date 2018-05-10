@@ -473,6 +473,9 @@ public:
 	/// Reset exporter / renderer.
 	void reset();
 
+	/// Clear exporter plugin caches.
+	void clearCaches();
+
 	/// Helper functions to retrieve the input node given an input connection name
 	/// @param op_node[in] - VOP node
 	/// @param inputName[in] -  the input connection name

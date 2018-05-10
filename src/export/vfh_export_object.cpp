@@ -162,14 +162,17 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 		case OP_FLAG_CHANGED:
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED: {
-			SOP_Node *geom_node = objGeo.getRenderSopPtr();
-			if (geom_node) {
-				exporter.addOpCallback(geom_node, RtCallbackSOPChanged);
+			SOP_Node *geomNode = objGeo.getRenderSopPtr();
+			if (geomNode) {
+				ObjectExporter &objExporter = exporter.getObjectExporter();
+
+				objExporter.clearPrimPluginCache();
+				objExporter.removeGenerated(objNode);
+
+				objExporter.exportGeometry(objNode);
+
+				exporter.addOpCallback(geomNode, RtCallbackSOPChanged);
 			}
-			ObjectExporter &objExporter = exporter.getObjectExporter();
-			objExporter.clearPrimPluginCache();
-			objExporter.removeGenerated(objNode);
-			objExporter.exportGeometry(objNode);
 			break;
 		}
 		case OP_NODE_PREDELETE: {
@@ -298,22 +301,23 @@ VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
 							opNode->getName().buffer());
 	}
 	else {
-		if (objLight) {
-			addOpCallback(opNode, RtCallbackLight);
-		}
-		else {
-			addOpCallback(opNode, RtCallbackOBJGeometry);
-			addOpCallback(renderOp, RtCallbackSOPChanged);
-		}
-
 		VRay::Plugin plugin = objectExporter.exportObject(*objNode);
 		if (plugin.isEmpty()) {
 			Log::getLog().error("Error exporting OBJ: %s [%s]",
-								opNode->getName().buffer(),
-								objOpType.buffer());
+			                    opNode->getName().buffer(),
+			                    objOpType.buffer());
 			Log::getLog().error("  Render OP: %s:\"%s\"",
-								renderOp->getName().buffer(),
-								renderOp->getOperator()->getName().buffer());
+			                    renderOp->getName().buffer(),
+			                    renderOp->getOperator()->getName().buffer());
+		}
+		else {
+			if (objLight) {
+				addOpCallback(opNode, RtCallbackLight);
+			}
+			else {
+				addOpCallback(opNode, RtCallbackOBJGeometry);
+				addOpCallback(renderOp, RtCallbackSOPChanged);
+			}
 		}
 
 		return plugin;
@@ -326,8 +330,6 @@ VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
 VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 {
 	const fpreal t = getContext().getTime();
-
-	addOpCallback(&clipperNode, RtCallbackVRayClipper);
 
 	Attrs::PluginDesc pluginDesc(getPluginName(clipperNode),
 	                             SL("VRayClipper"));
@@ -397,6 +399,8 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 	}
 
 	setAttrsFromOpNodePrms(pluginDesc, &clipperNode);
+
+	addOpCallback(&clipperNode, RtCallbackVRayClipper);
 
 	return exportPlugin(pluginDesc);
 }

@@ -711,7 +711,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			int usePackedTm = true;
 
 			if (primTypeID == primPackedTypeIDs.alembicRef) {
-				int abcUseTransform = 0;
+				int abcUseTransform = true;
 				if (prim->getIntrinsic(prim->findIntrinsic("abcusetransform"), abcUseTransform)) {
 					usePackedTm = !abcUseTransform;
 				}
@@ -1431,7 +1431,7 @@ VRay::Plugin ObjectExporter::exportAlembicRef(OBJ_Node &objNode, const GU_PrimPa
 	const int key = getPrimPackedID(prim);
 
 	Attrs::PluginDesc pluginDesc(SL("Alembic|") % QString::number(key),
-								 "GeomMeshFile");
+								 SL("GeomMeshFile"));
 
 	pluginDesc.add(Attrs::PluginAttr("use_full_names", true));
 	pluginDesc.add(Attrs::PluginAttr("visibility_lists_type", 1));
@@ -1452,7 +1452,7 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 	const int key = getPrimPackedID(prim);
 
 	Attrs::PluginDesc pluginDesc(SL("VRayProxy|") % QString::number(key),
-								 "GeomMeshFile");
+								 SL("GeomMeshFile"));
 
 	const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
 

@@ -166,14 +166,19 @@ static void makePathRelative(UT_String &path)
 
 void VRayExporter::reset()
 {
-	objectExporter.clearPrimPluginCache();
-	objectExporter.clearOpDepPluginCache();
-	objectExporter.clearOpPluginCache();
+	clearCaches();
 
 	resetOpCallbacks();
 	restoreCurrentTake();
 
 	m_renderer.reset();
+}
+
+void VRayExporter::clearCaches()
+{
+	objectExporter.clearPrimPluginCache();
+	objectExporter.clearOpDepPluginCache();
+	objectExporter.clearOpPluginCache();
 }
 
 QString VRayExporter::getPluginName(const OP_Node &opNode, const QString &prefix, const QString &suffix)
@@ -1257,32 +1262,27 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 					   vop_node->getName().buffer(),
 					   opType.buffer());
 
+	VRay::Plugin texPlugin;
+
 	if (opType == "switch") {
 		const fpreal t = m_context.getTime();
 		const int switcher = vop_node->evalInt("switcher", 0, t);
-		return exportConnectedVop(vop_node, switcher+1, parentContext);
+		texPlugin = exportConnectedVop(vop_node, switcher+1, parentContext);
 	}
-
-	if (opType == "null") {
-		return exportConnectedVop(vop_node, 0, parentContext);
+	else if (opType == "null") {
+		texPlugin = exportConnectedVop(vop_node, 0, parentContext);
 	}
-
-	if (opType.startsWith("principledshader")) {
-		return exportPrincipledShader(*opNode, parentContext);
+	else if (opType.startsWith("principledshader")) {
+		texPlugin = exportPrincipledShader(*opNode, parentContext);
 	}
-
-	if (opType == "parameter") {
-		return exportConnectedVop(vop_node, 0, parentContext);
+	else if (opType == "parameter") {
+		texPlugin = exportConnectedVop(vop_node, 0, parentContext);
 	}
-
-	if (opType.equal(vfhNodeMaterialOutput)) {
-		return exportVop(getVRayNodeFromOp(*opNode, vfhSocketMaterialOutputMaterial), parentContext);
+	else if (opType.equal(vfhNodeMaterialOutput)) {
+		texPlugin = exportVop(getVRayNodeFromOp(*opNode, vfhSocketMaterialOutputMaterial), parentContext);
 	}
-
-	if (opType.startsWith("VRayNode")) {
+	else if (opType.startsWith("VRayNode")) {
 		VOP::NodeBase *vrayNode = static_cast<VOP::NodeBase*>(vop_node);
-
-		addOpCallback(vop_node, RtCallbackVop);
 
 		Attrs::PluginDesc pluginDesc;
 		//TODO: need consistent naming for surface/displacement/other vops and their overrides
@@ -1345,13 +1345,20 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 				pluginDesc.add(Attrs::PluginAttr("uvw_matrix", envMatrix));
 			}
 
-			return exportPlugin(pluginDesc);
+			texPlugin = exportPlugin(pluginDesc);
 		}
+
+		return texPlugin;
 	}
 
-	Log::getLog().error("Unsupported VOP node: %s", opType.buffer());
+	if (!texPlugin.isNotEmpty()) {
+		Log::getLog().error("Unsupported VOP node: %s", opType.buffer());
+	}
+	else {
+		addOpCallback(vop_node, RtCallbackVop);
+	}
 
-	return VRay::Plugin();
+	return texPlugin;
 }
 
 
@@ -1934,11 +1941,6 @@ void VRayExporter::exportScene()
 		exportView();
 	}
 
-	if (sessionType == VfhSessionType::rt) {
-		// Add callback to OP Director so new nodes can be exported during RT Sessions
-		addOpCallback(OPgetDirector(), RtCallbackOPDirector);
-	}
-
 	bundleMap.init();
 
 	// Clear plugin caches.
@@ -2023,6 +2025,11 @@ void VRayExporter::exportScene()
 	}
 
 	bundleMap.freeMem();
+
+	// Add callback to OP Director so new nodes can be exported during RT sessions.
+	if (sessionType == VfhSessionType::rt) {
+		addOpCallback(OPgetDirector(), RtCallbackOPDirector);
+	}
 }
 
 
@@ -2445,7 +2452,7 @@ void MotionBlurParams::calcParams(fpreal currFrame)
 void VRayExporter::setTime(fpreal time)
 {
 	m_context.setTime(time);
-	getRenderer().getVRay().setCurrentTime(m_context.getFloatFrame());
+	getRenderer().getVRay().setCurrentFrame(m_context.getFloatFrame());
 
 	Log::getLog().debug("Time:  %g", m_context.getTime());
 	Log::getLog().debug("Frame: %g", m_context.getFloatFrame());
