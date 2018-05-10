@@ -37,6 +37,10 @@ OP_Node* VRayExporter::getObjMaterial(OBJ_Node *objNode, fpreal t)
 
 void VRayExporter::RtCallbackOPDirector(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (exporter.inSceneExport)
+		return;
+
 	// XXX: OP_UI_CURRENT_CHANGED is emitted almost for everthing.
 #if 0
 	if (!csect.tryEnter())
@@ -68,6 +72,10 @@ void VRayExporter::RtCallbackOPDirector(OP_Node *caller, void *callee, OP_EventT
 
 void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (exporter.inSceneExport)
+		return;
+
 	if (!csect.tryEnter())
 		return;
 
@@ -75,8 +83,6 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 
 	UT_ASSERT(caller->castToOBJNode());
 	UT_ASSERT(caller->castToOBJNode()->castToOBJGeometry());
-
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 
 	OBJ_Node &objNode = *caller->castToOBJNode();
 	OBJ_Geometry &objGeo = *objNode.castToOBJGeometry();
@@ -139,6 +145,10 @@ void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_Event
 
 void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (exporter.inSceneExport)
+		return;
+
 	if (!csect.tryEnter())
 		return;
 
@@ -147,8 +157,6 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 	UT_ASSERT(caller->getCreator());
 	UT_ASSERT(caller->getCreator()->castToOBJNode());
 	UT_ASSERT(caller->getCreator()->castToOBJNode()->castToOBJGeometry());
-
-	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
 
 	OBJ_Node &objNode = *caller->getCreator()->castToOBJNode();
 	OBJ_Geometry &objGeo = *objNode.castToOBJGeometry();
@@ -189,10 +197,13 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 
 void VRayExporter::RtCallbackVRayClipper(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (exporter.inSceneExport)
+		return;
+
 	if (!csect.tryEnter())
 		return;
 
-	VRayExporter &exporter = *reinterpret_cast< VRayExporter* >(callee);
 	OBJ_Node *clipperNode = caller->castToOBJNode();
 
 	Log::getLog().debug("RtCallbackVRayClipper: %s from \"%s\"", OPeventToString(type), clipperNode->getName().buffer());

@@ -125,6 +125,8 @@ static const UT_String vrayUserAttrSceneName = "VRay_Scene_Node_Name";
 static const QString attrCd("Cd");
 static const QString attrIntensity("intensity");
 
+static const ObjectExporter::GeomNodeCache dummyGeomCache;
+
 /// Identity transform.
 static VRay::Transform identityTm(1);
 
@@ -2265,13 +2267,12 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop
 		if (geomNode) {
 			OP_NodeList list;
 			geomNode->getLightMaskObjects(list, ctx.getTime());
-			const GeomNodeCache *nodeMap = getExportedNodes(*geomNode);
-			if (nodeMap) {
-				for (const OP_Node *maskNode : list) {
-					for (const auto &plugin : *nodeMap) {
-						if (plugin.isNotEmpty()) {
-							pluginCache.litObjects[maskNode->castToOBJNode()].append(plugin);
-						}
+
+			const GeomNodeCache &nodeMap = getExportedNodes(*geomNode);
+			for (const OP_Node *maskNode : list) {
+				for (const VRay::Plugin &plugin : nodeMap) {
+					if (plugin.isNotEmpty()) {
+						pluginCache.litObjects[maskNode->castToOBJNode()].append(plugin);
 					}
 				}
 			}
@@ -2381,19 +2382,21 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 	return plugin;
 }
 
-ObjectExporter::GeomNodeCache* ObjectExporter::getExportedNodes(const OBJ_Node &node)
+const ObjectExporter::GeomNodeCache &ObjectExporter::getExportedNodes(const OBJ_Node &node) const
 {
-	NodeMap::iterator it = pluginCache.instancerNodesMap.find(&node);
-
-	return it != pluginCache.instancerNodesMap.end() ? &it.value() : nullptr;
+	NodeMap::const_iterator it =
+		pluginCache.instancerNodesMap.find(&node);
+	return it != pluginCache.instancerNodesMap.end() ? it.value() : dummyGeomCache;
 }
 
-ObjectExporter::ObjNodePluginSetMap* ObjectExporter::getExportedLights() {
-	return &pluginCache.exportedLightsCache;
+const ObjectExporter::ObjNodePluginSetMap &ObjectExporter::getExportedLights() const
+{
+	return pluginCache.exportedLightsCache;
 }
 
-ObjectExporter::ObjNodePluginSetMap* ObjectExporter::getLitObjects() {
-	return &pluginCache.litObjects;
+const ObjectExporter::ObjNodePluginSetMap &ObjectExporter::getLitObjects() const
+{
+	return pluginCache.litObjects;
 }
 
 bool ObjectExporter::hasLights() const

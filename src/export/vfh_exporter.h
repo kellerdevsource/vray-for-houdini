@@ -133,6 +133,8 @@ struct ConnectedPluginInfo {
 class VRayExporter
 {
 public:
+	friend class ObjectExporter;
+
 	/// Available work modes for the exporter
 	// NOTE: Keep in sync with "render_export_mode"
 	enum ExpWorkMode {
@@ -626,6 +628,10 @@ public:
 	void renderLast();
 
 	const GSTY_BundleMap &getBundleMap() const { return bundleMap.getBundleMap(); }
+
+	/// Flag indicating that we are exporting scene.
+	/// Some non-cont OP_Node methods could trigger event handlers.
+	QAtomicInt inSceneExport = false;
 
 private:
 	/// Export V-Ray material from VOP node.

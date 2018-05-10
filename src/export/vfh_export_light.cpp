@@ -21,10 +21,12 @@ using namespace VRayForHoudini;
 
 void VRayExporter::RtCallbackLight(OP_Node *caller, void *callee, OP_EventType type, void* data)
 {
-	if (!csect.tryEnter())
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (exporter.inSceneExport)
 		return;
 
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (!csect.tryEnter())
+		return;
 
 	OBJ_Node *objNode = caller->castToOBJNode();
 

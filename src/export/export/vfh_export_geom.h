@@ -357,15 +357,15 @@ public:
 	/// @param node[in] OBJ_Node from which the plugins have been exported
 	/// @param map[out] Map of all nodes that have been exported for the given node
 	/// @returns true if the map has been set, false otherwise
-	ObjectExporter::GeomNodeCache* getExportedNodes(const OBJ_Node &node);
+	const GeomNodeCache &getExportedNodes(const OBJ_Node &node) const;
 
 	/// Get map of all exported lights, including any instanced lights
 	/// @returns Pointer to the cache of exported lights
-	ObjectExporter::ObjNodePluginSetMap* getExportedLights();
+	const ObjNodePluginSetMap &getExportedLights() const;
 
 	/// Get map of all exported lights and the plugins they illuminate
 	/// @returns Pointer to the cache of lit objects
-	ObjectExporter::ObjNodePluginSetMap* getLitObjects();
+	const ObjNodePluginSetMap  &getLitObjects() const;
 
 	/// Scene lights could have visibility flag turned off, but lights may be
 	/// instanced with the "instancer" node.

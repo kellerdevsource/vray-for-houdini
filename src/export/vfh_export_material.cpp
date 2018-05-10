@@ -24,10 +24,12 @@ static const QString clayMaterial("Mtl@Clay");
 
 void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	if (!csect.tryEnter())
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (exporter.inSceneExport)
 		return;
 
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (!csect.tryEnter())
+		return;
 
 	Log::getLog().debug("RtCallbackSurfaceShop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());

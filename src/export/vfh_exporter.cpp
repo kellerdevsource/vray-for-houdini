@@ -164,6 +164,23 @@ static void makePathRelative(UT_String &path)
 	vassert(newLen == lenBefore - 1 && "makePathRelative failed to strip leading slash");
 }
 
+struct QAtomicIntRaii
+{
+	QAtomicIntRaii(QAtomicInt &value)
+		: value(value)
+	{
+		value = true;
+	}
+
+	~QAtomicIntRaii()
+	{
+		value = false;
+	}
+
+private:
+	QAtomicInt &value;
+};
+
 void VRayExporter::reset()
 {
 	clearCaches();
@@ -1216,10 +1233,12 @@ VRay::Plugin VRayExporter::exportConnectedVop(VOP_Node *vop_node, const UT_Strin
 
 void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	if (!csect.tryEnter())
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (exporter.inSceneExport)
 		return;
 
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (!csect.tryEnter())
+		return;
 
 	Log::getLog().debug("RtCallbackVop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
@@ -1362,10 +1381,12 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 
 void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	if (!csect.tryEnter())
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (exporter.inSceneExport)
 		return;
 
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (!csect.tryEnter())
+		return;
 
 	Log::getLog().debug("RtCallbackDisplacementObj: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
@@ -1399,10 +1420,12 @@ void VRayExporter::RtCallbackDisplacementObj(OP_Node *caller, void *callee, OP_E
 
 void VRayExporter::RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	if (!csect.tryEnter())
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (exporter.inSceneExport)
 		return;
 
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (!csect.tryEnter())
+		return;
 
 	Log::getLog().debug("RtCallbackDisplacementShop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
@@ -1442,10 +1465,12 @@ void VRayExporter::RtCallbackDisplacementShop(OP_Node *caller, void *callee, OP_
 
 void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
-	if (!csect.tryEnter())
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (exporter.inSceneExport)
 		return;
 
-	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (!csect.tryEnter())
+		return;
 
 	Log::getLog().debug("RtCallbackDisplacementVop: %s from \"%s\"",
 					   OPeventToString(type), caller->getName().buffer());
@@ -1933,6 +1958,8 @@ static void onRendererClosed(VRay::VRayRenderer& /*renderer*/, void *data)
 
 void VRayExporter::exportScene()
 {
+	QAtomicIntRaii inSceneLock(inSceneExport);
+
 	Log::getLog().debug("VRayExporter::exportScene()");
 
 	if (sessionType != VfhSessionType::ipr) {
@@ -2504,6 +2531,8 @@ void VRayExporter::restoreCurrentTake()
 
 void VRayExporter::exportFrame(fpreal time)
 {
+	QAtomicIntRaii inSceneLock(inSceneExport);
+
 	Log::getLog().debug("VRayExporter::exportFrame(time = %.3f)", time);
 
 	if (isAborted()) {
@@ -2801,23 +2830,23 @@ void VRayExporter::VfhBundleMap::freeMem()
 
 void VRayExporter::exportLightLinker()
 {
-	ObjectExporter::ObjNodePluginSetMap *exportedLightsPtr = objectExporter.getExportedLights();
-	ObjectExporter::ObjNodePluginSetMap *litObjectsPtr = objectExporter.getLitObjects();
-	if (!exportedLightsPtr || !litObjectsPtr)
+	const ObjectExporter::ObjNodePluginSetMap &exportedLights = objectExporter.getExportedLights();
+	const ObjectExporter::ObjNodePluginSetMap &litObjects = objectExporter.getLitObjects();
+	if (litObjects.isEmpty() || exportedLights.isEmpty())
 		return;
 
 	PluginTables lightTables;
 	PluginTables shadowTables;
-	const ObjectExporter::ObjNodePluginSetMap &exportedLights = *exportedLightsPtr;
-	const ObjectExporter::ObjNodePluginSetMap &litObjects = *litObjectsPtr;
 
-	FOR_CONST_IT (ObjectExporter::ObjNodePluginSetMap, lightSet, exportedLights) {
-		const PluginSet &pluginSet = lightSet.value();
+	FOR_CONST_IT (ObjectExporter::ObjNodePluginSetMap, lsIt, exportedLights) {
+		OBJ_Node *lightKey = lsIt.key();
+		const PluginSet &pluginSet = lsIt.value();
+
 		PluginTable lightTable;
 		// Add empty plugin as place holder for the light plugin at the start
 		lightTable += VRay::Plugin();
 
-		ObjectExporter::ObjNodePluginSetMap::const_iterator it = litObjects.find(lightSet.key());
+		ObjectExporter::ObjNodePluginSetMap::const_iterator it = litObjects.find(lightKey);
 		if (it != litObjects.end()) {
 			const PluginSet &geomSet = it.value();
 			for (const VRay::Plugin &geom : geomSet) {
@@ -2838,19 +2867,19 @@ void VRayExporter::exportLightLinker()
 		// Add empty plugin as place holder for the light plugin at the start
 		shadowTable += VRay::Plugin();
 
-		OBJ_Light *lightNode = lightSet.key()->castToOBJLight();
+		OBJ_Light *lightNode = const_cast<OBJ_Light*>(lightKey->castToOBJLight());
 		if (lightNode) {
 			OP_Bundle *bundle = lightNode->getShadowMaskBundle(getContext().getTime());
 			OP_NodeList list;
 			bundle->getMembers(list);
 			for (OP_Node *node : list) {
 				OBJ_Node *objNodeShadow = node->castToOBJNode();
-				ObjectExporter::GeomNodeCache const * cache = objectExporter.getExportedNodes(*objNodeShadow);
-				if (cache) {
-					for (const VRay::Plugin &plugin : *cache) {
-						if (plugin.isNotEmpty()) {
-							shadowTable += plugin;
-						}
+
+				const ObjectExporter::GeomNodeCache &cache =
+					objectExporter.getExportedNodes(*objNodeShadow);
+				for (const VRay::Plugin &plugin : cache) {
+					if (plugin.isNotEmpty()) {
+						shadowTable += plugin;
 					}
 				}
 			}

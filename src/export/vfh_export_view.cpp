@@ -32,6 +32,8 @@ float VRayForHoudini::getFov(float aperture, float focal)
 static void onCameraChange(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (exporter.inSceneExport)
+		return;
 
 	Log::getLog().debug("onCameraChange: %s", OPeventToString(type));
 
