@@ -628,7 +628,6 @@ public:
 	const GSTY_BundleMap &getBundleMap() const { return bundleMap.getBundleMap(); }
 
 private:
-
 	/// Export V-Ray material from VOP node.
 	/// @param node VOP node.
 	/// @returns V-Ray plugin.

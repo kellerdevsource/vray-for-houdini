@@ -205,6 +205,13 @@ ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
 	, doExportGeometry(true)
 {}
 
+void ObjectExporter::reset()
+{
+	clearPrimPluginCache();
+	clearOpDepPluginCache();
+	clearOpPluginCache();
+}
+
 VRay::Transform ObjectExporter::getTm() const
 {
 	VRay::Transform tm(1);
@@ -2387,4 +2394,9 @@ ObjectExporter::ObjNodePluginSetMap* ObjectExporter::getExportedLights() {
 
 ObjectExporter::ObjNodePluginSetMap* ObjectExporter::getLitObjects() {
 	return &pluginCache.litObjects;
+}
+
+bool ObjectExporter::hasLights() const
+{
+	return !pluginCache.exportedLightsCache.isEmpty();
 }

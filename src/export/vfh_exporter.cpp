@@ -176,9 +176,7 @@ void VRayExporter::reset()
 
 void VRayExporter::clearCaches()
 {
-	objectExporter.clearPrimPluginCache();
-	objectExporter.clearOpDepPluginCache();
-	objectExporter.clearOpPluginCache();
+	objectExporter.reset();
 }
 
 QString VRayExporter::getPluginName(const OP_Node &opNode, const QString &prefix, const QString &suffix)
@@ -1943,12 +1941,8 @@ void VRayExporter::exportScene()
 
 	bundleMap.init();
 
-	// Clear plugin caches.
-	objectExporter.clearOpPluginCache();
-	objectExporter.clearOpDepPluginCache();
-	objectExporter.clearPrimPluginCache();
+	objectExporter.reset();
 
-	// export geometry nodes
 	OP_Bundle *activeGeo = getActiveGeometryBundle(*m_rop, m_context.getTime());
 	if (activeGeo) {
 		for (int i = 0; i < activeGeo->entries(); ++i) {
@@ -1960,16 +1954,17 @@ void VRayExporter::exportScene()
 	}
 
 	OP_Bundle *activeLights = getActiveLightsBundle(*m_rop, m_context.getTime());
-	if (!activeLights || activeLights->entries() <= 0) {
-		exportDefaultHeadlight();
-	}
-	else if (activeLights) {
+	if (activeLights) {
 		for (int i = 0; i < activeLights->entries(); ++i) {
 			OBJ_Node *objNode = CAST_OBJNODE(activeLights->getNode(i));
 			if (objNode) {
 				exportObject(objNode);
 			}
 		}
+	}
+
+	if (!objectExporter.hasLights()) {
+		exportDefaultHeadlight();
 	}
 
 	exportLightLinker();

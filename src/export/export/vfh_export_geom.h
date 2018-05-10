@@ -149,6 +149,9 @@ public:
 
 	explicit ObjectExporter(VRayExporter &pluginExporter);
 
+	/// Reset exporter state. Clear plugin caches.
+	void reset();
+
 	/// Clears OBJ plugin cache.
 	void clearOpPluginCache();
 
@@ -363,6 +366,11 @@ public:
 	/// Get map of all exported lights and the plugins they illuminate
 	/// @returns Pointer to the cache of lit objects
 	ObjectExporter::ObjNodePluginSetMap* getLitObjects();
+
+	/// Scene lights could have visibility flag turned off, but lights may be
+	/// instanced with the "instancer" node.
+	/// This will check if we have exported any lights.
+	bool hasLights() const;
 
 private:
 	/// Push context frame when exporting nested object.
