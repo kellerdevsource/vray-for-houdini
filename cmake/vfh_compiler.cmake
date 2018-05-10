@@ -47,7 +47,7 @@ macro(set_compiler_flags)
 		# Enable multi core compilation
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
-		set(CMAKE_CXX_FLAGS_DEBUG "/MD /Od /Zi /DNDEBUG /DVFH_DEBUG /DVASSERT_ENABLED")
+		set(CMAKE_CXX_FLAGS_DEBUG "/MD /Od /Zi /DNDEBUG /DVFH_DEBUG /DVASSERT_ENABLED /DUT_ASSERT_LEVEL=1")
 
 		add_definitions(-DOPENEXR_DLL)
 	else()
@@ -83,7 +83,7 @@ macro(set_compiler_flags)
 		# Houdini SDK / V-Ray SDK
 		set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-switch -Wno-narrowing -Wno-int-to-pointer-cast")
 
-		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DVASSERT_ENABLED")
+		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DVASSERT_ENABLED -DUT_ASSERT_LEVEL=1")
 
 		# Add time lib
 		set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -lrt")

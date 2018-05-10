@@ -274,10 +274,6 @@ if(HDK_FOUND)
 			-DEIGEN_MALLOC_ALREADY_ALIGNED=0
 		)
 
-		if(WIN32)
-			set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D UT_ASSERT_LEVEL=1")
-		endif()
-
 		set(HDK_LIBS
 			$<$<CONFIG:Release>:Half.lib>
 			$<$<CONFIG:RelWithDebInfo>:Half.lib>
