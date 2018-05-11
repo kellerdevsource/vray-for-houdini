@@ -189,7 +189,7 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 			if (vrayType.startsWith("Output") || vrayType.startsWith("List"))
 				continue;
 
-				vassert(vrayParmTypes.find(vrayType.buffer()) != vrayParmTypes.end());
+			vassert(vrayParmTypes.find(vrayType.buffer()) != vrayParmTypes.end());
 
 			const char *vrayPluginAttr = parmSpare->getValue("vray_pluginattr");
 			if (!UTisstring(vrayPluginAttr))

@@ -71,4 +71,16 @@ parm { \
 #define VFH_PLUGIN_PARM_INT(PLUGIN, NAME, LABEL, HELP, DEFAULT) \
     VRAY_PLUGIN_PARM_EX(PLUGIN, NAME, LABEL, HELP, int, "int", 1, DEFAULT)
 
+#define VFH_MTL_SOCKET(PLUGIN_ATTR, LABEL) \
+    parm { \
+        name PLUGIN_ATTR \
+        label LABEL \
+        type int \
+        parmtag { "cook_dependent" "1" } \
+        parmtag { "vray_label" PLUGIN_ATTR } \
+        parmtag { "vray_pluginattr" PLUGIN_ATTR } \
+        parmtag { "vray_type" "PluginMaterial" } \
+        invisible \
+    }
+
 #endif // __VFH_MACROS_DS__

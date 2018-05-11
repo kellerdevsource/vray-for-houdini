@@ -1,14 +1,6 @@
 #include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 
-parm {
-    VFH_NAME("material")
-    label "Material"
-    type int
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_pluginattr" "base_material" }
-    parmtag { "vray_type" "PluginMaterial" }
-    invisible
-}
+VFH_MTL_SOCKET("base_material", "Base Material")
 
 parm {
     VFH_NAME("use")

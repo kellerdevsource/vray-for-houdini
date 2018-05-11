@@ -1,3 +1,4 @@
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 {
     name    MtlOverride
     label   "Override"
@@ -7,54 +8,53 @@
 // NOTE: Using full path here because it's included in VRay.ds
 #include "$VRAY_UI_DS_PATH/common/vfh_material_common.ds"
 
-    parm {
-        name "material"
-        label "Material"
-        type int
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_label" "material" }
-        parmtag { "vray_pluginattr" "base_mtl" }
-        parmtag { "vray_type" "PluginMaterial" }
-        invisible
-    }
-    parm {
-        name    "use"
-        label   "Enabled"
-        type    toggle
-        default { "1" }
-        help    "Use Override material"
-        range   { 0 1 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_custom_handling" "1" }
-    }
+    VFH_MTL_SOCKET("base_mtl", "Base Material")
+
+    VFH_MTL_SOCKET("gi_mtl", "GI Material")
+    VFH_PLUGIN_PARM_TOGGLE("MtlOverride", "enable_gi_mt", "Enable the GI material", "Enable the GI material", 1)
+
+    VFH_MTL_SOCKET("reflect_mtl", "Reflection Material")
+    VFH_PLUGIN_PARM_TOGGLE("MtlOverride", "enable_reflect_mtl", "Enable the Reflection material", "Enable the reflection material", 1)
+
+    VFH_MTL_SOCKET("refract_mtl", "Refraction Material")
+    VFH_PLUGIN_PARM_TOGGLE("MtlOverride", "enable_refract_mtl", "Enable the Refraction material", "Enable the refraction material", 1)
+
+    VFH_MTL_SOCKET("shadow_mtl", "Shadow Material")
+    VFH_PLUGIN_PARM_TOGGLE("MtlOverride", "enable_shadow_mtl", "Enable the shadow material", "Enable the shadow material", 1)
+
+    VFH_PLUGIN_PARM_TOGGLE("MtlOverride",
+        "use_environment_override",
+        "Use Environment Override Texture",
+        "Use environment override texture",
+        0
+    )
+
     parm {
         name    "environment_override"
         label   "Environment"
+        help    "Environment override texture"
         type    color4
         size    4
         default { "1" "1" "1" "1" }
-        help    "Environment override texture"
-        disablewhen "{ use != 1 }"
-        range   { 0 1 }
-        export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "MtlOverride" }
         parmtag { "vray_pluginattr" "environment_override" }
         parmtag { "vray_type" "Texture" }
+
+        VFH_DISABLE_WHEN_PARAM_FALSE("use_environment_override")
     }
+
     parm {
         name    "environment_priority"
         label   "Environment Priority"
+        help    "Environment override priority (used when several materials override it along a ray path)"
         type    int
         default { "0" }
-        help    "Environment override priority (used when several materials override it along a ray path)"
-        disablewhen "{ use != 1 }"
-        range   { 0 5 }
-        export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "MtlOverride" }
         parmtag { "vray_pluginattr" "environment_priority" }
         parmtag { "vray_type" "int" }
+
+        VFH_DISABLE_WHEN_PARAM_FALSE("use_environment_override")
     }
 }
