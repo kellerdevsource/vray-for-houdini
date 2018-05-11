@@ -1,7 +1,7 @@
 #include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 
 parm {
-    VFH_NAME( "material")
+    VFH_NAME("material")
     label "Material"
     type int
     parmtag { "cook_dependent" "1" }
@@ -11,7 +11,7 @@ parm {
 }
 
 parm {
-    VFH_NAME(    "use")
+    VFH_NAME("use")
     label   "Enable"
     type    toggle
     default { "1" }
@@ -30,7 +30,7 @@ groupsimple {
     VFH_HIDETAB_WHEN_PARAM_FALSE("use")
 
     parm {
-        VFH_NAME(    "generate_gi")
+        VFH_NAME("generate_gi")
         label   "Generated GI Mult."
         type    float
         default { "1" }
@@ -44,7 +44,7 @@ groupsimple {
     }
 
     parm {
-        VFH_NAME(    "receive_gi")
+        VFH_NAME("receive_gi")
         label   "Received GI Mult."
         type    float
         default { "1" }
@@ -58,7 +58,7 @@ groupsimple {
     }
 
     parm {
-        VFH_NAME(    "generate_caustics")
+        VFH_NAME("generate_caustics")
         label   "Generated Caustics Mult."
         type    float
         default { "1" }
@@ -72,7 +72,7 @@ groupsimple {
     }
 
     parm {
-        VFH_NAME(    "receive_caustics")
+        VFH_NAME("receive_caustics")
         label   "Received Caustics Mult."
         type    float
         default { "1" }
@@ -86,7 +86,7 @@ groupsimple {
     }
 
     parm {
-        VFH_NAME(    "gi_quality_multiplier")
+        VFH_NAME("gi_quality_multiplier")
         label   "Subdivs Mult."
         type    float
         default { "1" }
@@ -122,7 +122,7 @@ groupsimple {
     VFH_HIDETAB_WHEN_PARAM_FALSE("use")
 
     parm {
-        VFH_NAME(    "alpha_contribution")
+        VFH_NAME("alpha_contribution")
         label   "Alpha Contribution"
         type    float
         default { "1" }
@@ -136,7 +136,7 @@ groupsimple {
     }
 
     parm {
-        VFH_NAME(    "generate_render_elements")
+        VFH_NAME("generate_render_elements")
         label   "Generate Render Elements"
         type    toggle
         default { "1" }
@@ -150,7 +150,7 @@ groupsimple {
     }
 
     parm {
-        VFH_NAME(    "matte_surface")
+        VFH_NAME("matte_surface")
         label   "Matte Surface"
         type    toggle
         default { "0" }
@@ -164,7 +164,7 @@ groupsimple {
     }
 
     parm {
-        VFH_NAME(    "shadows")
+        VFH_NAME("shadows")
         label   "Shadows"
         type    toggle
         default { "0" }
@@ -179,7 +179,7 @@ groupsimple {
     }
 
     parm {
-        VFH_NAME(    "affect_alpha")
+        VFH_NAME("affect_alpha")
         label   "Affect Alpha"
         type    toggle
         default { "0" }
@@ -193,7 +193,7 @@ groupsimple {
         VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
-        VFH_NAME(    "shadow_tint_color")
+        VFH_NAME("shadow_tint_color")
         label   "Shadow Tint"
         type    color
         size    3
@@ -208,7 +208,7 @@ groupsimple {
         VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
-        VFH_NAME(    "shadow_brightness")
+        VFH_NAME("shadow_brightness")
         label   "Shadow Brightness"
         type    float
         default { "1" }
@@ -222,7 +222,7 @@ groupsimple {
         VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
-        VFH_NAME(    "reflection_amount")
+        VFH_NAME("reflection_amount")
         label   "Reflection Amount"
         type    float
         default { "1" }
@@ -236,7 +236,7 @@ groupsimple {
         VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
-        VFH_NAME(    "refraction_amount")
+        VFH_NAME("refraction_amount")
         label   "Refraction Amount"
         type    float
         default { "1" }
@@ -250,7 +250,7 @@ groupsimple {
         VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
-        VFH_NAME(    "gi_amount")
+        VFH_NAME("gi_amount")
         label   "GI Amount"
         type    float
         default { "1" }
@@ -264,7 +264,7 @@ groupsimple {
         VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
-        VFH_NAME(    "no_gi_on_other_mattes")
+        VFH_NAME("no_gi_on_other_mattes")
         label   "No GI On Other Mattes"
         type    toggle
         default { "1" }
@@ -278,7 +278,7 @@ groupsimple {
         VFH_DISABLE_WHEN_PARAM_FALSE("matte_surface")
     }
     parm {
-        VFH_NAME(    "matte_for_secondary_rays")
+        VFH_NAME("matte_for_secondary_rays")
         label   "Matte For Secondary Rays"
         type    string
         default { "0" }
@@ -304,7 +304,7 @@ groupsimple {
     VFH_HIDETAB_WHEN_PARAM_FALSE("use")
 
     parm {
-        VFH_NAME(    "maya_background_shader_compatibility")
+        VFH_NAME("maya_background_shader_compatibility")
         label   "Maya Background Shader Compatibility"
         type    toggle
         default { "0" }
@@ -318,7 +318,7 @@ groupsimple {
         invisible
     }
     parm {
-        VFH_NAME(    "gi_surface_id")
+        VFH_NAME("gi_surface_id")
         label   "GI Surface ID"
         type    int
         default { "0" }
@@ -331,7 +331,7 @@ groupsimple {
         parmtag { "vray_type" "int" }
     }
     parm {
-        VFH_NAME(    "trace_depth")
+        VFH_NAME("trace_depth")
         label   "Trace Depth"
         type    int
         default { "-1" }
@@ -344,7 +344,7 @@ groupsimple {
         parmtag { "vray_type" "int" }
     }
     parm {
-        VFH_NAME(    "reflection_list_is_inclusive")
+        VFH_NAME("reflection_list_is_inclusive")
         label   "Reflection List Is Inclusive"
         type    toggle
         default { "0" }
@@ -358,7 +358,7 @@ groupsimple {
         invisible
     }
     parm {
-        VFH_NAME(    "refraction_list_is_inclusive")
+        VFH_NAME("refraction_list_is_inclusive")
         label   "Refraction List Is Inclusive"
         type    toggle
         default { "0" }
@@ -372,7 +372,7 @@ groupsimple {
         invisible
     }
     parm {
-        VFH_NAME(    "alpha_contribution_tex")
+        VFH_NAME("alpha_contribution_tex")
         label   "Alpha Contribution Tex"
         type    float
         default { "1" }
@@ -386,7 +386,7 @@ groupsimple {
         invisible
     }
     parm {
-        VFH_NAME(    "shadow_brightness_tex")
+        VFH_NAME("shadow_brightness_tex")
         label   "Shadow Brightness Tex"
         type    float
         default { "1" }
@@ -400,7 +400,7 @@ groupsimple {
         invisible
     }
     parm {
-        VFH_NAME(    "reflection_filter_tex")
+        VFH_NAME("reflection_filter_tex")
         label   "Reflection Filter Tex"
         type    color4
         size    4
