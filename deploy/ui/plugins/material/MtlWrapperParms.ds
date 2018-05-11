@@ -5,7 +5,7 @@ parm {
     label "Material"
     type int
     parmtag { "cook_dependent" "1" }
-    parmtag { "vray_pluginattr" "base_mtl" }
+    parmtag { "vray_pluginattr" "base_material" }
     parmtag { "vray_type" "PluginMaterial" }
     invisible
 }
