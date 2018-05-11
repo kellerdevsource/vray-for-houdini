@@ -944,6 +944,23 @@ static void appendObjUniqueID(QString &userAttributes, const OP_Node &opNode)
 	userAttributes.append(SL(";"));
 }
 
+static VRay::Plugin exportObjectProperties(VRayExporter &exporter, OBJ_Node &objNode, const VRay::Plugin &baseMaterial)
+{
+	if (!Parm::getParm(objNode, "MtlWrapper_use"))
+		return baseMaterial;
+
+	const int use = objNode.evalInt("MtlWrapper_use", 0, 0.0);
+	if (!use)
+		return baseMaterial;
+
+	Attrs::PluginDesc mtlWrapper(VRayExporter::getPluginName(objNode, SL("ObjectPropertiesMtlWrapper")),
+	                             SL("MtlWrapper"));
+	mtlWrapper.add(Attrs::PluginAttr(SL("base_material"), baseMaterial));
+	exporter.setAttrsFromOpNodePrms(mtlWrapper, &objNode, SL("MtlWrapper_"));
+
+	return exporter.exportPlugin(mtlWrapper);
+}
+
 VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 {
 	using namespace Attrs;
@@ -1021,6 +1038,8 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 
 			material = pluginExporter.exportPlugin(mtlStatsDesc);
 		}
+
+		material = exportObjectProperties(pluginExporter, objNode, material);
 
 		const VRay::Plugin node = getNodeForInstancerGeometry(primItem, objNode);
 
