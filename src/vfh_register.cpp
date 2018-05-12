@@ -7,6 +7,7 @@
 //
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
+//
 
 #include "vfh_dso_version.h"
 
@@ -40,38 +41,64 @@
 #include "io/io_vrmesh.h"
 #include "io/io_vrscene.h"
 
-// For newShopOperator()
 #include <SHOP/SHOP_Node.h>
 #include <SHOP/SHOP_Operator.h>
-
 #include <UT/UT_Exit.h>
 #include <UT/UT_IOTable.h>
 #include <GU/GU_Detail.h>
 
 #ifdef CGR_HAS_AUR
-#  include <threads.h>
-#  include <aurloader.h>
-VUtils::ThreadManager * aurThreadManager = nullptr;
+#include <threads.h>
+#include <aurloader.h>
 #endif
 
 using namespace VRayForHoudini;
 
-///@note This file contains all entry points of vfh DSO for
-///      registering custom nodes, geometry and tools.
-///      This also is the place for any future entry points you create.
-///      The entry point is of the form newFooOperator()
-///      where Foo is replaced with the network type (Sop, Obj, Dop, etc).
-///      For more info see:
-///      http://archive.sidefx.com/docs/hdk15.5/_h_d_k__intro__creating_plugins.html
-///      http://archive.sidefx.com/docs/hdk15.5/_h_d_k__op_basics__overview__registration.html
+#ifdef CGR_HAS_AUR
+static VUtils::ThreadManager *aurThreadManager = nullptr;
+#endif
 
+/// Indicates that newGeometryIO() was already called.
+static int newGeometryIORegistered = false;
+
+/// Indicates that newGeometryPrim() was already called.
+static int newGeometryPrimRegistered = false;
+
+/// Indicates that newDriverOperator() was already called.
+static int newDriverOperatorRegistered = false;
+
+/// Indicates that newSopOperator() was already called.
+static int newSopOperatorRegistered = false;
+
+/// Indicates that newObjectOperator() was already called.
+static int newObjectOperatorRegistered = false;
+
+/// Indicates that newShopOperator() was already called.
+static int newShopOperatorRegistered = false;
+
+/// Indicates that newVopOperator() was already called.
+static int newVopOperatorRegistered = false;
+
+/// Indicates that CMDextendLibrary() was already called.
+static int cmdExtendLibraryRegistered = false;
+
+/// We want to register our classes only once.
+static int isRegistered(int &registrationFlag)
+{
+	if (registrationFlag)
+		return true;
+	registrationFlag = true;
+	return false;
+}
 
 /// Register file extension that could be handled by vfh custom translators.
+/// This will check if the extension is already registered.
 static void registerExtension(UT_ExtensionList &extList, const char *ext)
 {
-	if (!extList.findExtension(ext)) {
-		extList.addExtension(ext);
-	}
+	if (extList.findExtension(ext))
+		return;
+
+	extList.addExtension(ext);
 }
 
 /// Register file extensions that could be handled by vfh custom translators.
@@ -87,10 +114,12 @@ static void registerExtensions()
 	registerExtension(*geoExtensions, IO::Vrscene::fileExtension);
 }
 
-
 /// Called by Houdini to register vfh custom translators
 void newGeometryIO(void *)
 {
+	if (isRegistered(newGeometryIORegistered))
+		return;
+
 	GU_Detail::registerIOTranslator(new IO::Vrmesh());
 	GU_Detail::registerIOTranslator(new IO::Vrscene());
 
@@ -100,16 +129,25 @@ void newGeometryIO(void *)
 	registerExtensions();
 }
 
-
 /// Called when Houdini exits, but only if ROP operators have been registered
 void unregister(void *)
 {
+	newGeometryIORegistered = false;
+	newGeometryPrimRegistered = false;
+	newDriverOperatorRegistered = false;
+	newSopOperatorRegistered = false;
+	newObjectOperatorRegistered = false;
+	newShopOperatorRegistered = false;
+	newVopOperatorRegistered = false;
+	cmdExtendLibraryRegistered = false;
+
 	deleteVRayInit();
 	Log::Logger::stopLogging();
 
 #ifdef CGR_HAS_AUR
 	finalizeAuraLoader();
 	destroyDefaultThreadManager(aurThreadManager);
+	aurThreadManager = nullptr;
 #endif
 
 #ifndef VASSERT_ENABLED
@@ -118,17 +156,13 @@ void unregister(void *)
 #endif
 }
 
-
 /// Called by Houdini to register vfh custom primitives
 /// @param gafactory[out] - primitive factory for DSO defined primitives
 void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 {
-	// In batch render this function is called multiple times, so we manually check
-	// to make sure we register only once
-	static bool registered = false;
-	if (registered) {
+	if (isRegistered(newGeometryPrimRegistered))
 		return;
-	}
+
 #ifdef CGR_HAS_VRAYSCENE
 	VRaySceneRef::install(gafactory);
 #endif
@@ -138,16 +172,18 @@ void newGeometryPrim(GA_PrimitiveFactory *gafactory)
 	VRayVolumeGridRef::install(gafactory);
 #endif
 	VRayPgYetiRef::install(gafactory);
-	registered = true;
 }
-
 
 /// Called by Houdini to register vfh custom ROP operators
 /// @param table[out] - ROP operator table
 void newDriverOperator(OP_OperatorTable *table)
 {
+	if (isRegistered(newDriverOperatorRegistered))
+		return;
+
 	Log::getLog().info("Build %s from " __DATE__ ", " __TIME__,
 					   STRINGIZE(CGR_GIT_HASH));
+
 #ifndef VASSERT_ENABLED
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(true);
@@ -164,12 +200,14 @@ void newDriverOperator(OP_OperatorTable *table)
 	UT_Exit::addExitCallback(unregister);
 }
 
-
 /// Called by Houdini to register vfh custom SOP operators
 /// @param table[out] - SOP operator table
 void newSopOperator(OP_OperatorTable *table)
 {
 	using namespace SOP;
+
+	if (isRegistered(newSopOperatorRegistered))
+		return;
 
 #ifdef CGR_HAS_AUR
 	const char *vfhPhoenixLoaderDir = getenv("VRAY_FOR_HOUDINI_AURA_LOADERS");
@@ -200,12 +238,14 @@ void newSopOperator(OP_OperatorTable *table)
 	VRayProxyROP::register_sopoperator(table);
 }
 
-
 /// Called by Houdini to register vfh custom OBJ operators
 /// @param table[out] - OBJ operator table
 void newObjectOperator(OP_OperatorTable *table)
 {
 	using namespace OBJ;
+
+	if (isRegistered(newObjectOperatorRegistered))
+		return;
 
 	VFH_ADD_OBJ_OPERATOR(table, SunLight);
 	VFH_ADD_OBJ_OPERATOR(table, LightDirect);
@@ -220,22 +260,28 @@ void newObjectOperator(OP_OperatorTable *table)
 	VFH_ADD_OBJ_OPERATOR(table, VRayClipper);
 }
 
-
 /// Called by Houdini to register vfh custom SHOP operators
 /// @param table[out] - SHOP operator table
 void newShopOperator(OP_OperatorTable *table)
 {
 	using namespace VOP;
-	VOP::VRayMaterialBuilder::register_shop_operator(table);
-}
 
+	if (isRegistered(newShopOperatorRegistered))
+		return;
+
+	VRayMaterialBuilder::register_shop_operator(table);
+}
 
 /// Called by Houdini to register vfh custom VOP operators
 /// @param table[out] - VOP operator table
 void newVopOperator(OP_OperatorTable *table)
 {
 	using namespace VOP;
-	VOP::MaterialOutput::register_operator(table);
+
+	if (isRegistered(newVopOperatorRegistered))
+		return;
+
+	MaterialOutput::register_operator(table);
 
 	VFH_VOP_ADD_OPERATOR(table, "SETTINGS", SettingsEnvironment);
 
@@ -410,10 +456,12 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", ColorCorrection);
 }
 
-
 /// Called by Houdini to register vfh custom hscript commands
 /// @param cman[out] - Houdini's command manager
 void CMDextendLibrary(CMD_Manager *cman)
 {
+	if (isRegistered(cmdExtendLibraryRegistered))
+		return;
+
 	CMD::RegisterCommands(cman);
 }
