@@ -1055,15 +1055,15 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 	else {
 		animInfo.frameStart = CAST_ROPNODE(m_rop)->FSTART();
 		animInfo.frameEnd = CAST_ROPNODE(m_rop)->FEND();
+		animInfo.frameStep = CAST_ROPNODE(m_rop)->FINC();
 
 		frames[0].setDouble(animInfo.frameStart);
 
 		if (m_frames > 1) {
-			animInfo.frameStep = CAST_ROPNODE(m_rop)->FINC();
 			if (animInfo.frameStep > 1) {
 				frames = VRay::VUtils::ValueRefList(m_frames);
 				for (int i = 0; i < m_frames; ++i) {
-					frames[i].setDouble(animInfo.frameStart + i * CAST_ROPNODE(m_rop)->FINC());
+					frames[i].setDouble(animInfo.frameStart + i * animInfo.frameStep);
 				}
 			}
 			else {
