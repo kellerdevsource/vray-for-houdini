@@ -35,24 +35,83 @@ OP_Node* VRayExporter::getObjMaterial(OBJ_Node *objNode, fpreal t)
 	return objNode ? objNode->getMaterialNode(t) : nullptr;
 }
 
+/// An OP_Node map for new objects in RT session.
+typedef QMap<QString, OP_Node*> OpNodeMap;
+
+/// A map for new objects in RT session.
+static OpNodeMap rtNewObjQueue;
+
+void newObjHandler(OP_Node *caller, void *callee, OP_EventType type, void *data)
+{
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	vassert(!exporter.inSceneExport);
+
+	const QString objPath(caller->getFullPath().nonNullBuffer());
+	if (objPath.isEmpty())
+		return;
+
+	Log::getLog().debug("newObjHandler: \"%s\" -> '%s'",
+	                    _toChar(objPath), OPeventToString(type));
+
+	// My tests are showing that this will be the last unique event after
+	// object creation.
+	if (type == OP_UI_CHANGED) {
+		const OpNodeMap::iterator it = rtNewObjQueue.find(objPath);
+		if (it != rtNewObjQueue.end()) {
+			OP_Node *opNode = it.value();
+
+			rtNewObjQueue.erase(it);
+
+			exporter.delOpCallback(opNode, newObjHandler);
+			exporter.exportObject(opNode);
+
+			exporter.getRenderer().getVRay().commit(true);
+		}
+	}
+}
+
+void VRayExporter::rtCallbackObjNetwork(OP_Node *caller, void *callee, OP_EventType type, void *data)
+{
+	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+	if (exporter.inSceneExport)
+		return;
+
+	const QString objPath(caller->getFullPath().nonNullBuffer());
+	if (objPath.isEmpty())
+		return;
+
+	Log::getLog().debug("rtCallbackObjNetwork: \"%s\" -> '%s'",
+	                    _toChar(objPath), OPeventToString(type));
+
+	if (type == OP_CHILD_CREATED) {
+		OP_Node *opNode = reinterpret_cast<OP_Node*>(data);
+		if (opNode) {
+			const QString newOpPath(opNode->getFullPath().nonNullBuffer());
+			if (!objPath.isEmpty()) {
+#if 0
+				// Render opearator is not yet ready, register callback that will handle export.
+				rtNewObjQueue.insert(newOpPath, opNode);
+				exporter.addOpCallback(opNode, newObjHandler);
+#endif
+			}
+		}
+	}
+}
+
 void VRayExporter::RtCallbackOPDirector(OP_Node *caller, void *callee, OP_EventType type, void *data)
 {
 	VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
 	if (exporter.inSceneExport)
 		return;
 
-	// XXX: OP_UI_CURRENT_CHANGED is emitted almost for everthing.
-#if 0
-	if (!csect.tryEnter())
-		return;
-
-	Log::getLog().debug("RtCallbackOPDirector: %s from caller: \"%s\"", OPeventToString(type), caller->getName().buffer());
+	Log::getLog().debug("RtCallbackOPDirector: \"%s\" -> '%s'",
+	                    caller->getFullPath().nonNullBuffer(), OPeventToString(type));
 
 	if (type == OP_UI_CURRENT_CHANGED) {
 		if (data) {
 			OBJ_Node* objNode = static_cast<OP_Node*>(data)->castToOBJNode();
 			if (objNode) {
-				VRayExporter &exporter = *reinterpret_cast<VRayExporter*>(callee);
+#if 0
 				ObjectExporter &objExporter = exporter.getObjectExporter();
 
 				// Clear caches, otherwise plugin will not be exported if it is deleted and recreated
@@ -62,12 +121,10 @@ void VRayExporter::RtCallbackOPDirector(OP_Node *caller, void *callee, OP_EventT
 				// Update node
 				objExporter.removeGenerated(*objNode);
 				exporter.exportObject(objNode);
+#endif
 			}
 		}
 	}
-
-	csect.leave();
-#endif
 }
 
 void VRayExporter::RtCallbackOBJGeometry(OP_Node *caller, void *callee, OP_EventType type, void *data)

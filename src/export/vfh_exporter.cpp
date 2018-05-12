@@ -2055,6 +2055,9 @@ void VRayExporter::exportScene()
 
 	// Add callback to OP Director so new nodes can be exported during RT sessions.
 	if (sessionType == VfhSessionType::rt) {
+		OP_Node *objNetwork = OPgetDirector()->findNode("/obj");
+
+		addOpCallback(objNetwork, rtCallbackObjNetwork);
 		addOpCallback(OPgetDirector(), RtCallbackOPDirector);
 	}
 }
