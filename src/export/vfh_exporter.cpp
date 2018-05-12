@@ -1123,10 +1123,15 @@ ReturnValue VRayExporter::exportSettings()
 		}
 	}
 
-	Attrs::PluginDesc pluginDesc(SL("settingsUnitsInfo"), SL("SettingsUnitsInfo"));
+	CH_Manager &chanMan = *OPgetDirector()->getChannelManager();
+
+	Attrs::PluginDesc pluginDesc(SL("settingsUnitsInfo"),
+	                             SL("SettingsUnitsInfo"));
+
 	pluginDesc.add(Attrs::PluginAttr(SL("scene_upDir"), VRay::Vector(0.0f, 1.0f, 0.0f)));
-	pluginDesc.add(Attrs::PluginAttr(SL("meters_scale"),
-	                                 OPgetDirector()->getChannelManager()->getUnitLength()));
+	pluginDesc.add(Attrs::PluginAttr(SL("meters_scale"), chanMan.getUnitLength()));
+	pluginDesc.add(Attrs::PluginAttr(SL("seconds_scale"), chanMan.getSecsPerSample()));
+	pluginDesc.add(Attrs::PluginAttr(SL("frames_scale"), chanMan.getSamplesPerSec()));
 
 	exportPlugin(pluginDesc);
 
