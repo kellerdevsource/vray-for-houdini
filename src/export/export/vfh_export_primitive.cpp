@@ -458,17 +458,28 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 			Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(*simVop, wrapperPrefix, cachePlugin.getName()),
 			                             wrapperType);
 			phxWrapper.add(Attrs::PluginAttr(SL("phoenix_sim"), overwriteSim));
-
-			VRay::Plugin phxWrapperPlugin = pluginExporter.exportPlugin(phxWrapper);
-			if (!isMesh) {
-				Attrs::PluginDesc node(VRayExporter::getPluginName(*simVop, SL("Node"), cachePlugin.getName()),
-									   SL("Node"));
-				node.add(Attrs::PluginAttr(SL("geometry"), phxWrapperPlugin));
-				node.add(Attrs::PluginAttr(SL("visible"), true));
-				node.add(Attrs::PluginAttr(SL("transform"), VRay::Transform(1)));
-				node.add(Attrs::PluginAttr(SL("material"), pluginExporter.exportDefaultMaterial()));
-				pluginExporter.exportPlugin(node);
+			if (isMesh) {
+				Attrs::PluginDesc staticMesh(VRayExporter::getPluginName(*simVop, SL("GeomStaticMesh"), cachePlugin.getName()),
+					SL("GeomStaticMesh"));
+				
+				const auto dynGeomAttr = phxSim.get(SL("_vray_dynamic_geometry"));
+				UT_ASSERT_MSG(dynGeomAttr, "Exporting PhxShaderSim inside PhxShaderSimGeom with missing _vray_dynamic_geometry");
+				const bool dynamic_geometry = dynGeomAttr ? dynGeomAttr->paramValue.valInt : false;
+				
+				staticMesh.add(Attrs::PluginAttr(SL("dynamic_geometry"), dynamic_geometry));
+				VRay::Plugin staticMeshPlugin = pluginExporter.exportPlugin(staticMesh);
+				
+				phxWrapper.add(Attrs::PluginAttr(SL("static_mesh"), staticMeshPlugin));
 			}
+			VRay::Plugin phxWrapperPlugin = pluginExporter.exportPlugin(phxWrapper);
+
+			Attrs::PluginDesc node(VRayExporter::getPluginName(*simVop, SL("Node"), cachePlugin.getName()),
+									SL("Node"));
+			node.add(Attrs::PluginAttr(SL("geometry"), phxWrapperPlugin));
+			node.add(Attrs::PluginAttr(SL("visible"), true));
+			node.add(Attrs::PluginAttr(SL("transform"), VRay::Transform(1)));
+			node.add(Attrs::PluginAttr(SL("material"), pluginExporter.exportDefaultMaterial()));
+			pluginExporter.exportPlugin(node);
 		}
 	}
 }
