@@ -47,9 +47,9 @@ FORCEINLINE uint qHash(const MapVertex &mapVertex, uint seed=0) {
 #pragma pack(pop)
 
 	const MapVertexHash mapVertexHash = {
-		VUtils::fast_ceil(mapVertex.v.x() * 1000.f),
-		VUtils::fast_ceil(mapVertex.v.y() * 1000.f),
-		VUtils::fast_ceil(mapVertex.v.z() * 1000.f),
+		VUtils::fast_ceil(mapVertex.v.x() * 10000.f),
+		VUtils::fast_ceil(mapVertex.v.y() * 10000.f),
+		VUtils::fast_ceil(mapVertex.v.z() * 10000.f),
 	};
 
 	Hash::MHash hash;
