@@ -626,6 +626,18 @@
                 hidewhen "{ al_enable == 0 }"
             }
             parm {
+                name    "lightscut"
+                label   "Lights Cut"
+                type    float
+                default { "0.001" }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "lightscut" }
+                parmtag { "vray_type" "float" }
+                invisible
+            }
+            parm {
                 name    "al_sampling"
                 label   "Lights Sampling"
                 type    string
@@ -1021,18 +1033,6 @@
                 parmtag { "vray_custom_handling" " " }
                 parmtag { "vray_ramp_type" "curve" }
                 disablewhen "{ targ != 1 targ != 2 targ != 3 targ != 10 }"
-            }
-            parm {
-                name    "lightscut"
-                label   "Lights Cut"
-                type    float
-                default { "0.001" }
-                export  none
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "PhxShaderSim" }
-                parmtag { "vray_pluginattr" "lightscut" }
-                parmtag { "vray_type" "float" }
-                invisible
             }
         }
         parm {
