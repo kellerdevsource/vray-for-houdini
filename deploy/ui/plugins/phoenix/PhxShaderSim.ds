@@ -362,8 +362,8 @@
         parm {
             name    "normalized_positions"
             label   "normalized_positions"
-            type    toggle
-            default { "1" }
+            type    int
+            default { "0" }
             range   { 0 1 }
             export  none
             parmtag { "cook_dependent" "1" }
@@ -372,7 +372,6 @@
             parmtag { "vray_type" "int" }
             invisible
         }
-
     }
 
     group {
@@ -625,6 +624,18 @@
                 parmtag { "vray_pluginattr" "selfshadow" }
                 parmtag { "vray_type" "enum" }
                 hidewhen "{ al_enable == 0 }"
+            }
+            parm {
+                name    "lightscut"
+                label   "Lights Cut"
+                type    float
+                default { "0.001" }
+                export  none
+                parmtag { "cook_dependent" "1" }
+                parmtag { "vray_plugin" "PhxShaderSim" }
+                parmtag { "vray_pluginattr" "lightscut" }
+                parmtag { "vray_type" "float" }
+                invisible
             }
             parm {
                 name    "al_sampling"
