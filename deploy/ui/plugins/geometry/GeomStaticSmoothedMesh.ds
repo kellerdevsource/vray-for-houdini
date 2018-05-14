@@ -5,4 +5,15 @@
     parmtag { vray_plugin "GeomStaticSmoothedMesh" }
 
 #include "$VRAY_UI_DS_PATH/plugins/geometry/GeomStaticSmoothedMeshParms.ds"
+
+    parm {
+        name "output"
+        label "Output"
+        type int
+        parmtag { "cook_dependent" "1" }
+        parmtag { "vray_label" "Surface" }
+        parmtag { "vray_pluginattr" "" }
+        parmtag { "vray_type" "OutputPlugin" }
+        invisible
+    }
 }

@@ -1223,8 +1223,7 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 		for (GA_Iterator it(gdp.getVertexRange()); it.blockAdvance(start, end); ) {
 			vaPageHndl.setPage(start);
 			for (GA_Offset offset = start; offset < end; ++offset) {
-				const UT_Vector3 &val = vaPageHndl.value(offset);
-				mapChannel.verticesSet.insert(MapVertex(val));
+				mapChannel.verticesSet.insert(MapVertex(vaPageHndl.value(offset)));
 			}
 		}
 
@@ -1233,9 +1232,9 @@ void MeshExporter::getVertexAttrAsMapChannel(const GA_Attribute &attr, MapChanne
 		mapChannel.faces = VRay::VUtils::IntRefList(getNumFaces() * 3);
 
 		int i = 0;
-		for (auto &mv : mapChannel.verticesSet) {
-			mv.index = i;
-			mapChannel.vertices[i++].set(mv.v[0], mv.v[1], mv.v[2]);
+		for (const MapVertex &mapVertex : mapChannel.verticesSet) {
+			mapVertex.index = i;
+			mapChannel.vertices[i++].set(mapVertex.v.x(), mapVertex.v.y(), mapVertex.v.z());
 		}
 
 		UT_ASSERT(i == mapChannel.vertices.size());

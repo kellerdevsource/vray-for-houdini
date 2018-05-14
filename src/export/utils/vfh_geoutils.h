@@ -17,8 +17,6 @@
 #include <GEO/GEO_Primitive.h>
 #include <SYS/SYS_Math.h>
 
-#include <unordered_set>
-
 #define EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT 0
 
 namespace VRayForHoudini {
@@ -27,30 +25,40 @@ namespace VRayForHoudini {
 struct MapVertex {
 	MapVertex() = default;
 
-	explicit MapVertex(const UT_Vector3 &vec) {
-		v[0] = vec[0];
-		v[1] = vec[1];
-		v[2] = vec[2];
-	}
+	explicit MapVertex(const UT_Vector3F &v)
+		: v(v)
+	{}
 
-	bool operator == (const MapVertex &other) const {
-		return SYSalmostEqual(v[0],other.v[0]) && SYSalmostEqual(v[1],other.v[1]) && SYSalmostEqual(v[2],other.v[2]);
-	}
+	bool operator ==(const MapVertex &other) const;
 
-	float v[3] = { 0.0f }; ///< vertex attribute value
-	mutable int index = 0; ///< the index of vertex attribute value
+	/// The index of vertex attribute value.
+	mutable int index = 0;
+
+	UT_Vector3F v;
 };
 
-/// Helper structure to hash MapVertex
-struct MapVertexHash {
-	std::size_t operator()(const MapVertex &v) const {
-		Hash::MHash hash;
-		Hash::MurmurHash3_x86_32(v.v, 3 * sizeof(float), 42, &hash);
-		return hash;
-	}
-};
+FORCEINLINE uint qHash(const MapVertex &mapVertex, uint seed=0) {
+#pragma pack(push, 1)
+	struct MapVertexHash {
+		int x;
+		int y;
+		int z;
+	};
+#pragma pack(pop)
 
-typedef std::unordered_set<MapVertex, MapVertexHash> VertexSet;
+	const MapVertexHash mapVertexHash = {
+		VUtils::fast_ceil(mapVertex.v.x() * 1000.f),
+		VUtils::fast_ceil(mapVertex.v.y() * 1000.f),
+		VUtils::fast_ceil(mapVertex.v.z() * 1000.f),
+	};
+
+	Hash::MHash hash;
+	Hash::MurmurHash3_x86_32(&mapVertexHash, sizeof(MapVertexHash), 42, &hash);
+
+	return hash;
+}
+
+typedef QSet<MapVertex> VertexSet;
 
 struct CharStringTable
 	: QStringList

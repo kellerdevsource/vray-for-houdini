@@ -108,6 +108,13 @@ bool GEOgetDataFromAttributeT(const GA_Attribute *attr,
 
 }
 
+bool MapVertex::operator==(const MapVertex &other) const
+{
+	return IsFloatEq(v[0], other.v[0]) &&
+	       IsFloatEq(v[1], other.v[1]) &&
+	       IsFloatEq(v[2], other.v[2]);
+}
+
 VRay::VUtils::CharStringRefList CharStringTable::toRefList() const
 {
 	VRay::VUtils::CharStringRefList refList(count());

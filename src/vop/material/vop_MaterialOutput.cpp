@@ -16,8 +16,6 @@
 #include <OP/OP_Input.h>
 #include <UT/UT_Version.h>
 
-#include <unordered_set>
-
 using namespace VRayForHoudini;
 using namespace VOP;
 
