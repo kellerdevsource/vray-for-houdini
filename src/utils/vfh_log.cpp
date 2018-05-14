@@ -206,11 +206,11 @@ void Logger::stopLogging()
 void Logger::valog(LogLevel level, const tchar *format, va_list args) const
 {
 	// Show all messages in debug.
-//#ifndef VFH_DEBUG
+#ifndef VFH_DEBUG
 	const bool showMessage = level <= logLevel;
 	if (!showMessage)
 		return;
-//#endif
+#endif
 
 	tchar msgBuf[2048];
 	vsnprintf(msgBuf, COUNT_OF(msgBuf), format, args);
