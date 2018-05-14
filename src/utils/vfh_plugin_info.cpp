@@ -83,6 +83,9 @@ static void initVRayParmTypesMap()
 	vrayParmTypes.insert("PluginMaterial",       ePlugin);
 	vrayParmTypes.insert("OutputPluginMaterial", eOutputPlugin);
 
+	vrayParmTypes.insert("PluginSurface",       ePlugin);
+	vrayParmTypes.insert("OutputPluginSurface", eOutputPlugin);
+
 	vrayParmTypes.insert("PluginBRDF",       ePlugin);
 	vrayParmTypes.insert("OutputPluginBRDF", eOutputPlugin);
 }
@@ -118,6 +121,9 @@ static void initVRayVopTypesMap()
 
 	vrayVopTypes.insert("PluginMaterial",       VOP_SURFACE_SHADER);
 	vrayVopTypes.insert("OutputPluginMaterial", VOP_SURFACE_SHADER);
+
+	vrayVopTypes.insert("PluginSurface",       VOP_GEOMETRY_SHADER);
+	vrayVopTypes.insert("OutputPluginSurface", VOP_GEOMETRY_SHADER);
 }
 
 static void initVRayTypeMaps()

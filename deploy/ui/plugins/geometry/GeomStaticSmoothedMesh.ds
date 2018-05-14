@@ -13,7 +13,7 @@
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_label" "Surface" }
         parmtag { "vray_pluginattr" "" }
-        parmtag { "vray_type" "OutputPlugin" }
+        parmtag { "vray_type" "OutputPluginSurface" }
         invisible
     }
 }

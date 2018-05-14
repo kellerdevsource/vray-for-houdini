@@ -81,7 +81,7 @@ unsigned MaterialOutput::getNumVisibleInputs() const
 
 bool MaterialOutput::willAutoconvertInputType(int idx)
 {
-	return true;
+	return idx == materialOutputInputMaterial;
 }
 
 const char* MaterialOutput::inputLabel(unsigned idx) const
@@ -131,6 +131,7 @@ void MaterialOutput::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeI
 		}
 		case materialOutputInputSimulation: {
 			type_infos.append(VOP_TypeInfo(VOP_ATMOSPHERE_SHADER));
+			break;
 		}
 		default: {
 			type_infos.append(VOP_TypeInfo(VOP_TYPE_ERROR));
