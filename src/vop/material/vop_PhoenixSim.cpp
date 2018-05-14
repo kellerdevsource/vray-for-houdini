@@ -751,9 +751,11 @@ PhxShaderSim::PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *en
 				if (!strcmp(typeString, "color")) {
 					ctx->m_uiType = static_cast<RampType>(ctx->m_uiType | RampType_Color);
 					m_rampTypes[token] = RampType_Color;
+					m_ramps[token]->data(RampType_Color).m_type = RampType_Color;
 				} else if (!strcmp(typeString, "curve")) {
 					ctx->m_uiType = static_cast<RampType>(ctx->m_uiType | RampType_Curve);
 					m_rampTypes[token] = RampType_Curve;
+					m_ramps[token]->data(RampType_Curve).m_type = RampType_Curve;
 				}
 			}
 		}
