@@ -86,6 +86,18 @@ static GA_AttributeFilter& supportedAttrFilter()
 	return filterAttr;
 }
 
+static void rescaleVectorList(VRay::VUtils::VectorRefList &vectorList, float factor)
+{
+	for (int i = 0; i < vectorList.size(); ++i) {
+		vectorList[i] /= factor;
+	}
+}
+
+static void rescaleVelocity(VRay::VUtils::VectorRefList &vectorList)
+{
+	rescaleVectorList(vectorList, OPgetDirector()->getChannelManager()->getSamplesPerSec());
+}
+
 /// Converts numeric list to vector list.
 /// @tparam T Numeric list type.
 /// @param attr Attribute.
@@ -131,6 +143,11 @@ static bool getDataFromAttribute(const GA_Attribute *attr, VRay::VUtils::VectorR
 
 	if (attr->getTupleSize() == 3) {
 		res = aifTuple->getRange(attr, GA_Range(attr->getIndexMap()), &data.get()->x);
+
+		const int isVelocity = attr->getName().equal(GEO_STD_ATTRIB_VELOCITY);
+		if (isVelocity) {
+			rescaleVelocity(data);
+		}
 	}
 	else if (attr->getTupleSize() == 1) {
 		if (attrRef.isFloat()) {
