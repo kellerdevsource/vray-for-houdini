@@ -33,7 +33,6 @@ const std::thread::id mainThreadID = std::this_thread::get_id();
 static const char* logLevelAsString(LogLevel level)
 {
 	switch (level) {
-		case LogLevelMsg:      return "Message";
 		case LogLevelInfo:     return "Info";
 		case LogLevelProgress: return "Progress";
 		case LogLevelWarning:  return "Warning";
@@ -46,7 +45,6 @@ static const char* logLevelAsString(LogLevel level)
 static const char* logLevelAsColor(LogLevel level)
 {
 	switch (level) {
-		case LogLevelMsg:      return VUTILS_COLOR_DEFAULT;
 		case LogLevelInfo:     return VUTILS_COLOR_DEFAULT;
 		case LogLevelProgress: return VUTILS_COLOR_GREEN;
 		case LogLevelWarning:  return VUTILS_COLOR_YELLOW;
@@ -58,16 +56,16 @@ static const char* logLevelAsColor(LogLevel level)
 
 struct VfhLogMessage {
 	/// The message's log level.
-	LogLevel level;
+	LogLevel level = LogLevelDebug;
 
 	/// The message.
 	QString message;
 
 	/// The time the log was made.
-	time_t time;
+	time_t time = 0;
 
 	/// The thread ID of the caller thread.
-	int fromMain;
+	int fromMain = -1;
 };
 
 /// Because there is no "formatter.asprintf()" in Qt4...
@@ -208,11 +206,11 @@ void Logger::stopLogging()
 void Logger::valog(LogLevel level, const tchar *format, va_list args) const
 {
 	// Show all messages in debug.
-#ifndef VFH_DEBUG
-	const bool showMessage = level == LogLevelMsg ? true : level <= logLevel;
+//#ifndef VFH_DEBUG
+	const bool showMessage = level <= logLevel;
 	if (!showMessage)
 		return;
-#endif
+//#endif
 
 	tchar msgBuf[2048];
 	vsnprintf(msgBuf, COUNT_OF(msgBuf), format, args);
@@ -282,16 +280,6 @@ void Logger::progress(const tchar *format, ...) const
 	va_start(args, format);
 
 	valog(Log::LogLevelProgress, format, args);
-
-	va_end(args);
-}
-
-void Logger::msg(const tchar *format, ...) const
-{
-	va_list args;
-	va_start(args, format);
-
-	valog(Log::LogLevelMsg, format, args);
 
 	va_end(args);
 }

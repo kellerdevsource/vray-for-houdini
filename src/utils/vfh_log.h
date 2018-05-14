@@ -17,8 +17,7 @@ namespace VRayForHoudini {
 namespace Log {
 
 enum LogLevel {
-	LogLevelMsg = 0,
-	LogLevelInfo,
+	LogLevelInfo = 0,
 	LogLevelProgress,
 	LogLevelWarning,
 	LogLevelError,
@@ -30,9 +29,6 @@ struct Logger {
 	Logger()
 		: logLevel(LogLevelError)
 	{}
-
-	/// Log string with msg level, always show not taking current log level into account.
-	void msg(const tchar *format, ...) const;
 	
 	/// Log string with info level.
 	void info(const tchar *format, ...) const;

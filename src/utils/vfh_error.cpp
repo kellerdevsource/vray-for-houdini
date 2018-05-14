@@ -47,7 +47,7 @@ void Error::ErrorChaser::crashHandler()
 	filename.expandVariables();
 	FILE *file = vutils_fopen(filename, "w");
 	if (file) {
-		Log::getLog().msg("Saving crash dump to %s", filename.nonNullBuffer());
+		Log::getLog().info("Saving crash dump to %s", filename.nonNullBuffer());
 	}
 	else {
 		file = stderr;

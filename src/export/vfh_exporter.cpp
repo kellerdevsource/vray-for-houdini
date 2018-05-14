@@ -2338,7 +2338,7 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	const int logLevel = m_rop->evalInt("exporter_log_level", 0, 0.0);
 	Log::getLog().setLogLevel(logLevel == 0 ? Log::LogLevelError : Log::LogLevelDebug);
 
-	OBJ_Node *camera = VRayExporter::getCamera(m_rop);
+	OBJ_Node *camera = getCamera(m_rop);
 	if (!camera) {
 		Log::getLog().error("Camera is not set!");
 		m_error = ROP_ABORT_RENDER;

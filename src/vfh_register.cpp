@@ -185,6 +185,8 @@ void newDriverOperator(OP_OperatorTable *table)
 					   STRINGIZE(CGR_GIT_HASH));
 
 #ifndef VASSERT_ENABLED
+	Log::getLog().setLogLevel(Log::LogLevelError);
+
 	Error::ErrorChaser &errChaser = Error::ErrorChaser::getInstance();
 	errChaser.enable(true);
 #endif
