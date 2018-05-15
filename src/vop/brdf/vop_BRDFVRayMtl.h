@@ -27,10 +27,7 @@ public:
 	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
 
 protected:
-	void setPluginType() VRAY_OVERRIDE { 
-		pluginType = VRayPluginType::BRDF; 
-		pluginID   = "BRDFVRayMtl"; 
-	} 
+	void setPluginType() VRAY_OVERRIDE;
 };
 
 } // VRayForHoudini

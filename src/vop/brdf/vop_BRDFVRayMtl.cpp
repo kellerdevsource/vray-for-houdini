@@ -12,17 +12,21 @@
 
 using namespace VRayForHoudini;
 
-OP::VRayNode::PluginResult BRDFVRayMtl::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+void BRDFVRayMtl::setPluginType()
 {
-	const fpreal &t = exporter.getContext().getTime();
+	pluginType = VRayPluginType::BRDF;
+	pluginID = "BRDFVRayMtl";
+}
+
+OP::VRayNode::PluginResult BRDFVRayMtl::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*)
+{
+	const fpreal t = exporter.getContext().getTime();
 
 	const int hilightLockVal = evalInt("hilight_glossiness_lock", 0, t);
 	const fpreal hilightGlossinessValue = evalFloat("hilight_glossiness", 0, t);
 	const fpreal reflectionColourValue = evalFloat("reflect_glossiness", 0, t);
 
-	if (hilightLockVal) {
-		pluginDesc.add(Attrs::PluginAttr("hilight_glossiness", reflectionColourValue));
-	}
+	pluginDesc.add(Attrs::PluginAttr("hilight_glossiness", hilightLockVal ? reflectionColourValue : hilightGlossinessValue));
 
-	return PluginResult::PluginResultNA;
+	return PluginResultNA;
 }
