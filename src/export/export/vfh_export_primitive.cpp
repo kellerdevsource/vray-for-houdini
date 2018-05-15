@@ -458,24 +458,23 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 			Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(*simVop, wrapperPrefix, cachePlugin.getName()),
 			                             wrapperType);
 			phxWrapper.add(Attrs::PluginAttr(SL("phoenix_sim"), overwriteSim));
-
-			VRay::Plugin phxWrapperPlugin = pluginExporter.exportPlugin(phxWrapper);
-			if (!isMesh) {
-				// make static mesh that wraps the geom plugin
-				Attrs::PluginDesc meshWrapper(VRayExporter::getPluginName(*simVop, SL("Mesh"), cachePlugin.getName()),
-				                              SL("GeomStaticMesh"));
-				meshWrapper.add(Attrs::PluginAttr(SL("static_mesh"), phxWrapperPlugin));
-
+			if (isMesh) {
+				Attrs::PluginDesc staticMesh(VRayExporter::getPluginName(*simVop, SL("GeomStaticMesh"), cachePlugin.getName()),
+					SL("GeomStaticMesh"));
+				
 				const auto dynGeomAttr = phxSim.get(SL("_vray_dynamic_geometry"));
 				UT_ASSERT_MSG(dynGeomAttr, "Exporting PhxShaderSim inside PhxShaderSimGeom with missing _vray_dynamic_geometry");
 				const bool dynamic_geometry = dynGeomAttr ? dynGeomAttr->paramValue.valInt : false;
-
-				meshWrapper.add(Attrs::PluginAttr(SL("dynamic_geometry"), dynamic_geometry));
-				phxWrapperPlugin = pluginExporter.exportPlugin(meshWrapper);
+				
+				staticMesh.add(Attrs::PluginAttr(SL("dynamic_geometry"), dynamic_geometry));
+				VRay::Plugin staticMeshPlugin = pluginExporter.exportPlugin(staticMesh);
+				
+				phxWrapper.add(Attrs::PluginAttr(SL("static_mesh"), staticMeshPlugin));
 			}
+			VRay::Plugin phxWrapperPlugin = pluginExporter.exportPlugin(phxWrapper);
 
 			Attrs::PluginDesc node(VRayExporter::getPluginName(*simVop, SL("Node"), cachePlugin.getName()),
-			                       SL("Node"));
+									SL("Node"));
 			node.add(Attrs::PluginAttr(SL("geometry"), phxWrapperPlugin));
 			node.add(Attrs::PluginAttr(SL("visible"), true));
 			node.add(Attrs::PluginAttr(SL("transform"), VRay::Transform(1)));
