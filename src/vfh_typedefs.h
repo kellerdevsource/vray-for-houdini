@@ -18,5 +18,6 @@
 typedef QSet<QString> StringSet;
 typedef QSet<fpreal> FloatSet;
 typedef QList<VRay::Plugin> PluginSet;
+typedef QList<VRay::Plugin> PluginList;
 
 #endif // VRAY_FOR_HOUDINI_TYPEDEFS_H
