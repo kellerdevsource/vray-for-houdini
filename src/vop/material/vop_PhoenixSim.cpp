@@ -132,19 +132,20 @@ struct RampContext {
 	typedef std::array<VRayVolumeGridRef::MinMaxPair, CHANNEL_COUNT> MinMaxMap;
 
 	/// Constructs empty context with None type for ramps
-	/// @param type - the type of the data inside the context
-	explicit RampContext(AurRamps::RampType type = AurRamps::RampType_None)
+	RampContext()
 		: m_ui(nullptr)
 		, m_freeUi(false)
-		, m_uiType(type)
+		, m_uiType(RampType_None)
 		, m_activeChan(CHANNEL_SMOKE)
 	{
 		for (int c = 0; c < CHANNEL_COUNT; ++c) {
-			for (int r = AurRamps::RampType_Curve; r <= AurRamps::RampType_Color; ++r) {
-				const auto currentType = static_cast<AurRamps::RampType>(r);
-				m_data[c][rampTypeToIdx(type)].m_type = currentType;
+			for (int r = RampType_Curve; r <= RampType_Color; ++r) {
+				const RampType currentType = static_cast<RampType>(r);
+
+				m_data[c][rampTypeToIdx(currentType)].m_type = currentType;
 			}
 		}
+
 		memset(m_minMax.data(), 0, m_minMax.size() * sizeof(m_minMax[0]));
 	}
 
@@ -723,26 +724,31 @@ PhxShaderSim::PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *en
     : NodeBase(parent, name, entry)
 {
 	const auto count = AttrItems ? PRM_Template::countTemplates(AttrItems) : 0;
+
 	for (int c = 0; c < count; ++c) {
-		auto & parm = AttrItems[c];
-		const auto spareData = parm.getSparePtr();
+		PRM_Template &parm = AttrItems[c];
+
+		const PRM_SpareData *spareData = parm.getSparePtr();
 		if (spareData) {
-			const auto typeString = spareData->getValue("vray_ramp_type");
-			const auto mergeRamp = spareData->getValue("vray_ramp_merge");
-			const auto token = parm.getToken();
+			const char *typeString = spareData->getValue("vray_ramp_type");
+			const char *token = parm.getToken();
 			if (token && typeString) {
+				const char *mergeRamp = spareData->getValue("vray_ramp_merge");
+
 				RampContextPtr ctx;
 
-				// try to find the ramp we should merge with
-				// if it is already created - use it's context
+				// Try to find the ramp we should merge with
+				// if it is already created - use it's context.
 				if (mergeRamp) {
-					auto mergeCtx = m_ramps.find(mergeRamp);
-					if (mergeCtx != m_ramps.end()) {
-						ctx = mergeCtx.value();
-						// attach ref with our token
+					const auto mergeCtxIt = m_ramps.find(mergeRamp);
+					if (mergeCtxIt != m_ramps.end()) {
+						ctx = mergeCtxIt.value();
+
+						// Attach ref with our token
 						m_ramps[token] = ctx;
 					}
 				}
+
 				if (!ctx) {
 					ctx.reset(new RampContext);
 					m_ramps[token] = ctx; 
@@ -750,10 +756,13 @@ PhxShaderSim::PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *en
 
 				if (!strcmp(typeString, "color")) {
 					ctx->m_uiType = static_cast<RampType>(ctx->m_uiType | RampType_Color);
+
 					m_rampTypes[token] = RampType_Color;
 					m_ramps[token]->data(RampType_Color).m_type = RampType_Color;
-				} else if (!strcmp(typeString, "curve")) {
+				}
+				else if (!strcmp(typeString, "curve")) {
 					ctx->m_uiType = static_cast<RampType>(ctx->m_uiType | RampType_Curve);
+
 					m_rampTypes[token] = RampType_Curve;
 					m_ramps[token]->data(RampType_Curve).m_type = RampType_Curve;
 				}
