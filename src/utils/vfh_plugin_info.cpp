@@ -88,6 +88,9 @@ static void initVRayParmTypesMap()
 
 	vrayParmTypes.insert("PluginBRDF",       ePlugin);
 	vrayParmTypes.insert("OutputPluginBRDF", eOutputPlugin);
+
+	vrayParmTypes.insert("PluginSimualtion",       ePlugin);
+	vrayParmTypes.insert("OutputPluginSimulation", eOutputPlugin);
 }
 
 static void initVRayVopTypesMap()
@@ -124,6 +127,9 @@ static void initVRayVopTypesMap()
 
 	vrayVopTypes.insert("PluginSurface",       VOP_GEOMETRY_SHADER);
 	vrayVopTypes.insert("OutputPluginSurface", VOP_GEOMETRY_SHADER);
+
+	vrayVopTypes.insert("PluginSimualtion",       VOP_ATMOSPHERE_SHADER);
+	vrayVopTypes.insert("OutputPluginSimulation", VOP_ATMOSPHERE_SHADER);
 }
 
 static void initVRayTypeMaps()

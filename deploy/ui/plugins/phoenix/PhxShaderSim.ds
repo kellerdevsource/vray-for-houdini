@@ -1041,7 +1041,7 @@
             parmtag { "cook_dependent" "0" }
             parmtag { "vray_label" "output" }
             parmtag { "vray_pluginattr" "" }
-            parmtag { "vray_type" "OutputPlugin" }
+            parmtag { "vray_type" "OutputPluginSimulation" }
             invisible
         }
     }
