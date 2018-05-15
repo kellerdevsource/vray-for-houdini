@@ -11,6 +11,7 @@
         default { "uv" }
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_type" "string" }
+        parmtag { "vray_pluginattr" "channel_name" }
     }
 
     parm {
@@ -29,9 +30,8 @@
         type    color4
         size    4
         default { "0" "0" "0" "1" }
-        range   { 0 1 }
-        export  none
         parmtag { "cook_dependent" "1" }
+        parmtag { "vray_pluginattr" "default_color" }
         parmtag { "vray_type" "Texture" }
     }
 
