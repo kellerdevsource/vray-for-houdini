@@ -339,6 +339,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFScanned);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFSkinComplex);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFVRayMtl);
+	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFToonMtl);
 	VFH_VOP_ADD_OPERATOR(table, "BRDF", BRDFAlSurface);
 
 #ifdef CGR_HAS_AUR

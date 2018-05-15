@@ -138,6 +138,7 @@ set(SOURCES
 	vop/brdf/vop_BRDFLayered.cpp
 	vop/brdf/vop_BRDFScanned.cpp
 	vop/brdf/vop_BRDFVRayMtl.cpp
+	vop/brdf/vop_BRDFToonMtl.cpp
 	vop/env/vop_SettingsEnvironment.cpp
 	vop/material/vop_MaterialOutput.cpp
 	vop/material/vop_MtlMulti.cpp
@@ -180,6 +181,7 @@ set(HEADERS
 	vop/brdf/vop_BRDFLayered.h
 	vop/brdf/vop_BRDFScanned.h
 	vop/brdf/vop_BRDFVRayMtl.h
+	vop/brdf/vop_BRDFToonMtl.h
 	vop/env/vop_env_def.h
 	vop/env/vop_SettingsEnvironment.h
 	vop/material/vop_MaterialOutput.h

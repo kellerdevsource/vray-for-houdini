@@ -15,6 +15,7 @@
 #include "vop_BRDFLayered.h"
 #include "vop_BRDFScanned.h"
 #include "vop_BRDFVRayMtl.h"
+#include "vop_BRDFToonMtl.h"
 
 namespace VRayForHoudini {
 namespace VOP {

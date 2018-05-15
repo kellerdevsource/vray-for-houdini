@@ -396,6 +396,24 @@ voptoolutils.genericTool(kwargs, 'VRayNodeBRDFVRayMtl', nodename="vraymtl")
     </script>
 </tool>
 
+<tool name="vop_VRayNodeBRDFToonMtl" label="V-Ray Toon Material" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeBRDFToonMtl</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeBRDFToonMtl', nodename="vraytoonmtl")
+
+]]>
+    </script>
+</tool>
 
 <tool name="vop_VRayNodeBRDFWard" label="Ward" icon="ROP_vray">
     <readOnly/>
