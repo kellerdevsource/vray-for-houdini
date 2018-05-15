@@ -6,11 +6,9 @@
     parm {
         name    "channel_name"
         label   "Channel Name"
+        help    "Name of the channel to use"
         type    string
         default { "uv" }
-        help    "Name of the channel to use"
-        range   { 0 1 }
-        export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_type" "string" }
     }
@@ -20,8 +18,6 @@
         label   "Channel Index"
         type    int
         default { "0" }
-        range   { 0 2 }
-        export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_type" "int" }
         invisible
