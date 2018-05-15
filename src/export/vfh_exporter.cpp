@@ -1369,8 +1369,6 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 
 			texPlugin = exportPlugin(pluginDesc);
 		}
-
-		return texPlugin;
 	}
 
 	if (!texPlugin.isNotEmpty()) {
