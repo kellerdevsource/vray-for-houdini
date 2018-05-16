@@ -234,7 +234,7 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 				objExporter.clearPrimPluginCache();
 				objExporter.removeGenerated(objNode);
 
-				objExporter.exportGeometry(objNode);
+				objExporter.exportObject(objNode);
 
 				exporter.addOpCallback(geomNode, RtCallbackSOPChanged);
 			}

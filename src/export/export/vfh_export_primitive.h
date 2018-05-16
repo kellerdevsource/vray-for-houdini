@@ -26,13 +26,13 @@ enum ObjectIDTypes {
 	objectIdUndefined = -1,
 };
 
-struct PrimitiveItem {
+struct InstancerItem {
 	enum InstancerItemFlags {
 		itemFlagsNone = 0,
 		itemFlagsUseTime = (1 << 0),
 	};
 
-	explicit PrimitiveItem(VRay::Plugin geometry=VRay::Plugin(),
+	explicit InstancerItem(VRay::Plugin geometry=VRay::Plugin(),
 						   VRay::Plugin material=VRay::Plugin())
 		: prim(nullptr)
 		, primID(0)
@@ -79,7 +79,7 @@ struct PrimitiveItem {
 	uint32_t flags;
 };
 
-typedef VUtils::Table<PrimitiveItem, -1> PrimitiveItems;
+typedef QList<InstancerItem> InstancerItems;
 
 class VRayExporter;
 
@@ -96,8 +96,7 @@ public:
 	{}
 	virtual ~PrimitiveExporter() {}
 
-	virtual void exportPrimitive(const PrimitiveItem &item, PluginList &pluginsSet) {}
-	virtual void exportPrimitives(const GU_Detail &detail, PrimitiveItems &plugins) {}
+	virtual void exportPrimitive(const GA_Primitive &prim, const PrimMaterial &primMtl, PluginList &volumePlugins) {}
 
 	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) { return false; }
 	virtual bool hasData() const { return false; }
@@ -136,7 +135,7 @@ public:
 		: PrimitiveExporter(obj, ctx, exp)
 	{}
 
-	void exportPrimitive(const PrimitiveItem &item, PluginList &pluginsSet) VRAY_OVERRIDE;
+	void exportPrimitive(const GA_Primitive &prim, const PrimMaterial &primMtl, PluginList &pluginsSet) VRAY_OVERRIDE;
 
 protected:
 	VRay::Plugin exportVRayVolumeGridRef(OBJ_Node &objNode, const GU_PrimPacked &prim) const;
@@ -152,7 +151,7 @@ public:
 		: VolumeExporter(obj, ctx, exp)
 	{}
 
-	void exportPrimitive(const PrimitiveItem &item, PluginList &pluginsSet) VRAY_OVERRIDE;
+	void exportPrimitive(const GA_Primitive &prim, const PrimMaterial &primMtl, PluginList &volumePlugins) VRAY_OVERRIDE;
 };
 
 #endif // CGR_HAS_AUR

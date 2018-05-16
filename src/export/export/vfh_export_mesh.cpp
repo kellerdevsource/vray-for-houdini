@@ -277,7 +277,7 @@ void MeshExporter::reset()
 	map_channels_data.clear();
 }
 
-bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, PrimitiveItems &instancerItems, const PrimitiveItem &topItem, VRayExporter &exporter)
+bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, InstancerItems &instancerItems, const InstancerItem &topItem, VRayExporter &exporter)
 {
 	using namespace VRay::VUtils;
 	const VectorRefList & allVertices = getVertices();
@@ -324,7 +324,7 @@ bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, PrimitiveItems &in
 		VectorRefList vertices(vertexCount);
 		memcpy(vertices.get(), allVertices.get() + vertexRange.first, vertexCount * sizeof(vertices[0]));
 
-		PrimitiveItem item;
+		InstancerItem item;
 		item.primID = soup->getMapIndex();
 		item.prim = soup;
 		item.tm = topItem.tm;
@@ -646,8 +646,7 @@ VRay::Plugin MeshExporter::getMaterial()
 		return VRay::Plugin();
 	}
 
-	PrimMaterial topPrimMaterial;
-	objectExporter.getPrimMaterial(topPrimMaterial);
+	const PrimMaterial &topPrimMaterial = objectExporter.getPrimMaterial();
 
 	OP_Node *objMatNode = topPrimMaterial.matNode
 	                      ? topPrimMaterial.matNode

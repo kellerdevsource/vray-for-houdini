@@ -171,7 +171,7 @@ int isMeshLightSupportedGeometryType(const VRay::Plugin &geometry) {
 	return 0; // Isn't a supported type
 }
 
-static int fillLightPluginDesc(Attrs::PluginDesc &pluginDesc, OP_Node &objLight, const PrimitiveItem &item, const VRay::Transform &objTm) {
+static int fillLightPluginDesc(Attrs::PluginDesc &pluginDesc, OP_Node &objLight, const InstancerItem &item, const VRay::Transform &objTm) {
 	if (item.geometry.isEmpty() || !isMeshLightSupportedGeometryType(item.geometry)) {
 		Log::getLog().warning("Unsupported geometry type for Mesh Light: %s ! Node name: %s",
 		                      item.geometry.getType(), _toChar(pluginDesc.pluginName));
@@ -205,7 +205,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 		return PluginResultError;
 	}
 
-	PrimitiveItems geomList;
+	InstancerItems geomList;
 	exporter.getObjectExporter().exportGeometry(*obj_node, geomList);
 
 	const VRay::Transform &objTm =
@@ -215,12 +215,12 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 	pluginDesc.pluginName = VRayExporter::getPluginName(*this);
 
 	if (geomList.count()) {
-		const PrimitiveItem &item = geomList[0];
+		const InstancerItem &item = geomList[0];
 		fillLightPluginDesc(pluginDesc, *this, item, objTm);
 	}
 
 	for (int i = 1; i < geomList.count(); ++i) {
-		const PrimitiveItem &item = geomList[i];
+		const InstancerItem &item = geomList[i];
 
 		const QString meshLightName =
 			pluginDesc.pluginName % SL("|") % QString::number(i) + SL("|") + item.geometry.getName();
