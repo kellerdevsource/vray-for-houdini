@@ -32,6 +32,9 @@ public:
 	/// @param time Current time.
 	void startRenderRT(fpreal time);
 
+	/// Re-starts last rendering session.
+	void renderLast();
+
 	/// Shows V-Ray Frame Buffer window (if exists).
 	void showVFB();
 
@@ -85,11 +88,17 @@ private:
 	/// Scene exporter.
 	VRayExporter m_exporter;
 
+	/// Num frames.
+	int numFrames;
+
 	/// Start render time.
 	fpreal m_tstart;
 
 	/// End render time.
 	fpreal m_tend;
+
+	/// Last session type.
+	VfhSessionType sessionType;
 
 public:
 	/// Registers VRayRendererNode node type as a ROP operator.

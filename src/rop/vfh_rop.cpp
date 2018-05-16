@@ -52,9 +52,8 @@ static int RendererShowVFB(void *data, int /*index*/, fpreal /*t*/, const PRM_Te
 
 /// Callback for the "GPU Devices" button on the ROP node.
 /// Shows GPU device select UI.
-static int rendererGpuDeviceSelect(void *data, int /*index*/, fpreal /*t*/, const PRM_Template* /*tplate*/)
+static int rendererGpuDeviceSelect(void* /*data*/, int /*index*/, fpreal /*t*/, const PRM_Template* /*tplate*/)
 {
-	VRayRendererNode &rop = *reinterpret_cast<VRayRendererNode*>(data);
 	showGpuDeviceSelectUI();
 	return 1;
 }
@@ -105,8 +104,10 @@ OP_Node* VRayRendererNode::myConstructor(OP_Network *parent, const char *name, O
 VRayRendererNode::VRayRendererNode(OP_Network *net, const char *name, OP_Operator *entry)
 	: ROP_Node(net, name, entry)
 	, m_exporter(this)
+	, numFrames(1)
 	, m_tstart(0)
 	, m_tend(0)
+	, sessionType(VfhSessionType::production)
 {
 	Log::getLog().debug("VRayRendererNode()");
 }
@@ -181,6 +182,7 @@ int VRayRendererNode::initSession(VfhSessionType sessionType, int nframes, fprea
 	ROP_RENDER_CODE error = ROP_ABORT_RENDER;
 
 	// Store end time for endRender() executePostRenderScript()
+	numFrames = nframes;
 	m_tstart = tstart;
 	m_tend = tend;
 
@@ -266,6 +268,15 @@ void VRayRendererNode::startRenderRT(fpreal time)
 
 	if (initSession(VfhSessionType::rt, 1, time, time)) {
 		m_exporter.exportFrame(time);
+	}
+}
+
+void VRayRendererNode::renderLast()
+{
+	Log::getLog().debug("VRayRendererNode::renderLast()");
+
+	if (initSession(sessionType, numFrames, m_tstart, m_tend)) {
+		m_exporter.exportFrame(m_exporter.getContext().getTime());
 	}
 }
 

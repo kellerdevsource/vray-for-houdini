@@ -619,7 +619,7 @@ public:
 	void restoreVfbState();
 
 	/// Executed when user presses "Render" button in the VFB.
-	void renderLast();
+	void renderLast() const;
 
 	const GSTY_BundleMap &getBundleMap() const { return bundleMap.getBundleMap(); }
 

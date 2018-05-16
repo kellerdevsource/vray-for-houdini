@@ -2743,13 +2743,16 @@ void VRayExporter::restoreVfbState()
 	}
 }
 
-void VRayExporter::renderLast()
+void VRayExporter::renderLast() const
 {
+	// We should not use this for IPR.
+	vassert(sessionType != VfhSessionType::ipr);
+
 	if (!m_rop)
 		return;
 
-	initExporter(true, m_frames, m_timeStart, m_timeEnd);
-	exportFrame(m_context.getTime());
+	VRayRendererNode &vrayRop = static_cast<VRayRendererNode&>(*m_rop);
+	vrayRop.renderLast();
 }
 
 void VRayExporter::VfhBundleMap::MyBundle::freeMem()
