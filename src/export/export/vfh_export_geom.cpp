@@ -125,7 +125,7 @@ static const UT_String vrayUserAttrSceneName = "VRay_Scene_Node_Name";
 static const QString attrCd("Cd");
 static const QString attrIntensity("intensity");
 
-static const ObjectExporter::GeomNodeCache dummyGeomCache;
+static const PluginNameMap dummyGeomCache;
 
 /// Identity transform.
 static VRay::Transform identityTm(1);
@@ -196,8 +196,59 @@ static int getPluginFromCacheImpl(ContainerType &container, const KeyType &key, 
 template <typename ContainerType, typename KeyType>
 static void addPluginToCacheImpl(ContainerType &container, const KeyType &key, VRay::Plugin &plugin)
 {
+#if 0
 	vassert(container.find(key) == container.end());
+#endif
 	container.insert(key, plugin);
+}
+
+ObjCacheEntry &OpCacheMan::getObjEntry(const OBJ_Node &objNode)
+{
+	return objPlugins[&objNode];
+}
+
+const ObjCacheEntry &OpCacheMan::getObjEntry(const OBJ_Node &objNode) const
+{
+	static const ObjCacheEntry fakeEntry;
+
+	const ObjPluginCache::const_iterator it = objPlugins.find(&objNode);
+	return it != objPlugins.end() ? it.value() : fakeEntry;
+}
+
+ObjLightCacheEntry &OpCacheMan::getObjLightEntry(const OBJ_Light &objLight)
+{
+	return objLightPlugins[&objLight];
+}
+
+const ObjLightCacheEntry &OpCacheMan::getObjLightEntry(const OBJ_Light &objLight) const
+{
+	static const ObjLightCacheEntry fakeEntry;
+
+	const ObjLightPluginsCache::const_iterator it = objLightPlugins.find(&objLight);
+	return it != objLightPlugins.end() ? it.value() : fakeEntry;
+}
+
+int OpCacheMan::getMatPlugin(const OP_Node &opNode, VRay::Plugin &matPlugin)
+{
+	const MatPluginCache::const_iterator it = matCache.find(&opNode);
+	if (it != matCache.end()) {
+		matPlugin = it.value();
+		return true;
+	}
+	return false;
+}
+
+void OpCacheMan::addMatPlugin(const OP_Node &opNode, const VRay::Plugin &matPlugin)
+{
+	vassert(matCache.find(&opNode) != matCache.end());
+	matCache[&opNode] = matPlugin;
+}
+
+void OpCacheMan::clear()
+{
+	objPlugins.clear();
+	objLightPlugins.clear();
+	matCache.clear();
 }
 
 ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
@@ -205,6 +256,7 @@ ObjectExporter::ObjectExporter(VRayExporter &pluginExporter)
 	, ctx(pluginExporter.getContext())
 	, partitionAttribute("")
 	, doExportGeometry(true)
+	, cacheMan(pluginExporter.getCacheMan())
 {}
 
 void ObjectExporter::reset()
@@ -212,6 +264,8 @@ void ObjectExporter::reset()
 	clearPrimPluginCache();
 	clearOpDepPluginCache();
 	clearOpPluginCache();
+
+	cacheMan.clear();
 }
 
 VRay::Transform ObjectExporter::getTm() const
@@ -250,12 +304,11 @@ exint ObjectExporter::getDetailID() const
 	return detailID;
 }
 
-OP_Node* ObjectExporter::getGenerator() const
+const OBJ_Node &ObjectExporter::getGenerator(const OBJ_Node &currentObj) const
 {
 	if (primContextStack.isEmpty())
-		return nullptr;
-
-	return primContextStack[0].objNode;
+		return currentObj;
+	return *primContextStack.first().objNode;
 }
 
 void ObjectExporter::getPrimMaterial(PrimMaterial &primMaterial) const
@@ -311,9 +364,8 @@ void ObjectExporter::clearPrimPluginCache()
 	pluginCache.polyMapChannels.clear();
 	pluginCache.polyMaterial.clear();
 	pluginCache.hashCache.clear();
-	pluginCache.instancerNodesMap.clear();
-	pluginCache.exportedLightsCache.clear();
-	pluginCache.litObjects.clear();
+
+	cacheMan.clear();
 }
 
 SubdivInfo ObjectExporter::getSubdivInfoFromMatNode(OP_Node &matNode)
@@ -438,7 +490,7 @@ int ObjectExporter::isNodePhantom(OBJ_Node &objNode) const
 	return bundle->contains(&objNode, false);
 }
 
-VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &primItem, const OBJ_Node &objNode)
+VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &primItem, ObjCacheEntry &cacheEntry)
 {
 	if (primItem.geometry.isEmpty()) {
 		return VRay::Plugin();
@@ -449,10 +501,9 @@ VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &pr
 		return primItem.geometry;
 	}
 
-	GeomNodeCache &cache = pluginCache.instancerNodesMap[&objNode];
-	GeomNodeCache::iterator gnIt = cache.find(primItem.geometry.getName());
-	if (gnIt != cache.end()) {
-		return gnIt.value();
+	PluginNameMap::iterator it = cacheEntry.nodes.find(primItem.geometry.getName());
+	if (it != cacheEntry.nodes.end()) {
+		return it.value();
 	}
 
 	const VRay::Plugin objMaterial = pluginExporter.exportDefaultMaterial();
@@ -469,7 +520,7 @@ VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &pr
 	VRay::Plugin node = pluginExporter.exportPlugin(nodeDesc);
 	vassert(node.isNotEmpty());
 
-	cache.insert(primItem.geometry.getName(), node);
+	cacheEntry.nodes.insert(primItem.geometry.getName(), node);
 
 	return node;
 }
@@ -616,7 +667,7 @@ void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &it
 
 	const VRay::Transform &tm = VRayExporter::getObjTransform(&objNode, ctx, false) *  item.tm;
 
-	PluginSet volumePlugins;
+	PluginList volumePlugins;
 
 	if (primTypeID == primPackedTypeIDs.vrayVolumeGridRef) {
 		VolumeExporter volumeGridExp(objNode, ctx, pluginExporter);
@@ -639,6 +690,9 @@ void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const PrimitiveItem &it
 	for (const VRay::Plugin &plugin : volumePlugins) {
 		addGenerated(objNode, plugin);
 	}
+
+	ObjCacheEntry &objEntry = cacheMan.getObjEntry(objNode);
+	mergePluginList(objEntry.volumes, volumePlugins);
 #endif
 }
 
@@ -984,6 +1038,10 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 	VRay::VUtils::ValueRefList instances(numParticles + 1);
 	instances[instancesListIdx++].setDouble(instancerTime);
 
+	// Instancer node items must be stored on the top-level node.
+	const OBJ_Node &cacheOwner = getGenerator(objNode);
+	ObjCacheEntry &objEntry = cacheMan.getObjEntry(cacheOwner);
+
 	for (int i = 0; i < instancerItems.count(); ++i) {
 		const PrimitiveItem &primItem = instancerItems[i];
 
@@ -1041,7 +1099,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 
 		material = exportObjectProperties(pluginExporter, objNode, material);
 
-		const VRay::Plugin node = getNodeForInstancerGeometry(primItem, objNode);
+		const VRay::Plugin node = getNodeForInstancerGeometry(primItem, objEntry);
 
 		uint32_t additional_params_flags = 0;
 		if (primItem.objectID != objectIdUndefined) {
@@ -2263,12 +2321,7 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 	pluginDesc.pluginName = SL("Light|") % QString::number(getDetailID()) % SL("@") % objLight.getName().buffer();
 
-	const VRay::Plugin &lightPlugin = pluginExporter.exportPlugin(pluginDesc);
-	if (lightPlugin.isNotEmpty()) {
-		pluginCache.exportedLightsCache[objLight.castToOBJNode()].append(lightPlugin);
-	}
-
-	return lightPlugin;
+	return pluginExporter.exportPlugin(pluginDesc);
 }
 
 VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop)
@@ -2282,21 +2335,6 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *specificSop
 	const VRay::Plugin geometry = exportGeometry(objNode, specificSop);
 	// May be NULL if geometry was not re-exported during RT sessions.
 	if (geometry.isNotEmpty()) {
-		OBJ_Geometry *geomNode = objNode.castToOBJGeometry();
-		if (geomNode) {
-			OP_NodeList list;
-			geomNode->getLightMaskObjects(list, ctx.getTime());
-
-			const GeomNodeCache &nodeMap = getExportedNodes(*geomNode);
-			for (const OP_Node *maskNode : list) {
-				for (const VRay::Plugin &plugin : nodeMap) {
-					if (plugin.isNotEmpty()) {
-						pluginCache.litObjects[maskNode->castToOBJNode()].append(plugin);
-					}
-				}
-			}
-		}
-
 		nodeDesc.add(PluginAttr("geometry", geometry));
 	}
 	nodeDesc.add(PluginAttr("material", pluginExporter.exportDefaultMaterial()));
@@ -2319,7 +2357,7 @@ void ObjectExporter::addGenerated(OP_Node &opNode, VRay::Plugin plugin)
 
 	const UT_StringHolder &key = getKeyFromOpNode(opNode);
 
-	PluginSet &pluginsSet = pluginCache.generated[key.buffer()];
+	PluginList &pluginsSet = pluginCache.generated[key.buffer()];
 	pluginsSet.append(plugin);
 }
 
@@ -2330,7 +2368,7 @@ void ObjectExporter::removeGenerated(const char *key)
 		return;
 	}
 
-	PluginSet &pluginsSet = cIt.value();
+	PluginList &pluginsSet = cIt.value();
 
 	for (const VRay::Plugin &plugin : pluginsSet) {
 		pluginExporter.removePlugin(plugin);
@@ -2359,10 +2397,48 @@ void ObjectExporter::removeObject(const char *objNode)
 	removeGenerated(objNode);
 
 	// Remove self.
-	OpPluginCache::iterator pIt = pluginCache.op.find(objNode);
+	PluginNameMap::iterator pIt = pluginCache.op.find(objNode);
 	if (pIt != pluginCache.op.end()) {
 		pluginExporter.removePlugin(pIt.value());
 		pluginCache.op.erase(pIt);
+	}
+}
+
+static void appendToLightIlluminationLists(OpCacheMan &cacheMan, OBJ_Node &objNode)
+{
+	OBJ_Geometry *objGeom = objNode.castToOBJGeometry();
+	if (!objGeom)
+		return;
+
+	// Get the list of lights that will illuminate this OBJ_Node.
+	OP_NodeList lightOpList;
+	objGeom->getLightMaskObjects(lightOpList, 0.0);
+
+	UT_String lightmask;
+	objNode.evalString(lightmask, "lightmask", 0, 0.0);
+	if (lightmask.equal("*"))
+		return;
+
+	if (lightOpList.isEmpty())
+		return;
+
+	const ObjCacheEntry &objEntry = cacheMan.getObjEntry(objNode);
+	if (objEntry.nodes.isEmpty() &&
+		objEntry.volumes.isEmpty())
+		return;
+
+	for (OP_Node *lightOp : lightOpList) {
+		OBJ_Node *lightObjNode = CAST_OBJNODE(lightOp);
+		if (!lightObjNode)
+			continue;
+
+		const OBJ_Light *objLight = lightObjNode->castToOBJLight();
+		if (!objLight)
+			continue;
+
+		ObjLightCacheEntry &lightEntry = cacheMan.getObjLightEntry(*objLight);
+		mergePluginList(lightEntry.includeNodes, objEntry.nodes);
+		mergePluginList(lightEntry.includeNodes, objEntry.volumes);
 	}
 }
 
@@ -2370,55 +2446,37 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 {
 	VRay::Plugin plugin;
 
-	OBJ_Light *objLight = objNode.castToOBJLight();
-	if (objLight) {
+	if (objNode.castToOBJLight()) {
+		OBJ_Light &objLight = *objNode.castToOBJLight();
+
 		PrimitiveItem rootItem;
 		rootItem.tm = VRayExporter::getObjTransform(&objNode, ctx);
 
 		pushContext(PrimContext(&objNode, rootItem));
 
-		plugin = exportLight(*objLight);
+		// NOTE: We do not cache light plugins because they are not instancable,
+		// so we need to create a new plugin for every instance.
+		plugin = exportLight(objLight);
 
-		if (!getPluginFromCache(objNode, plugin)) {
-			addPluginToCache(objNode, plugin);
-		}
+		const OBJ_Node &objCacheOwner = getGenerator(objNode);
 
-		OP_Node *objGen = getGenerator();
-		if (objGen) {
-			addGenerated(*objGen, plugin);
-		}
+		ObjCacheEntry &objEntry = cacheMan.getObjEntry(objCacheOwner);
+		objEntry.lights.append(plugin);
+
+		ObjLightCacheEntry &lightEntry = cacheMan.getObjLightEntry(objLight);
+		lightEntry.lights.append(plugin);
 
 		popContext();
 	}
-	else {
-		if (!getPluginFromCache(objNode, plugin)) {
-			plugin = exportNode(objNode);
+	else if (!getPluginFromCache(objNode, plugin)) {
+		plugin = exportNode(objNode);
+
+		if (plugin.isNotEmpty()) {
+			appendToLightIlluminationLists(cacheMan, objNode);
 
 			addPluginToCache(objNode, plugin);
 		}
 	}
 
 	return plugin;
-}
-
-const ObjectExporter::GeomNodeCache &ObjectExporter::getExportedNodes(const OBJ_Node &node) const
-{
-	NodeMap::const_iterator it =
-		pluginCache.instancerNodesMap.find(&node);
-	return it != pluginCache.instancerNodesMap.end() ? it.value() : dummyGeomCache;
-}
-
-const ObjectExporter::ObjNodePluginSetMap &ObjectExporter::getExportedLights() const
-{
-	return pluginCache.exportedLightsCache;
-}
-
-const ObjectExporter::ObjNodePluginSetMap &ObjectExporter::getLitObjects() const
-{
-	return pluginCache.litObjects;
-}
-
-bool ObjectExporter::hasLights() const
-{
-	return !pluginCache.exportedLightsCache.isEmpty();
 }

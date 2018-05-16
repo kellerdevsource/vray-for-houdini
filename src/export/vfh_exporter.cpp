@@ -1156,12 +1156,6 @@ void VRayExporter::exportEffects(OP_Node *op_net)
 }
 
 
-void VRayExporter::phxAddSimumation(VRay::Plugin sim)
-{
-	m_phxSimulations.insert(sim);
-}
-
-
 void VRayExporter::exportRenderChannels(OP_Node *op_node)
 {
 	exportVop(CAST_VOPNODE(op_node));
@@ -1993,7 +1987,7 @@ void VRayExporter::exportScene()
 		}
 	}
 
-	if (!objectExporter.hasLights()) {
+	if (!cacheMan.numLights()) {
 		exportDefaultHeadlight();
 	}
 
@@ -2035,18 +2029,6 @@ void VRayExporter::exportScene()
 		rcOpId.add(Attrs::PluginAttr("enableDeepOutput", false));
 		rcOpId.add(Attrs::PluginAttr("texmap", exportPlugin(texOpId)));
 		exportPlugin(rcOpId);
-	}
-
-	// Add simulations from OBJ
-	if (!m_phxSimulations.empty()) {
-		Attrs::PluginDesc phxSims("VRayNodePhxShaderSimVol", "PhxShaderSimVol");
-		VRay::ValueList sims(m_phxSimulations.size());
-		std::transform(m_phxSimulations.begin(), m_phxSimulations.end(), sims.begin(), [](const VRay::Plugin &plugin) {
-			return VRay::Value(plugin);
-		});
-		phxSims.add(Attrs::PluginAttr("phoenix_sim", sims));
-
-		exportPlugin(phxSims);
 	}
 
 	bundleMap.freeMem();
@@ -2349,7 +2331,6 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	m_viewParams.firstExport = true;
 
 	m_exportedFrames.clear();
-	m_phxSimulations.clear();
 	m_frames    = nframes;
 	m_timeStart = tstart;
 	m_timeEnd   = tend;
@@ -2834,115 +2815,145 @@ void VRayExporter::VfhBundleMap::freeMem()
 	bundles.clear();
 }
 
-void VRayExporter::exportLightLinker()
+struct ExportLightLinker
 {
-	const ObjectExporter::ObjNodePluginSetMap &exportedLights = objectExporter.getExportedLights();
-	const ObjectExporter::ObjNodePluginSetMap &litObjects = objectExporter.getLitObjects();
-	if (litObjects.isEmpty() || exportedLights.isEmpty())
-		return;
+	enum LightListType {
+		/// The list is an exclude list (default).
+		lightListTypeExclude = 0,
 
-	PluginTables lightTables;
-	PluginTables shadowTables;
+		/// The list is an include list.
+		lightListTypeInclude = 1,
 
-	FOR_CONST_IT (ObjectExporter::ObjNodePluginSetMap, lsIt, exportedLights) {
-		OBJ_Node *lightKey = lsIt.key();
-		const PluginSet &pluginSet = lsIt.value();
+		/// List is ignored and the light illuminates
+		/// (or casts shadows from) all objects in the
+		/// scene, useful for animating the light linking.
+		lightListTypeIgnore = 2,
+	};
 
-		PluginTable lightTable;
-		// Add empty plugin as place holder for the light plugin at the start
-		lightTable += VRay::Plugin();
+	struct LightLinkerEntry {
+		/// Ligth plugin.
+		VRay::Plugin light;
 
-		ObjectExporter::ObjNodePluginSetMap::const_iterator it = litObjects.find(lightKey);
-		if (it != litObjects.end()) {
-			const PluginSet &geomSet = it.value();
-			for (const VRay::Plugin &geom : geomSet) {
-				if (geom.isNotEmpty()) {
-					lightTable += geom;
-				}
+		/// Include / exclude list of Node plugins.
+		PluginList nodes;
+	};
+
+	typedef QList<LightLinkerEntry> LightLinkerEntries;
+
+	ExportLightLinker(VRayExporter &self, const OpCacheMan &cacheMan)
+		: self(self)
+		, cacheMan(cacheMan)
+	{}
+
+	static void lightLinkerEntriesToValueLists(const LightLinkerEntries &entries,
+	                                           VRay::VUtils::ValueRefList &lightEntries,
+	                                           VRay::VUtils::IntRefList &lightEntriesFlags)
+	{
+		const int numEntries = entries.size();
+		if (!numEntries)
+			return;
+
+		lightEntries = VRay::VUtils::ValueRefList(numEntries);
+		lightEntriesFlags = VRay::VUtils::IntRefList(numEntries);
+
+		FOR_CONST_IT (LightLinkerEntries, it, entries) {
+			const LightLinkerEntry &entry = *it;
+
+			// +1 because first element is light itself.
+			VRay::VUtils::ValueRefList entryItem(entry.nodes.size()+1);
+			entryItem[0].setPlugin(entry.light);
+
+			FOR_CONST_IT (PluginList, pIt, entry.nodes) {
+				entryItem[pItIdx+1].setPlugin(*pIt);
+			}
+
+			lightEntries[itIdx].setList(entryItem);
+			lightEntriesFlags[itIdx] = lightListTypeInclude;
+		}
+	}
+
+	void fillShadowPluginList(const OBJ_Light &objLight, PluginList &shadowList) const
+	{
+		UT_String shadowmask;
+		objLight.evalString(shadowmask, "shadowmask", 0, 0.0);
+		if (shadowmask.equal("*"))
+			return;
+
+		OP_Bundle *shadowMaskBundle = const_cast<OBJ_Light&>(objLight).getShadowMaskBundle(0.0);
+		if (!shadowMaskBundle)
+			return;
+
+		OP_NodeList castShadowList;
+		shadowMaskBundle->getMembers(castShadowList);
+
+		for (OP_Node *node : castShadowList) {
+			OBJ_Node *objNodeShadow = node->castToOBJNode();
+			if (objNodeShadow) {
+				const ObjCacheEntry &objEntry = cacheMan.getObjEntry(*objNodeShadow);
+
+				mergePluginList(shadowList, objEntry.nodes);
+				mergePluginList(shadowList, objEntry.volumes);
 			}
 		}
+	}
 
-		for (const VRay::Plugin &light : pluginSet) {
-			PluginTable *lightPluginTable = new PluginTable();
-			lightPluginTable->copy(lightTable);
-			(*lightPluginTable)[0] = light;
-			lightTables += lightPluginTable;
-		}
+	void exportPlugin() const
+	{
+		const ObjLightPluginsCache &objLightToLightPlugins = cacheMan.getLightPlugins();
+		if (objLightToLightPlugins.isEmpty())
+			return;
 
-		PluginTable shadowTable;
-		// Add empty plugin as place holder for the light plugin at the start
-		shadowTable += VRay::Plugin();
+		LightLinkerEntries ignoredLights;
+		LightLinkerEntries ignoredShadowLights;
 
-		OBJ_Light *lightNode = const_cast<OBJ_Light*>(lightKey->castToOBJLight());
-		if (lightNode) {
-			OP_Bundle *bundle = lightNode->getShadowMaskBundle(getContext().getTime());
-			OP_NodeList list;
-			bundle->getMembers(list);
-			for (OP_Node *node : list) {
-				OBJ_Node *objNodeShadow = node->castToOBJNode();
+		FOR_CONST_IT (ObjLightPluginsCache, it, objLightToLightPlugins) {
+			const OBJ_Light &objLight = *it.key();
+			const ObjLightCacheEntry &lightEntry = it.value();
 
-				const ObjectExporter::GeomNodeCache &cache =
-					objectExporter.getExportedNodes(*objNodeShadow);
-				for (const VRay::Plugin &plugin : cache) {
-					if (plugin.isNotEmpty()) {
-						shadowTable += plugin;
+			// Generate shadow include list.
+			PluginList shadowList;
+			fillShadowPluginList(objLight, shadowList);
+
+			// Create an entry for every light plugin.
+			if (!lightEntry.includeNodes.empty() ||
+			    !shadowList.empty())
+			{
+				for (const VRay::Plugin &light : lightEntry.lights) {
+					if (!lightEntry.includeNodes.empty()) {
+						ignoredLights.append({light, lightEntry.includeNodes});
+					}
+					if (!shadowList.empty()) {
+						ignoredShadowLights.append({light, shadowList});
 					}
 				}
 			}
 		}
 
-		for (const VRay::Plugin &light : pluginSet) {
-			PluginTable *shadowPluginTable = new PluginTable();
-			shadowPluginTable->copy(shadowTable);
-			(*shadowPluginTable)[0] = light;
-			shadowTables += shadowPluginTable;
-		}
+		VRay::VUtils::ValueRefList lightList;
+		VRay::VUtils::IntRefList lightInclusivityList;
+		lightLinkerEntriesToValueLists(ignoredLights, lightList, lightInclusivityList);
+
+		VRay::VUtils::ValueRefList shadowList;
+		VRay::VUtils::IntRefList shadowInclusivityList;
+		lightLinkerEntriesToValueLists(ignoredShadowLights, shadowList, shadowInclusivityList);
+
+		Attrs::PluginDesc lightLinker(SL("settingsLightLinker"),
+		                              SL("SettingsLightLinker"));
+		lightLinker.add(Attrs::PluginAttr(SL("ignored_lights"), lightList));
+		lightLinker.add(Attrs::PluginAttr(SL("ignored_shadow_lights"), shadowList));
+		lightLinker.add(Attrs::PluginAttr(SL("include_exclude_light_flags"), lightInclusivityList));
+		lightLinker.add(Attrs::PluginAttr(SL("include_exclude_shadow_flags"), shadowInclusivityList));
+
+		self.exportPlugin(lightLinker);
 	}
 
-	const int lightTablesSize = lightTables.count();
-	VRay::VUtils::ValueRefList lightLists(lightTablesSize);
+private:
+	VRayExporter &self;
+	const OpCacheMan &cacheMan;
+};
 
-	for (int i = 0; i < lightTablesSize; i++) {
-		const PluginTable *pluginList = lightTables[i];
-		VRay::VUtils::ValueRefList lightList(pluginList->count());
-		int listAt = 0;
-		for (const VRay::Plugin &plugin : *pluginList) {
-			lightList[listAt++] = VRay::VUtils::Value(plugin);
-		}
-		delete pluginList;
-		lightLists[i].setList(lightList);
-	}
-
-	VRay::VUtils::IntRefList lightInclusivityList(lightTablesSize);
-	for (int i = 0; i < lightTablesSize; i++) {
-		lightInclusivityList[i] = 1;
-	}
-
-	const int shadowTablesSize = shadowTables.count();
-
-	VRay::VUtils::IntRefList shadowInclusivityList(shadowTablesSize);
-	for (int i = 0; i < shadowTablesSize; i++) {
-		shadowInclusivityList[i] = 1;
-	}
-
-	VRay::VUtils::ValueRefList shadowLists(shadowTablesSize);
-	for (int i = 0; i < shadowTablesSize; i++) {
-		const PluginTable *shadowPluginsList = shadowTables[i];
-		VRay::VUtils::ValueRefList shadowList(shadowPluginsList->count());
-		int listAt = 0;
-		for (const VRay::Plugin &plugin : *shadowPluginsList) {
-			shadowList[listAt++] = VRay::VUtils::Value(plugin);
-		}
-		delete shadowPluginsList;
-		shadowLists[i].setList(shadowList);
-	}
-
-	Attrs::PluginDesc lightLinkerDesc(SL("settingsLightLinker"),
-	                                  SL("SettingsLightLinker"));
-	lightLinkerDesc.add(Attrs::PluginAttr(SL("ignored_lights"), lightLists));
-	lightLinkerDesc.add(Attrs::PluginAttr(SL("ignored_shadow_lights"), shadowLists));
-	lightLinkerDesc.add(Attrs::PluginAttr(SL("include_exclude_light_flags"), lightInclusivityList));
-	lightLinkerDesc.add(Attrs::PluginAttr(SL("include_exclude_shadow_flags"), shadowInclusivityList));
-
-	exportPlugin(lightLinkerDesc);
+void VRayExporter::exportLightLinker()
+{
+	ExportLightLinker exportLightLinker(*this, cacheMan);
+	exportLightLinker.exportPlugin();
 }

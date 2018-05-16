@@ -170,7 +170,7 @@ static OP_Node* getPhoenixShaderSimNode(OP_Node *matNode)
 	return getVRayNodeFromOp(*matNode, "Simulation", "PhxShaderSim");
 }
 
-void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet)
+void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginList &pluginsSet)
 {
 #if 0
 	GA_ROAttributeRef ref_name = detail.findStringTuple(GA_ATTRIB_PRIMITIVE, "name");
@@ -385,7 +385,7 @@ VRay::Plugin VolumeExporter::exportVRayVolumeGridRef(OBJ_Node &objNode, const GU
 	return VRay::Plugin();
 }
 
-void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet)
+void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginList &volumePlugins)
 {
 	const GU_PrimPacked *primPacked = UTverify_cast<const GU_PrimPacked*>(item.prim);
 	UT_ASSERT_MSG(primPacked, "PhxShaderCache plugin is not set!");
@@ -398,7 +398,7 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 
 	OP_Node *matNode = item.primMaterial.matNode;
 	if (!matNode) {
-		matNode = pluginExporter.getObjMaterial(&objNode, ctx.getTime());
+		matNode = VRayExporter::getObjMaterial(&objNode, ctx.getTime());
 	}
 
 	OP_Node *phxSimNode = getPhoenixShaderSimNode(matNode);
@@ -414,40 +414,32 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 		return;
 	}
 
-	VOP::NodeBase &phxSimVopNode = static_cast<VOP::NodeBase&>(*simVop);
-
 	Attrs::PluginDesc phxSim(SL("PhxShaderSim|") % QString::number(primID) % objNode.getName().buffer(),
 	                         SL("PhxShaderSim"));
 
+	VOP::NodeBase &phxSimVopNode = static_cast<VOP::NodeBase&>(*simVop);
 	phxSimVopNode.asPluginDesc(phxSim, pluginExporter);
 
 	pluginExporter.setAttrsFromOpNodeConnectedInputs(phxSim, simVop);
-
-	// Handle VOP overrides if any
 	pluginExporter.setAttrsFromSHOPOverrides(phxSim, *simVop);
 
 	phxSim.add(Attrs::PluginAttr(SL("node_transform"), tm));
 	phxSim.add(Attrs::PluginAttr(SL("cache"), cachePlugin));
 
-	const auto rendModeAttr = phxSim.get(SL("_vray_render_mode"));
+	const Attrs::PluginAttr *rendModeAttr = phxSim.get(SL("_vray_render_mode"));
 	UT_ASSERT_MSG(rendModeAttr, "Trying to export PhxShaderSim without setting it's _vray_render_mode.");
 
 	typedef VOP::PhxShaderSim::RenderMode RMode;
 
-	const auto rendMode = static_cast<RMode>(rendModeAttr->paramValue.valInt);
+	const RMode rendMode = static_cast<RMode>(rendModeAttr->paramValue.valInt);
 	if (rendMode == RMode::Volumetric) {
 		phxSim.add(Attrs::PluginAttr("renderAsVolumetric", true));
 	}
 
 	VRay::Plugin overwriteSim = pluginExporter.exportPlugin(phxSim);
 	if (rendModeAttr && overwriteSim.isNotEmpty()) {
-		typedef VOP::PhxShaderSim::RenderMode RMode;
-
-		const auto rendMode = static_cast<RMode>(rendModeAttr->paramValue.valInt);
 		if (rendMode == RMode::Volumetric) {
-			// All volumetic simulations need to be listed in one PhxShaderSimVol,
-			// so different intersecting volumes can be blended correctly.
-			pluginExporter.phxAddSimumation(overwriteSim);
+			volumePlugins.append(overwriteSim);
 		}
 		else {
 			const bool isMesh = rendMode == RMode::Mesh;
@@ -458,20 +450,21 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 			Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(*simVop, wrapperPrefix, cachePlugin.getName()),
 			                             wrapperType);
 			phxWrapper.add(Attrs::PluginAttr(SL("phoenix_sim"), overwriteSim));
+
 			if (isMesh) {
-				Attrs::PluginDesc staticMesh(VRayExporter::getPluginName(*simVop, SL("GeomStaticMesh"), cachePlugin.getName()),
-					SL("GeomStaticMesh"));
-				
-				const auto dynGeomAttr = phxSim.get(SL("_vray_dynamic_geometry"));
-				UT_ASSERT_MSG(dynGeomAttr, "Exporting PhxShaderSim inside PhxShaderSimGeom with missing _vray_dynamic_geometry");
+				const Attrs::PluginAttr *dynGeomAttr = phxSim.get(SL("_vray_dynamic_geometry"));
+				vassert(dynGeomAttr && "Exporting PhxShaderSim inside PhxShaderSimGeom with missing _vray_dynamic_geometry");
+
 				const bool dynamic_geometry = dynGeomAttr ? dynGeomAttr->paramValue.valInt : false;
-				
+
+				Attrs::PluginDesc staticMesh(VRayExporter::getPluginName(*simVop, SL("GeomStaticMesh"), cachePlugin.getName()),
+				                             SL("GeomStaticMesh"));
 				staticMesh.add(Attrs::PluginAttr(SL("dynamic_geometry"), dynamic_geometry));
-				VRay::Plugin staticMeshPlugin = pluginExporter.exportPlugin(staticMesh);
-				
-				phxWrapper.add(Attrs::PluginAttr(SL("static_mesh"), staticMeshPlugin));
+		
+				phxWrapper.add(Attrs::PluginAttr(SL("static_mesh"), pluginExporter.exportPlugin(staticMesh)));
 			}
-			VRay::Plugin phxWrapperPlugin = pluginExporter.exportPlugin(phxWrapper);
+
+			const VRay::Plugin phxWrapperPlugin = pluginExporter.exportPlugin(phxWrapper);
 
 			Attrs::PluginDesc node(VRayExporter::getPluginName(*simVop, SL("Node"), cachePlugin.getName()),
 									SL("Node"));
@@ -479,7 +472,9 @@ void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginSet &plugi
 			node.add(Attrs::PluginAttr(SL("visible"), true));
 			node.add(Attrs::PluginAttr(SL("transform"), VRay::Transform(1)));
 			node.add(Attrs::PluginAttr(SL("material"), pluginExporter.exportDefaultMaterial()));
-			pluginExporter.exportPlugin(node);
+			
+			const VRay::Plugin phxNodePlugin = pluginExporter.exportPlugin(node);
+			volumePlugins.append(phxNodePlugin);
 		}
 	}
 }

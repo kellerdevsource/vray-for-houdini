@@ -108,7 +108,7 @@ struct OpInterestItem {
 };
 
 typedef std::vector<OpInterestItem> CbItems;
-typedef VUtils::StringHashMap<PluginSet> StringPluginSetHashMap;
+typedef VUtils::StringHashMap<PluginList> StringPluginSetHashMap;
 typedef VUtils::StringHashMap<VRay::Plugin> StringPluginMap;
 typedef VUtils::HashMap<VRay::Plugin, OP_NodeList> PluginNodeListMap;
 typedef VUtils::Table<VRay::Plugin> PluginTable;
@@ -272,7 +272,7 @@ public:
 	VRay::Transform exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr, bool rotate = false);
 
 	/// Export V-Ray material from SHOP network or VOP node.
-	/// @param node SHOP or VOP node.
+	/// @param node SHOP or VOP node. May be nullptr (the default material will be returned in this case). 
 	/// @returns V-Ray plugin.
 	VRay::Plugin exportMaterial(OP_Node *node);
 
@@ -602,12 +602,6 @@ public:
 	/// @param vopNode[in] - the VOP node
 	void setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode);
 
-	/// All volumetic primitives need to be gathered and passed to a single global PhxShaderSimVol
-	/// plugin instance so different interescting volumes can be blended correctly.
-	/// This is called from the volume primitive exporters when exporting volume primitives
-	/// @param sim[in] - the volumetric data plugin
-	void phxAddSimumation(VRay::Plugin sim);
-
 	/// Returns object exporter.
 	ObjectExporter& getObjectExporter() { return objectExporter; }
 
@@ -633,6 +627,9 @@ public:
 	/// Some non-cont OP_Node methods could trigger event handlers.
 	QAtomicInt inSceneExport = false;
 
+	/// Get plugin cache.
+	OpCacheMan &getCacheMan() { return cacheMan; }
+
 private:
 	/// Export V-Ray material from VOP node.
 	/// @param node VOP node.
@@ -651,7 +648,6 @@ private:
 	ROP_RENDER_CODE                m_error; ///< ROP error to singnal the ROP rendering should be aborted
 	ExpWorkMode                    m_workMode; ///< what should the exporter do- export vrscene, render or both
 	CbItems                        m_opRegCallbacks; ///< holds registered node callbacks for live IPR updates
-	Hash::PluginHashSet            m_phxSimulations; ///< accumulates volumetric data to pass to PhxShaderSimVol
 
 	/// Rendering session type.
 	VfhSessionType sessionType;
@@ -723,6 +719,9 @@ private:
 		/// Bundles data.
 		QList<MyBundle> bundles;
 	} bundleMap;
+
+	/// Plugins cache.
+	OpCacheMan cacheMan;
 
 public:
 	/// Register event callback for a given node. This callback will be invoked when

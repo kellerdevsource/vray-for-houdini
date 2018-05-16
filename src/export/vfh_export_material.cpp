@@ -78,36 +78,37 @@ VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 {
 	VRay::Plugin material;
 
-	if (matNode) {
-		if (!objectExporter.getPluginFromCache(*matNode, material)) {
-			VOP_Node *vopNode = CAST_VOPNODE(matNode);
-			SHOP_Node *shopNode = CAST_SHOPNODE(matNode);
-			if (vopNode) {
-				material = exportMaterial(vopNode);
-			}
-			else if (shopNode) {
-				const UT_String &opType = shopNode->getOperator()->getName();
-				if (opType.equal("principledshader")) {
-					material = exportPrincipledShader(*matNode);
-				}
-				else {
-					OP_Node *materialNode = getVRayNodeFromOp(*matNode, "Material");
-					if (materialNode) {
-						material = exportMaterial(CAST_VOPNODE(materialNode));
-					}
-				}
-			}
-
-			if (material.isNotEmpty()) {
-				addOpCallback(matNode, RtCallbackSurfaceShop);
-			}
-
-			objectExporter.addPluginToCache(*matNode, material);
-		}
-	}
-
-	if (material.isEmpty()) {
+	if (!matNode) {
 		material = exportDefaultMaterial();
+	}
+	else if (!cacheMan.getMatPlugin(*matNode, material)) {
+		VOP_Node *vopNode = CAST_VOPNODE(matNode);
+		SHOP_Node *shopNode = CAST_SHOPNODE(matNode);
+
+		// MAT context
+		if (vopNode) {
+			material = exportMaterial(vopNode);
+		}
+		// SHOP context
+		else if (shopNode) {
+			const UT_String &opType = shopNode->getOperator()->getName();
+			// We support only "V-Ray Material" SHOP node.
+			if (opType.equal("vray_material")) {
+				OP_Node *materialNode = getVRayNodeFromOp(*matNode, vfhSocketMaterialOutputMaterial);
+				if (materialNode) {
+					material = exportMaterial(CAST_VOPNODE(materialNode));
+				}
+			}
+		}
+
+		if (material.isEmpty()) {
+			material = exportDefaultMaterial();
+		}
+		else {
+			cacheMan.addMatPlugin(*matNode, material);
+
+			addOpCallback(matNode, RtCallbackSurfaceShop);
+		}
 	}
 
 	return material;

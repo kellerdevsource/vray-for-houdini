@@ -96,7 +96,7 @@ public:
 	{}
 	virtual ~PrimitiveExporter() {}
 
-	virtual void exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet) {}
+	virtual void exportPrimitive(const PrimitiveItem &item, PluginList &pluginsSet) {}
 	virtual void exportPrimitives(const GU_Detail &detail, PrimitiveItems &plugins) {}
 
 	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) { return false; }
@@ -136,7 +136,7 @@ public:
 		: PrimitiveExporter(obj, ctx, exp)
 	{}
 
-	void exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet) VRAY_OVERRIDE;
+	void exportPrimitive(const PrimitiveItem &item, PluginList &pluginsSet) VRAY_OVERRIDE;
 
 protected:
 	VRay::Plugin exportVRayVolumeGridRef(OBJ_Node &objNode, const GU_PrimPacked &prim) const;
@@ -152,7 +152,7 @@ public:
 		: VolumeExporter(obj, ctx, exp)
 	{}
 
-	void exportPrimitive(const PrimitiveItem &item, PluginSet &pluginsSet) VRAY_OVERRIDE;
+	void exportPrimitive(const PrimitiveItem &item, PluginList &pluginsSet) VRAY_OVERRIDE;
 };
 
 #endif // CGR_HAS_AUR

@@ -23,6 +23,22 @@
 
 namespace VRayForHoudini {
 
+/// A type that maps hash with the plugin instance.
+typedef QMap<Hash::MHash, VRay::Plugin> HashPluginCache;
+
+/// A type that maps unique primitive ID with the plugin instance.
+typedef QMap<int, VRay::Plugin> PrimPluginCache;
+
+/// A type that maps plugin name with plugin instance.
+typedef QMap<QString, VRay::Plugin> PluginNameMap;
+
+typedef QMap<QString, PluginList> OpPluginGenCache;
+
+typedef QMap<const OBJ_Node*, PluginNameMap> NodeMap;
+
+typedef QMap<const OBJ_Node*, PluginList> ObjNodePluginList;
+typedef QMap<const OBJ_Light*, PluginList> ObjLightPluginList;
+
 enum class ObjSubdivMenu {
 	none = -1, ///< No subdivision.
 	displacement = 0, ///< Displacement.
@@ -110,16 +126,16 @@ struct VRayOpContext
 /// Primitive export context item.
 /// Used for non-Instancer objects like volumes and lights.
 struct PrimContext {
-	explicit PrimContext(OP_Node *generator=nullptr,
+	explicit PrimContext(OBJ_Node *OBJ_Node=nullptr,
 						 PrimitiveItem parentItem=PrimitiveItem(),
 						 STY_Styler styler=STY_Styler())
-		: objNode(generator)
+		: objNode(OBJ_Node)
 		, parentItem(parentItem)
 		, styler(styler)
 	{}
 
 	/// Primitive generator.
-	OP_Node *objNode;
+	OBJ_Node *objNode;
 
 	/// Parent item.
 	PrimitiveItem parentItem;
@@ -134,19 +150,112 @@ typedef QStack<PrimContext> PrimContextStack;
 /// Primitive export context stack iterator.
 typedef QVectorIterator<PrimContext> PrimContextIt;
 
+/// Collect plugin lists the OBJ_Node has generated.
+/// Used by:
+///  * LightLinker
+///  * IRP plugin removal
+struct ObjCacheEntry
+{
+	/// A list of lights this node has generated.
+	PluginList lights;
+
+	/// A list of volume grid plugins this OBJ_Node is generating.
+	PluginList volumes;
+
+	/// A list of node plugins used to wrap raw
+	/// geometry plugins the OBJ_Node is instancing.
+	PluginNameMap nodes;
+};
+
+/// A type mapping OBJ_Node with the data this node is generating.
+typedef QMap<const OBJ_Node*, ObjCacheEntry> ObjPluginCache;
+
+/// Collect plugin lists the OBJ_Light has generated.
+/// Used by:
+///  * LightLinker
+struct ObjLightCacheEntry
+{
+	/// A list of lights this light has generated.
+	/// It's a list because OBJ_Light could be instanced with "instancer" node. 
+	PluginList lights;
+
+	/// A list of node plugins this light illuminates.
+	PluginList includeNodes;
+};
+
+/// A type mapping OBJ_Light with the data this node is generating.
+typedef QMap<const OBJ_Light*, ObjLightCacheEntry> ObjLightPluginsCache;
+
+struct OpCacheMan
+{
+	/// Get writable object entry.
+	/// @param objNode OBJ_Node instance.
+	ObjCacheEntry &getObjEntry(const OBJ_Node &objNode);
+
+	/// Get object entry.
+	/// @param objNode OBJ_Node instance.
+	const ObjCacheEntry &getObjEntry(const OBJ_Node &objNode) const;
+
+	/// Get writable light entry.
+	/// @param objLight OBJ_Light instance.
+	ObjLightCacheEntry &getObjLightEntry(const OBJ_Light &objLight);
+
+	/// Get light cache entry.
+	/// @param objLight OBJ_Light instance.
+	const ObjLightCacheEntry &getObjLightEntry(const OBJ_Light &objLight) const;
+
+	/// Get lights cache list.
+	const ObjLightPluginsCache &getLightPlugins() const { return objLightPlugins; }
+
+	/// Get the number of processed OBJ_Light nodes.
+	int numLights() const { return objLightPlugins.size(); }
+
+	/// Get material plugin from cache.
+	/// @param opNode VOP or SHOP node.
+	/// @param[out] matPlugin Material plugin.
+	/// @returns True if plugin was found in cache, false - otherwise.
+	int getMatPlugin(const OP_Node &opNode, VRay::Plugin &matPlugin);
+
+	/// Add material plugin to cache.
+	/// @param opNode VOP or SHOP node.
+	/// @param matPlugin Material plugin.
+	void addMatPlugin(const OP_Node &opNode, const VRay::Plugin &matPlugin);
+
+	/// Clear cached plugins. This won't delete plugin instances.
+	void clear();
+
+private:
+	/// Object centric plugins cache.
+	ObjPluginCache objPlugins;
+
+	/// Light object centric plugins cache; for faster export of light linker.
+	ObjLightPluginsCache objLightPlugins;
+
+	/// A type mapping material node with the exported material plugin.
+	/// @tparam key VOP or SHOP node.
+	/// @tparam value VRay::Plugin instance.
+	typedef QMap<const OP_Node*, VRay::Plugin> MatPluginCache;
+
+	/// Shading node centric plugins cache.
+	MatPluginCache matCache;
+};
+
+template <typename ListType>
+static void mergePluginList(PluginList &dstList, const ListType &srcList)
+{
+	for (const VRay::Plugin &plugin : srcList) {
+		if (plugin.isEmpty())
+			continue;
+
+		dstList.append(plugin);
+	}
+}
+
 class VRayExporter;
 class VRayRendererNode;
 class ObjectExporter
 {
 public:
-	typedef QMap<QString, PluginSet> OpPluginGenCache;
-	typedef QMap<QString, VRay::Plugin> OpPluginCache;
-	typedef QMap<QString, VRay::Plugin> GeomNodeCache;
-	typedef QMap<int, VRay::Plugin> PrimPluginCache;
-	typedef QMap<Hash::MHash, VRay::Plugin> HashPluginCache;
-	typedef QMap<const OBJ_Node*, GeomNodeCache> NodeMap;
-	typedef QMap<OBJ_Node*, PluginSet> ObjNodePluginSetMap;
-
 	explicit ObjectExporter(VRayExporter &pluginExporter);
 
 	/// Reset exporter state. Clear plugin caches.
@@ -289,8 +398,9 @@ public:
 	/// Instancer works only with Node plugins. This method will wrap geometry into
 	/// the Node plugin if needed.
 	/// @param primItem Instancer item.
+	/// @param cacheEntry Top-level object cache entry.
 	/// @returns Node plugin instance.
-	VRay::Plugin getNodeForInstancerGeometry(const PrimitiveItem &primItem, const OBJ_Node &objNode);
+	VRay::Plugin getNodeForInstancerGeometry(const PrimitiveItem &primItem, ObjCacheEntry &cacheEntry);
 
 	/// Export object geometry.
 	/// @returns Geometry plugin.
@@ -334,7 +444,7 @@ public:
 	STY_Styler getStyler() const;
 
 	/// Returns the top-most object that we are exporting.
-	OP_Node *getGenerator() const;
+	const OBJ_Node &getGenerator(const OBJ_Node &currentObj) const;
 
 	/// Adds plugin to a list of plugins generated by a node.
 	/// @param key Node intance.
@@ -352,25 +462,6 @@ public:
 	/// Export geometric object.
 	/// @returns Node plugin.
 	VRay::Plugin exportNode(OBJ_Node &objNode, SOP_Node *specificSop = nullptr);
-
-	/// Get map of all exported instanced Node plugins with OBJ_Node keys
-	/// @param node[in] OBJ_Node from which the plugins have been exported
-	/// @param map[out] Map of all nodes that have been exported for the given node
-	/// @returns true if the map has been set, false otherwise
-	const GeomNodeCache &getExportedNodes(const OBJ_Node &node) const;
-
-	/// Get map of all exported lights, including any instanced lights
-	/// @returns Pointer to the cache of exported lights
-	const ObjNodePluginSetMap &getExportedLights() const;
-
-	/// Get map of all exported lights and the plugins they illuminate
-	/// @returns Pointer to the cache of lit objects
-	const ObjNodePluginSetMap  &getLitObjects() const;
-
-	/// Scene lights could have visibility flag turned off, but lights may be
-	/// instanced with the "instancer" node.
-	/// This will check if we have exported any lights.
-	bool hasLights() const;
 
 private:
 	/// Push context frame when exporting nested object.
@@ -404,7 +495,7 @@ private:
 	/// NOTE: mutable because HashMapKey doesn't have const methods.
 	mutable struct PluginCaches {
 		/// OP_Node centric plugin cache.
-		OpPluginCache op;
+		PluginNameMap op;
 
 		/// Unique primitive plugin cache.
 		PrimPluginCache prim;
@@ -418,28 +509,22 @@ private:
 		/// Mesh map channel overrides cache.
 		HashPluginCache polyMapChannels;
 
-		/// Wrapper nodes cache for Instancer plugin.
-		NodeMap instancerNodesMap;
-
 		/// Maps OP_Node with generated set of plugins for
 		/// non directly instancable object.
 		OpPluginGenCache generated;
 
 		/// Plugin cache by data hash.
 		HashPluginCache hashCache;
-
-		/// Map of light node and lights exported from aforementioned light node
-		ObjNodePluginSetMap exportedLightsCache;
-
-		/// Map of light node and plugins that it illuminates
-		ObjNodePluginSetMap litObjects;
 	} pluginCache;
+
+	/// Plugins cache.
+	OpCacheMan &cacheMan;
 
 	/// Primitive export context stack.
 	/// Used for non-Instancer objects like volumes and lights.
 	PrimContextStack primContextStack;
 
-	/// All primitive items for final Instancer.
+	/// All primitive items for final Instancer for the current OBJ_Node.
 	PrimitiveItems instancerItems;
 };
 
