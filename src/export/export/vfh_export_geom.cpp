@@ -509,7 +509,7 @@ VRay::Plugin ObjectExporter::getNodeForInstancerGeometry(const PrimitiveItem &pr
 	const VRay::Plugin objMaterial = pluginExporter.exportDefaultMaterial();
 
 	// Wrap into Node plugin.
-	Attrs::PluginDesc nodeDesc(SL("Node@%s") % primItem.geometry.getName(),
+	Attrs::PluginDesc nodeDesc(SL("Node@%1").arg(primItem.geometry.getName()),
 							   vrayPluginTypeNode.buffer());
 	nodeDesc.add(Attrs::PluginAttr(SL("geometry"), primItem.geometry));
 	nodeDesc.add(Attrs::PluginAttr(SL("material"), objMaterial));
