@@ -425,9 +425,6 @@ public:
 	/// Remove object.
 	void removeObject(const char *objNode);
  
-	/// Fill primitive item properties from context.
-	void fillFromContext(PrimitiveItem &item) const;
-
 	/// Returns transform from the primitive context stack.
 	VRay::Transform getTm() const;
 

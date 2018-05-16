@@ -332,13 +332,6 @@ STY_Styler ObjectExporter::getStyler() const
 	return primContextStack.top().styler;
 }
 
-void ObjectExporter::fillFromContext(PrimitiveItem &item) const
-{
-	item.tm = getTm();
-	item.primID = getDetailID();
-	getPrimMaterial(item.primMaterial);
-}
-
 void ObjectExporter::clearOpPluginCache()
 {
 	// clearOpPluginCache() is called before export,
