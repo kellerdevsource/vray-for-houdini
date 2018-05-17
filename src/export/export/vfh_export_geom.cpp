@@ -571,43 +571,6 @@ static void ensureDynamicGeometryForInstancer(VRay::PluginRef geometry)
 	}
 }
 
-static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QString &userAttributes) {
-	FOR_CONST_IT (MtlOverrideItems, oiIt, overrides) {
-		const QString overrideName = oiIt.key();
-		const MtlOverrideItem &overrideItem = oiIt.value();
-
-		switch (overrideItem.getType()) {
-			case MtlOverrideItem::itemTypeInt: {
-				userAttributes += overrideName % SL("=") %
-					QString::number(overrideItem.valueInt) %
-					SL(";");
-				break;
-			}
-			case MtlOverrideItem::itemTypeDouble: {
-				userAttributes += overrideName % SL("=") %
-					QString::number(overrideItem.valueDouble) %
-					SL(";");
-				break;
-			}
-			case MtlOverrideItem::itemTypeVector: {
-				userAttributes += overrideName % SL("=") %
-					QString::number(overrideItem.valueVector.x) % SL(",") %
-					QString::number(overrideItem.valueVector.y) % SL(",") %
-					QString::number(overrideItem.valueVector.z) %
-					SL(";");
-				break;
-			}
-			case MtlOverrideItem::itemTypeString: {
-				userAttributes += overrideName % SL("=") % overrideItem.valueString % SL(";");
-				break;
-			}
-			default: {
-				break;
-			}
-		}
-	}
-}
-
 int ObjectExporter::getPrimKey(const GA_Primitive &prim) const
 {
 	int primKey = 0;
@@ -1007,6 +970,52 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	popContext();
 }
 
+static void appendSeparator(QString &userAttributes)
+{
+	if (!userAttributes.isEmpty())
+		userAttributes.append(';');
+}
+
+static void overrideItemsToUserAttributes(const MtlOverrideItems &overrides, QString &userAttributes)
+{
+	FOR_CONST_IT (MtlOverrideItems, oiIt, overrides) {
+		const QString overrideName = oiIt.key();
+		const MtlOverrideItem &overrideItem = oiIt.value();
+
+		QString overrideAttr;
+
+		switch (overrideItem.getType()) {
+			case MtlOverrideItem::itemTypeInt: {
+				overrideAttr = overrideName % SL("=") % QString::number(overrideItem.valueInt);
+				break;
+			}
+			case MtlOverrideItem::itemTypeDouble: {
+				overrideAttr = overrideName % SL("=") % QString::number(overrideItem.valueDouble);
+				break;
+			}
+			case MtlOverrideItem::itemTypeVector: {
+				overrideAttr = overrideName % SL("=") %
+				               QString::number(overrideItem.valueVector.x) % SL(",") %
+				               QString::number(overrideItem.valueVector.y) % SL(",") %
+				               QString::number(overrideItem.valueVector.z);
+				break;
+			}
+			case MtlOverrideItem::itemTypeString: {
+				overrideAttr = overrideName % SL("=") % overrideItem.valueString;
+				break;
+			}
+			default:
+				break;
+		}
+
+		if (!overrideAttr.isEmpty()) {
+			appendSeparator(userAttributes);			
+
+			userAttributes.append(overrideAttr);
+		}
+	}
+}
+
 /// Add object's scene name as user attribute.
 /// @param userAttributes User attributes buffer.
 /// @param opNode Scene node.
@@ -1014,12 +1023,13 @@ static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
 {
 	const VRay::VUtils::CharStringRefList &sceneName = VRayExporter::getSceneName(opNode);
 
+	appendSeparator(userAttributes);
+
 	userAttributes.append(vrayUserAttrSceneName);
 	userAttributes.append('=');
 	userAttributes.append(sceneName[0].ptr());
 	userAttributes.append(',');
 	userAttributes.append(sceneName[1].ptr());
-	userAttributes.append(';');
 }
 
 /// Add object's unique ID for IPR drag-drop.
@@ -1027,9 +1037,27 @@ static void appendSceneName(QString &userAttributes, const OP_Node &opNode)
 /// @param opNode Scene node.
 static void appendObjUniqueID(QString &userAttributes, const OP_Node &opNode)
 {
+	appendSeparator(userAttributes);
+
 	userAttributes.append(SL("Op_Id="));
 	userAttributes.append(QString::number(opNode.getUniqueId()));
-	userAttributes.append(SL(";"));
+}
+
+static void appendPartitionAttribute(QString &userAttributes, const GA_Primitive &prim, const UT_String &partitionAttribute)
+{
+	const GA_Detail &gdp = prim.getDetail();
+
+	GA_ROHandleS separateAttrHandle(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, partitionAttribute.buffer()));
+	if (!separateAttrHandle.isValid())
+		return;
+
+	const char *attrValue = separateAttrHandle.get(prim.getMapOffset());
+	if (UTisstring(attrValue))
+		return;
+
+	appendSeparator(userAttributes);
+
+	userAttributes.append(SL("vrayPrimPartition=%1;").arg(attrValue));
 }
 
 static VRay::Plugin exportObjectProperties(VRayExporter &exporter, OBJ_Node &objNode, const VRay::Plugin &baseMaterial)
@@ -1085,14 +1113,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		appendObjUniqueID(userAttributes, objNode);
 
 		if (addParitionAttr && primItem.prim) {
-			const GA_Detail & gdp = primItem.prim->getDetail();
-			GA_ROHandleS separateAttrHandle(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, partitionAttribute.buffer()));
-			if (separateAttrHandle.isValid()) {
-				const char *attrValue = separateAttrHandle.get(primItem.prim->getMapOffset());
-				if (attrValue) {
-					userAttributes += SL("vrayPrimPartition=%1;").arg(attrValue);
-				}
-			}
+			appendPartitionAttribute(userAttributes, *primItem.prim, partitionAttribute);
 		}
 
 		VRay::Plugin material = objMaterial;
@@ -2074,6 +2095,8 @@ static VRay::Transform getPointInstanceTM(const GU_Detail &gdp, const PointInsta
 
 void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gdp, int isInstanceNode)
 {
+	const fpreal t = ctx.getTime();
+
 	const GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
 
 	const GA_ROHandleS instanceHndl(gdp.findAttribute(GA_ATTRIB_POINT, "instance"));
@@ -2102,7 +2125,7 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 			instanceObjectPath = instancePathHndl.get(pointOffset);
 		}
 		else if (isInstanceNode) {
-			objNode.evalString(instanceObjectPath, "instancepath", 0, ctx.getTime());
+			objNode.evalString(instanceObjectPath, "instancepath", 0, t);
 		}
 
 		if (!instanceObjectPath.isstring()) {
@@ -2110,7 +2133,7 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 			continue;
 		}
 
-		OP_Node *instaceOpNode = getOpNodeFromPath(objNode, instanceObjectPath, ctx.getTime());
+		OP_Node *instaceOpNode = getOpNodeFromPath(objNode, instanceObjectPath, t);
 		if (!instaceOpNode) {
 			Log::getLog().error("\"%s\": Instance object \"%s\" is not found!",
 			                    objNode.getFullPath().buffer(), instanceObjectPath.buffer());
@@ -2126,17 +2149,19 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 
 		PrimContext primCtx;
 		primCtx.objNode = &objNode;
+		primCtx.mat.matNode = instaceObjNode->getMaterialNode(t);
 
 		pushContext(primCtx);
 
 		const VRay::Plugin geometry = pluginExporter.exportObject(instaceObjNode);
 
-		popContext();
-
 		const bool isLight = bool(instaceObjNode->castToOBJLight());
 		if (!isLight && geometry.isNotEmpty()) {
 			InstancerItem item;
 			item.geometry = geometry;
+
+			// Check parent overrides.
+			item.primMaterial = getPrimMaterial();
 
 			// Use offset as ID.
 			item.primID = objNode.getUniqueId() ^ gdp.getUniqueId() ^ pointOffset;
@@ -2148,11 +2173,10 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 			appendMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, pointOffset, ctx.getTime());
 			attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
 
-			// Check parent overrides.
-			item.primMaterial = getPrimMaterial();
-
 			pointInstancerItems += item;
 		}
+
+		popContext();
 
 		++validPointIdx;
 	}
