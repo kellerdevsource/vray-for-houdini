@@ -61,10 +61,6 @@ public:
 	/// Load data ranges from the selectedSopPath's value
 	void loadDataRanges();
 
-	RenderMode getRenderMode() const;
-
-	int getDynamicGeometry() const;
-
 protected:
 	/// Clear all ramp's points
 	void clearRampData();
@@ -130,6 +126,21 @@ protected:
 };
 
 } // namespace VOP
+
+namespace Phoenix {
+
+FORCEINLINE VOP::PhxShaderSim::RenderMode getRenderMode(OP_Node &phxShaderSim)
+{
+	return static_cast<VOP::PhxShaderSim::RenderMode>(phxShaderSim.evalInt("renderMode", 0, 0.0));
+}
+
+FORCEINLINE	int getDynamicGeometry(OP_Node &phxShaderSim)
+{
+	return phxShaderSim.evalInt("dynamic_geometry", 0, 0.0);
+}
+
+} // namespace Phoenix
+
 } // namespace VRayForHoudini
 
 #endif // CGR_HAS_AUR

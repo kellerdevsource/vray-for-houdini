@@ -600,16 +600,6 @@ void PhxShaderSim::loadDataRanges()
 	}
 }
 
-PhxShaderSim::RenderMode PhxShaderSim::getRenderMode() const
-{
-	return static_cast<RenderMode>(evalInt("renderMode", 0, 0.0));
-}
-
-int PhxShaderSim::getDynamicGeometry() const
-{
-	return evalInt("dynamic_geometry", 0, 0.0);
-}
-
 int PhxShaderSim::rampButtonClickCB(void *data, int, fpreal64, const PRM_Template *tplate)
 {
 	using namespace std;
@@ -1003,7 +993,8 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 {
 	const fpreal t = exporter.getContext().getTime();
 
-	const RenderMode rendMode = getRenderMode();
+	const RenderMode rendMode = Phoenix::getRenderMode(*this);
+
 	pluginDesc.add(Attrs::PluginAttr("geommode", rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface));
 	pluginDesc.add(Attrs::PluginAttr("mesher", rendMode == Mesh));
 	pluginDesc.add(Attrs::PluginAttr("rendsolid", rendMode == Isosurface));
