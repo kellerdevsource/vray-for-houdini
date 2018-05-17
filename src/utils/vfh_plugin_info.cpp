@@ -206,10 +206,7 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 
 			const char *vrayPluginAttr = parmSpare->getValue("vray_pluginattr");
 			if (!UTisstring(vrayPluginAttr)) {
-				Log::getLog().error("\"vray_pluginattr\" is missing for attribute \"%s\"",
-				                    tokenName);
-				vassert(false);
-				continue;
+				vrayPluginAttr = tokenName;
 			}
 
 			uint32_t attrFlags = attrFlagNone;
