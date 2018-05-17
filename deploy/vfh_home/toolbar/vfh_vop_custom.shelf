@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shelfDocument>
 
+<tool name="vop_vray_material_builder" label="V-Ray Material Builder" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/vray_material</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import shoptoolutils
+shoptoolutils.genericTool(kwargs, 'vray_material', nodename="vrayMaterialBuilder")
+
+]]>
+    </script>
+</tool>
+
 <tool name="vop_vray_material_output" label="Material Output" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
