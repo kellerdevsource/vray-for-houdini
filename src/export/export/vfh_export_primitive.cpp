@@ -30,7 +30,7 @@ using namespace VRayForHoudini;
 
 #ifdef CGR_HAS_AUR
 
-namespace {
+namespace{
 
 /// Wrapper over GEO_PrimVolume and GEO_PrimVDB providing common interface
 /// this wrapper *can* be INVALID - it can be initialized with unsuported primitive
@@ -80,7 +80,7 @@ struct VolumeProxy {
 	/// @acc - function called for each element in @data, should return reference to which each voxel is assigned to
 	///        if @T is color, @acc should return reference to either the red or green or blue channels - used to export velocities
 	template <typename T, typename F>
-	void copyTo(VRay::VUtils::PtrArray<T> & data, F acc) const {
+	void copyTo(VRay::VUtils::PtrArray<T> &data, F acc) const {
 		int res[3] = {0, 0, 0};
 		getRes(res);
 
@@ -98,7 +98,7 @@ struct VolumeProxy {
 				for (int y = 0; y < res[1]; ++y) {
 					for (int z = 0; z < res[2]; ++z) {
 						const float &val = readHandle.getValue(openvdb::Coord(x, y, z));
-						const int   &idx = GetCellIndex(x, y, z);
+						const int &idx = GetCellIndex(x, y, z);
 						acc(data[idx]) = val;
 					}
 				}
@@ -110,7 +110,7 @@ struct VolumeProxy {
 				for (int y = 0; y < res[1]; ++y) {
 					for (int z = 0; z < res[2]; ++z) {
 						const float &val = vh->getValue(x, y, z);
-						const int   &idx = GetCellIndex(x, y, z);
+						const int &idx = GetCellIndex(x, y, z);
 						acc(data[idx]) = val;
 					}
 				}
@@ -136,7 +136,8 @@ struct VolumeProxy {
 		UT_Matrix4D res(1);
 		if (m_vol) {
 			m_vol->getTransform4(res);
-		} else if (m_vdb) {
+		}
+		else if (m_vdb) {
 			m_vdb->getSpaceTransform().getTransform4(res);
 		}
 		return res;
@@ -157,20 +158,23 @@ struct VolumeProxy {
 		return m_prim && (m_vol || m_vdb);
 	}
 
-	const GEO_PrimVDB    *m_vdb; ///< pointer to the VDB primitive in this is vdb
+	const GEO_PrimVDB *m_vdb; ///< pointer to the VDB primitive in this is vdb
 	const GEO_PrimVolume *m_vol; ///< pointer to the VOL primitive if this is vol
-	const GEO_Primitive  *m_prim; ///< pointer to the primitive passed to constructor
+	const GEO_Primitive *m_prim; ///< pointer to the primitive passed to constructor
 };
 }
 
-static OP_Node* getPhoenixShaderSimNode(OP_Node *matNode)
+static VOP::PhxShaderSim *getPhoenixShaderSimNode(OP_Node *matNode)
 {
 	if (!matNode)
 		return nullptr;
-	return getVRayNodeFromOp(*matNode, "Simulation", "PhxShaderSim");
+	if (matNode->getOperator()->getName().equal("VRayNodePhxShaderSim"))
+		return static_cast<VOP::PhxShaderSim*>(matNode);
+	return static_cast<VOP::PhxShaderSim*>(getVRayNodeFromOp(*matNode, "Simulation", "PhxShaderSim"));
 }
 
-void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginList &pluginsSet)
+void HoudiniVolumeExporter::exportPrimitive(const GA_Primitive &prim, const PrimMaterial &primMtl,
+                                            PluginList &volumePlugins)
 {
 #if 0
 	GA_ROAttributeRef ref_name = detail.findStringTuple(GA_ATTRIB_PRIMITIVE, "name");
@@ -178,7 +182,7 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginLis
 	if (hnd_name.isInvalid()) {
 		SOP_Node *sop = m_object.getRenderSopPtr();
 		Log::getLog().error("%s: \"name\" attribute not found! Can't export fluid data!",
-							sop ? sop->getFullPath().buffer() : "UNKNOWN");
+		                    sop ? sop->getFullPath().buffer() : "UNKNOWN");
 		return;
 	}
 
@@ -188,7 +192,6 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginLis
 
 	// will hold resolution for velocity channels as it can be different
 	int velocityRes[3] = {0, 0, 0};
-
 
 	VRay::Transform nodeTm = VRayExporter::getObjTransform(&m_object, ctx);
 	VRay::Transform phxTm;
@@ -212,8 +215,8 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginLis
 			}
 			velVoxCount = std::max(voxCount, velVoxCount);
 			// set max res of the 3 components
-			for (int c = 0; c <3; ++c) {
-				velocityRes[c] =  std::max(velocityRes[c], chRes[c]);
+			for (int c = 0; c < 3; ++c) {
+				velocityRes[c] = std::max(velocityRes[c], chRes[c]);
 			}
 		}
 	}
@@ -261,22 +264,24 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginLis
 		VRay::Transform phxMatchTm = nodeTm * phxTm;
 
 		Log::getLog().debug("Volume \"%s\": %i x %i x %i",
-							texType, res[0], res[1], res[2]);
+		                    texType, res[0], res[1], res[2]);
 
 		// extract data
 		if (texType == "vel.x") {
 			volume.copyTo(vel, std::bind(&VRay::Color::r, std::placeholders::_1));
 			continue;
-		} else if (texType == "vel.y") {
+		}
+		else if (texType == "vel.y") {
 			volume.copyTo(vel, std::bind(&VRay::Color::g, std::placeholders::_1));
 			continue;
-		} else if (texType == "vel.z") {
+		}
+		else if (texType == "vel.z") {
 			volume.copyTo(vel, std::bind(&VRay::Color::b, std::placeholders::_1));
 			continue;
 		}
 
 		VRay::VUtils::FloatRefList values(voxCount);
-		volume.copyTo(values, [](float & c) -> float & { return c; });
+		volume.copyTo(values, [](float &c) -> float& { return c; });
 
 		const QString primPluginNamePrefix = texType + "|";
 
@@ -286,7 +291,8 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginLis
 		fluidTex.add(Attrs::PluginAttr("size_z", res[2]));
 		fluidTex.add(Attrs::PluginAttr("values", values));
 
-		Attrs::PluginDesc fluidTexTm(VRayExporter::getPluginName(&m_object, primPluginNamePrefix+"Tm"), "TexMayaFluidTransformed");
+		Attrs::PluginDesc fluidTexTm(VRayExporter::getPluginName(&m_object, primPluginNamePrefix + "Tm"),
+		                             "TexMayaFluidTransformed");
 		fluidTexTm.add(Attrs::PluginAttr("fluid_tex", m_exporter.exportPlugin(fluidTex)));
 		fluidTexTm.add(Attrs::PluginAttr("fluid_value_scale", 1.0f));
 		fluidTexTm.add(Attrs::PluginAttr("object_to_world", phxMatchTm));
@@ -294,7 +300,8 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginLis
 		VRay::Plugin fluidTexPlugin = m_exporter.exportPlugin(fluidTexTm);
 
 		if (texType == "density") {
-			Attrs::PluginDesc fluidTexAlpha(VRayExporter::getPluginName(&m_object, primPluginNamePrefix+"Alpha"), "PhxShaderTexAlpha");
+			Attrs::PluginDesc fluidTexAlpha(VRayExporter::getPluginName(&m_object, primPluginNamePrefix + "Alpha"),
+			                                "PhxShaderTexAlpha");
 			fluidTexAlpha.add(Attrs::PluginAttr("ttex", fluidTexPlugin));
 
 			fluidTexPlugin = m_exporter.exportPlugin(fluidTexAlpha);
@@ -328,7 +335,7 @@ void HoudiniVolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginLis
 	phxShaderCacheDesc.add(Attrs::PluginAttr("grid_size_z", (float)res[2]));
 
 	// Skip "cache_path" exporting - we don't have chache but texture plugins
-	phxShaderCacheDesc.add(Attrs::PluginAttr("cache_path", Attrs::PluginAttr::AttrTypeIgnore));
+	phxShaderCacheDesc.add(Attrs::PluginAttr("cache_path", Attrs::AttrTypeIgnore));
 
 	VRay::Plugin phxShaderCache = m_exporter.exportPlugin(phxShaderCacheDesc);
 
@@ -385,97 +392,89 @@ VRay::Plugin VolumeExporter::exportVRayVolumeGridRef(OBJ_Node &objNode, const GU
 	return VRay::Plugin();
 }
 
-void VolumeExporter::exportPrimitive(const PrimitiveItem &item, PluginList &volumePlugins)
+void VolumeExporter::exportPrimitive(const GA_Primitive &prim, const PrimMaterial &primMtl, PluginList &volumePlugins)
 {
-	const GU_PrimPacked *primPacked = UTverify_cast<const GU_PrimPacked*>(item.prim);
-	UT_ASSERT_MSG(primPacked, "PhxShaderCache plugin is not set!");
+	const GU_PrimPacked *primPacked = UTverify_cast<const GU_PrimPacked*>(&prim);
+	vassert(primPacked && "PhxShaderCache plugin is not GU_PrimPacked!");
 
 	VRay::Plugin cachePlugin = exportVRayVolumeGridRef(objNode, *primPacked);
 	if (cachePlugin.isEmpty()) {
-		UT_ASSERT_MSG(primPacked, "PhxShaderCache plugin is not exported!");
+		Log::getLog().error("PhxShaderCache plugin is not exported for volume %s",
+		                    objNode.getName().buffer());
 		return;
 	}
 
-	OP_Node *matNode = item.primMaterial.matNode;
+	OP_Node *matNode = primMtl.matNode;
 	if (!matNode) {
 		matNode = VRayExporter::getObjMaterial(&objNode, ctx.getTime());
 	}
 
-	OP_Node *phxSimNode = getPhoenixShaderSimNode(matNode);
-	if (!phxSimNode) {
-		Log::getLog().error("Volume shader is not assigned for volume %s",
-							objNode.getName().buffer());
+	VOP::PhxShaderSim *phxShaderSim = getPhoenixShaderSimNode(matNode);
+	if (!phxShaderSim) {
+		Log::getLog().error("Volume shader is not found for volume %s",
+		                    objNode.getName().buffer());
 		return;
 	}
 
-	VOP_Node *simVop = CAST_VOPNODE(phxSimNode);
-	if (!simVop) {
-		Log::getLog().error("PhxShaderSim can't be casted to VOP node!");
-		return;
-	}
+	const QString phxShaderSimName = SL("PhxShaderSim@") % QString::number(primID) % objNode.getName().buffer();
 
-	Attrs::PluginDesc phxSim(SL("PhxShaderSim|") % QString::number(primID) % objNode.getName().buffer(),
+	Attrs::PluginDesc phxSim(phxShaderSimName,
 	                         SL("PhxShaderSim"));
+	phxShaderSim->asPluginDesc(phxSim, pluginExporter);
 
-	VOP::NodeBase &phxSimVopNode = static_cast<VOP::NodeBase&>(*simVop);
-	phxSimVopNode.asPluginDesc(phxSim, pluginExporter);
-
-	pluginExporter.setAttrsFromOpNodeConnectedInputs(phxSim, simVop);
-	pluginExporter.setAttrsFromSHOPOverrides(phxSim, *simVop);
+	pluginExporter.setAttrsFromOpNodeConnectedInputs(phxSim, *phxShaderSim);
+	pluginExporter.setAttrsFromSHOPOverrides(phxSim, *phxShaderSim);
 
 	phxSim.add(Attrs::PluginAttr(SL("node_transform"), tm));
 	phxSim.add(Attrs::PluginAttr(SL("cache"), cachePlugin));
 
-	const Attrs::PluginAttr *rendModeAttr = phxSim.get(SL("_vray_render_mode"));
-	UT_ASSERT_MSG(rendModeAttr, "Trying to export PhxShaderSim without setting it's _vray_render_mode.");
+	const VOP::PhxShaderSim::RenderMode rendMode = Phoenix::getRenderMode(*phxShaderSim);
 
-	typedef VOP::PhxShaderSim::RenderMode RMode;
-
-	const RMode rendMode = static_cast<RMode>(rendModeAttr->paramValue.valInt);
-	if (rendMode == RMode::Volumetric) {
-		phxSim.add(Attrs::PluginAttr("renderAsVolumetric", true));
+	if (rendMode == VOP::PhxShaderSim::RenderMode::Volumetric) {
+		phxSim.add(Attrs::PluginAttr(SL("renderAsVolumetric"), true));
 	}
 
-	VRay::Plugin overwriteSim = pluginExporter.exportPlugin(phxSim);
-	if (rendModeAttr && overwriteSim.isNotEmpty()) {
-		if (rendMode == RMode::Volumetric) {
-			volumePlugins.append(overwriteSim);
+	const VRay::Plugin overwriteSim = pluginExporter.exportPlugin(phxSim);
+	vassert(overwriteSim.isNotEmpty());
+
+	if (rendMode == VOP::PhxShaderSim::RenderMode::Volumetric) {
+		volumePlugins.append(overwriteSim);
+	}
+	else {
+		const bool isMesh = rendMode == VOP::PhxShaderSim::RenderMode::Mesh;
+
+		const QString &phxWrapperPluginID = isMesh ? SL("PhxShaderSimMesh") : SL("PhxShaderSimGeom");
+
+		Attrs::PluginDesc phxWrapper(SL("Wrapper@") % phxShaderSimName,
+		                             phxWrapperPluginID);
+
+		// Need to export as List().
+		VRay::VUtils::ValueRefList phoenixSimParamValue(1);
+		phoenixSimParamValue[0].setPlugin(overwriteSim);
+
+		phxWrapper.add(SL("phoenix_sim"), phoenixSimParamValue);
+
+		if (isMesh) {
+			const int dynamicGeometry = Phoenix::getDynamicGeometry(*phxShaderSim);
+
+			Attrs::PluginDesc staticMesh(SL("Geom@") % phxShaderSimName,
+			                             SL("GeomStaticMesh"));
+			staticMesh.add(Attrs::PluginAttr(SL("dynamic_geometry"), dynamicGeometry));
+
+			phxWrapper.add(Attrs::PluginAttr(SL("static_mesh"), pluginExporter.exportPlugin(staticMesh)));
 		}
-		else {
-			const bool isMesh = rendMode == RMode::Mesh;
 
-			const QString &wrapperType = isMesh ? SL("PhxShaderSimMesh") : SL("PhxShaderSimGeom");
-			const QString &wrapperPrefix = isMesh ? SL("Mesh") : SL("Geom");
+		const VRay::Plugin phxWrapperPlugin = pluginExporter.exportPlugin(phxWrapper);
 
-			Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(*simVop, wrapperPrefix, cachePlugin.getName()),
-			                             wrapperType);
-			phxWrapper.add(Attrs::PluginAttr(SL("phoenix_sim"), overwriteSim));
+		Attrs::PluginDesc node(SL("Node@") % phxShaderSimName,
+		                       SL("Node"));
+		node.add(Attrs::PluginAttr(SL("geometry"), phxWrapperPlugin));
+		node.add(Attrs::PluginAttr(SL("visible"), true));
+		node.add(Attrs::PluginAttr(SL("transform"), tm));
+		node.add(Attrs::PluginAttr(SL("material"), pluginExporter.exportDefaultMaterial()));
 
-			if (isMesh) {
-				const Attrs::PluginAttr *dynGeomAttr = phxSim.get(SL("_vray_dynamic_geometry"));
-				vassert(dynGeomAttr && "Exporting PhxShaderSim inside PhxShaderSimGeom with missing _vray_dynamic_geometry");
-
-				const bool dynamic_geometry = dynGeomAttr ? dynGeomAttr->paramValue.valInt : false;
-
-				Attrs::PluginDesc staticMesh(VRayExporter::getPluginName(*simVop, SL("GeomStaticMesh"), cachePlugin.getName()),
-				                             SL("GeomStaticMesh"));
-				staticMesh.add(Attrs::PluginAttr(SL("dynamic_geometry"), dynamic_geometry));
-		
-				phxWrapper.add(Attrs::PluginAttr(SL("static_mesh"), pluginExporter.exportPlugin(staticMesh)));
-			}
-
-			const VRay::Plugin phxWrapperPlugin = pluginExporter.exportPlugin(phxWrapper);
-
-			Attrs::PluginDesc node(VRayExporter::getPluginName(*simVop, SL("Node"), cachePlugin.getName()),
-									SL("Node"));
-			node.add(Attrs::PluginAttr(SL("geometry"), phxWrapperPlugin));
-			node.add(Attrs::PluginAttr(SL("visible"), true));
-			node.add(Attrs::PluginAttr(SL("transform"), VRay::Transform(1)));
-			node.add(Attrs::PluginAttr(SL("material"), pluginExporter.exportDefaultMaterial()));
-			
-			const VRay::Plugin phxNodePlugin = pluginExporter.exportPlugin(node);
-			volumePlugins.append(phxNodePlugin);
-		}
+		const VRay::Plugin phxNodePlugin = pluginExporter.exportPlugin(node);
+		volumePlugins.append(phxNodePlugin);
 	}
 }
 

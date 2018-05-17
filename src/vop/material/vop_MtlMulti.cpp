@@ -171,48 +171,47 @@ void VOP::MtlMulti::getCode(UT_String &codestr, const VOP_CodeGenContext &)
 
 OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	const int mtls_count = evalInt("mtl_count", 0, 0.0);
+	const int mtlsCount = evalInt("mtl_count", 0, 0.0);
 
-	VRay::ValueList mtls_list;
-	VRay::IntList   ids_list;
+	Attrs::QValueList mtlsList(mtlsCount);
+	Attrs::QIntList   idsList(mtlsCount);
 
-	for (int i = 1; i <= mtls_count; ++i) {
+	for (int i = 1; i <= mtlsCount; ++i) {
 		const QString mtlSockName = SL("mtl_%1").arg(i);
 
-		OP_Node *mtl_node = VRayExporter::getConnectedNode(this, mtlSockName);
-		if (!mtl_node) {
+		OP_Node *mtlNode = VRayExporter::getConnectedNode(this, mtlSockName);
+		if (!mtlNode) {
 			Log::getLog().warning("Node \"%s\": Material node is not connected to \"%s\", ignoring...",
-			                      getName().buffer(), _toChar(mtlSockName));
+			                      getName().buffer(), qPrintable(mtlSockName));
 		}
 		else {
-			VRay::Plugin mtl_plugin = exporter.exportVop(mtl_node, parentContext);
-
-			if (mtl_plugin.isEmpty()) {
+			const VRay::Plugin mtlPlugin = exporter.exportVop(mtlNode, parentContext);
+			if (mtlPlugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export material node connected to \"%s\", ignoring...",
-				                    getName().buffer(), _toChar(mtlSockName));
+				                    getName().buffer(), qPrintable(mtlSockName));
 			}
 			else {
-				mtls_list.push_back(VRay::Value(mtl_plugin));
-				ids_list.push_back(i - 1);
+				mtlsList.append(VRay::VUtils::Value(mtlPlugin));
+				idsList.append(i - 1);
 			}
 		}
 	}
 
-	if (mtls_list.empty())
+	if (mtlsList.empty())
 		return PluginResultError;
 
-	pluginDesc.add(Attrs::PluginAttr(SL("mtls_list"), mtls_list));
-	pluginDesc.add(Attrs::PluginAttr(SL("ids_list"), ids_list));
+	pluginDesc.add(SL("mtls_list"), mtlsList);
+	pluginDesc.add(SL("ids_list"), idsList);
 
 	OP_Node *mtlid_gen       = VRayExporter::getConnectedNode(this, SL("mtlid_gen"));
 	OP_Node *mtlid_gen_float = VRayExporter::getConnectedNode(this, SL("mtlid_gen_float"));
 
 	if (mtlid_gen && !mtlid_gen_float) {
-		pluginDesc.add(Attrs::PluginAttr(SL("mtlid_gen_float"), Attrs::PluginAttr::AttrTypeIgnore));
+		pluginDesc.add(SL("mtlid_gen_float"), Attrs::AttrTypeIgnore);
 	}
 
 	if (mtlid_gen_float && !mtlid_gen) {
-		pluginDesc.add(Attrs::PluginAttr(SL("mtlid_gen"), Attrs::PluginAttr::AttrTypeIgnore));
+		pluginDesc.add(SL("mtlid_gen"), Attrs::AttrTypeIgnore);
 	}
 
 	return PluginResultContinue;

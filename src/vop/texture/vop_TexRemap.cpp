@@ -11,22 +11,20 @@
 #include "vop_TexRemap.h"
 #include "vfh_tex_utils.h"
 
-
 using namespace VRayForHoudini;
-
 
 void VOP::TexRemap::setPluginType()
 {
 	pluginType = VRayPluginType::TEXTURE;
-	pluginID   = "TexRemap";
+	pluginID = SL("TexRemap");
 }
 
-
-OP::VRayNode::PluginResult VOP::TexRemap::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult VOP::TexRemap::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*)
 {
-	Texture::exportRampAttribute(exporter, pluginDesc, this,
-								 SL("ramp"),
-								 "color_colors", "color_positions", "color_types");
-
-	return OP::VRayNode::PluginResultContinue;
+	Texture::exportRampAttribute(exporter, pluginDesc, *this,
+	                             SL("ramp"),
+	                             SL("color_colors"),
+	                             SL("color_positions"),
+	                             SL("color_types"));
+	return PluginResultContinue;
 }

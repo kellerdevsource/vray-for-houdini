@@ -134,7 +134,7 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 	for (const UVWGenSocket &it : selectedUVWGen) {
 		const QString &inputName = it.label;
 
-		const int idx = getInputFromName(_toChar(inputName));
+		const int idx = getInputFromName(qPrintable(inputName));
 
 		OP_Node *connectedInput = getInput(idx);
 		if (connectedInput) {
@@ -170,7 +170,7 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 			COP2_Node *copNode = opNode->castToCOP2Node();
 			if (copNode) {
 				bitmapBufferDesc.pluginID = "RawBitmapBuffer";
-				bitmapBufferDesc.add(Attrs::PluginAttr("file", Attrs::PluginAttr::AttrTypeIgnore));
+				bitmapBufferDesc.add(Attrs::PluginAttr("file", Attrs::AttrTypeIgnore));
 
 				if (!exporter.fillCopNodeBitmapBuffer(*copNode, bitmapBufferDesc)) {
 					Log::getLog().error("Failed to bake texture data from \"%s\"", copNode->getName().buffer());

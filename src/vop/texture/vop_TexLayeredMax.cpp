@@ -115,33 +115,33 @@ OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &p
 {
 	const fpreal t = exporter.getContext().getTime();
 
-	const int tex_count = evalInt("textures_count", 0, 0.0);
+	const int texCount = evalInt("textures_count", 0, 0.0);
 
-	VRay::ValueList textures;
-	VRay::IntList   blend_modes;
-	VRay::FloatList opacities;
+	Attrs::QValueList textures(texCount);
+	Attrs::QIntList   blend_modes(texCount);
+	Attrs::QFloatList opacities(texCount);
 
-	for (int i = 1; i <= tex_count; ++i) {
-		QString texSockName(QString("tex_%1").arg(i));
+	for (int i = 1; i <= texCount; ++i) {
+		const QString texSockName(SL("tex_%1").arg(i));
 
-		OP_Node *tex_node = VRayExporter::getConnectedNode(this, _toChar(texSockName));
-		if (!tex_node) { 
+		OP_Node *texNode = VRayExporter::getConnectedNode(this, qPrintable(texSockName));
+		if (!texNode) { 
 			Log::getLog().warning("Node \"%s\": Texture node is not connected to \"%s\", ignoring...",
-					   getName().buffer(), _toChar(texSockName));
+					   getName().buffer(), qPrintable(texSockName));
 		}
 		else {
-			const VRay::Plugin tex_plugin = exporter.exportVop(tex_node, parentContext);
-			if (tex_plugin.isEmpty()) {
+			const VRay::Plugin texPlugin = exporter.exportVop(texNode, parentContext);
+			if (texPlugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
-							getName().buffer(), _toChar(texSockName));
+							getName().buffer(), qPrintable(texSockName));
 			}
 			else {
-				const int blend_mode   = evalIntInst("tex#blend_mode", &i, 0, t);
-				const float blend_amount = evalFloatInst("tex#blend_amount", &i, 0, t);
+				const int blendMode = evalIntInst("tex#blend_mode", &i, 0, t);
+				const float blendAmount = evalFloatInst("tex#blend_amount", &i, 0, t);
 
-				textures.push_back(VRay::Value(tex_plugin));
-				blend_modes.push_back(blend_mode);
-				opacities.push_back(blend_amount);
+				textures.append(VRay::VUtils::Value(texPlugin));
+				blend_modes.append(blendMode);
+				opacities.append(blendAmount);
 			}
 		}
 	}
@@ -153,9 +153,9 @@ OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &p
 	std::reverse(blend_modes.begin(), blend_modes.end());
 	std::reverse(opacities.begin(), opacities.end());
 
-	pluginDesc.add(Attrs::PluginAttr("textures", textures));
-	pluginDesc.add(Attrs::PluginAttr("blend_modes", blend_modes));
-	pluginDesc.add(Attrs::PluginAttr("opacities", opacities));
+	pluginDesc.add(SL("textures"), textures);
+	pluginDesc.add(SL("blend_modes"), blend_modes);
+	pluginDesc.add(SL("opacities"), opacities);
 
 	return PluginResultContinue;
 }

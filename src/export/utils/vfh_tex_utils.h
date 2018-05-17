@@ -13,7 +13,6 @@
 
 #include "vop_node_base.h"
 
-
 namespace VRayForHoudini {
 namespace Texture {
 
@@ -70,29 +69,37 @@ inline VRAY_InterpolationType mapToVray(HOU_InterpolationType type) {
 ///        or colors should be wrapped in texture plugins
 /// @param remapInterp[in] - flags if interpolation type should be remapped to the
 ///        closest one supported by V-Ray
-void exportRampAttribute(VRayExporter &exporter, Attrs::PluginDesc &pluginDesc, OP_Node *op_node,
-						 const QString &rampAttrName,
-						 const QString &colAttrName, const QString &posAttrName, const QString &typesAttrName="",
-                         bool asColor=false, bool remapInterp=false);
+void exportRampAttribute(VRayExporter &exporter,
+                         Attrs::PluginDesc &pluginDesc,
+                         OP_Node &opNode,
+                         const QString &rampAttrName,
+                         const QString &colAttrName,
+                         const QString &posAttrName,
+                         const QString &typesAttrName = "",
+                         bool asColor = false, bool remapInterp = false);
 
 /// Helpper function to obtain data from a curve ramp parameter
-/// @param exporter[in] - reference to the main vfh exporter
-/// @param node[in] - the node owning the ramp parameter
-/// @param curveAttrName[in] - ramp parameter name
-/// @param interpolations[out] - output for the ramp intarpolation types
-///        per interval
-/// @param positions[out] - output for the ramp interpolation intervals
-/// @param values[out] - if a valid pointer, this will hold the ouput of
+/// @param exporter reference to the main vfh exporter.
+/// @param node the node owning the ramp parameter.
+/// @param curveAttrName ramp parameter name.
+/// @param interpolations output for the ramp intarpolation types
+///        per interval.
+/// @param positions output for the ramp interpolation intervals.
+/// @param values this will hold the ouput of
 ///        curve control points, otherwise those would be added to positions
-///        parameter so that every 2 sequential values form a tuple (position, value)
-/// @param needHandles[in] - flags whether positions and values need to be transformed
-///        // TODO: need more info here
-/// @param remapInterp[in] - flags if interpolation type should be remapped to the
-///        closest one supported by V-Ray
+///        parameter so that every 2 sequential values form a tuple (position, value).
+/// @param needValues flags whether values need to be exported.
+/// @param needHandles flags whether positions and values need to be transformed.
+/// @param remapInterp flags if interpolation type should be remapped to the
+///        closest one supported by V-Ray.
 void getCurveData(VRayExporter &exporter, OP_Node *node,
-				  const QString &curveAttrName,
-				  VRay::IntList &interpolations, VRay::FloatList &positions, VRay::FloatList *values=nullptr,
-				  const bool needHandles=false, const bool remapInterp=false);
+                  const QString &curveAttrName,
+                  VRay::VUtils::IntRefList &interpolations,
+                  VRay::VUtils::FloatRefList &positions,
+                  VRay::VUtils::FloatRefList &values,
+                  bool needValues = true,
+                  bool needHandles = false,
+                  bool remapInterp = false);
 
 } // namespace Texture
 } // namespace VRayForHoudini

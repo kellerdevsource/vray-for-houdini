@@ -277,7 +277,7 @@ void MeshExporter::reset()
 	map_channels_data.clear();
 }
 
-bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, PrimitiveItems &instancerItems, const PrimitiveItem &topItem, VRayExporter &exporter)
+bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, InstancerItems &instancerItems, const InstancerItem &topItem, VRayExporter &exporter)
 {
 	using namespace VRay::VUtils;
 	const VectorRefList & allVertices = getVertices();
@@ -324,7 +324,7 @@ bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, PrimitiveItems &in
 		VectorRefList vertices(vertexCount);
 		memcpy(vertices.get(), allVertices.get() + vertexRange.first, vertexCount * sizeof(vertices[0]));
 
-		PrimitiveItem item;
+		InstancerItem item;
 		item.primID = soup->getMapIndex();
 		item.prim = soup;
 		item.tm = topItem.tm;
@@ -408,7 +408,7 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 			map_channels[mcItIdx].setList(map_channel);
 
 			// Channel name attribute
-			map_channel_names[mcItIdx].setString(_toChar(map_channel_name));
+			map_channel_names[mcItIdx].setString(qPrintable(map_channel_name));
 		}
 
 		pluginDesc.add(Attrs::PluginAttr("map_channels_names", map_channel_names));
@@ -646,8 +646,7 @@ VRay::Plugin MeshExporter::getMaterial()
 		return VRay::Plugin();
 	}
 
-	PrimMaterial topPrimMaterial;
-	objectExporter.getPrimMaterial(topPrimMaterial);
+	const PrimMaterial &topPrimMaterial = objectExporter.getPrimMaterial();
 
 	OP_Node *objMatNode = topPrimMaterial.matNode
 	                      ? topPrimMaterial.matNode
@@ -820,7 +819,7 @@ VRay::Plugin MeshExporter::exportExtMapChannels(const MapChannels &mapChannelOve
 		const MapChannel &map_channel_data = mcIt.value();
 
 		VRay::VUtils::ValueRefList map_channel(3);
-		map_channel[0].setString(_toChar(map_channel_name));
+		map_channel[0].setString(qPrintable(map_channel_name));
 		if (map_channel_data.type == MapChannel::mapChannelTypeVertex) {
 			map_channel[1].setListVector(map_channel_data.vertices);
 		}

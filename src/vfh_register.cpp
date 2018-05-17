@@ -284,6 +284,7 @@ void newVopOperator(OP_OperatorTable *table)
 		return;
 
 	MaterialOutput::register_operator(table);
+	VRayMaterialBuilder::register_shop_operator(table);
 
 	VFH_VOP_ADD_OPERATOR(table, "SETTINGS", SettingsEnvironment);
 

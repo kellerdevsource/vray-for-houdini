@@ -135,7 +135,7 @@ public:
 	/// @param topItem - the parent item for all primitives (used for tm, vel and material)
 	/// @param exporter - the vray exporter used to export mesh plugins
 	/// @return - false on fail, success otherwise
-	bool asPolySoupPrimitives(const GU_Detail &gdp, PrimitiveItems &instancerItems, const PrimitiveItem &topItem, VRayExporter &exporter);
+	bool asPolySoupPrimitives(const GU_Detail &gdp, InstancerItems &instancerItems, const InstancerItem &topItem, VRayExporter &exporter);
 
 	/// Build material taking overrides into account.
 	VRay::Plugin getMaterial();

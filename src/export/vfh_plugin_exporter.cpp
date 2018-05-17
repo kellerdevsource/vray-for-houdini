@@ -33,11 +33,11 @@ bool VRayPluginRenderer::hasVRScansGUILicense(VRay::ScannedMaterialLicenseError 
 		return isGUIAvailable;
 	}
 
-	VRay::ScannedMaterialParams dummyParms;
+	const VRay::ScannedMaterialParams dummyParms;
 	VRay::IntList dummyData;
 	const bool res = VRay::encodeScannedMaterialParams(dummyParms, dummyData, err);
 	if (!res) {
-		const char *errMsg = (err.error())? err.toString() : "V-Ray AppSDK internal error";
+		const char *errMsg = err.error() ? err.toString() : "V-Ray AppSDK internal error";
 		if (!err.error()) {
 			// This should not happen in general but let's adjust the error code just in case
 			err.errorCode = VRay::LicenseError::vrlauth_notInitializedError;
@@ -172,7 +172,6 @@ VRay::Plugin VRayPluginRenderer::getPlugin(const char *pluginName)
 
 VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDesc)
 {
-#define CGR_DEBUG_APPSDK_VALUES  0
 	if (!m_vray) {
 		return VRay::Plugin();
 	}
@@ -180,12 +179,12 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 	if (pluginDesc.pluginID.isEmpty()) {
 		// NOTE: Could be done intentionally to skip plugin creation
 		Log::getLog().debug("[%s] PluginDesc.pluginID is not set!",
-		                    _toChar(pluginDesc.pluginName));
+		                    qPrintable(pluginDesc.pluginName));
 		return VRay::Plugin();
 	}
 
-	VRay::Plugin plug = m_vray->getOrCreatePlugin(_toChar(pluginDesc.pluginName),
-	                                              _toChar(pluginDesc.pluginID));
+	VRay::Plugin plug = m_vray->getOrCreatePlugin(qPrintable(pluginDesc.pluginName),
+	                                              qPrintable(pluginDesc.pluginID));
 	if (plug.isEmpty()) {
 		VRay::Error err = m_vray->getLastError();
 		if (err != VRay::SUCCESS) {
@@ -205,110 +204,81 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 {
 	FOR_CONST_IT (PluginAttrs, pIt, pluginDesc.pluginAttrs) {
 		const PluginAttr &p = pIt.value();
-		const std::string &paramName = p.paramName.toStdString();
 
-		if (p.paramType == PluginAttr::AttrTypeIgnore) {
+		if (p.paramType == AttrTypeIgnore)
 			continue;
-		}
 
-		if (p.paramType == PluginAttr::AttrTypeInt) {
-			plugin.setValue(paramName, p.paramValue.valInt);
+		const std::string paramName(p.paramName.toStdString());
+		
+		int setValueRes = true;
+
+		if (p.paramType == AttrTypeInt) {
+			setValueRes = plugin.setValue(paramName, p.paramValue.valInt);
 		}
-		else if (p.paramType == PluginAttr::AttrTypeFloat) {
-			plugin.setValue(paramName, p.paramValue.valFloat);
+		else if (p.paramType == AttrTypeFloat) {
+			setValueRes = plugin.setValue(paramName, p.paramValue.valVector[0]);
 		}
-		else if (p.paramType == PluginAttr::AttrTypeColor) {
-			plugin.setValue(paramName, VRay::Color(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2]));
+		else if (p.paramType == AttrTypeColor) {
+			setValueRes = plugin.setValue(paramName, VRay::Color(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2]));
 		}
-		else if (p.paramType == PluginAttr::AttrTypeVector) {
-			plugin.setValue(paramName, VRay::Vector(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2]));
+		else if (p.paramType == AttrTypeVector) {
+			setValueRes = plugin.setValue(paramName, VRay::Vector(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2]));
 		}
-		else if (p.paramType == PluginAttr::AttrTypeAColor) {
-			plugin.setValue(paramName, VRay::AColor(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2], p.paramValue.valVector[3]));
+		else if (p.paramType == AttrTypeAColor) {
+			setValueRes = plugin.setValue(paramName, VRay::AColor(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2], p.paramValue.valVector[3]));
 		}
-		else if (p.paramType == PluginAttr::AttrTypePlugin) {
+		else if (p.paramType == AttrTypePlugin) {
 			if (p.paramValue.valPluginOutput.isEmpty()) {
-				plugin.setValue(paramName, p.paramValue.valPlugin);
+				setValueRes = plugin.setValue(paramName, p.paramValue.valPlugin);
 			}
 			else {
-				plugin.setValue(paramName, VRay::PluginRef(p.paramValue.valPlugin, _toChar(p.paramValue.valPluginOutput)));
+				setValueRes = plugin.setValue(paramName, VRay::PluginRef(p.paramValue.valPlugin, qPrintable(p.paramValue.valPluginOutput)));
 			}
 		}
-		else if (p.paramType == PluginAttr::AttrTypeTransform) {
-			plugin.setValue(paramName, p.paramValue.valTransform);
+		else if (p.paramType == AttrTypeTransform) {
+			setValueRes = plugin.setValue(paramName, p.paramValue.valTransform);
 		}
-		else if (p.paramType == PluginAttr::AttrTypeMatrix) {
-			plugin.setValue(paramName, p.paramValue.valTransform.matrix);
+		else if (p.paramType == AttrTypeMatrix) {
+			setValueRes = plugin.setValue(paramName, p.paramValue.valTransform.matrix);
 		}
-		else if (p.paramType == PluginAttr::AttrTypeString) {
-			plugin.setValue(paramName, p.paramValue.valString.toStdString());
-#if CGR_DEBUG_APPSDK_VALUES
-			Log::getLog().debug("AttrTypeString:  %s [%s] = %s",
-								paramName, plug.getType(), plug.getValueAsString(p.paramName));
-#endif
+		else if (p.paramType == AttrTypeString) {
+			setValueRes = plugin.setValue(paramName, p.paramValue.valString.toStdString());
 		}
-		else if (p.paramType == PluginAttr::AttrTypeListPlugin) {
-			plugin.setValue(paramName, VRay::Value(p.paramValue.valListValue));
+		else if (p.paramType == AttrTypeRawListInt) {
+			setValueRes = plugin.setValue(paramName, p.paramValue.valRawListInt);
 		}
-		else if (p.paramType == PluginAttr::AttrTypeListInt) {
-			plugin.setValue(paramName, VRay::Value(p.paramValue.valListInt));
-#if CGR_DEBUG_APPSDK_VALUES
-			Log::getLog().debug("AttrTypeListInt:  %s [%s] = %s",
-								paramName, plug.getType(), plug.getValueAsString(p.paramName));
-#endif
+		else if (p.paramType == AttrTypeRawListFloat) {
+			setValueRes = plugin.setValue(paramName, p.paramValue.valRawListFloat);
 		}
-		else if (p.paramType == PluginAttr::AttrTypeListFloat) {
-			plugin.setValue(paramName, VRay::Value(p.paramValue.valListFloat));
-#if CGR_DEBUG_APPSDK_VALUES
-			Log::getLog().debug("AttrTypeListFloat:  %s [%s] = %s",
-								paramName, plug.getType(), plug.getValueAsString(p.paramName));
-#endif
+		else if (p.paramType == AttrTypeRawListVector) {
+			setValueRes = plugin.setValue(paramName, p.paramValue.valRawListVector);
 		}
-		else if (p.paramType == PluginAttr::AttrTypeListVector) {
-			plugin.setValue(paramName, VRay::Value(p.paramValue.valListVector));
+		else if (p.paramType == AttrTypeRawListColor) {
+			setValueRes = plugin.setValue(paramName, p.paramValue.valRawListColor);
 		}
-		else if (p.paramType == PluginAttr::AttrTypeListColor) {
-			plugin.setValue(paramName, VRay::Value(p.paramValue.valListColor));
+		else if (p.paramType == AttrTypeRawListCharString) {
+			setValueRes = plugin.setValue(paramName, p.paramValue.valRawListCharString);
 		}
-		else if (p.paramType == PluginAttr::AttrTypeListValue) {
-			plugin.setValue(paramName, VRay::Value(p.paramValue.valListValue));
-#if CGR_DEBUG_APPSDK_VALUES
-			Log::getLog().debug("AttrTypeListValue:  %s [%s] = %s",
-								paramName, plug.getType(), plug.getValueAsString(p.paramName));
-#endif
-		}
-		else if (p.paramType == PluginAttr::AttrTypeRawListInt) {
-			plugin.setValue(paramName, p.paramValue.valRawListInt);
-		}
-		else if (p.paramType == PluginAttr::AttrTypeRawListFloat) {
-			plugin.setValue(paramName, p.paramValue.valRawListFloat);
-		}
-		else if (p.paramType == PluginAttr::AttrTypeRawListVector) {
-			plugin.setValue(paramName, p.paramValue.valRawListVector);
-		}
-		else if (p.paramType == PluginAttr::AttrTypeRawListColor) {
-			plugin.setValue(paramName, p.paramValue.valRawListColor);
-		}
-		else if (p.paramType == PluginAttr::AttrTypeRawListCharString) {
-			plugin.setValue(paramName, p.paramValue.valRawListCharString);
-		}
-		else if (p.paramType == PluginAttr::AttrTypeRawListValue) {
+		else if (p.paramType == AttrTypeRawListValue) {
 			const bool curAnimValue = m_vray->getUseAnimatedValuesState();
 
 			// Force animated generic list key-frames.
-			if (curAnimValue && !p.isAnimatedGenericList) {
+			if (curAnimValue && !p.paramValue.isAnimatedGenericList) {
 				m_vray->useAnimatedValues(false);
 			}
 
-			plugin.setValue(paramName, p.paramValue.valRawListValue);
+			setValueRes = plugin.setValue(paramName, p.paramValue.valRawListValue);
 
 			m_vray->useAnimatedValues(curAnimValue);
 		}
 
-#if CGR_DEBUG_APPSDK_VALUES
-		Log::getLog().debug("Setting plugin parameter: \"%s\" %s.%s = %s",
-							pluginDesc.pluginName, pluginDesc.pluginID, paramName, plugin.getValue(p.paramName).toString());
-#endif
+		if (!setValueRes) {
+			const VRay::Error err = m_vray->getLastError();
+			if (err != VRay::SUCCESS) {
+				Log::getLog().error("Error setting parameter %s::%s: \"%s\"",
+				                    qPrintable(pluginDesc.pluginID), paramName.c_str(), err.toString());
+			}
+		}
 	}
 }
 
@@ -429,11 +399,11 @@ void VRayPluginRenderer::removePlugin(const QString &pluginName) const
 {
 	vassert(m_vray);
 
-	m_vray->removePlugin(_toChar(pluginName));
+	m_vray->removePlugin(qPrintable(pluginName));
 
 	const VRay::Error err = m_vray->getLastError();
 	if (err.getCode() != VRay::SUCCESS) {
-		Log::getLog().debug("Error removing plugin \"%s\": %s", _toChar(pluginName), err.toString());
+		Log::getLog().debug("Error removing plugin \"%s\": %s", qPrintable(pluginName), err.toString());
 	}
 }
 
@@ -445,9 +415,9 @@ int VRayPluginRenderer::exportScene(const QString &filepath, VRay::VRayExportSet
 		Log::getLog().error("Export to the *.vrscene files is not allowed in Houdini Indie");
 	}
 	else if (m_vray) {
-		Log::getLog().info("Starting export to \"%s\"...", _toChar(filepath));
+		Log::getLog().info("Starting export to \"%s\"...", qPrintable(filepath));
 
-		res = m_vray->exportScene(_toChar(filepath), settings);
+		res = m_vray->exportScene(qPrintable(filepath), settings);
 
 		VRay::Error err = m_vray->getLastError();
 		if (err != VRay::SUCCESS) {

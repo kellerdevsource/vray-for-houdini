@@ -86,13 +86,13 @@ OP::VRayNode::PluginResult VOP::RenderChannelsContainer::asPluginDesc(Attrs::Plu
 		OP_Node *chan_node = VRayExporter::getConnectedNode(this, chanSockName);
 		if (!chan_node) {
 			Log::getLog().warning("Node \"%s\": Render channel node is not connected to \"%s\", ignoring...",
-			                      getName().buffer(), _toChar(chanSockName));
+			                      getName().buffer(), qPrintable(chanSockName));
 		}
 		else {
 			VRay::Plugin chan_plugin = exporter.exportVop(chan_node, parentContext);
 			if (chan_plugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export render channel node connected to \"%s\", ignoring...",
-				                    getName().buffer(), _toChar(chanSockName));
+				                    getName().buffer(), qPrintable(chanSockName));
 			}
 		}
 	}

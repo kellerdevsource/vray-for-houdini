@@ -73,7 +73,7 @@ def _addDisplacementControls(ptg, vrayFolder):
     }))
 
     ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_displ_folder_GeomDisplacedMesh", "Displacement", **{
-        'parm_templates' : (vfh_ptg_utils.getParmTemplatesFromDS("GeomDisplacedMesh", prefix="GeomDisplacedMesh")),
+        'parm_templates' : (vfh_ptg_utils.getParmTemplatesFromDS("ObjectGeomDisplacedMesh", prefix="GeomDisplacedMesh")),
         'folder_type' : hou.folderType.Simple,
         'tags' : {
             'spare_category': 'vray'
@@ -84,7 +84,7 @@ def _addDisplacementControls(ptg, vrayFolder):
     }))
 
     ptg.appendToFolder(vrayFolder, hou.FolderParmTemplate("vray_displ_folder_GeomStaticSmoothedMesh", "Subdivision", **{
-        'parm_templates' : (vfh_ptg_utils.getParmTemplatesFromDS("GeomStaticSmoothedMesh", prefix ="GeomStaticSmoothedMesh")),
+        'parm_templates' : (vfh_ptg_utils.getParmTemplatesFromDS("ObjectGeomStaticSmoothedMesh", prefix ="GeomStaticSmoothedMesh")),
         'folder_type' : hou.folderType.Simple,
         'tags' : {
             'spare_category': 'vray'

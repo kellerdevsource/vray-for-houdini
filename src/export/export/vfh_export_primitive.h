@@ -26,61 +26,6 @@ enum ObjectIDTypes {
 	objectIdUndefined = -1,
 };
 
-struct PrimitiveItem {
-	enum InstancerItemFlags {
-		itemFlagsNone = 0,
-		itemFlagsUseTime = (1 << 0),
-	};
-
-	explicit PrimitiveItem(VRay::Plugin geometry=VRay::Plugin(),
-						   VRay::Plugin material=VRay::Plugin())
-		: prim(nullptr)
-		, primID(0)
-		, geometry(geometry)
-		, material(material)
-		, tm(1)
-		, vel(1)
-		, objectID(objectIdUndefined)
-		, t(0.0)
-		, flags(itemFlagsNone)
-	{}
-
-	/// Primitive.
-	const GA_Primitive *prim;
-
-	/// Primitive ID.
-	exint primID;
-
-	/// Material.
-	PrimMaterial primMaterial;
-
-	/// Exported geometry plugin.
-	VRay::Plugin geometry;
-
-	/// Exported material plugin.
-	VRay::Plugin material;
-
-	/// Map channel overrides.
-	VRay::Plugin mapChannels;
-
-	/// Transform.
-	VRay::Transform tm;
-
-	/// Velocity.
-	VRay::Transform vel;
-
-	/// Object ID.
-	int objectID;
-
-	/// Time instancing.
-	fpreal t;
-
-	/// Flags.
-	uint32_t flags;
-};
-
-typedef VUtils::Table<PrimitiveItem, -1> PrimitiveItems;
-
 class VRayExporter;
 
 /// Base class for exporting primitives from OBJ nodes
@@ -96,8 +41,7 @@ public:
 	{}
 	virtual ~PrimitiveExporter() {}
 
-	virtual void exportPrimitive(const PrimitiveItem &item, PluginList &pluginsSet) {}
-	virtual void exportPrimitives(const GU_Detail &detail, PrimitiveItems &plugins) {}
+	virtual void exportPrimitive(const GA_Primitive &prim, const PrimMaterial &primMtl, PluginList &volumePlugins) {}
 
 	virtual bool asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginDesc) { return false; }
 	virtual bool hasData() const { return false; }
@@ -136,7 +80,7 @@ public:
 		: PrimitiveExporter(obj, ctx, exp)
 	{}
 
-	void exportPrimitive(const PrimitiveItem &item, PluginList &pluginsSet) VRAY_OVERRIDE;
+	void exportPrimitive(const GA_Primitive &prim, const PrimMaterial &primMtl, PluginList &pluginsSet) VRAY_OVERRIDE;
 
 protected:
 	VRay::Plugin exportVRayVolumeGridRef(OBJ_Node &objNode, const GU_PrimPacked &prim) const;
@@ -152,7 +96,7 @@ public:
 		: VolumeExporter(obj, ctx, exp)
 	{}
 
-	void exportPrimitive(const PrimitiveItem &item, PluginList &pluginsSet) VRAY_OVERRIDE;
+	void exportPrimitive(const GA_Primitive &prim, const PrimMaterial &primMtl, PluginList &volumePlugins) VRAY_OVERRIDE;
 };
 
 #endif // CGR_HAS_AUR

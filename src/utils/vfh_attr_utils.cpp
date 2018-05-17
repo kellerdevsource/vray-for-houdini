@@ -38,7 +38,7 @@ UT_String getOpPathFromAttr(const OP_Node &node, const char *attrName, fpreal t)
 
 UT_String getOpPathFromAttr(const OP_Node &node, const QString &attrName, fpreal t)
 {
-	return getOpPathFromAttr(node, _toChar(attrName), t);
+	return getOpPathFromAttr(node, qPrintable(attrName), t);
 }
 
 OP_Node* getOpNodeFromPath(const OP_Node &node, const char *path, fpreal t)

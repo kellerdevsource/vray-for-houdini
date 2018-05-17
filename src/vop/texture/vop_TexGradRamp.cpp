@@ -11,21 +11,20 @@
 #include "vop_TexGradRamp.h"
 #include "vfh_tex_utils.h"
 
-
 using namespace VRayForHoudini;
-
 
 void VOP::TexGradRamp::setPluginType()
 {
 	pluginType = VRayPluginType::TEXTURE;
-	pluginID   = "TexGradRamp";
+	pluginID = SL("TexGradRamp");
 }
-
 
 OP::VRayNode::PluginResult VOP::TexGradRamp::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	Texture::exportRampAttribute(exporter, pluginDesc, this,
-								 SL("ramp"),
-								 "colors", "positions", "interpolation");
-	return OP::VRayNode::PluginResultContinue;
+	Texture::exportRampAttribute(exporter, pluginDesc, *this,
+	                             SL("ramp"),
+	                             SL("colors"),
+	                             SL("positions"),
+	                             SL("interpolation"));
+	return PluginResultContinue;
 }

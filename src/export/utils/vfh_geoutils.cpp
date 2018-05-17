@@ -119,7 +119,7 @@ VRay::VUtils::CharStringRefList CharStringTable::toRefList() const
 {
 	VRay::VUtils::CharStringRefList refList(count());
 	for (int i = 0; i < count(); ++i) {
-		refList[i] = _toChar((*this)[i]);
+		refList[i] = qPrintable((*this)[i]);
 	}
 	return refList;
 }

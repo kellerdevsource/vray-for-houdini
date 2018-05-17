@@ -1,0 +1,8 @@
+{
+    name GeomStaticSmoothedMesh
+    label "Subdivision"
+    parmtag { spare_category "Subdivision" }
+    parmtag { vray_plugin "GeomStaticSmoothedMesh" }
+
+#include "$VRAY_UI_DS_PATH/plugins/geometry/GeomStaticSmoothedMeshParms.ds"
+}

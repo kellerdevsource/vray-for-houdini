@@ -15,6 +15,7 @@
         parmtag { "vray_type" "PluginMaterial" }
         invisible
     }
+
     parm {
         name    "material_id_color"
         label   "Material ID Color"
@@ -22,20 +23,17 @@
         size    4
         default { "0" "0" "0" "1" }
         help    "The material id color"
-        range   { 0 10 }
-        export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "MtlMaterialID" }
         parmtag { "vray_pluginattr" "material_id_color" }
         parmtag { "vray_type" "Texture" }
     }
+
     parm {
         name    "material_id_number"
         label   "ID Number"
         type    int
         default { "0" }
-        range   { 0 10 }
-        export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_plugin" "MtlMaterialID" }
         parmtag { "vray_pluginattr" "material_id_number" }

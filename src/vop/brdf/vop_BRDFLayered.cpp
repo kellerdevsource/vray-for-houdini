@@ -210,27 +210,26 @@ unsigned VOP::BRDFLayered::orderedInputs() const
 }
 
 
-void VOP::BRDFLayered::getCode(UT_String &codestr, const VOP_CodeGenContext &)
-{
-}
+void VOP::BRDFLayered::getCode(UT_String&, const VOP_CodeGenContext &)
+{}
 
 OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	const fpreal &t = exporter.getContext().getTime();
+	const fpreal t = exporter.getContext().getTime();
 
-	const int brdf_count = evalInt("brdf_count", 0, 0.0);
+	const int brdfCount = evalInt("brdf_count", 0, 0.0);
 
-	VRay::ValueList brdfs;
-	VRay::ValueList weights;
+	Attrs::QValueList brdfs(brdfCount);
+	Attrs::QValueList weights(brdfCount);
 
-	for (int i = 1; i <= brdf_count; ++i) {
+	for (int i = 1; i <= brdfCount; ++i) {
 		const QString &paramPrefix = SL("@%1").arg(QString::number(i));
 		const QString &brdfSockName = SL("brdf_%1").arg(QString::number(i));
 
 		OP_Node *brdf_node = VRayExporter::getConnectedNode(this, brdfSockName);
-		if (NOT(brdf_node)) {
+		if (!brdf_node) {
 			Log::getLog().warning("Node \"%s\": BRDF node is not connected to \"%s\", ignoring...",
-			                      getName().buffer(), _toChar(brdfSockName));
+			                      getName().buffer(), qPrintable(brdfSockName));
 		}
 		else {
 			const QString weightSockName = SL("weight_%1").arg(QString::number(i));
@@ -238,7 +237,7 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 			VRay::Plugin brdf_plugin = exporter.exportVop(brdf_node, parentContext);
 			if (brdf_plugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export BRDF node connected to \"%s\", ignoring...",
-				                    getName().buffer(), _toChar(brdfSockName));
+				                    getName().buffer(), qPrintable(brdfSockName));
 			}
 			else {
 				VRay::Plugin weight_plugin = VRay::Plugin();
@@ -260,26 +259,26 @@ OP::VRayNode::PluginResult VOP::BRDFLayered::asPluginDesc(Attrs::PluginDesc &plu
 
 				if (weight_plugin.isEmpty()) {
 					Log::getLog().error("Node \"%s\": Failed to export BRDF weight node connected to \"%s\", ignoring...",
-								getName().buffer(), _toChar(brdfSockName));
+								getName().buffer(), qPrintable(brdfSockName));
 				}
 				else {
 					// Convert weight plugin.
 					exporter.convertInputPlugin(weight_plugin, pluginDesc, this, VOP_TYPE_FLOAT, weightSockName);
-					weights.push_back(VRay::Value(weight_plugin));
+					weights.append(VRay::VUtils::Value(weight_plugin));
 
 					// Convert BRDF plugin.
 					exporter.convertInputPlugin(brdf_plugin, pluginDesc, this, VOP_TYPE_BSDF, brdfSockName);
-					brdfs.push_back(VRay::Value(brdf_plugin));
+					weights.append(VRay::VUtils::Value(brdf_plugin));
 				}
 			}
 		}
 	}
 
-	if (!brdfs.size())
+	if (brdfs.empty())
 		return PluginResultError;
 
-	pluginDesc.add(Attrs::PluginAttr(SL("brdfs"), brdfs));
-	pluginDesc.add(Attrs::PluginAttr(SL("weights"), weights));
+	pluginDesc.add(SL("brdfs"), brdfs);
+	pluginDesc.add(SL("weights"), weights);
 
 	return PluginResultContinue;
 }

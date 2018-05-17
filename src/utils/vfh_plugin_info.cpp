@@ -11,6 +11,7 @@
 #include "vfh_defines.h"
 #include "vfh_plugin_info.h"
 #include "vfh_prm_templates.h"
+#include "vfh_log.h"
 
 using namespace VRayForHoudini;
 using namespace Parm;
@@ -192,7 +193,7 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 		const bool isRamp = parm->getMultiType() == PRM_MULTITYPE_RAMP_RGB;
 
 		// Storage key.
-		const char *parmKey = parm->getToken();
+		const char *tokenName = parm->getToken();
 
 		const UT_String vrayType(parmSpare->getValue("vray_type"));
 		if (vrayType.isstring()) {
@@ -204,8 +205,12 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 			vassert(vrayParmTypes.find(vrayType.buffer()) != vrayParmTypes.end());
 
 			const char *vrayPluginAttr = parmSpare->getValue("vray_pluginattr");
-			if (!UTisstring(vrayPluginAttr))
+			if (!UTisstring(vrayPluginAttr)) {
+				Log::getLog().error("\"vray_pluginattr\" is missing for attribute \"%s\"",
+				                    tokenName);
+				vassert(false);
 				continue;
+			}
 
 			uint32_t attrFlags = attrFlagNone;
 
@@ -229,9 +234,9 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 			const char *vrayLabel = parmSpare->getValue("vray_label");
 			const char *uiLabel = UTisstring(vrayLabel) ? vrayLabel : parm->getLabel();
 
-			vassert(pluginInfo.attributes.find(parmKey) == pluginInfo.attributes.end());			
+			vassert(pluginInfo.attributes.find(vrayPluginAttr) == pluginInfo.attributes.end());			
 
-			AttrDesc &attrDesc = pluginInfo.attributes[parmKey];
+			AttrDesc &attrDesc = pluginInfo.attributes[vrayPluginAttr];
 			attrDesc.label = uiLabel;
 			attrDesc.attr = vrayPluginAttr;
 			attrDesc.flags = attrFlags;
@@ -253,7 +258,15 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 			const UT_String rampValue(parmSpare->getValue("rampvalues_var"));
 			const UT_String rampInterp(parmSpare->getValue("rampbasis_var"));
 
-			AttrDesc &attrDesc = pluginInfo.attributes[parmKey];
+			const char *vrayPluginAttr = parmSpare->getValue("vray_pluginattr");
+			if (!UTisstring(vrayPluginAttr)) {
+				Log::getLog().error("\"vray_pluginattr\" is missing for attribute \"%s\"",
+				                    tokenName);
+				vassert(false);
+				continue;
+			}
+
+			AttrDesc &attrDesc = pluginInfo.attributes[tokenName];
 			attrDesc.attr = parm->getToken();
 			attrDesc.label = parm->getLabel();
 
@@ -290,7 +303,7 @@ static VRayPluginInfo *generatePluginInfo(const QString &pluginID)
 	VRayPluginInfo *pluginInfo = new VRayPluginInfo;
 
 	PRMList prmTemplates;
-	prmTemplates.addFromFile(_toChar(pluginID));
+	prmTemplates.addFromFile(qPrintable(pluginID));
 
 	initVRayTypeMaps();
 

@@ -64,7 +64,7 @@ struct DsFilesLocations
 			return it.value();
 		}
 
-		Log::getLog().error("Requested .ds file is not found: \"%s\"!", _toChar(fileName));
+		Log::getLog().error("Requested .ds file is not found: \"%s\"!", qPrintable(fileName));
 
 		// vassert(false && "Requested .ds file is not found!");
 
@@ -129,7 +129,7 @@ int VRayForHoudini::Parm::isParmExist(const OP_Node &node, const QString &attrNa
 
 	const PRM_ParmList *parmList = node.getParmList();
 	if (parmList) {
-		const PRM_Parm *param = parmList->getParmPtr(_toChar(attrName));
+		const PRM_Parm *param = parmList->getParmPtr(qPrintable(attrName));
 		if (param) {
 			parmExist = true;
 		}
@@ -174,7 +174,7 @@ const PRM_Parm *VRayForHoudini::Parm::getParm(const OP_Node &node, const QString
 
 	const PRM_ParmList *parmList = node.getParmList();
 	if (parmList) {
-		param = parmList->getParmPtr(_toChar(attrName));
+		param = parmList->getParmPtr(qPrintable(attrName));
 	}
 
 	return param;
@@ -186,7 +186,7 @@ int VRayForHoudini::Parm::getParmInt(const OP_Node &node, const QString &attrNam
 	int value = 0;
 
 	if (isParmExist(node, attrName)) {
-		value = node.evalInt(_toChar(attrName), 0, t);
+		value = node.evalInt(qPrintable(attrName), 0, t);
 	}
 
 	return value;
@@ -211,7 +211,7 @@ float VRayForHoudini::Parm::getParmFloat(const OP_Node &node, const QString &att
 	float value = 0.0f;
 
 	if (isParmExist(node, attrName)) {
-		value = node.evalFloat(_toChar(attrName), 0, t);
+		value = node.evalFloat(qPrintable(attrName), 0, t);
 	}
 
 	return value;
@@ -261,7 +261,7 @@ PRM_Template* Parm::getPrmTemplate(const QString &pluginID)
 {
 	Parm::PRMList *prmList = generatePrmTemplate(pluginID);
 	if (!prmList) {
-		Log::getLog().warning("No parameter template generated for plugin %s.", _toChar(pluginID));
+		Log::getLog().warning("No parameter template generated for plugin %s.", qPrintable(pluginID));
 	}
 
 	return (prmList)? prmList->getPRMTemplate() : nullptr;
@@ -319,7 +319,7 @@ void Parm::PRMList::renamePRMTemplate(PRM_Template tmpl[], const char *prefix)
 			PRM_Name *name = tmpl[i].getNamePtr();
 			if (name) {
 				const QString prmtoken = QString("%1_%2").arg(prefix).arg(name->getToken());
-				name->setToken(_toChar(prmtoken));
+				name->setToken(qPrintable(prmtoken));
 				name->harden();
 			}
 		}
@@ -441,9 +441,9 @@ Parm::PRMList& Parm::PRMList::addFromFile(const QString &dsFileName)
 	const QString &dsFilePath = dsFilesLocations.getFilePath(dsFileName);
 	const DsFilesLocations::DsIncludePaths &incPaths = dsFilesLocations.getIncludePaths();
 
-	DS_Stream stream(_toChar(dsFilePath));
+	DS_Stream stream(qPrintable(dsFilePath));
 	for (const QString &incPath : incPaths) {
-		stream.addIncludePath(_toChar(incPath));
+		stream.addIncludePath(qPrintable(incPath));
 	}
 
 	// Need to keep all the pages as myTemplate will have references to it.
@@ -456,7 +456,7 @@ Parm::PRMList& Parm::PRMList::addFromFile(const QString &dsFileName)
 		group->addPage(currentPage);
 	}
 	else {
-		Log::getLog().error("Error parsing file: \"%s\"!", _toChar(dsFilePath));
+		Log::getLog().error("Error parsing file: \"%s\"!", qPrintable(dsFilePath));
 		FreePtr(currentPage);
 	}
 
@@ -756,7 +756,7 @@ Parm::PRMFactory::PRMFactory(const PRM_Type &type, const char *token, const char
 
 
 Parm::PRMFactory::PRMFactory(const PRM_Type &type, const QString &token, const QString &label):
-	m_prm(new PImplPRM(_toChar(token), _toChar(label)))
+	m_prm(new PImplPRM(qPrintable(token), qPrintable(label)))
 {
 	m_prm->type = type;
 }
@@ -770,7 +770,7 @@ Parm::PRMFactory::PRMFactory(const PRM_MultiType &multiType, const char *token, 
 
 
 Parm::PRMFactory::PRMFactory(const PRM_MultiType &multiType, const QString &token, const QString &label):
-	m_prm(new PImplPRM(_toChar(token), _toChar(label)))
+	m_prm(new PImplPRM(qPrintable(token), qPrintable(label)))
 {
 	m_prm->multiType = multiType;
 }
@@ -806,7 +806,7 @@ Parm::PRMFactory& Parm::PRMFactory::setName(const char *token, const char *label
 
 Parm::PRMFactory& Parm::PRMFactory::setName(const QString &token, const QString &label)
 {
-	return setName(_toChar(token), _toChar(label));
+	return setName(qPrintable(token), qPrintable(label));
 }
 
 
@@ -840,7 +840,7 @@ Parm::PRMFactory& Parm::PRMFactory::setDefault(fpreal f, const char *s, CH_Strin
 
 Parm::PRMFactory& Parm::PRMFactory::setDefault(const QString &s, CH_StringMeaning meaning)
 {
-	m_prm->defaults = createPRMDefaut(0.0, ::strdup(_toChar(s)), meaning);
+	m_prm->defaults = createPRMDefaut(0.0, ::strdup(qPrintable(s)), meaning);
 	return *this;
 }
 

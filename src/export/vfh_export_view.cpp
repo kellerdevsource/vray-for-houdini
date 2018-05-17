@@ -577,13 +577,13 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 
 		// Need to remove plugins only for RT session.
 		if (isRtSession && !m_viewParams.firstExport) {
-			vray.removePlugin(_toChar(viewPluginRenderView));
-			vray.removePlugin(_toChar(viewPluginSettingsCamera));
-			vray.removePlugin(_toChar(viewPluginSettingsCameraDof));
-			vray.removePlugin(_toChar(viewPluginSettingsMotionBlur));
-			vray.removePlugin(_toChar(viewPluginStereoSettings));
-			vray.removePlugin(_toChar(viewPluginCameraPhysical));
-			vray.removePlugin(_toChar(viewPluginCameraDefault));
+			vray.removePlugin(qPrintable(viewPluginRenderView));
+			vray.removePlugin(qPrintable(viewPluginSettingsCamera));
+			vray.removePlugin(qPrintable(viewPluginSettingsCameraDof));
+			vray.removePlugin(qPrintable(viewPluginSettingsMotionBlur));
+			vray.removePlugin(qPrintable(viewPluginStereoSettings));
+			vray.removePlugin(qPrintable(viewPluginCameraPhysical));
+			vray.removePlugin(qPrintable(viewPluginCameraDefault));
 		}
 
 		if (viewParams.useCameraPhysical != PhysicalCameraMode::modeNone) {
@@ -612,8 +612,8 @@ ReturnValue VRayExporter::exportView(const ViewParams &newViewParams)
 		if (physCamChanged) {
 			Log::getLog().debug("VRayExporter::exportView: Updating PhysicalCamera...");
 
-			vray.removePlugin(_toChar(viewPluginCameraPhysical));
-			vray.removePlugin(_toChar(viewPluginRenderView));
+			vray.removePlugin(qPrintable(viewPluginCameraPhysical));
+			vray.removePlugin(qPrintable(viewPluginRenderView));
 
 			vray.setCamera(exportPhysicalCamera(*this, viewParams));
 		}

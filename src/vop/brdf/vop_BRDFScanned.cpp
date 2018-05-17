@@ -55,7 +55,7 @@ bool VOP::BRDFScanned::updateParmsFlags()
 void VOP::BRDFScanned::setPluginType()
 {
 	pluginType = VRayPluginType::BRDF;
-	pluginID   = "BRDFScanned";
+	pluginID = SL("BRDFScanned");
 }
 
 
@@ -116,11 +116,11 @@ OP::VRayNode::PluginResult VOP::BRDFScanned::asPluginDesc(Attrs::PluginDesc &plu
 	VRay::IntList parmBlock;
 	VRay::ScannedMaterialLicenseError err;
 	if (VRay::encodeScannedMaterialParams(parms, parmBlock, err)) {
-		pluginDesc.add(Attrs::PluginAttr("param_block", parmBlock));
+		pluginDesc.add(SL("param_block"), Attrs::toRefList(parmBlock));
 	}
 	else {
-		pluginDesc.add(Attrs::PluginAttr("param_block", 0));
+		pluginDesc.add(SL("param_block"), 0);
 	}
 
-	return PluginResult::PluginResultContinue;
+	return PluginResultContinue;
 }

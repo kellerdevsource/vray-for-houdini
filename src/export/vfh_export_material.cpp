@@ -105,10 +105,12 @@ VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 			material = exportDefaultMaterial();
 		}
 		else {
-			cacheMan.addMatPlugin(*matNode, material);
-
 			addOpCallback(matNode, RtCallbackSurfaceShop);
 		}
+
+		vassert(material.isNotEmpty());
+
+		cacheMan.addMatPlugin(*matNode, material);
 	}
 
 	return material;
@@ -224,7 +226,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			{
 				Attrs::PluginDesc mtlOverrideDesc(getPluginName(vopNode, attrName), SL("TexUserColor"));
 
-				Attrs::PluginAttr attr("default_color", Attrs::PluginAttr::AttrTypeAColor);
+				Attrs::PluginAttr attr("default_color", Attrs::AttrTypeAColor);
 				for (int i = 0; i < std::min(prm->getVectorSize(), 4); ++i) {
 					attr.paramValue.valVector[i] = creator->evalFloat(prm, i, t);
 				}

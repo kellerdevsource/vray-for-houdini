@@ -102,9 +102,9 @@ struct RampHandler
 
 /// Singe frame data for either color or curve ramp
 struct RampData {
-	std::vector<float>                          m_xS;      ///< contains all the keys of the ramp
-	std::vector<float>                          m_yS;      ///< if this is curve, there are same nuber of values as m_xS, else there are 3 times more for rgb color
-	std::vector<AurRamps::MultiCurvePointType>  m_interps; ///< interpolation types for each point
+	QVector<float>                          m_xS;      ///< contains all the keys of the ramp
+	QVector<float>                          m_yS;      ///< if this is curve, there are same nuber of values as m_xS, else there are 3 times more for rgb color
+	QVector<AurRamps::MultiCurvePointType>  m_interps; ///< interpolation types for each point
 	AurRamps::RampType                          m_type;    ///< the type of the data, either Ramp or Color but not both
 
 	/// Constructs default data with None type
@@ -529,7 +529,7 @@ int PhxShaderSim::rampDropDownDependCB(void * data, int index, fpreal64 time, co
 	const auto chan = static_cast<RampContext::RampChannel>(index);
 
 	if (!ctx) {
-		Log::getLog().error("Missing context for \"%s\"!", _toChar(token));
+		Log::getLog().error("Missing context for \"%s\"!", qPrintable(token));
 		return 0;
 	}
 
@@ -600,7 +600,6 @@ void PhxShaderSim::loadDataRanges()
 	}
 }
 
-
 int PhxShaderSim::rampButtonClickCB(void *data, int, fpreal64, const PRM_Template *tplate)
 {
 	using namespace std;
@@ -619,7 +618,7 @@ int PhxShaderSim::rampButtonClickCB(void *data, int, fpreal64, const PRM_Templat
 
 	// this should not happen - calling callback on uninited context
 	if (!ctx) {
-		Log::getLog().error("Missing context for \"%s\"!", _toChar(token));
+		Log::getLog().error("Missing context for \"%s\"!", qPrintable(token));
 		return 0;
 	}
 
@@ -874,7 +873,7 @@ bool PhxShaderSim::saveRamps(std::ostream & os)
 		}
 
 		const auto type = m_rampTypes[rampName];
-		os << _toChar(rampName) << SAVE_SEPARATOR; // token
+		os << qPrintable(rampName) << SAVE_SEPARATOR; // token
 		os << static_cast<int>(type) << SAVE_SEPARATOR; // type
 
 		os << static_cast<int>(ramp->getActiveChannel()) << SAVE_SEPARATOR; // active channel
@@ -983,45 +982,31 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 	return true;
 }
 
-
 void PhxShaderSim::setPluginType()
 {
 	pluginType = VRayPluginType::MATERIAL;
-	pluginID   = "PhxShaderSim";
+	pluginID = SL("PhxShaderSim");
 }
 
 OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	const auto t = exporter.getContext().getTime();
+	const fpreal t = exporter.getContext().getTime();
 
-	// renderMode
-	const RenderMode rendMode = static_cast<RenderMode>(evalInt("renderMode", 0, t));
+	const RenderMode rendMode = Phoenix::getRenderMode(*this);
+
 	pluginDesc.add(Attrs::PluginAttr("geommode", rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface));
 	pluginDesc.add(Attrs::PluginAttr("mesher", rendMode == Mesh));
 	pluginDesc.add(Attrs::PluginAttr("rendsolid", rendMode == Isosurface));
 	pluginDesc.add(Attrs::PluginAttr("heathaze", rendMode == Volumetric_Heat_Haze));
 
-	// TODO: find a better way to pass these
-	// add these so we know later in what to wrap this sim
-	Attrs::PluginAttr attrRendMode(SL("_vray_render_mode"), Attrs::PluginAttr::AttrTypeIgnore);
-	attrRendMode.paramValue.valInt = static_cast<int>(rendMode);
-	pluginDesc.add(attrRendMode);
-
-	// in geom mode, this will be property for the geom plugin generated for the sim
-	const bool dynamic_geometry = evalInt("dynamic_geometry", 0, t) == 1;
-
-	const Attrs::PluginAttr attrDynGeom(SL("_vray_dynamic_geometry"), Attrs::PluginAttr::AttrTypeIgnore);
-	attrRendMode.paramValue.valInt = dynamic_geometry;
-	pluginDesc.add(attrDynGeom);
-
-	const auto primVal = evalInt("pmprimary", 0, t);
+	const int primVal = evalInt("pmprimary", 0, t);
 	const bool enableProb = (exporter.isInteractive() && primVal) || primVal == 2;
 	pluginDesc.add(Attrs::PluginAttr("pmprimary", enableProb));
 
 	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID);
 	if (!pluginInfo) {
 		Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
-							this->getName().buffer(), _toChar(pluginDesc.pluginID));
+							this->getName().buffer(), qPrintable(pluginDesc.pluginID));
 	}
 	else {
 		// Export ramp data.
@@ -1035,34 +1020,36 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 			const bool hasRampToken = RAMP_ATTRIBUTE_NAMES.find(rampToken) != RAMP_ATTRIBUTE_NAMES.end();
 			if (!hasRampToken) {
 				Log::getLog().error("Node \"%s\": Plugin \"%s\" missing description for \"%s\"",
-					this->getName().buffer(), _toChar(pluginDesc.pluginID), _toChar(rampToken));
+					this->getName().buffer(), qPrintable(pluginDesc.pluginID), qPrintable(rampToken));
 			}
 			else {
 				const auto & attrNames = RAMP_ATTRIBUTE_NAMES[rampToken];
 
 				const auto &data = ramp->data(m_rampTypes[rampToken]);
-				const auto pointCount = data.m_xS.size();
+				const int pointCount = data.m_xS.size();
 
-				if (data.m_type == AurRamps::RampType_Color) {
-					VRay::ColorList colorList(pointCount);
+				if (data.m_type == RampType_Color) {
+					Attrs::QColorList colorList(pointCount);
 					for (int c = 0; c < pointCount; ++c) {
 						colorList[c] = VRay::Color(data.m_yS[c * 3 + 0], data.m_yS[c * 3 + 1], data.m_yS[c * 3 + 2]);
 					}
 
-					pluginDesc.add(Attrs::PluginAttr(attrNames["positions"], data.m_xS));
-					pluginDesc.add(Attrs::PluginAttr(attrNames["colors"], colorList));
-					// color interpolations are not supported - export linear
-					pluginDesc.add(Attrs::PluginAttr(attrNames["interpolations"], VRay::IntList(pointCount, static_cast<int>(Texture::VRAY_InterpolationType::Linear))));
+					pluginDesc.add(attrNames["positions"], data.m_xS);
+					pluginDesc.add(attrNames["colors"], colorList);
+
+					// NOTE: Color interpolations are not supported - export linear.
+					pluginDesc.add(attrNames["interpolations"],
+					               Attrs::QIntList(pointCount, static_cast<int>(Texture::VRAY_InterpolationType::Linear)));
 				}
 				else if (data.m_type == AurRamps::RampType_Curve) {
-					pluginDesc.add(Attrs::PluginAttr(attrNames["values"], data.m_yS));
-					pluginDesc.add(Attrs::PluginAttr(attrNames["positions"], data.m_xS));
+					pluginDesc.add(attrNames["values"], data.m_yS);
+					pluginDesc.add(attrNames["positions"], data.m_xS);
 
-					VRay::IntList interpolations(pointCount);
-					// exporter expects ints instead of enums
-					memcpy(interpolations.data(), data.m_interps.data(), pointCount * sizeof(int));
+					VRay::VUtils::IntRefList interpolations(pointCount);
+					// Exporter expects ints instead of enums.
+					memcpy(interpolations.get(), data.m_interps.data(), pointCount * sizeof(int));
 
-					pluginDesc.add(Attrs::PluginAttr(attrNames["interpolations"], interpolations));
+					pluginDesc.add(attrNames["interpolations"], interpolations);
 				}
 			}
 		}
@@ -1070,7 +1057,7 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 
 	exporter.setAttrsFromOpNodePrms(pluginDesc, this, "", true);
 
-	return OP::VRayNode::PluginResultContinue;
+	return PluginResultContinue;
 }
 
 #endif // CGR_HAS_AUR

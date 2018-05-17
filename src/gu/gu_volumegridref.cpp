@@ -117,10 +117,10 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 	const time_point tStart = time_clock::now();
 	IAur *aurPtr;
 	if (key.map.isEmpty()) {
-		aurPtr = newIAurMaxVox(_toChar(key.path), voxelCount, infoOnly);
+		aurPtr = newIAurMaxVox(qPrintable(key.path), voxelCount, infoOnly);
 	}
 	else {
-		aurPtr = newIAurWithChannelsMappingMaxVox(_toChar(key.path), _toChar(key.map), voxelCount, infoOnly);
+		aurPtr = newIAurWithChannelsMappingMaxVox(qPrintable(key.path), qPrintable(key.map), voxelCount, infoOnly);
 	}
 	data.aurPtr = VRayVolumeGridRef::CachePtr(aurPtr, [](IAur *ptr) { deleteIAur(ptr); });
 	const time_point tEndCache = time_clock::now();
@@ -132,7 +132,7 @@ void VRayVolumeGridRef::fetchDataMaxVox(const VolumeCacheKey &key, VolumeCacheDa
 	}
 	else {
 		data.detailHandle.clear();
-		Log::getLog().error("Failed to load cache \"%s\"", _toChar(key.path));
+		Log::getLog().error("Failed to load cache \"%s\"", qPrintable(key.path));
 		return;
 	}
 
@@ -290,7 +290,7 @@ i64 VRayVolumeGridRef::getFullCacheVoxelCount() const
 	if (!key.isValid())
 		return -1;
 
-	QScopedPointer<IAur, IAurPointerDeleter> aurPtr(newIAurMaxVox(_toChar(key.path), -1, true));
+	QScopedPointer<IAur, IAurPointerDeleter> aurPtr(newIAurMaxVox(qPrintable(key.path), -1, true));
 	if (!aurPtr)
 		return -1;
 

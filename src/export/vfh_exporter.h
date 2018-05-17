@@ -578,7 +578,7 @@ public:
 	/// @param pluginDesc[out] - the plugin description
 	/// @param vopNode[in] - the VOP node
 	/// @param parentContext - not used
-	void setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node *vopNode, ExportContext *parentContext=nullptr);
+	void setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode, ExportContext *parentContext=nullptr);
 
 	/// Export connected input for a VOP node
 	/// @param pluginDesc[out] - the plugin description
