@@ -168,6 +168,8 @@ static VOP::PhxShaderSim *getPhoenixShaderSimNode(OP_Node *matNode)
 {
 	if (!matNode)
 		return nullptr;
+	if (matNode->getOperator()->getName().equal("VRayNodePhxShaderSim"))
+		return static_cast<VOP::PhxShaderSim*>(matNode);
 	return static_cast<VOP::PhxShaderSim*>(getVRayNodeFromOp(*matNode, "Simulation", "PhxShaderSim"));
 }
 
@@ -414,9 +416,10 @@ void VolumeExporter::exportPrimitive(const GA_Primitive &prim, const PrimMateria
 		return;
 	}
 
-	Attrs::PluginDesc phxSim(SL("PhxShaderSim|") % QString::number(primID) % objNode.getName().buffer(),
-	                         SL("PhxShaderSim"));
+	const QString phxShaderSimName = SL("PhxShaderSim@") % QString::number(primID) % objNode.getName().buffer();
 
+	Attrs::PluginDesc phxSim(phxShaderSimName,
+	                         SL("PhxShaderSim"));
 	phxShaderSim->asPluginDesc(phxSim, pluginExporter);
 
 	pluginExporter.setAttrsFromOpNodeConnectedInputs(phxSim, *phxShaderSim);
@@ -428,7 +431,7 @@ void VolumeExporter::exportPrimitive(const GA_Primitive &prim, const PrimMateria
 	const VOP::PhxShaderSim::RenderMode rendMode = Phoenix::getRenderMode(*phxShaderSim);
 
 	if (rendMode == VOP::PhxShaderSim::RenderMode::Volumetric) {
-		phxSim.add(Attrs::PluginAttr("renderAsVolumetric", true));
+		phxSim.add(Attrs::PluginAttr(SL("renderAsVolumetric"), true));
 	}
 
 	const VRay::Plugin overwriteSim = pluginExporter.exportPlugin(phxSim);
@@ -440,26 +443,25 @@ void VolumeExporter::exportPrimitive(const GA_Primitive &prim, const PrimMateria
 	else {
 		const bool isMesh = rendMode == VOP::PhxShaderSim::RenderMode::Mesh;
 
-		const QString &wrapperType = isMesh ? SL("PhxShaderSimMesh") : SL("PhxShaderSimGeom");
-		const QString &wrapperPrefix = isMesh ? SL("Mesh") : SL("Geom");
+		const QString &phxWrapperPluginID = isMesh ? SL("PhxShaderSimMesh") : SL("PhxShaderSimGeom");
 
-		Attrs::PluginDesc phxWrapper(VRayExporter::getPluginName(*phxShaderSim, wrapperPrefix, cachePlugin.getName()),
-		                             wrapperType);
+		Attrs::PluginDesc phxWrapper(SL("Wrapper@") % phxShaderSimName,
+		                             phxWrapperPluginID);
 		phxWrapper.add(Attrs::PluginAttr(SL("phoenix_sim"), overwriteSim));
 
 		if (isMesh) {
-			const int dynamic_geometry = Phoenix::getDynamicGeometry(*phxShaderSim);
+			const int dynamicGeometry = Phoenix::getDynamicGeometry(*phxShaderSim);
 
-			Attrs::PluginDesc staticMesh(VRayExporter::getPluginName(*phxShaderSim, SL("GeomStaticMesh"), cachePlugin.getName()),
+			Attrs::PluginDesc staticMesh(SL("Geom@") % phxShaderSimName,
 			                             SL("GeomStaticMesh"));
-			staticMesh.add(Attrs::PluginAttr(SL("dynamic_geometry"), dynamic_geometry));
+			staticMesh.add(Attrs::PluginAttr(SL("dynamic_geometry"), dynamicGeometry));
 
 			phxWrapper.add(Attrs::PluginAttr(SL("static_mesh"), pluginExporter.exportPlugin(staticMesh)));
 		}
 
 		const VRay::Plugin phxWrapperPlugin = pluginExporter.exportPlugin(phxWrapper);
 
-		Attrs::PluginDesc node(VRayExporter::getPluginName(*phxShaderSim, SL("Node"), cachePlugin.getName()),
+		Attrs::PluginDesc node(SL("Node@") % phxShaderSimName,
 		                       SL("Node"));
 		node.add(Attrs::PluginAttr(SL("geometry"), phxWrapperPlugin));
 		node.add(Attrs::PluginAttr(SL("visible"), true));
