@@ -21,8 +21,8 @@
 // From Phoenix SDK.
 #include <ramps.h>
 
-namespace VRayForHoudini {
-namespace VOP {
+namespace VRayForHoudini{
+namespace VOP{
 
 struct RampContext;
 
@@ -31,41 +31,46 @@ class PhxShaderSim
 {
 public:
 	enum RenderMode {
-		Volumetric  = 0,
-		Volumetric_Geometry  = 1,
-		Volumetric_Heat_Haze  = 2,
-		Isosurface  = 3,
-		Mesh  = 4,
+		Volumetric = 0,
+		Volumetric_Geometry = 1,
+		Volumetric_Heat_Haze = 2,
+		Isosurface = 3,
+		Mesh = 4,
 	};
 
-	static PRM_Template       *GetPrmTemplate();
+	static PRM_Template *GetPrmTemplate();
 
-	                           PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *entry);
-	virtual                   ~PhxShaderSim() {}
+	PhxShaderSim(OP_Network *parent, const char *name, OP_Operator *entry);
+	virtual ~PhxShaderSim() {}
 
 	/// Called by Houdini when all nodes are loaded, this parses UI and sets proper state on m_ramps
-	 void                      finishedLoadingNetwork(bool is_child_call=false) VRAY_OVERRIDE;
+	void finishedLoadingNetwork(bool is_child_call = false) VRAY_OVERRIDE;
 
 	/// Called by Houdini when scene is saved
-	OP_ERROR                   saveIntrinsic(std::ostream &os, const OP_SaveFlags &sflags) VRAY_OVERRIDE;
+	OP_ERROR saveIntrinsic(std::ostream &os, const OP_SaveFlags &sflags) VRAY_OVERRIDE;
 	/// Called by Houdini on each packet in the saved scene, we parse the one we saved with saveIntrinsic
-	bool                       loadPacket(UT_IStream &is, const char *token, const char *path) VRAY_OVERRIDE;
+	bool loadPacket(UT_IStream &is, const char *token, const char *path) VRAY_OVERRIDE;
 
 	/// Called by Houdini when it saves presets, so we save current ramps data
-	bool                       savePresetContents(std::ostream &os) VRAY_OVERRIDE;
+	bool savePresetContents(std::ostream &os) VRAY_OVERRIDE;
 	/// Called by Houdini on each packet in preset and we only load the one saved with savePresetContents
-	bool                       loadPresetContents(const char *tok, UT_IStream &is) VRAY_OVERRIDE;
+	bool loadPresetContents(const char *tok, UT_IStream &is) VRAY_OVERRIDE;
 
-	virtual PluginResult       asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
+	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext = nullptr) VRAY_OVERRIDE;
 
 	/// Load data ranges from the selectedSopPath's value
-	void                       loadDataRanges();
+	void loadDataRanges();
+
+	RenderMode getRenderMode() const;
+
+	int getDynamicGeometry() const;
+
 protected:
 	/// Clear all ramp's points
-	void                       clearRampData();
+	void clearRampData();
 
 	/// Set the *non* preset defaults for all ramps in sim
-	void                       setRampDefaults();
+	void setRampDefaults();
 
 	/// Used as callback for when the current preset field is set to update ramp data accordingly
 	/// @param data - pointer to OP_Node that called the callback
@@ -73,7 +78,7 @@ protected:
 	/// @param time - the time that the change was made
 	/// @param tplate - the param template that this was triggered for
 	/// @retval 1 if houdini should refresh the UI
-	static int                 setPresetTypeCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
+	static int setPresetTypeCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
 
 	/// Used as callback for when channel dropdown is changed. It sets the active channel for the appropriate ramp
 	/// @param data - pointer to OP_Node that called the callback
@@ -81,7 +86,7 @@ protected:
 	/// @param time - the time that the change was made
 	/// @param tplate - the param template that this was triggered for
 	/// @retval 1 if houdini should refresh the UI
-	static int                 rampDropDownDependCB(void * data, int index, fpreal64 time, const PRM_Template *tplate);
+	static int rampDropDownDependCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
 
 	/// Called when user clicks on button for ramp, this should open the UI if it is not yet open
 	/// @param data - pointer to OP_Node that called the callback
@@ -89,7 +94,7 @@ protected:
 	/// @param time - the time that the change was made
 	/// @param tplate - the param template that this was triggered for
 	/// @retval 1 if houdini should refresh the UI
-	static int                 rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
+	static int rampButtonClickCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
 
 	/// Called when 'selectedSopPath' is changed so we can update data ranges appropriatelly
 	/// @param data - pointer to OP_Node that called the callback
@@ -97,19 +102,19 @@ protected:
 	/// @param time - the time that the change was made
 	/// @param tplate - the param template that this was triggered for
 	/// @retval 1 if houdini should refresh the UI
-	static int                 setVopPathCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
+	static int setVopPathCB(void *data, int index, fpreal64 time, const PRM_Template *tplate);
 
 	/// Set the current active channels for all ramps
 	/// @param fromUi - if true this takes the values from the current UI, otherwise uses the default from .ds file.
 	///                 This is true when the scene is loaded from file and we need to parse the loaded channels
-	void                       onLoadSetActiveChannels(bool fromUi);
+	void onLoadSetActiveChannels(bool fromUi);
 
 	/// Write ramp data to ostream *wuthot* writing the packet name
 	/// @retval - true on success
-	bool                       saveRamps(std::ostream & os);
+	bool saveRamps(std::ostream &os);
 
 	/// Read ramp data from UT_IStream
-	bool                       loadRamps(UT_IStream & is);
+	bool loadRamps(UT_IStream &is);
 
 	typedef QSharedPointer<RampContext> RampContextPtr;
 	typedef QMap<QString, RampContextPtr> RampContexts;
@@ -123,7 +128,6 @@ protected:
 
 	void setPluginType() VRAY_OVERRIDE;
 };
-
 
 } // namespace VOP
 } // namespace VRayForHoudini

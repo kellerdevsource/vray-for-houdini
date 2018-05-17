@@ -600,6 +600,15 @@ void PhxShaderSim::loadDataRanges()
 	}
 }
 
+PhxShaderSim::RenderMode PhxShaderSim::getRenderMode() const
+{
+	return static_cast<RenderMode>(evalInt("renderMode", 0, 0.0));
+}
+
+int PhxShaderSim::getDynamicGeometry() const
+{
+	return evalInt("dynamic_geometry", 0, 0.0);
+}
 
 int PhxShaderSim::rampButtonClickCB(void *data, int, fpreal64, const PRM_Template *tplate)
 {
@@ -992,29 +1001,15 @@ void PhxShaderSim::setPluginType()
 
 OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	const auto t = exporter.getContext().getTime();
+	const fpreal t = exporter.getContext().getTime();
 
-	// renderMode
-	const RenderMode rendMode = static_cast<RenderMode>(evalInt("renderMode", 0, t));
+	const RenderMode rendMode = getRenderMode();
 	pluginDesc.add(Attrs::PluginAttr("geommode", rendMode == Volumetric_Geometry || rendMode == Volumetric_Heat_Haze || rendMode == Isosurface));
 	pluginDesc.add(Attrs::PluginAttr("mesher", rendMode == Mesh));
 	pluginDesc.add(Attrs::PluginAttr("rendsolid", rendMode == Isosurface));
 	pluginDesc.add(Attrs::PluginAttr("heathaze", rendMode == Volumetric_Heat_Haze));
 
-	// TODO: find a better way to pass these
-	// add these so we know later in what to wrap this sim
-	Attrs::PluginAttr attrRendMode(SL("_vray_render_mode"), Attrs::PluginAttr::AttrTypeIgnore);
-	attrRendMode.paramValue.valInt = static_cast<int>(rendMode);
-	pluginDesc.add(attrRendMode);
-
-	// in geom mode, this will be property for the geom plugin generated for the sim
-	const bool dynamic_geometry = evalInt("dynamic_geometry", 0, t) == 1;
-
-	const Attrs::PluginAttr attrDynGeom(SL("_vray_dynamic_geometry"), Attrs::PluginAttr::AttrTypeIgnore);
-	attrRendMode.paramValue.valInt = dynamic_geometry;
-	pluginDesc.add(attrDynGeom);
-
-	const auto primVal = evalInt("pmprimary", 0, t);
+	const int primVal = evalInt("pmprimary", 0, t);
 	const bool enableProb = (exporter.isInteractive() && primVal) || primVal == 2;
 	pluginDesc.add(Attrs::PluginAttr("pmprimary", enableProb));
 
@@ -1041,9 +1036,9 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 				const auto & attrNames = RAMP_ATTRIBUTE_NAMES[rampToken];
 
 				const auto &data = ramp->data(m_rampTypes[rampToken]);
-				const auto pointCount = data.m_xS.size();
+				const int pointCount = data.m_xS.size();
 
-				if (data.m_type == AurRamps::RampType_Color) {
+				if (data.m_type == RampType_Color) {
 					VRay::ColorList colorList(pointCount);
 					for (int c = 0; c < pointCount; ++c) {
 						colorList[c] = VRay::Color(data.m_yS[c * 3 + 0], data.m_yS[c * 3 + 1], data.m_yS[c * 3 + 2]);
