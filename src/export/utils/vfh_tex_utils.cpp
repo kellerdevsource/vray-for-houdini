@@ -12,12 +12,11 @@
 #include "vfh_typedefs.h"
 #include "vfh_tex_utils.h"
 
-#define CGR_DEBUG_RAMPS  0
-#define CGR_MAX_NUM_POINTS 64
+static const int CGR_MAX_NUM_POINTS = 64;
 
 struct MyPoint {
-	float x;
-	float y;
+	float x = 0.0f;
+	float y = 0.0f;
 };
 
 static const QString FmtPos(SL("%1#pos"));
@@ -26,21 +25,21 @@ static const QString FmtValue(SL("%1#value"));
 static const QString FmtInterp(SL("%1#interp"));
 static const QString FmtColorPluginName(SL("%1|%2"));
 
-void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs::PluginDesc &pluginDesc, OP_Node *op_node,
-												  const QString &rampAttrName,
-												  const QString &colAttrName, const QString &posAttrName, const QString &typesAttrName,
-												  bool asColor, bool remapInterp)
+void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter,
+                                                  Attrs::PluginDesc &pluginDesc,
+                                                  OP_Node &opNode,
+                                                  const QString &rampAttrName,
+                                                  const QString &colAttrName,
+                                                  const QString &posAttrName,
+                                                  const QString &typesAttrName,
+                                                  bool asColor,
+                                                  bool remapInterp)
 {
-	const fpreal &t = exporter.getContext().getTime();
+	const fpreal t = exporter.getContext().getTime();
 
-	const QString &pluginName = VRayExporter::getPluginName(*op_node, rampAttrName);
+	const QString &pluginName = VRayExporter::getPluginName(opNode, rampAttrName);
 
-	const int nPoints = op_node->evalInt(_toChar(rampAttrName), 0, 0.0f);
-
-#if CGR_DEBUG_RAMPS
-	Log::getLog().info("Ramp points: %i",
-	                   nPoints);
-#endif
+	const int nPoints = opNode.evalInt(qPrintable(rampAttrName), 0, 0.0f);
 
 	const bool needTypes = !typesAttrName.isEmpty();
 
@@ -48,73 +47,103 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter, Attrs:
 	const QString &prmColName = FmtColor.arg(rampAttrName);
 	const QString &prmInterpName = FmtInterp.arg(rampAttrName);
 
-	VRay::ValueList colorPlugins;
-	VRay::ColorList colorList;
-	VRay::FloatList positions;
-	VRay::IntList   types;
+	VRay::VUtils::ValueRefList colorPlugins;
+	VRay::VUtils::ColorRefList colorList;
+
+	if (asColor) {
+		colorList = VRay::VUtils::ColorRefList(nPoints);
+	}
+	else {
+		colorPlugins = VRay::VUtils::ValueRefList(nPoints);
+	}
+
+	VRay::VUtils::FloatRefList positions(nPoints);
+
+	VRay::VUtils::IntRefList types;
+	if (needTypes) {
+		types = VRay::VUtils::IntRefList(nPoints);
+	}
 
 	for(int i = 1; i <= nPoints; i++) {
-		const float pos = op_node->evalFloatInst(_toChar(prmPosName), &i, 0, t);
+		const int pntIdx = i - 1;
 
-		const float colR = op_node->evalFloatInst(_toChar(prmColName), &i, 0, t);
-		const float colG = op_node->evalFloatInst(_toChar(prmColName), &i, 1, t);
-		const float colB = op_node->evalFloatInst(_toChar(prmColName), &i, 2, t);
+		const float pos = opNode.evalFloatInst(qPrintable(prmPosName), &i, 0, t);
 
-		int interp = op_node->evalIntInst(_toChar(prmInterpName), &i, 0, t);
+		const float colR = opNode.evalFloatInst(qPrintable(prmColName), &i, 0, t);
+		const float colG = opNode.evalFloatInst(qPrintable(prmColName), &i, 1, t);
+		const float colB = opNode.evalFloatInst(qPrintable(prmColName), &i, 2, t);
+
+		int interp = opNode.evalIntInst(qPrintable(prmInterpName), &i, 0, t);
 		if (remapInterp) {
 			interp = static_cast<int>(mapToVray(static_cast<HOU_InterpolationType>(interp)));
 		}
-#if CGR_DEBUG_RAMPS
-		Log::getLog().info(" %.3f: Color(%.3f,%.3f,%.3f) [%i]",
-		                   pos, colR, colG, colB, interp);
-#endif
+
 		if (asColor) {
-			colorList.push_back(VRay::Color(colR, colG, colB));
-			positions.push_back(pos);
+			colorList[pntIdx] = VRay::Color(colR, colG, colB);
+			positions[pntIdx] = pos;
 			if (needTypes) {
-				types.push_back(interp);
+				types[pntIdx] = interp;
 			}
 		}
 		else {
 			const QString colPluginName(FmtColorPluginName.arg(pluginName).arg(QString::number(i)));
 
-			Attrs::PluginDesc colPluginDesc(colPluginName, SL("TexAColor"));
-			colPluginDesc.add(Attrs::PluginAttr(SL("texture"), Attrs::PluginAttr::AttrTypeAColor, colR, colG, colB, 1.0f));
+			Attrs::PluginDesc colPluginDesc(colPluginName,
+			                                SL("TexAColor"));
+			colPluginDesc.add(SL("texture"), colR, colG, colB, 1.0f);
 
-			VRay::Plugin colPlugin = exporter.exportPlugin(colPluginDesc);
+			const VRay::Plugin colPlugin = exporter.exportPlugin(colPluginDesc);
 			if (colPlugin.isNotEmpty()) {
-				colorPlugins.push_back(VRay::Value(colPlugin));
-				positions.push_back(pos);
+				colorPlugins[pntIdx].setPlugin(colPlugin);
+				positions[pntIdx] = pos;
 				if (needTypes) {
-					types.push_back(interp);
+					types[pntIdx] = interp;
 				}
 			}
 		}
 	}
 
 	if (asColor) {
-		pluginDesc.add(Attrs::PluginAttr(colAttrName, colorList));
+		pluginDesc.add(colAttrName, colorList);
 	}
 	else {
-		pluginDesc.add(Attrs::PluginAttr(colAttrName, colorPlugins));
+		pluginDesc.add(colAttrName, colorPlugins);
 	}
-	pluginDesc.add(Attrs::PluginAttr(posAttrName, positions));
+
+	pluginDesc.add(posAttrName, positions);
+
 	if (needTypes) {
-		pluginDesc.add(Attrs::PluginAttr(typesAttrName, types));
+		pluginDesc.add(typesAttrName, types);
 	}
 }
 
-
 void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_node,
-										   const QString &curveAttrName,
-										   VRay::IntList &interpolations, VRay::FloatList &positions, VRay::FloatList *values,
-										   const bool needHandles, const bool remapInterp)
+                                           const QString &curveAttrName,
+                                           VRay::VUtils::IntRefList &interpolations,
+                                           VRay::VUtils::FloatRefList &positions,
+                                           VRay::VUtils::FloatRefList &values,
+                                           bool needValues,
+                                           bool needHandles,
+                                           bool remapInterp)
 {
 	const fpreal &t = exporter.getContext().getTime();
 
-	const int numPoints = op_node->evalInt(_toChar(curveAttrName), 0, t);
-	if (NOT(numPoints))
+	const int numPoints = op_node->evalInt(qPrintable(curveAttrName), 0, t);
+	if (!numPoints)
 		return;
+
+	interpolations = VRay::VUtils::IntRefList(numPoints);
+
+	if (!needHandles) {
+		if (needValues) {
+			positions = VRay::VUtils::FloatRefList(numPoints);
+			values = VRay::VUtils::FloatRefList(numPoints);
+		}
+		else {
+			// List will cover point and value.
+			positions = VRay::VUtils::FloatRefList(numPoints * 2);
+		}
+	}
 
 	MyPoint point[CGR_MAX_NUM_POINTS];
 
@@ -122,19 +151,25 @@ void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_n
 	const QString &prmValName    = FmtValue.arg(curveAttrName);
 	const QString &prmInterpName = FmtInterp.arg(curveAttrName);
 
+	const char *prmPosPtr = qPrintable(prmPosName);
+	const char *prmValNamePtr = qPrintable(prmValName);
+	const char *prmInterpNamePtr = qPrintable(prmInterpName);
+
 	int p = 0;
+	int posIdx = 0;
+
 	for(int i = 1; i <= numPoints; ++i, ++p) {
-		const float pos = op_node->evalFloatInst(_toChar(prmPosName), &i, 0, t);
-		const float val = op_node->evalFloatInst(_toChar(prmValName), &i, 0, t);
-		int interp      = op_node->evalIntInst(_toChar(prmInterpName), &i, 0, t);
+		const float pos = op_node->evalFloatInst(prmPosPtr, &i, 0, t);
+		const float val = op_node->evalFloatInst(prmValNamePtr, &i, 0, t);
+		int interp      = op_node->evalIntInst(prmInterpNamePtr, &i, 0, t);
 
 		if (!needHandles) {
-			positions.push_back(pos);
-			if (values) {
-				values->push_back(val);
+			positions[posIdx++] = pos;
+			if (needValues) {
+				values[p] = val;
 			}
 			else {
-				positions.push_back(val);
+				positions[posIdx++] = val;
 			}
 		}
 		else {
@@ -146,12 +181,11 @@ void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_n
 			interp = static_cast<int>(mapToVray(static_cast<HOU_InterpolationType>(interp)));
 		}
 
-		interpolations.push_back(interp);
+		interpolations[p] = interp;
 	}
 
-	if (!needHandles) {
+	if (!needHandles)
 		return;
-	}
 
 	float  deltaX[CGR_MAX_NUM_POINTS + 1];
 	float  ySecon[CGR_MAX_NUM_POINTS];
@@ -160,43 +194,72 @@ void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_n
 	float  w[CGR_MAX_NUM_POINTS];
 	int    i;
 
-	for(i = 1; i < numPoints; i++)
-		deltaX[i] = point[i].x - point[i-1].x;
-	deltaX[0] = deltaX[1];
-	deltaX[numPoints] = deltaX[numPoints-1];
-	for(i = 1; i < numPoints-1; i++) {
-		d[i] = 2 * (point[i + 1].x - point[i - 1].x);
-		w[i] = 6 * ((point[i + 1].y - point[i].y) / deltaX[i+1] - (point[i].y - point[i - 1].y) / deltaX[i]);
+	for (i = 1; i < numPoints; i++) {
+		deltaX[i] = point[i].x - point[i - 1].x;
 	}
-	for(i = 1; i < numPoints-2; i++) {
-		w[i + 1] -= w[i] * deltaX[i+1] / d[i];
-		d[i + 1] -= deltaX[i+1] * deltaX[i+1] / d[i];
-	}
-	ySecon[0] = 0;
-	ySecon[numPoints-1] = 0;
-	for(i = numPoints - 2; i >= 1; i--)
-		ySecon[i] = (w[i] - deltaX[i+1] * ySecon[i + 1]) / d[i];
-	for(i = 0; i < numPoints-1; i++)
-		yPrim[i] = (point[i+1].y - point[i].y) / deltaX[i+1] - (deltaX[i+1] / 6.0f) * (2 * ySecon[i] + ySecon[i+1]);
-	yPrim[i] = (point[i].y - point[i-1].y) / deltaX[i] + (deltaX[i] / 6.0f) * ySecon[i-1];
 
-	for(p = 0; p < numPoints; ++p) {
+	deltaX[0] = deltaX[1];
+	deltaX[numPoints] = deltaX[numPoints - 1];
+
+	for (i = 1; i < numPoints - 1; i++) {
+		d[i] = 2 * (point[i + 1].x - point[i - 1].x);
+		w[i] = 6 * ((point[i + 1].y - point[i].y) / deltaX[i + 1] - (point[i].y - point[i - 1].y) / deltaX[i]);
+	}
+
+	for (i = 1; i < numPoints - 2; i++) {
+		w[i + 1] -= w[i] * deltaX[i + 1] / d[i];
+		d[i + 1] -= deltaX[i + 1] * deltaX[i + 1] / d[i];
+	}
+
+	ySecon[0] = 0;
+	ySecon[numPoints - 1] = 0;
+
+	for (i = numPoints - 2; i >= 1; i--)
+		ySecon[i] = (w[i] - deltaX[i + 1] * ySecon[i + 1]) / d[i];
+
+	for (i = 0; i < numPoints - 1; i++)
+		yPrim[i] = (point[i + 1].y - point[i].y) / deltaX[i + 1] - (deltaX[i + 1] / 6.0f) * (
+			           2 * ySecon[i] + ySecon[i + 1]);
+	yPrim[i] = (point[i].y - point[i - 1].y) / deltaX[i] + (deltaX[i] / 6.0f) * ySecon[i - 1];
+
+	if (needValues) {
+		positions = VRay::VUtils::FloatRefList(numPoints * 3);
+		values = VRay::VUtils::FloatRefList(numPoints * 3);
+	}
+	else {
+		// List will cover point and value.
+		positions = VRay::VUtils::FloatRefList(numPoints * 6);
+	}
+
+	posIdx = 0;
+	int valIdx = 0;
+
+	for (p = 0; p < numPoints; ++p) {
 		const float &px = point[p].x;
 		const float &py = point[p].y;
 
 		const float h1x = -deltaX[p] / 3;
 		const float h1y = -deltaX[p] * yPrim[p] / 3;
 
-		const float h2x = deltaX[p+1] / 3;
-		const float h2y = deltaX[p+1] * yPrim[p] / 3;
+		const float h2x = deltaX[p + 1] / 3;
+		const float h2y = deltaX[p + 1] * yPrim[p] / 3;
 
-		positions.push_back(px);
-		if (values) values->push_back(py); else positions.push_back(py);
+		positions[posIdx++] = px;
+		if (needValues)
+			values[valIdx++] = py;
+		else
+			positions[posIdx++] = py;
 
-		positions.push_back(h1x);
-		if (values) values->push_back(h1y); else positions.push_back(h1y);
+		positions[posIdx++] = h1x;
+		if (needValues)
+			values[valIdx++] = h1y;
+		else
+			positions[posIdx++] = h1y;
 
-		positions.push_back(h2x);
-		if (values) values->push_back(h2y); else positions.push_back(h2y);
+		positions[posIdx++] = h2x;
+		if (needValues)
+			values[valIdx++] = h2y;
+		else
+			positions[posIdx++] = h2y;
 	}
 }

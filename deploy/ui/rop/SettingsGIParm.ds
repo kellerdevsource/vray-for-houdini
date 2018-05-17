@@ -133,15 +133,9 @@ groupsimple {
     parm {
         name    "SettingsGI_advancedOptions_enable"
         label   "GI - Advanced"
+        help    "Enables/disables advanced GI controls"
         type    toggle
         default { "0" }
-        help    "Enables/disables advanced GI controls"
-        range   { 0 1 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "SettingsGI" }
-        parmtag { "vray_pluginattr" "on" }
-        parmtag { "vray_type" "boolean" }
         disablewhen "{ SettingsGI_on == 0 }"
     }
 

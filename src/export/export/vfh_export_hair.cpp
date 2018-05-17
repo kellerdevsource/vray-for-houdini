@@ -204,7 +204,7 @@ bool HairPrimitiveExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc
 			map_channel[0].setDouble(mcItIdx);
 			map_channel[1].setListInt(mapChannel.faces);
 			map_channel[2].setListVector(mapChannel.vertices);
-			map_channel[3].setString(_toChar(map_channel_name));
+			map_channel[3].setString(qPrintable(map_channel_name));
 
 			map_channels[mcItIdx].setList(map_channel);
 		}

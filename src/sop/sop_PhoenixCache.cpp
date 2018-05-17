@@ -158,7 +158,7 @@ UT_StringHolder PhxShaderCache::evalCachePath(fpreal t, bool sequencePath) const
 	// Expand all the other variables.
 	CH_Manager *chanMan = OPgetDirector()->getChannelManager();
 	UT_String loadPath;
-	chanMan->expandString(_toChar(rawLoadPathQtS), loadPath, t);
+	chanMan->expandString(qPrintable(rawLoadPathQtS), loadPath, t);
 	
 
 	return loadPath;

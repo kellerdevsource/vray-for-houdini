@@ -48,20 +48,20 @@ const char* VOP::NodeBase::inputLabel(unsigned idx) const
 {
 	if (idx >= pluginInfo->inputs.count())
 		return nullptr;
-	return _toChar(pluginInfo->inputs[idx].socketLabel);
+	return qPrintable(pluginInfo->inputs[idx].socketLabel);
 }
 
 void VOP::NodeBase::getInputNameSubclass(UT_String &name, int idx) const
 {
 	if (idx < 0 || idx >= pluginInfo->inputs.count())
 		return;
-	name = _toChar(pluginInfo->inputs[idx].socketLabel);
+	name = qPrintable(pluginInfo->inputs[idx].socketLabel);
 }
 
 int VOP::NodeBase::getInputFromNameSubclass(const UT_String &name) const
 {
 	for (int i = 0; i < pluginInfo->inputs.count(); ++i) {
-		if (name.equal(_toChar(pluginInfo->inputs[i].socketLabel))) {
+		if (name.equal(qPrintable(pluginInfo->inputs[i].socketLabel))) {
 			return i;
 		}
 	}
@@ -167,20 +167,20 @@ const char* VOP::NodeBase::outputLabel(unsigned idx) const
 	if (idx >= pluginInfo->outputs.count())
 		return nullptr;
 
-	return _toChar(pluginInfo->outputs[idx].socketLabel);
+	return qPrintable(pluginInfo->outputs[idx].socketLabel);
 }
 
 void VOP::NodeBase::getOutputNameSubclass(UT_String &name, int idx) const
 {
 	if (idx < 0 || idx >= pluginInfo->outputs.count())
 		return;
-	name = _toChar(pluginInfo->outputs[idx].socketLabel);
+	name = qPrintable(pluginInfo->outputs[idx].socketLabel);
 }
 
 int VOP::NodeBase::getOutputFromName(const UT_String &name) const
 {
 	for (int i = 0; i < pluginInfo->outputs.count(); ++i) {
-		if (name.equal(_toChar(pluginInfo->outputs[i].socketLabel))) {
+		if (name.equal(qPrintable(pluginInfo->outputs[i].socketLabel))) {
 			return i;
 		}
 	}
@@ -204,7 +204,7 @@ const char *VOP::NodeBase::getCreateSocketLabel(int socketIndex, const char *for
 
 	va_end(args);
 
-	return _toChar(label);
+	return qPrintable(label);
 }
 
 const char *VOP::NodeBase::getCreateSocketToken(int socketIndex, const char *format, ...) const
@@ -217,5 +217,5 @@ const char *VOP::NodeBase::getCreateSocketToken(int socketIndex, const char *for
 
 	va_end(args);
 
-	return _toChar(label);
+	return qPrintable(label);
 }

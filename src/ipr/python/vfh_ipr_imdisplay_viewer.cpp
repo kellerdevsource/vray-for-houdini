@@ -188,13 +188,13 @@ void ImdisplayThread::processImageHeaderMessage(ImageHeaderMessage &msg) const
 
 	for (const QString &planeName : msg.planeNames) {
 		IMG_TileOptions	*tileOptions = new IMG_TileOptions();
-		tileOptions->setPlaneInfo(_toChar(msg.ropName),
-								  _toChar(planeName),
+		tileOptions->setPlaneInfo(qPrintable(msg.ropName),
+								  qPrintable(planeName),
 								  0,
 								  IMG_FLOAT32,
 								  IMG_RGBA);
 		tileOptions->setFormatOption("socketport",
-									 _toChar(QString::number(port)));
+									 qPrintable(QString::number(port)));
 
 		tileOptionList.append(tileOptions);
 	}
@@ -236,10 +236,10 @@ void ImdisplayThread::processProgressMessage(const TileProgressMessage &msg) con
 	const QString percentage(QString::number(msg.percentage));
 
 	VUtils::Table<const char*, 1> msgData(1, NULL);
-	msgData[0] = _toChar(msg.message);
+	msgData[0] = qPrintable(msg.message);
 
 	VUtils::Table<const char*, 1> percData(1, NULL);
-	percData[0] = _toChar(percentage);
+	percData[0] = qPrintable(percentage);
 
 	Log::getLog().debug("IPR: Received message: \"%s\" %s", msgData[0], percData[0]);
 

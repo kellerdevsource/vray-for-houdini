@@ -202,7 +202,7 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 	if (exporter.exportVrscene(vrscenePath, settings) != 0) {
 		err.setError(__FUNCTION__,
 		             ROP_SAVE_ERROR,
-		             "Failed to write intermediate file: %s", _toChar(vrscenePath));
+		             "Failed to write intermediate file: %s", qPrintable(vrscenePath));
 		return err;
 	}
 	exporter.getRenderer().reset();
@@ -249,7 +249,7 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 	const QString ply2vrmeshExe = "ply2vrmesh.bin";
 #endif
 
-	Log::getLog().debug("ply2vrmesh %s", _toChar(arguments.join(" ")));
+	Log::getLog().debug("ply2vrmesh %s", qPrintable(arguments.join(" ")));
 
 	QProcess ply2vrmesh;
 	ply2vrmesh.start(appsdkPath + "/bin/" + ply2vrmeshExe, arguments);
@@ -272,7 +272,7 @@ VUtils::ErrorCode VRayProxyExporter::convertData(float start, float end)
 	// Keep the .vrscene file arround when debugging - usefull to check if it is missing data
 	// or if the ply2vrmesh did not convert correctly
 #ifndef VFH_DEBUG
-	std::remove(_toChar(vrscenePath));
+	std::remove(qPrintable(vrscenePath));
 #endif
 
 	return err;

@@ -166,8 +166,8 @@ public:
 	VRay::Plugin exportPlugin(const Attrs::PluginDesc &pluginDesc);
 
 	/// Update a plugin properties from a plugin description
-	/// @param plugin - the plugin to update
-	/// @param pluginDesc - plugin description with relevant properties set
+	/// @param plugin The plugin to update.
+	/// @param pluginDesc Plugin description with relevant properties.
 	void exportPluginProperties(VRay::Plugin &plugin, const Attrs::PluginDesc &pluginDesc);
 
 	/// Delete plugin with the given name

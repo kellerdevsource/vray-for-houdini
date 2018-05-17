@@ -202,6 +202,30 @@ static void addPluginToCacheImpl(ContainerType &container, const KeyType &key, V
 	container.insert(key, plugin);
 }
 
+InstancerItem::InstancerItem(VRay::Plugin geometry, VRay::Plugin material)
+	: prim(nullptr)
+	, primID(0)
+	, geometry(geometry)
+	, material(material)
+	, tm(1)
+	, vel(1)
+	, objectID(objectIdUndefined)
+	, timeOffset(0.0)
+	, flags(itemFlagsNone)
+{}
+
+void PrimContextStack::pushContext(const PrimContext &value)
+{
+	currentContextInitialized = false;
+	primContexts.push(value);
+}
+
+PrimContext PrimContextStack::popContext()
+{
+	currentContextInitialized = false;
+	return primContexts.pop();
+}
+
 VRay::Transform PrimContextStack::getTm() const
 {
 	initCurrentContext();
@@ -239,12 +263,22 @@ STY_Styler PrimContextStack::getStyler() const
 	return currentContext.styler;
 }
 
+const GA_Primitive * PrimContextStack::getPrim() const
+{
+	initCurrentContext();
+	return currentContext.prim;
+}
+
 void PrimContextStack::initCurrentContext() const
 {
-	if (pushInitialized)
+	if (currentContextInitialized)
 		return;
+	currentContextInitialized = true;
 
 	currentContext = PrimContext();
+
+	if (primContexts.isEmpty())
+		return;
 
 	PrimContextIt it(primContexts);
 	it.toBack();
@@ -254,6 +288,7 @@ void PrimContextStack::initCurrentContext() const
 		if (ctx.mat.matNode) {
 			currentContext.mat.matNode = ctx.mat.matNode;
 		}
+
 		currentContext.mat.appendOverrides(ctx.mat.overrides);
 	}
 
@@ -264,10 +299,12 @@ void PrimContextStack::initCurrentContext() const
 		currentContext.id ^= ctx.id;
 		currentContext.vel = ctx.vel * currentContext.vel;
 		currentContext.tm  = ctx.tm * currentContext.tm;
-		currentContext.styler = ctx.styler;
 	}
 
-	pushInitialized = true;
+	const PrimContext &lastCtx = primContexts.last();
+
+	currentContext.styler = lastCtx.styler;
+	currentContext.prim = lastCtx.prim;
 }
 
 ObjCacheEntry &OpCacheMan::getObjEntry(const OBJ_Node &objNode)
@@ -308,7 +345,7 @@ int OpCacheMan::getMatPlugin(const OP_Node &opNode, VRay::Plugin &matPlugin)
 
 void OpCacheMan::addMatPlugin(const OP_Node &opNode, const VRay::Plugin &matPlugin)
 {
-	vassert(matCache.find(&opNode) != matCache.end());
+	vassert(matCache.find(&opNode) == matCache.end());
 	matCache[&opNode] = matPlugin;
 }
 
@@ -723,8 +760,8 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	const GA_Size numPrims = gdp.getNumPrimitives();
 
 	int objectID = objectIdUndefined;
-	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
-		objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+	if (Parm::isParmExist(objNode, VFH_ATTRIB_VRAY_OBJECTID)) {
+		objectID = objNode.evalInt(VFH_ATTRIB_VRAY_OBJECTID, 0, ctx.getTime());
 	}
 
 	const STY_Styler &objStyler = getStylerForObject(getStyler(), pluginExporter.getBundleMap(), objNode);
@@ -736,8 +773,8 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	const GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
 	const GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_OVERRIDE));
 	const GA_ROHandleS materialPathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, GA_Names::shop_materialpath));
-	const GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_OBJECTID));
-	const GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_ANIM_OFFSET));
+	const GA_ROHandleI objectIdHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_VRAY_OBJECTID));
+	const GA_ROHandleF animOffsetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTRIB_VRAY_ANIM_OFFSET));
 	const GA_ROHandleS pathHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, intrPackedPath));
 
 	MtlOverrideAttrExporter attrExp(gdp);
@@ -760,6 +797,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		const bool isVolumePrim = primPackedTypeIDs.isVolumePrim(primTypeID);
 
 		PrimContext primCtx;
+		primCtx.prim = &prim;
 		primCtx.objNode = &objNode;
 		primCtx.styler = getStylerForPrimitive(objStyler, prim);
 
@@ -790,7 +828,7 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			if (primTypeID == primPackedTypeIDs.alembicRef) {
 				int abcUseTransform = true;
 				if (prim.getIntrinsic(prim.findIntrinsic("abcusetransform"), abcUseTransform)) {
-					usePackedTm = !abcUseTransform;
+					usePackedTm = abcUseTransform;
 				}
 			}
 
@@ -873,17 +911,17 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 		}
 
 		if (geometry.isNotEmpty()) {
-			InstancerItem item;
-			item.geometry = geometry;
-			item.primMaterial = objMaterialOverride;
-			item.prim = &prim;
-			item.primID = getDetailID() ^ primOffset;
+			InstancerItem item(geometry);
+			item.prim = primCtx.prim;
+			item.primMaterial = primCtx.mat;
+			item.primID = primCtx.id;
 			item.objectID = objectIdHndl.isValid() ? objectIdHndl.get(primOffset) : objectID;
 			item.tm = getTm() * primCtx.tm;
 			item.vel = getVel() * primCtx.vel;
 
 			if (animOffsetHndl.isValid()) {
-				item.t = animOffsetHndl.get(primOffset);
+				item.timeOffset = animOffsetHndl.get(primOffset);
+				item.flags |= InstancerItem::itemFlagsUseTimeOffset;
 			}
 
 			instancerItems += item;
@@ -1058,11 +1096,11 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		}
 
 		VRay::Plugin material = objMaterial;
-		if (primItem.material.isNotEmpty()) {
-			material = primItem.material;
-		}
-		else if (primItem.primMaterial.matNode) {
+		if (primItem.primMaterial.matNode) {
 			material = pluginExporter.exportMaterial(primItem.primMaterial.matNode);
+		}
+		else if (primItem.material.isNotEmpty()) {
+			material = primItem.material;
 		}
 
 		if (isNodeMatte(objNode)) {
@@ -1105,16 +1143,13 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		if (!userAttributes.isEmpty()) {
 			additional_params_flags |= VRay::InstancerParamFlags::useUserAttributes;
 		}
-		if (primItem.flags & InstancerItem::itemFlagsUseTime) {
-			// TODO: Utilize use_time_instancing.
-		}
 		static const int useMapChannels = (1 << 7);
 		if (primItem.mapChannels.isNotEmpty()) {
 			additional_params_flags |= useMapChannels;
 		}
 
-		// Index + TM + VEL_TM + AdditionalParams + Node + AdditionalParamsMembers
-		const int itemSize = 5 + VUtils::popcnt_u32(additional_params_flags);
+		// Index + TM + VEL_TM + UseInstanceTime + Time + AdditionalParams + Node + AdditionalParamsMembers
+		const int itemSize = 7 + VUtils::popcnt_u32(additional_params_flags);
 
 		VRay::Transform vel = primItem.vel;
 		vel.matrix.makeZero();
@@ -1134,12 +1169,14 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		item[indexOffs++].setDouble(instanceIdx++);
 		item[indexOffs++].setTransform(tm);
 		item[indexOffs++].setTransform(vel);
+		item[indexOffs++].setDouble(bool(additional_params_flags & VRay::InstancerParamFlags::useParentTimes));
+		item[indexOffs++].setDouble(instancerTime + primItem.timeOffset);
 		item[indexOffs++].setDouble(additional_params_flags);
 		if (additional_params_flags & VRay::InstancerParamFlags::useObjectID) {
 			item[indexOffs++].setDouble(primItem.objectID);
 		}
 		if (additional_params_flags & VRay::InstancerParamFlags::useUserAttributes) {
-			item[indexOffs++].setString(_toChar(userAttributes));
+			item[indexOffs++].setString(qPrintable(userAttributes));
 		}
 		if (additional_params_flags & VRay::InstancerParamFlags::useMaterial) {
 			item[indexOffs++].setPlugin(material);
@@ -1147,7 +1184,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		if (additional_params_flags & useMapChannels) {
 			item[indexOffs++].setPlugin(primItem.mapChannels);
 		}
-		item[indexOffs++].setPlugin(node);
+		item[indexOffs].setPlugin(node);
 
 		instances[instancesListIdx++].setList(item);
 	}
@@ -1159,9 +1196,9 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 
 	const int needKeyFrames = pluginExporter.isAnimation() || pluginExporter.needVelocity();
 
-	instancer2.add(Attrs::PluginAttr("instances", instances, needKeyFrames));
-	instancer2.add(Attrs::PluginAttr("use_additional_params", true));
-	instancer2.add(Attrs::PluginAttr("use_time_instancing", false));
+	instancer2.add(PluginAttr("instances", instances, needKeyFrames));
+	instancer2.add(PluginAttr("use_additional_params", true));
+	instancer2.add(PluginAttr("use_time_instancing", true));
 
 	return pluginExporter.exportPlugin(instancer2);
 }
@@ -1228,8 +1265,8 @@ void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const G
 	item.tm = getTm();
 	item.vel = getVel();
 	item.primID = hairKey;
-	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
-		item.objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+	if (Parm::isParmExist(objNode, VFH_ATTRIB_VRAY_OBJECTID)) {
+		item.objectID = objNode.evalInt(VFH_ATTRIB_VRAY_OBJECTID, 0, ctx.getTime());
 	}
 
 	if (doExportGeometry) {
@@ -1272,8 +1309,8 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	item.tm = getTm();
 	item.vel = getVel();
 	item.primID = meshKey;
-	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
-		item.objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+	if (Parm::isParmExist(objNode, VFH_ATTRIB_VRAY_OBJECTID)) {
+		item.objectID = objNode.evalInt(VFH_ATTRIB_VRAY_OBJECTID, 0, ctx.getTime());
 	}
 
 	polyMeshExporter.setDetailID(meshKey);
@@ -2289,10 +2326,11 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 		pluginDesc.add(Attrs::PluginAttr("enabled",   objLight.evalInt("light_enable", 0, t)));
 
 		if (lightType != VRayLightSun) {
-			pluginDesc.add(Attrs::PluginAttr("color", Attrs::PluginAttr::AttrTypeColor,
-															   objLight.evalFloat("light_color", 0, t),
-															   objLight.evalFloat("light_color", 1, t),
-															   objLight.evalFloat("light_color", 2, t)));
+			pluginDesc.add(SL("color"),
+			               Attrs::AttrTypeColor,
+			               objLight.evalFloat("light_color", 0, t),
+			               objLight.evalFloat("light_color", 1, t),
+			               objLight.evalFloat("light_color", 2, t));
 		}
 
 		pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
@@ -2321,8 +2359,8 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *overrideSOP
 	nodeDesc.add(PluginAttr("visible", isNodeVisible(objNode)));
 	nodeDesc.add(PluginAttr("scene_name", VRayExporter::getSceneName(objNode)));
 
-	if (Parm::isParmExist(objNode, VFH_ATTRIB_OBJECTID)) {
-		const int objectID = objNode.evalInt(VFH_ATTRIB_OBJECTID, 0, ctx.getTime());
+	if (Parm::isParmExist(objNode, VFH_ATTRIB_VRAY_OBJECTID)) {
+		const int objectID = objNode.evalInt(VFH_ATTRIB_VRAY_OBJECTID, 0, ctx.getTime());
 		nodeDesc.add(PluginAttr("objectID", objectID));
 	}
 

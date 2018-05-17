@@ -34,7 +34,6 @@
 
 #define FOR_IT(type, itName, var) int itName##Idx = 0; for (type::iterator itName = (var).begin(); itName != (var).end(); ++itName, ++itName##Idx)
 #define FOR_CONST_IT(type, itName, var) int itName##Idx = 0; for (type::const_iterator itName = (var).begin(); itName != (var).end(); ++itName, ++itName##Idx)
-#define _toChar(qt_string) (qt_string).toLocal8Bit().constData()
 
 template <typename T>
 FORCEINLINE void FreePtr(T* &p) {

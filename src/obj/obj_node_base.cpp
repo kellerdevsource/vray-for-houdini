@@ -174,7 +174,7 @@ int isMeshLightSupportedGeometryType(const VRay::Plugin &geometry) {
 static int fillLightPluginDesc(Attrs::PluginDesc &pluginDesc, OP_Node &objLight, const InstancerItem &item, const VRay::Transform &objTm) {
 	if (item.geometry.isEmpty() || !isMeshLightSupportedGeometryType(item.geometry)) {
 		Log::getLog().warning("Unsupported geometry type for Mesh Light: %s ! Node name: %s",
-		                      item.geometry.getType(), _toChar(pluginDesc.pluginName));
+		                      item.geometry.getType(), qPrintable(pluginDesc.pluginName));
 		return 0;
 	}
 
@@ -274,14 +274,14 @@ static VRay::Plugin exportAttributeFromPathAuto(VRayExporter &exporter,
 	const OP_Context &ctx = exporter.getContext();
 	const fpreal t = ctx.getTime();
 
-	if (!node.evalInt(_toChar(toggleAttrName), 0, t))
+	if (!node.evalInt(qPrintable(toggleAttrName), 0, t))
 		return VRay::Plugin();
 
 	UT_String texPath;
-	node.evalString(texPath, _toChar(texAttrName), 0, t);
+	node.evalString(texPath, qPrintable(texAttrName), 0, t);
 
 	const BitmapBufferColorSpace colorSpace =
-		static_cast<BitmapBufferColorSpace>(Parm::getParmEnum(node, _toChar(texColorSpaceAttrName), bitmapBufferColorSpaceLinear, 0.0));
+		static_cast<BitmapBufferColorSpace>(Parm::getParmEnum(node, qPrintable(texColorSpaceAttrName), bitmapBufferColorSpaceLinear, 0.0));
 
 	const VRay::Plugin texPlugin = exporter.exportNodeFromPathWithDefaultMapping(texPath, mappingType, colorSpace);
 	if (texPlugin.isNotEmpty()) {

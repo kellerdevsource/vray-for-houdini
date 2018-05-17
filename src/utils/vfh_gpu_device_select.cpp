@@ -90,7 +90,7 @@ static void setStoredDeviceList(const char *deviceVarName, const QStringList &de
 {
 	OP_CommandManager &cmdMan = *OPgetDirector()->getCommandManager();
 
-	cmdMan.setVariable(deviceVarName, _toChar(devicesList.join(';')), false);
+	cmdMan.setVariable(deviceVarName, qPrintable(devicesList.join(';')), false);
 }
 
 static void getStoredDeviceList(const char *deviceVarName, QStringList &devicesList)

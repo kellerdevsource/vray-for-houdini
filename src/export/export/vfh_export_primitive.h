@@ -26,61 +26,6 @@ enum ObjectIDTypes {
 	objectIdUndefined = -1,
 };
 
-struct InstancerItem {
-	enum InstancerItemFlags {
-		itemFlagsNone = 0,
-		itemFlagsUseTime = (1 << 0),
-	};
-
-	explicit InstancerItem(VRay::Plugin geometry=VRay::Plugin(),
-						   VRay::Plugin material=VRay::Plugin())
-		: prim(nullptr)
-		, primID(0)
-		, geometry(geometry)
-		, material(material)
-		, tm(1)
-		, vel(1)
-		, objectID(objectIdUndefined)
-		, t(0.0)
-		, flags(itemFlagsNone)
-	{}
-
-	/// Primitive.
-	const GA_Primitive *prim;
-
-	/// Primitive ID.
-	exint primID;
-
-	/// Material.
-	PrimMaterial primMaterial;
-
-	/// Exported geometry plugin.
-	VRay::Plugin geometry;
-
-	/// Exported material plugin.
-	VRay::Plugin material;
-
-	/// Map channel overrides.
-	VRay::Plugin mapChannels;
-
-	/// Transform.
-	VRay::Transform tm;
-
-	/// Velocity.
-	VRay::Transform vel;
-
-	/// Object ID.
-	int objectID;
-
-	/// Time instancing.
-	fpreal t;
-
-	/// Flags.
-	uint32_t flags;
-};
-
-typedef QList<InstancerItem> InstancerItems;
-
 class VRayExporter;
 
 /// Base class for exporting primitives from OBJ nodes

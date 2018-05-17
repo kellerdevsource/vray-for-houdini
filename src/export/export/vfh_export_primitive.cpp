@@ -335,7 +335,7 @@ void HoudiniVolumeExporter::exportPrimitive(const GA_Primitive &prim, const Prim
 	phxShaderCacheDesc.add(Attrs::PluginAttr("grid_size_z", (float)res[2]));
 
 	// Skip "cache_path" exporting - we don't have chache but texture plugins
-	phxShaderCacheDesc.add(Attrs::PluginAttr("cache_path", Attrs::PluginAttr::AttrTypeIgnore));
+	phxShaderCacheDesc.add(Attrs::PluginAttr("cache_path", Attrs::AttrTypeIgnore));
 
 	VRay::Plugin phxShaderCache = m_exporter.exportPlugin(phxShaderCacheDesc);
 
@@ -447,7 +447,12 @@ void VolumeExporter::exportPrimitive(const GA_Primitive &prim, const PrimMateria
 
 		Attrs::PluginDesc phxWrapper(SL("Wrapper@") % phxShaderSimName,
 		                             phxWrapperPluginID);
-		phxWrapper.add(Attrs::PluginAttr(SL("phoenix_sim"), overwriteSim));
+
+		// Need to export as List().
+		VRay::VUtils::ValueRefList phoenixSimParamValue(1);
+		phoenixSimParamValue[0].setPlugin(overwriteSim);
+
+		phxWrapper.add(SL("phoenix_sim"), phoenixSimParamValue);
 
 		if (isMesh) {
 			const int dynamicGeometry = Phoenix::getDynamicGeometry(*phxShaderSim);

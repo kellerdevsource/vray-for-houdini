@@ -51,7 +51,7 @@ void newObjHandler(OP_Node *caller, void *callee, OP_EventType type, void *data)
 		return;
 
 	Log::getLog().debug("newObjHandler: \"%s\" -> '%s'",
-	                    _toChar(objPath), OPeventToString(type));
+	                    qPrintable(objPath), OPeventToString(type));
 
 	// My tests are showing that this will be the last unique event after
 	// object creation.
@@ -81,7 +81,7 @@ void VRayExporter::rtCallbackObjNetwork(OP_Node *caller, void *callee, OP_EventT
 		return;
 
 	Log::getLog().debug("rtCallbackObjNetwork: \"%s\" -> '%s'",
-	                    _toChar(objPath), OPeventToString(type));
+	                    qPrintable(objPath), OPeventToString(type));
 
 	if (type == OP_CHILD_CREATED) {
 		OP_Node *opNode = reinterpret_cast<OP_Node*>(data);
@@ -329,7 +329,7 @@ static void dumpType(OBJ_OBJECT_TYPE objType) {
 	if (objType & OBJ_STD_MUSCLE) { objTypeStr += "OBJ_STD_MUSCLE | "; }
 	if (objType & OBJ_STD_CAMSWITCH) { objTypeStr += "OBJ_STD_CAMSWITCH | "; }
 	if (objType & OBJ_ALL) {  objTypeStr += "OBJ_ALL"; }
-	Log::getLog().debug("OBJ_OBJECT_TYPE = %s", _toChar(objTypeStr));
+	Log::getLog().debug("OBJ_OBJECT_TYPE = %s", qPrintable(objTypeStr));
 }
 
 VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
@@ -435,8 +435,9 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 	// Release the internal bundle created by getPattern()
 	OPgetDirector()->getBundles()->deReferenceBundle(bundle_name);
 
-	VRay::ValueList nodePluginList;
-	nodePluginList.reserve(nodeList.size());
+	VRay::VUtils::ValueRefList nodePluginList(nodeList.size());
+	int nodeIdx = 0;
+
 	for (OP_Node *node : nodeList) {
 		OBJ_Node *objNode = node->castToOBJNode();
 		if (!objNode ||
@@ -452,10 +453,10 @@ VRay::Plugin VRayExporter::exportVRayClipper(OBJ_Node &clipperNode)
 			continue;
 		}
 
-		nodePluginList.emplace_back(nodePlugin);
+		nodePluginList[nodeIdx++].setPlugin(nodePlugin);
 	}
 
-	pluginDesc.add(Attrs::PluginAttr("exclusion_nodes", nodePluginList));
+	pluginDesc.add(SL("exclusion_nodes"), nodePluginList);
 
 	// transform
 	pluginDesc.add(Attrs::PluginAttr("transform", getObjTransform(&clipperNode, m_context, clipNodePlugin.isEmpty())));

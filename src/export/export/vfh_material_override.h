@@ -17,8 +17,6 @@
 
 #include <QString>
 
-#include <hash_map.h>
-
 #include <GA/GA_Handle.h>
 #include <OBJ/OBJ_Node.h>
 #include <STY/STY_Styler.h>
@@ -79,7 +77,7 @@ struct MtlOverrideItem {
 	/// Returns override value type.
 	MtlOverrideItemType getType() const { return type; }
 
-	const char *getString() const { return _toChar(valueString); }
+	const char *getString() const { return qPrintable(valueString); }
 
 	/// Override value type.
 	MtlOverrideItemType type;

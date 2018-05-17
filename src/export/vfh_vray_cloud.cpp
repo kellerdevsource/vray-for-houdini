@@ -130,7 +130,7 @@ QString JobFilePath::createFilePath()
 	QFileInfo tempDir(QDir::tempPath());
 	if (!tempDir.isDir() || !tempDir.isWritable()) {
 		Log::getLog().error("Temporary location \"%s\" is not writable!",
-							_toChar(tempDir.absolutePath()));
+							qPrintable(tempDir.absolutePath()));
 	}
 	else {
 		QFileInfo tempFile(tempDir.absoluteFilePath(), "vfhVRayCloud.vrscene");
@@ -151,7 +151,7 @@ void JobFilePath::removeFilePath(const QString &filePath)
 
 	const int removeRes = QFile::remove(filePath);
 	if (!removeRes) {
-		Log::getLog().error("Failed to remove \"%s\"!", _toChar(filePath));
+		Log::getLog().error("Failed to remove \"%s\"!", qPrintable(filePath));
 	}
 }
 
@@ -305,7 +305,7 @@ public:
 
 		const CloudCommand cmd = commands.dequeue();
 
-		Log::getLog().info("Calling V-Ray Cloud Client: %s", _toChar(cmd.arguments.join(" ")));
+		Log::getLog().info("Calling V-Ray Cloud Client: %s", qPrintable(cmd.arguments.join(" ")));
 
 		proc.start(cmd.command, cmd.arguments, QIODevice::ReadOnly);
 	}
@@ -417,7 +417,7 @@ static CloudWindow *cloudWindowInstance = nullptr;
 /// A blocking call to the V-Ray Cloud Client. Used in batch version.
 static void executeVRayCloudClient(const CloudCommand &cmd)
 {
-	Log::getLog().info("Calling V-Ray Cloud Client: %s", _toChar(cmd.arguments.join(" ")));
+	Log::getLog().info("Calling V-Ray Cloud Client: %s", qPrintable(cmd.arguments.join(" ")));
 
 	QProcess vrayCloudClientProc;
 	vrayCloudClientProc.setProcessChannelMode(QProcess::ForwardedChannels);
@@ -432,7 +432,7 @@ int VRayForHoudini::Cloud::submitJob(const Job &job)
 	if (vrayCloudClient.isEmpty())
 		return false;
 
-	Log::getLog().info("Using V-Ray Cloud Client: \"%s\"", _toChar(vrayCloudClient));
+	Log::getLog().info("Using V-Ray Cloud Client: \"%s\"", qPrintable(vrayCloudClient));
 
 	CloudCommands commands;
 

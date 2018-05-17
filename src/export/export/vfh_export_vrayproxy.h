@@ -88,7 +88,7 @@ struct VRayProxyExportOptions {
 
 	/// (OP_Context) current time at which to export geometry geometry
 	/// default value: 0
-	OP_Context m_context;
+	VRayOpContext m_context;
 
 	/// (bool) if true, use last object in list as preview geometry
 	/// this option is always false if exporting single object per file

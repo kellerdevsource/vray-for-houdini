@@ -117,8 +117,8 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 {
 	const int numTextures = evalInt("tex_count", 0, 0.0);
 
-	VRay::ValueList textures;
-	VRay::IntList textureIds;
+	Attrs::QValueList textures(numTextures);
+	Attrs::QIntList textureIds(numTextures);
 
 	for (int i = 1; i <= numTextures; ++i) {
 		QString texSockName = SL("tex_%1").arg(i);
@@ -126,19 +126,19 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 		OP_Node *texNode = VRayExporter::getConnectedNode(this, texSockName);
 		if (!texNode) {
 			Log::getLog().warning("Node \"%s\": Texture node is not connected to \"%s\", ignoring...",
-								  getName().buffer(), _toChar(texSockName));
+								  getName().buffer(), qPrintable(texSockName));
 		}
 		else {
 			VRay::Plugin texPlugin = exporter.exportVop(texNode, parentContext);
 			if (texPlugin.isEmpty()) {
 				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
-									getName().buffer(), _toChar(texSockName));
+									getName().buffer(), qPrintable(texSockName));
 			}
 			else {
 				exporter.convertInputPlugin(texPlugin, pluginDesc, texNode, VOP_TYPE_COLOR, texSockName);
 
-				textures.push_back(VRay::Value(texPlugin));
-				textureIds.push_back(i-1);
+				textures.append(VRay::VUtils::Value(texPlugin));
+				textureIds.append(i - 1);
 			}
 		}
 	}
@@ -146,8 +146,8 @@ OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &plugin
 	if (textures.empty())
 		return PluginResultError;
 
-	pluginDesc.add(Attrs::PluginAttr(SL("textures_list"), textures));
-	pluginDesc.add(Attrs::PluginAttr(SL("ids_list"), textureIds));
+	pluginDesc.add(SL("textures_list"), textures);
+	pluginDesc.add(SL("ids_list"), textureIds);
 
 	return PluginResultContinue;
 }
