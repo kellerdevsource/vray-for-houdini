@@ -453,26 +453,6 @@ int VRayPluginRenderer::startRender(int locked)
 }
 
 
-int VRayPluginRenderer::startSequence(int start, int end, int step, int locked)
-{
-	if (m_vray) {
-		Log::getLog().info("Starting sequence render (%i-%i,%i)...", start, end, step);
-
-		VRay::SubSequenceDesc seq;
-		seq.start = start;
-		seq.end   = end;
-		seq.step  = step;
-
-		m_vray->renderSequence(&seq, 1);
-		if (locked) {
-			m_vray->waitForSequenceEnd();
-		}
-	}
-
-	return 0;
-}
-
-
 void VRayPluginRenderer::stopRender()
 {
 	if (m_vray) {

@@ -217,15 +217,6 @@ public:
 	/// @retval 0 - no error
 	int startRender(int locked=false);
 
-	/// Start rendering an animation sequence in a separate thread.
-	/// @param start[in] - animation start time
-	/// @param end[in] - animation end time
-	/// @param step[in] - animation time step
-	/// @param locked[in] - when true this will force the current thread to block
-	///        until rendering is done. By default this is a non-blocking call
-	/// @retval 0 - no error
-	int startSequence(int start, int end, int step, int locked=false);
-
 	/// Flags the image rendering thread to stop and waits for it to join.
 	void stopRender();
 

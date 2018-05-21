@@ -1875,22 +1875,32 @@ static void onStateChanged(VRay::VRayRenderer &renderer, VRay::RendererState old
 	VRayExporter &self = *reinterpret_cast<VRayExporter*>(data);
 
 	// Check abort from "Stop" button or Esc key.
-	if (renderer.isAborted()) {
+	if (newState == VRay::IDLE_STOPPED ||
+		renderer.isAborted())
+	{
 		self.setAbort();
 	}
 
-	switch (self.getSessionType()) {
-		case VfhSessionType::production: {
-			// ROP_Node will call "VRayExporter::exportEnd()" and we'll free stuff there.
-			break;
-		}
-		case VfhSessionType::rt: {
-			self.exportEnd();
-			break;
-		}
-		case VfhSessionType::ipr: {
-			// Handled separately for the IPR session.
-			break;
+	switch (newState) {
+		case VRay::IDLE_STOPPED:
+		case VRay::IDLE_ERROR:
+		case VRay::IDLE_DONE: {
+			switch (self.getSessionType()) {
+				case VfhSessionType::production: {
+					// ROP_Node will call "VRayExporter::exportEnd()" and we'll free stuff there.
+					break;
+				}
+				case VfhSessionType::rt: {
+					self.exportEnd();
+					break;
+				}
+				case VfhSessionType::ipr: {
+					// Handled separately for the IPR session.
+					break;
+				}
+				default:
+					break;
+			}
 		}
 		default:
 			break;
@@ -2238,12 +2248,6 @@ int VRayExporter::renderFrame(int locked)
 	}
 
 	return 0;
-}
-
-
-int VRayExporter::renderSequence(int start, int end, int step, int locked)
-{
-	return m_renderer.startSequence(start, end, step, locked);
 }
 
 

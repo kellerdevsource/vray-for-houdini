@@ -373,15 +373,6 @@ public:
 	/// @returns 0 - no error
 	int renderFrame(int locked=false);
 
-	/// Start rendering an animation sequence.
-	/// @param start[in] - animation start time
-	/// @param end[in] - animation end time
-	/// @param step[in] - animation time step
-	/// @param locked[in] - when true this will force the current thread to block
-	///        until rendering is done. By default this is a non-blocking call
-	/// @returns 0 - no error
-	int renderSequence(int start, int end, int step, int locked=false);
-
 	void clearKeyFrames(double toTime);
 
 	/// Set if we are exporting animation
