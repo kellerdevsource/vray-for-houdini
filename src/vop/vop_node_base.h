@@ -105,6 +105,8 @@ private:
 
 	typedef QMap<int, SocketLabel> IndexToString;
 
+	static const char *getCreateSocketLabelItem(IndexToString &storage, int socketIndex, const char *fmt, va_list args);
+
 	/// Storage for dynamically generated socket labels.
 	mutable IndexToString socketLabels;
 

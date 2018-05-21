@@ -15,7 +15,7 @@ using namespace VRayForHoudini;
 void VOP::TexMulti::setPluginType()
 {
 	pluginType = VRayPluginType::TEXTURE;
-	pluginID   = "TexMulti";
+	pluginID = SL("TexMulti");
 }
 
 const char* VOP::TexMulti::inputLabel(unsigned idx) const
@@ -53,7 +53,7 @@ int VOP::TexMulti::getInputFromNameSubclass(const UT_String &in) const
 {
 	int inIdx = -1;;
 
-	if (in.startsWith("tex_")) {
+	if (in.startsWith("tex_") && in != "tex_count") {
 		const int numBaseInputs = NodeBase::orderedInputs();
 
 		int idx = -1;
@@ -99,7 +99,7 @@ int VOP::TexMulti::customInputsCount() const
 
 unsigned VOP::TexMulti::getNumVisibleInputs() const
 {
-	return orderedInputs();
+	return TexMulti::orderedInputs();
 }
 
 unsigned VOP::TexMulti::orderedInputs() const

@@ -11,6 +11,7 @@
 #include "vop_MtlMulti.h"
 
 using namespace VRayForHoudini;
+using namespace VOP;
 
 // NOTE: Sockets order:
 //
@@ -20,19 +21,18 @@ using namespace VRayForHoudini;
 //   - material_<mtl_count>
 //
 
-void VOP::MtlMulti::setPluginType()
+void MtlMulti::setPluginType()
 {
 	pluginType = VRayPluginType::MATERIAL;
-	pluginID   = "MtlMulti";
+	pluginID = SL("MtlMulti");
 }
 
-
-const char* VOP::MtlMulti::inputLabel(unsigned idx) const
+const char* MtlMulti::inputLabel(unsigned idx) const
 {
-	const int numBaseInputs = VOP::NodeBase::orderedInputs();
+	const int numBaseInputs = NodeBase::orderedInputs();
 
 	if (idx < numBaseInputs) {
-		return VOP::NodeBase::inputLabel(idx);
+		return NodeBase::inputLabel(idx);
 	}
 
 	const int socketIndex = idx - numBaseInputs + 1;
@@ -40,19 +40,17 @@ const char* VOP::MtlMulti::inputLabel(unsigned idx) const
 	return getCreateSocketLabel(socketIndex, "Material %i", socketIndex);
 }
 
-
-int VOP::MtlMulti::getInputFromName(const UT_String &in) const
+int MtlMulti::getInputFromName(const UT_String &in) const
 {
 	return getInputFromNameSubclass(in);
 }
 
-
-void VOP::MtlMulti::getInputNameSubclass(UT_String &in, int idx) const
+void MtlMulti::getInputNameSubclass(UT_String &in, int idx) const
 {
-	const int numBaseInputs = VOP::NodeBase::orderedInputs();
+	const int numBaseInputs = NodeBase::orderedInputs();
 
 	if (idx < numBaseInputs) {
-		VOP::NodeBase::getInputNameSubclass(in, idx);
+		NodeBase::getInputNameSubclass(in, idx);
 	}
 	else {
 		const int socketIndex = idx - numBaseInputs + 1;
@@ -60,44 +58,42 @@ void VOP::MtlMulti::getInputNameSubclass(UT_String &in, int idx) const
 	}
 }
 
-
-int VOP::MtlMulti::getInputFromNameSubclass(const UT_String &in) const
+int MtlMulti::getInputFromNameSubclass(const UT_String &in) const
 {
 	int inIdx;
-	if (in.startsWith("mtl_")) {
-		const int numBaseInputs = VOP::NodeBase::orderedInputs();
+	if (in.startsWith("mtl_") && in != "mtl_count") {
+		const int numBaseInputs = NodeBase::orderedInputs();
 
 		int idx = -1;
-		sscanf(in.buffer(), "mtl_%i", &idx);
-
-		inIdx = numBaseInputs + idx - 1;
+		if (sscanf(in.buffer(), "mtl_%i", &idx) == 1) {
+			inIdx = numBaseInputs + idx - 1;
+		}
 	}
 	else {
-		inIdx = VOP::NodeBase::getInputFromNameSubclass(in);
+		inIdx = NodeBase::getInputFromNameSubclass(in);
 	}
 
 	return inIdx;
 }
 
-
-void VOP::MtlMulti::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
+void MtlMulti::getInputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 {
-	const int numBaseInputs = VOP::NodeBase::orderedInputs();
+	const int numBaseInputs = NodeBase::orderedInputs();
 
 	if (idx < numBaseInputs) {
-		VOP::NodeBase::getInputTypeInfoSubclass(type_info, idx);
+		NodeBase::getInputTypeInfoSubclass(type_info, idx);
 	}
 	else {
 		type_info.setType(VOP_SURFACE_SHADER);
 	}
 }
 
-void VOP::MtlMulti::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos)
+void MtlMulti::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeInfoArray &type_infos)
 {
-	const int numBaseInputs = VOP::NodeBase::orderedInputs();
+	const int numBaseInputs = NodeBase::orderedInputs();
 
 	if (idx < numBaseInputs) {
-		VOP::NodeBase::getAllowedInputTypeInfosSubclass(idx, type_infos);
+		NodeBase::getAllowedInputTypeInfosSubclass(idx, type_infos);
 	}
 	else {
 		VOP_TypeInfo vopTypeInfo;
@@ -108,12 +104,12 @@ void VOP::MtlMulti::getAllowedInputTypeInfosSubclass(unsigned idx, VOP_VopTypeIn
 	}
 }
 
-void VOP::MtlMulti::getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &voptypes)
+void MtlMulti::getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray &voptypes)
 {
-	const int numBaseInputs = VOP::NodeBase::orderedInputs();
+	const int numBaseInputs = NodeBase::orderedInputs();
 
 	if (idx < numBaseInputs) {
-		VOP::NodeBase::getAllowedInputTypesSubclass(idx, voptypes);
+		NodeBase::getAllowedInputTypesSubclass(idx, voptypes);
 	}
 	else {
 		VOP_TypeInfo vopTypeInfo;
@@ -124,52 +120,41 @@ void VOP::MtlMulti::getAllowedInputTypesSubclass(unsigned idx, VOP_VopTypeArray 
 	}
 }
 
-bool VOP::MtlMulti::willAutoconvertInputType(int input_idx)
+bool MtlMulti::willAutoconvertInputType(int input_idx)
 {
-	const int numBaseInputs = VOP::NodeBase::orderedInputs();
+	const int numBaseInputs = NodeBase::orderedInputs();
 
 	if (input_idx < numBaseInputs) {
-		return VOP::NodeBase::willAutoconvertInputType(input_idx);
+		return NodeBase::willAutoconvertInputType(input_idx);
 	}
 
 	VOP_VopTypeInfoArray typesInfo;
 	getAllowedInputTypeInfosSubclass(input_idx, typesInfo);
-	if (typesInfo.find(VOP_TypeInfo(VOP_SURFACE_SHADER))) {
-		return true;
-	}
 
-	return false;
+	return typesInfo.find(VOP_TypeInfo(VOP_SURFACE_SHADER));
 }
 
-int VOP::MtlMulti::customInputsCount() const
+int MtlMulti::customInputsCount() const
 {
 	// One socket per texture
 	const int numCustomInputs = evalInt("mtl_count", 0, 0.0);
 	return numCustomInputs;
 }
 
-
-unsigned VOP::MtlMulti::getNumVisibleInputs() const
+unsigned MtlMulti::getNumVisibleInputs() const
 {
-	return orderedInputs();
+	return MtlMulti::orderedInputs();
 }
 
-
-unsigned VOP::MtlMulti::orderedInputs() const
+unsigned MtlMulti::orderedInputs() const
 {
-	int orderedInputs = VOP::NodeBase::orderedInputs();
+	int orderedInputs = NodeBase::orderedInputs();
 	orderedInputs += customInputsCount();
 
 	return orderedInputs;
 }
 
-
-void VOP::MtlMulti::getCode(UT_String &codestr, const VOP_CodeGenContext &)
-{
-}
-
-
-OP::VRayNode::PluginResult VOP::MtlMulti::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult MtlMulti::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
 	const int mtlsCount = evalInt("mtl_count", 0, 0.0);
 

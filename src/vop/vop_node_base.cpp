@@ -194,34 +194,40 @@ void VOP::NodeBase::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 	type_info.setType(pluginInfo->outputs[idx].socketType);
 }
 
-const char *VOP::NodeBase::getCreateSocketLabel(int socketIndex, const char *format, ...) const
+const char *VOP::NodeBase::getCreateSocketLabelItem(IndexToString &storage, int socketIndex, const char *format, va_list args)
 {
-	SocketLabel &label = socketLabels[socketIndex];
-	if (!label.initialized) {
-		va_list args;
-		va_start(args, format);
+	SocketLabel &labelItem = storage[socketIndex];
+	if (!labelItem.initialized) {
+		tchar msgBuf[128];
+		vsnprintf(msgBuf, COUNT_OF(msgBuf), format, args);
 
-		label.label.sprintf(format, args);
-		label.initialized = true;
-
-		va_end(args);
+		labelItem.label = UT_String(msgBuf, true);
+		labelItem.initialized = true;
 	}
 
-	return label.label.buffer();
+	return labelItem.label.buffer();
+}
+
+const char *VOP::NodeBase::getCreateSocketLabel(int socketIndex, const char *format, ...) const
+{
+	va_list args;
+	va_start(args, format);
+
+	const char *token = getCreateSocketLabelItem(socketLabels, socketIndex, format, args);
+
+	va_end(args);
+
+	return token;
 }
 
 const char *VOP::NodeBase::getCreateSocketToken(int socketIndex, const char *format, ...) const
 {
-	SocketLabel &label = socketLabels[socketIndex];
-	if (!label.initialized) {
-		va_list args;
-		va_start(args, format);
+	va_list args;
+	va_start(args, format);
 
-		label.label.sprintf(format, args);
-		label.initialized = true;
+	const char *token = getCreateSocketLabelItem(socketTokens, socketIndex, format, args);
 
-		va_end(args);
-	}
+	va_end(args);
 
-	return label.label.buffer();
+	return token;
 }

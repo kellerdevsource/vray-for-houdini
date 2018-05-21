@@ -2,7 +2,7 @@
 
 {
     name TexMulti
-    label "Multi ID"
+    label "Texture Multi ID"
     parmtag { spare_category "TexMulti" }
     parmtag { vray_plugin "TexMulti" }
 
