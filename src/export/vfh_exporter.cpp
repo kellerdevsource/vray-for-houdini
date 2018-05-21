@@ -2212,7 +2212,10 @@ int VRayExporter::renderFrame(int locked)
 {
 	Log::getLog().debug("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
 
-	if (m_workMode == ExpExport || m_workMode == ExpExportRender) {
+	if (sessionType == VfhSessionType::production &&
+	    (m_workMode == ExpExport ||
+	     m_workMode == ExpExportRender))
+	{
 		const fpreal t = getContext().getTime();
 
 		UT_String exportFilepath;
