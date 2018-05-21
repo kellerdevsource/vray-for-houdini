@@ -190,7 +190,7 @@
             range   { 0 1 }
             export  none
             parmtag { "vray_plugin"     "PhxShaderCache" }
-            parmtag { "vray_pluginattr" "loop_overlap" }
+            parmtag { "vray_pluginattr" "blend_method" }
             parmtag { "vray_type"       "int" }
         }
         parm {
