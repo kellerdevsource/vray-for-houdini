@@ -136,7 +136,7 @@ struct SocketDesc {
 	ParmType attrType = eUnknown;
 
 	/// UI token.
-	QString socketLabel;
+	UT_String socketLabel;
 
 	/// Socket type.
 	VOP_Type socketType = VOP_TYPE_UNDEF;

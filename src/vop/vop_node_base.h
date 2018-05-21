@@ -98,7 +98,12 @@ protected:
 	const char *getCreateSocketToken(int socketIndex, const char *nameFormat, ...) const;
 
 private:
-	typedef QMap<int, QString> IndexToString;
+	struct SocketLabel {
+		UT_String label;
+		int initialized = false;
+	};
+
+	typedef QMap<int, SocketLabel> IndexToString;
 
 	/// Storage for dynamically generated socket labels.
 	mutable IndexToString socketLabels;

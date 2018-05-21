@@ -48,20 +48,20 @@ const char* VOP::NodeBase::inputLabel(unsigned idx) const
 {
 	if (idx >= pluginInfo->inputs.count())
 		return nullptr;
-	return qPrintable(pluginInfo->inputs[idx].socketLabel);
+	return pluginInfo->inputs[idx].socketLabel.buffer();
 }
 
 void VOP::NodeBase::getInputNameSubclass(UT_String &name, int idx) const
 {
 	if (idx < 0 || idx >= pluginInfo->inputs.count())
 		return;
-	name = qPrintable(pluginInfo->inputs[idx].socketLabel);
+	name = pluginInfo->inputs[idx].socketLabel;
 }
 
 int VOP::NodeBase::getInputFromNameSubclass(const UT_String &name) const
 {
 	for (int i = 0; i < pluginInfo->inputs.count(); ++i) {
-		if (name.equal(qPrintable(pluginInfo->inputs[i].socketLabel))) {
+		if (name == pluginInfo->inputs[i].socketLabel) {
 			return i;
 		}
 	}
@@ -167,20 +167,20 @@ const char* VOP::NodeBase::outputLabel(unsigned idx) const
 	if (idx >= pluginInfo->outputs.count())
 		return nullptr;
 
-	return qPrintable(pluginInfo->outputs[idx].socketLabel);
+	return pluginInfo->outputs[idx].socketLabel.buffer();
 }
 
 void VOP::NodeBase::getOutputNameSubclass(UT_String &name, int idx) const
 {
 	if (idx < 0 || idx >= pluginInfo->outputs.count())
 		return;
-	name = qPrintable(pluginInfo->outputs[idx].socketLabel);
+	name = pluginInfo->outputs[idx].socketLabel;
 }
 
 int VOP::NodeBase::getOutputFromName(const UT_String &name) const
 {
 	for (int i = 0; i < pluginInfo->outputs.count(); ++i) {
-		if (name.equal(qPrintable(pluginInfo->outputs[i].socketLabel))) {
+		if (name == pluginInfo->outputs[i].socketLabel) {
 			return i;
 		}
 	}
@@ -196,26 +196,32 @@ void VOP::NodeBase::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int idx)
 
 const char *VOP::NodeBase::getCreateSocketLabel(int socketIndex, const char *format, ...) const
 {
-	va_list args;
-	va_start(args, format);
+	SocketLabel &label = socketLabels[socketIndex];
+	if (!label.initialized) {
+		va_list args;
+		va_start(args, format);
 
-	QString &label = socketLabels[socketIndex];
-	label.vsprintf(format, args);
+		label.label.sprintf(format, args);
+		label.initialized = true;
 
-	va_end(args);
+		va_end(args);
+	}
 
-	return qPrintable(label);
+	return label.label.buffer();
 }
 
 const char *VOP::NodeBase::getCreateSocketToken(int socketIndex, const char *format, ...) const
 {
-	va_list args;
-	va_start(args, format);
+	SocketLabel &label = socketLabels[socketIndex];
+	if (!label.initialized) {
+		va_list args;
+		va_start(args, format);
 
-	QString &label = socketLabels[socketIndex];
-	label.vsprintf(format, args);
+		label.label.sprintf(format, args);
+		label.initialized = true;
 
-	va_end(args);
+		va_end(args);
+	}
 
-	return qPrintable(label);
+	return label.label.buffer();
 }

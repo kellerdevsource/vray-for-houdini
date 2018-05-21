@@ -276,7 +276,8 @@ void VRayRendererNode::renderLast()
 	Log::getLog().debug("VRayRendererNode::renderLast()");
 
 	if (initSession(sessionType, numFrames, m_tstart, m_tend)) {
-		m_exporter.exportFrame(m_exporter.getContext().getTime());
+		const fpreal t = m_exporter.getContext().getTime();
+		m_exporter.exportFrame(t);
 	}
 }
 
