@@ -138,10 +138,6 @@ VRay::RendererOptions VRayForHoudini::getDefaultOptions(int initVFB)
 	options.showFrameBuffer = false;
 	options.useDefaultVfbTheme = false;
 	options.vfbDrawStyle = VRay::RendererOptions::ThemeStyleMaya;
-	options.keepRTRunning = true;
-	options.rtNoiseThreshold = 0.0f;
-	options.rtSampleLevel = INT_MAX;
-	options.rtTimeout = 0;
 	options.pluginLibraryPath = env.value("VRAY_FOR_HOUDINI_PLUGINS", "").toStdString();
 	options.gpuPluginPath = env.value("VRAY_APPSDK", "").toStdString();
 	options.gpuPluginPath.append("/bin");

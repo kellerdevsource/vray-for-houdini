@@ -45,7 +45,7 @@ static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int 
 	planes.append(rgbaImage);
 
 	const VRay::RenderElements &reMan = renderer.getRenderElements();
-	const RenderElementsList &reList = reMan.getAllByType(VRay::RenderElement::NONE);
+	const RenderElementsList &reList = reMan.getAll(VRay::RenderElement::NONE);
 	for (const VRay::RenderElement &re : reList) {
 		TileImage *renderElementImage = new TileImage(re.getImage(&region), re.getName().c_str());
 		renderElementImage->setRegion(region);
@@ -56,22 +56,29 @@ static void addImages(VRay::VRayRenderer &renderer, VRay::VRayImage *image, int 
 	imdisplayThread.add(new TileImageMessage(planes));
 }
 
-void VRayForHoudini::onBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char*, VRay::VRayImage *image, void*)
+void VRayForHoudini::onBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char*, VRay::VRayImage *image, VRay::ImagePassType pass, double, void*)
 {
 	addImages(renderer, image, x, y);
 }
 
-void VRayForHoudini::onRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *image, void*)
+void VRayForHoudini::onProgressiveImageUpdated(VRay::VRayRenderer &renderer,
+                                               VRay::VRayImage *image,
+                                               unsigned long long changeIndex,
+                                               VRay::ImagePassType pass,
+                                               double instant,
+                                               void *userData)
 {
 	addImages(renderer, image, 0, 0);
 }
 
-void VRayForHoudini::onImageReady(VRay::VRayRenderer &renderer, void*)
+void VRayForHoudini::onStateChanged(VRay::VRayRenderer &renderer, VRay::RendererState oldState, VRay::RendererState newState, double instant, void *userData)
 {
-	addImages(renderer, renderer.getImage(), 0, 0);
+	if (newState == VRay::IDLE_DONE) {
+		addImages(renderer, renderer.getImage(), 0, 0);
+	}
 }
 
-void VRayForHoudini::onProgress(VRay::VRayRenderer& /*renderer*/, const char *msg, int elementNumber, int elementsCount, void *data)
+void VRayForHoudini::onProgress(VRay::VRayRenderer& /*renderer*/, const char *msg, int elementNumber, int elementsCount, double /*instant*/, void* /*data*/)
 {
 	const QString text(QString(msg).simplified());
 
@@ -93,16 +100,13 @@ void VRayForHoudini::initImdisplay(VRay::VRayRenderer &renderer, const char *rop
 {
 	Log::getLog().debug("initImdisplay()");
 
-	const VRay::RendererOptions &rendererOptions = renderer.getOptions();
-
 	ImageHeaderMessage *imageHeaderMsg = new ImageHeaderMessage();
-	imageHeaderMsg->imageWidth = rendererOptions.imageWidth;
-	imageHeaderMsg->imageHeight = rendererOptions.imageHeight;
+	renderer.getImageSize(imageHeaderMsg->imageWidth, imageHeaderMsg->imageHeight);
 	imageHeaderMsg->planeNames.append(colorPass);
 	imageHeaderMsg->ropName = ropName;
 
 	const VRay::RenderElements &reMan = renderer.getRenderElements();
-	for (const VRay::RenderElement &re : reMan.getAllByType(VRay::RenderElement::NONE)) {
+	for (const VRay::RenderElement &re : reMan.getAll(VRay::RenderElement::NONE)) {
 		imageHeaderMsg->planeNames.append(re.getName().c_str());
 	}
 

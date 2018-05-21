@@ -22,11 +22,10 @@ ImdisplayThread &getImdisplay();
 /// Initializes writer thread instance.
 void initImdisplay(VRay::VRayRenderer &renderer, const char *ropName);
 
-void onRTImageUpdated(VRay::VRayRenderer &renderer, VRay::VRayImage *image, void *userData);
-void onImageReady(VRay::VRayRenderer &renderer, void *userData);
-void onBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char* host, VRay::VRayImage *image, void *userData);
-
-void onProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount, void *data);
+void onProgressiveImageUpdated(VRay::VRayRenderer&, VRay::VRayImage* img, unsigned long long changeIndex, VRay::ImagePassType pass, double instant, void *userData);
+void onStateChanged(VRay::VRayRenderer &renderer, VRay::RendererState oldState, VRay::RendererState newState, double instant, void *userData);
+void onBucketReady(VRay::VRayRenderer &renderer, int x, int y, const char* host, VRay::VRayImage *image, VRay::ImagePassType pass, double instant, void *userData);
+void onProgress(VRay::VRayRenderer &renderer, const char *msg, int elementNumber, int elementsCount, double instant, void *data);
 
 } // namespace VRayForHoudini
 

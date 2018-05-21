@@ -158,7 +158,7 @@ void VRayRendererNode::RtCallbackRop(OP_Node *caller, void *callee, OP_EventType
 /// Returns render mode/device from the ROP node depending on the session type.
 /// @param ropNode ROP node instance. May be V-Ray IPR asset.
 /// @param sessionType Session type.
-static VRay::RendererOptions::RenderMode getRenderModeFromROP(const OP_Node &ropNode, VfhSessionType sessionType)
+static VRay::VRayRenderer::RenderMode getRenderModeFromROP(const OP_Node &ropNode, VfhSessionType sessionType)
 {
 	switch (sessionType) {
 		case VfhSessionType::ipr:
@@ -210,7 +210,7 @@ int VRayRendererNode::initSession(VfhSessionType sessionType, int nframes, fprea
 		}
 
 		if (m_exporter.initRenderer(hasUI, false)) {
-			const VRay::RendererOptions::RenderMode renderMode =
+			const VRay::VRayRenderer::RenderMode renderMode =
 				getRenderModeFromROP(*this, sessionType);
 
 			m_exporter.setRopPtr(this);

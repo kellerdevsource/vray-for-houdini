@@ -266,10 +266,10 @@ void ImdisplayThread::writeTileBuckets(int planeIndex, const TileImage &image)
 			const int maxXRes = (currentIRes + tileSize - 1) < width  ? (currentIRes + tileSize - 1) : width  - 1;
 			const int maxYRes = (currentMRes + tileSize - 1) < height ? (currentMRes + tileSize - 1) : height - 1;
 
-			VRay::VRayImage *cropImage = image.image->crop(currentIRes,
-			                                               currentMRes,
-			                                               maxXRes - currentIRes + 1,
-			                                               maxYRes - currentMRes + 1);
+			VRay::VRayImage *cropImage = image.image->getCropped(currentIRes,
+			                                                     currentMRes,
+			                                                     maxXRes - currentIRes + 1,
+			                                                     maxYRes - currentMRes + 1);
 
 			TileImage imageBucket(cropImage, image.name);
 			imageBucket.x0 = currentIRes;

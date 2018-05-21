@@ -65,7 +65,7 @@ void newObjHandler(OP_Node *caller, void *callee, OP_EventType type, void *data)
 			exporter.delOpCallback(opNode, newObjHandler);
 			exporter.exportObject(opNode);
 
-			exporter.getRenderer().getVRay().commit(true);
+			exporter.getRenderer().getVRay().commit();
 		}
 	}
 }

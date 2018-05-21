@@ -330,7 +330,7 @@ static void fillSettingsRTEnginePlugin(const SettingsRTEngine &self, VRay::Plugi
 	plugin.setValue("undersampling", self.undersampling);
 }
 
-void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngine, VRay::RendererOptions::RenderMode mode)
+void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngine, VRay::VRayRenderer::RenderMode mode)
 {
 	if (!m_vray)
 		return;
@@ -340,39 +340,44 @@ void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngin
 	VRay::RendererOptions options(m_vray->getOptions());
 
 	const int isInteractiveMode =
-		mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
-		mode <= VRay::RendererOptions::RENDER_MODE_RT_GPU;
+		mode >= VRay::VRayRenderer::RENDER_MODE_INTERACTIVE &&
+		mode <= VRay::VRayRenderer::RENDER_MODE_INTERACTIVE_CUDA;
 
 	if (isInteractiveMode) {
 		options.numThreads = VUtils::Max(1, VUtils::getNumProcessors() - 1);
-		options.keepRTRunning = true;
-		options.rtNoiseThreshold = 0.0f;
-		options.rtSampleLevel = INT_MAX;
-		options.rtTimeout = 0;
+
+		m_vray->setKeepInteractiveRunning(true);
+		m_vray->setInteractiveTimeout(0);
+		m_vray->setInteractiveNoiseThreshold(0.0f);
+		m_vray->setInteractiveSampleLevel(INT_MAX);
 	}
 	else {
 		options.numThreads = 0;
-		options.keepRTRunning = false;
-		options.rtNoiseThreshold = settingsRTEngine.noise_threshold;
-		options.rtSampleLevel = settingsRTEngine.max_sample_level;
-		options.rtTimeout = settingsRTEngine.max_render_time * 60 * 1000;
+
+		m_vray->setKeepInteractiveRunning(false);
+		m_vray->setInteractiveTimeout(settingsRTEngine.max_render_time * 60 * 1000);
+		m_vray->setInteractiveNoiseThreshold(settingsRTEngine.noise_threshold);
+		m_vray->setInteractiveSampleLevel(settingsRTEngine.max_sample_level);
 	}
 
 	const VRay::RendererState renderState = m_vray->getState();
 
 	vassert(renderState >= VRay::IDLE_INITIALIZED && renderState <= VRay::IDLE_DONE);
-
+#if 1
+#pragma message("TODO: Reimplement without setOptions()")
+#else
 	m_vray->setOptions(options);
+#endif
 	m_vray->setRenderMode(mode);
 
 	const int isCPU =
-		mode == VRay::RendererOptions::RENDER_MODE_PRODUCTION ||
-		mode == VRay::RendererOptions::RENDER_MODE_RT_CPU;
+		mode == VRay::VRayRenderer::RENDER_MODE_PRODUCTION ||
+		mode == VRay::VRayRenderer::RENDER_MODE_INTERACTIVE;
 
 	if (!isCPU) {
 		const int isCUDA =
-			mode == VRay::RendererOptions::RENDER_MODE_RT_GPU_CUDA ||
-			mode == VRay::RendererOptions::RENDER_MODE_PRODUCTION_CUDA;
+			mode == VRay::VRayRenderer::RENDER_MODE_INTERACTIVE_CUDA ||
+			mode == VRay::VRayRenderer::RENDER_MODE_PRODUCTION_CUDA;
 
 		ComputeDeviceIdList deviceList;
 		getGpuDeviceIdList(isCUDA, deviceList);
@@ -386,7 +391,7 @@ void VRayPluginRenderer::removePlugin(const VRay::Plugin &plugin) const
 {
 	vassert(m_vray);
 
-	m_vray->removePlugin(plugin);
+	m_vray->deletePlugin(plugin);
 
 	const VRay::Error err = m_vray->getLastError();
 	if (err.getCode() != VRay::SUCCESS) {
@@ -399,7 +404,7 @@ void VRayPluginRenderer::removePlugin(const QString &pluginName) const
 {
 	vassert(m_vray);
 
-	m_vray->removePlugin(qPrintable(pluginName));
+	m_vray->deletePlugin(qPrintable(pluginName));
 
 	const VRay::Error err = m_vray->getLastError();
 	if (err.getCode() != VRay::SUCCESS) {
@@ -441,7 +446,7 @@ int VRayPluginRenderer::startRender(int locked)
 	m_vray->startSync();
 
 	if (locked) {
-		m_vray->waitForImageReady();
+		m_vray->waitForRenderEnd();
 	}
 
 	return 0;
@@ -460,7 +465,7 @@ int VRayPluginRenderer::startSequence(int start, int end, int step, int locked)
 
 		m_vray->renderSequence(&seq, 1);
 		if (locked) {
-			m_vray->waitForSequenceDone();
+			m_vray->waitForSequenceEnd();
 		}
 	}
 
@@ -522,7 +527,7 @@ void VRayPluginRenderer::reset()
 	unbindCallbacks(false);
 
 	m_vray->stop();
-	m_vray->reset();
+	m_vray->clearScene();
 }
 
 void VRayPluginRenderer::unbindCallbacks(int unbindUiButtons) const
@@ -532,12 +537,12 @@ void VRayPluginRenderer::unbindCallbacks(int unbindUiButtons) const
 
 	if (unbindUiButtons) {
 		m_vray->setOnVFBClosed(nullptr);
-		m_vray->setOnRenderLast(nullptr);
+		m_vray->setOnVFBRenderLast(nullptr);
 	}
 
-	m_vray->setOnImageReady(nullptr);
+	m_vray->setOnStateChanged(nullptr);
 	m_vray->setOnProgress(nullptr);
-	m_vray->setOnDumpMessage(nullptr);
+	m_vray->setOnLogMessage(nullptr);
 	m_vray->setOnRendererClose(nullptr);
 }
 

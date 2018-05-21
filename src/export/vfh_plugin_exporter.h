@@ -200,7 +200,7 @@ public:
 	/// a current rendering running it will not be affected. You can switch between
 	/// Production and RT mode with this without resetting the scene.
 	/// Valid modes are Production, RT CPU, RT GPU (CUDA)
-	void setRendererMode(const SettingsRTEngine &settingsRTEngine, VRay::RendererOptions::RenderMode mode);
+	void setRendererMode(const SettingsRTEngine &settingsRTEngine, VRay::VRayRenderer::RenderMode mode);
 
 	/// Sets the frame buffer width and height.
 	void setImageSize(const int w, const int h);

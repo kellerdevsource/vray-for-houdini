@@ -397,7 +397,7 @@ void onRenderStart(VRay::VRayRenderer &renderer, void* extraData) {
 static void renderScene(const char *filepath)
 {
 	VRay::RendererOptions options;
-	options.renderMode = VRay::RendererOptions::RENDER_MODE_PRODUCTION;
+	options.renderMode = VRay::VRayRenderer::RENDER_MODE_PRODUCTION;
 	options.keepRTRunning = true;
 	options.imageWidth = 800;
 	options.imageHeight = 600;

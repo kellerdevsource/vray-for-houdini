@@ -123,14 +123,14 @@ static void setSettingsRTEngineFromRopNode(SettingsRTEngine &self, const OP_Node
 /// @param self SettingsRTEngine instance.
 /// @param ropNode ROP node.
 /// @param mode Render mode.
-static void setSettingsRTEnginetOptimizedGpuSettings(SettingsRTEngine &self, const OP_Node &ropNode, VRay::RendererOptions::RenderMode mode)
+static void setSettingsRTEnginetOptimizedGpuSettings(SettingsRTEngine &self, const OP_Node &ropNode, VRay::VRayRenderer::RenderMode mode)
 {
 	if (!Parm::getParmInt(ropNode, "SettingsRTEngine_auto"))
 		return;
 
 	// CPU/GPU RT/IPR.
-	if (mode >= VRay::RendererOptions::RENDER_MODE_RT_CPU &&
-        mode <= VRay::RendererOptions::RENDER_MODE_RT_GPU)
+	if (mode >= VRay::VRayRenderer::RENDER_MODE_INTERACTIVE &&
+        mode <= VRay::VRayRenderer::RENDER_MODE_INTERACTIVE_CUDA)
     {
 		self.cpu_samples_per_pixel = 1;
 		self.cpu_bundle_size = 64;
@@ -140,8 +140,8 @@ static void setSettingsRTEnginetOptimizedGpuSettings(SettingsRTEngine &self, con
 		self.progressive_samples_per_pixel = 0;
     }
 	// GPU Production.
-	else if (mode >= VRay::RendererOptions::RENDER_MODE_PRODUCTION_OPENCL &&
-			 mode <= VRay::RendererOptions::RENDER_MODE_PRODUCTION_CUDA)
+	else if (mode >= VRay::VRayRenderer::RENDER_MODE_PRODUCTION_OPENCL &&
+			 mode <= VRay::VRayRenderer::RENDER_MODE_PRODUCTION_CUDA)
 	{
 		self.gpu_samples_per_pixel = 16;
 		self.gpu_bundle_size = 256;
@@ -1839,7 +1839,7 @@ void VRayExporter::delOpCallbacks(OP_Node *op_node)
 }
 
 /// Callback function for the event when V-Ray logs a text message.
-static void onDumpMessage(VRay::VRayRenderer& /*renderer*/, const char *msg, int level, void *data)
+static void onLogMessage(VRay::VRayRenderer& /*renderer*/, const char *msg, VRay::MessageLevel level, double /*instant*/, void*)
 {
 	const QString message(QString(msg).simplified());
 
@@ -1855,7 +1855,7 @@ static void onDumpMessage(VRay::VRayRenderer& /*renderer*/, const char *msg, int
 }
 
 /// Callback function for the event when V-Ray updates its current computation task and the number of workunits done.
-static void onProgress(VRay::VRayRenderer& /*renderer*/, const char *msg, int elementNumber, int elementsCount, void *data)
+static void onProgress(VRay::VRayRenderer& /*renderer*/, const char *msg, int elementNumber, int elementsCount, double /*instant*/, void*)
 {
 	const QString message(QString(msg).simplified());
 
@@ -1868,9 +1868,9 @@ static void onProgress(VRay::VRayRenderer& /*renderer*/, const char *msg, int el
 }
 
 /// Callback function for the event when rendering has finished, successfully or not.
-static void onImageReady(VRay::VRayRenderer &renderer, void *data)
+static void onStateChanged(VRay::VRayRenderer &renderer, VRay::RendererState oldState, VRay::RendererState newState, double instant, void *data)
 {
-	Log::getLog().debug("onImageReady");
+	Log::getLog().debug("onStateChanged");
 
 	VRayExporter &self = *reinterpret_cast<VRayExporter*>(data);
 
@@ -1896,8 +1896,9 @@ static void onImageReady(VRay::VRayRenderer &renderer, void *data)
 			break;
 	}
 }
+
 /// Callback function for the "Render Last" button in the VFB.
-static void onRenderLast(VRay::VRayRenderer& /*renderer*/, bool /*isRendering*/, void *data)
+static void onRenderLast(VRay::VRayRenderer& /*renderer*/, bool /*isRendering*/, double /*instant*/, void *data)
 {
 	Log::getLog().debug("onRenderLast");
 
@@ -1906,7 +1907,7 @@ static void onRenderLast(VRay::VRayRenderer& /*renderer*/, bool /*isRendering*/,
 }
 
 /// Callback function when VFB closes.
-static void onVfbClosed(VRay::VRayRenderer& /*renderer*/, void *data)
+static void onVfbClosed(VRay::VRayRenderer& /*renderer*/, double, void *data)
 {
 	Log::getLog().debug("onVfbClosed");
 
@@ -1935,7 +1936,7 @@ static void onVfbClosed(VRay::VRayRenderer& /*renderer*/, void *data)
 	}
 }
 
-static void onRendererClosed(VRay::VRayRenderer& /*renderer*/, void *data)
+static void onRendererClosed(VRay::VRayRenderer& /*renderer*/, double, void *data)
 {
 	Log::getLog().debug("onRendererClosed");
 }
@@ -2116,9 +2117,7 @@ void VRayExporter::setDRSettings()
 	const int nDRHosts = Parm::getParmInt(*m_rop, "drhost_cnt");
 	const bool drEnabled = Parm::getParmInt(*m_rop, "dr_enabled") && (nDRHosts > 0);
 
-	VRay::RendererOptions options = vray.getOptions();
-	options.noDR = NOT(drEnabled);
-	vray.setOptions(options);
+	vray.setDREnabled(drEnabled);
 
 	if (drEnabled) {
 		UT_String defaultHostPort;
@@ -2165,7 +2164,7 @@ void VRayExporter::setDRSettings()
 }
 
 
-void VRayExporter::setRenderMode(VRay::RendererOptions::RenderMode mode)
+void VRayExporter::setRenderMode(VRay::VRayRenderer::RenderMode mode)
 {
 	SettingsRTEngine settingsRTEngine;
 	setSettingsRTEngineFromRopNode(settingsRTEngine, *m_rop, mode);
@@ -2173,7 +2172,7 @@ void VRayExporter::setRenderMode(VRay::RendererOptions::RenderMode mode)
 
 	m_renderer.setRendererMode(settingsRTEngine, mode);
 
-	m_isGPU = mode >= VRay::RendererOptions::RENDER_MODE_RT_GPU_OPENCL;
+	m_isGPU = mode >= VRay::VRayRenderer::RENDER_MODE_INTERACTIVE_OPENCL;
 }
 
 
@@ -2345,11 +2344,14 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 	}
 
 	m_renderer.getVRay().setOnProgress(onProgress, this);
-	m_renderer.getVRay().setOnDumpMessage(onDumpMessage, this);
-	m_renderer.getVRay().setOnImageReady(onImageReady, this);
-	m_renderer.getVRay().setOnVFBClosed(onVfbClosed, this);
+	m_renderer.getVRay().setOnLogMessage(onLogMessage, VRay::MessageInfo, this);
+	m_renderer.getVRay().setOnStateChanged(onStateChanged, this);
 	m_renderer.getVRay().setOnRendererClose(onRendererClosed, this);
-	m_renderer.getVRay().setOnRenderLast(onRenderLast, this);
+
+	if (hasUI) {
+		m_renderer.getVRay().setOnVFBClosed(onVfbClosed, this);
+		m_renderer.getVRay().setOnVFBRenderLast(onRenderLast, this);
+	}
 
 	const int isExportMode =
 		m_workMode == ExpExport ||
@@ -2652,36 +2654,36 @@ enum class VfhRenderModeMenu {
 	opencl,
 };
 
-VRay::RendererOptions::RenderMode VRayForHoudini::getRendererMode(const OP_Node &rop)
+VRay::VRayRenderer::RenderMode VRayForHoudini::getRendererMode(const OP_Node &rop)
 {
 	const VfhRenderModeMenu renderMode =
 		static_cast<VfhRenderModeMenu>(rop.evalInt("render_render_mode", 0, 0.0));
 
 	switch (renderMode) {
-		case VfhRenderModeMenu::cpu:    return VRay::RendererOptions::RENDER_MODE_PRODUCTION;
-		case VfhRenderModeMenu::cuda:   return VRay::RendererOptions::RENDER_MODE_PRODUCTION_CUDA;
-		case VfhRenderModeMenu::opencl: return VRay::RendererOptions::RENDER_MODE_PRODUCTION_OPENCL;
+		case VfhRenderModeMenu::cpu:    return VRay::VRayRenderer::RENDER_MODE_PRODUCTION;
+		case VfhRenderModeMenu::cuda:   return VRay::VRayRenderer::RENDER_MODE_PRODUCTION_CUDA;
+		case VfhRenderModeMenu::opencl: return VRay::VRayRenderer::RENDER_MODE_PRODUCTION_OPENCL;
 	}
 
 	vassert(false && "VRayForHoudini::getRendererMode(): Incorrect \"render_render_mode\" value!");
 
-	return VRay::RendererOptions::RENDER_MODE_PRODUCTION;
+	return VRay::VRayRenderer::RENDER_MODE_PRODUCTION;
 }
 
-VRay::RendererOptions::RenderMode VRayForHoudini::getRendererIprMode(const OP_Node &rop)
+VRay::VRayRenderer::RenderMode VRayForHoudini::getRendererIprMode(const OP_Node &rop)
 {
 	const VfhRenderModeMenu renderMode =
 		static_cast<VfhRenderModeMenu>(rop.evalInt("render_rt_mode", 0, 0.0));
 
 	switch (renderMode) {
-		case VfhRenderModeMenu::cpu:    return VRay::RendererOptions::RENDER_MODE_RT_CPU;
-		case VfhRenderModeMenu::cuda:   return VRay::RendererOptions::RENDER_MODE_RT_GPU_CUDA;
-		case VfhRenderModeMenu::opencl: return VRay::RendererOptions::RENDER_MODE_RT_GPU_OPENCL;
+		case VfhRenderModeMenu::cpu:    return VRay::VRayRenderer::RENDER_MODE_INTERACTIVE;
+		case VfhRenderModeMenu::cuda:   return VRay::VRayRenderer::RENDER_MODE_INTERACTIVE_CUDA;
+		case VfhRenderModeMenu::opencl: return VRay::VRayRenderer::RENDER_MODE_INTERACTIVE_OPENCL;
 	}
 
 	vassert(false && "VRayForHoudini::getRendererIprMode(): Incorrect \"render_rt_mode\" value!");
 
-	return VRay::RendererOptions::RENDER_MODE_PRODUCTION;
+	return VRay::VRayRenderer::RENDER_MODE_PRODUCTION;
 }
 
 VRayExporter::ExpWorkMode VRayForHoudini::getExportMode(const OP_Node &rop)

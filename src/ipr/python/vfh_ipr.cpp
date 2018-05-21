@@ -421,11 +421,11 @@ static PyObject* vfhInit(PyObject*, PyObject *args, PyObject *keywds)
 			VRayExporter &exporter = WithExporter::getExporter();
 
 			exporter.getRenderer().getVRay().setKeepBucketsInCallback(true);
-			exporter.getRenderer().getVRay().setKeepRTframesInCallback(true);
-			exporter.getRenderer().getVRay().setRTImageUpdateTimeout(1000);
+			exporter.getRenderer().getVRay().setKeepProgressiveFramesInCallback(true);
+			exporter.getRenderer().getVRay().setProgressiveImageUpdateTimeout(1000);
 
-			exporter.getRenderer().getVRay().setOnImageReady(onImageReady);
-			exporter.getRenderer().getVRay().setOnRTImageUpdated(onRTImageUpdated);
+			exporter.getRenderer().getVRay().setOnStateChanged(onStateChanged);
+			exporter.getRenderer().getVRay().setOnProgressiveImageUpdated(onProgressiveImageUpdated);
 			exporter.getRenderer().getVRay().setOnBucketReady(onBucketReady);
 			exporter.getRenderer().getVRay().setOnProgress(onProgress);
 		}

@@ -399,7 +399,7 @@ public:
 	void setDRSettings();
 
 	/// Set the render mode: Production/RT CPU/RT GPU
-	void setRenderMode(VRay::RendererOptions::RenderMode mode);
+	void setRenderMode(VRay::VRayRenderer::RenderMode mode);
 
 	/// Sets export mode: export vrscene/render/both
 	void setExportMode(ExpWorkMode mode);
@@ -768,10 +768,10 @@ const char *getVRayPluginIDName(VRayPluginID pluginID);
 int getFrameBufferType(OP_Node &rop);
 
 /// Returns render mode/device for the production rendering from the ROP node.
-VRay::RendererOptions::RenderMode getRendererMode(const OP_Node &rop);
+VRay::VRayRenderer::RenderMode getRendererMode(const OP_Node &rop);
 
 /// Returns render mode/device for the interactive rendering from the ROP node.
-VRay::RendererOptions::RenderMode getRendererIprMode(const OP_Node &rop);
+VRay::VRayRenderer::RenderMode getRendererIprMode(const OP_Node &rop);
 
 /// Returns export mode from the ROP node.
 VRayExporter::ExpWorkMode getExportMode(const OP_Node &rop);

@@ -99,14 +99,14 @@ struct Job {
 
 	/// Returns RenderMode as string argument value.
 	/// @param renderMode Render mode.
-	static QString renderModeToString(const VRay::RendererOptions::RenderMode renderMode) {
+	static QString renderModeToString(const VRay::VRayRenderer::RenderMode renderMode) {
 		switch (renderMode) {
-			case VRay::RendererOptions::RENDER_MODE_PRODUCTION: return "-1";
-			case VRay::RendererOptions::RENDER_MODE_RT_CPU: return "0";
-			case VRay::RendererOptions::RENDER_MODE_RT_GPU_OPENCL: return "1";
-			case VRay::RendererOptions::RENDER_MODE_RT_GPU_CUDA: return "4";
-			case VRay::RendererOptions::RENDER_MODE_PRODUCTION_OPENCL: return "101";
-			case VRay::RendererOptions::RENDER_MODE_PRODUCTION_CUDA: return "104";
+			case VRay::VRayRenderer::RENDER_MODE_PRODUCTION: return "-1";
+			case VRay::VRayRenderer::RENDER_MODE_INTERACTIVE: return "0";
+			case VRay::VRayRenderer::RENDER_MODE_INTERACTIVE_OPENCL: return "1";
+			case VRay::VRayRenderer::RENDER_MODE_INTERACTIVE_CUDA: return "4";
+			case VRay::VRayRenderer::RENDER_MODE_PRODUCTION_OPENCL: return "101";
+			case VRay::VRayRenderer::RENDER_MODE_PRODUCTION_CUDA: return "104";
 			default:
 				return "-1";
 		}
