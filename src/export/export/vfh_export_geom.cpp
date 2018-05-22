@@ -290,11 +290,6 @@ void PrimContextStack::initCurrentContext() const
 		}
 
 		currentContext.mat.appendOverrides(ctx.mat.overrides);
-	}
-
-	it.toFront();
-	while (it.hasNext()) {
-		const PrimContext &ctx = it.next();
 
 		currentContext.id ^= ctx.id;
 		currentContext.vel = ctx.vel * currentContext.vel;
@@ -732,6 +727,13 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	PrimMaterial objMaterialOverride;
 	appendOverrideValues(objStyler, objMaterialOverride, overrideMerge);
 
+	PrimContext objCtx;
+	objCtx.objNode = &objNode;
+	objCtx.styler = objStyler;
+	objCtx.mat = objMaterialOverride;
+
+	PrimContextAuto objCtxPush(*this, objCtx);
+
 	const GA_ROHandleV3 velocityHndl(gdp.findAttribute(GA_ATTRIB_POINT, GEO_STD_ATTRIB_VELOCITY));
 	const GA_ROHandleS materialStyleSheetHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_STYLESHEET));
 	const GA_ROHandleS materialOverrideHndl(gdp.findAttribute(GA_ATTRIB_PRIMITIVE, VFH_ATTR_MATERIAL_OVERRIDE));
@@ -830,26 +832,25 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			UT_Matrix4 tm4;
 			primSphere.getTransform4(tm4);
 
-			primCtx.tm = utMatrixToVRayTransform(tm4);
+			primCtx.tm = utMatrixToVRayTransform(tm4, true);
 		}
+
+		PrimContextAuto primCtxPush(*this, primCtx);
 
 		// Primitive geometry.
 		// May be NONE if primitive generates non-directly "instanceable" plugin.
 		VRay::Plugin geometry;
 
 		if (isVolumePrim) {
-			pushContext(primCtx); {
-				exportPrimVolume(objNode, prim);
-			} popContext();
+			exportPrimVolume(objNode, prim);
 		}
 		else if (isPackedPrim) {
 			const int primKey = getPrimKey(prim);
 
 			if (!getPrimPluginFromCache(primKey, geometry)) {
-				pushContext(primCtx); {
-					const GU_PrimPacked &primPacked = static_cast<const GU_PrimPacked&>(prim);
-					geometry = exportPrimPacked(objNode, primPacked);
-				} popContext();
+				const GU_PrimPacked &primPacked = static_cast<const GU_PrimPacked&>(prim);
+
+				geometry = exportPrimPacked(objNode, primPacked);
 
 				if (geometry.isNotEmpty()) {
 					OP_Node *matNode = primCtx.mat.matNode
@@ -879,8 +880,8 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			item.primMaterial = primCtx.mat;
 			item.primID = primCtx.id;
 			item.objectID = objectIdHndl.isValid() ? objectIdHndl.get(primOffset) : objectID;
-			item.tm = getTm() * primCtx.tm;
-			item.vel = getVel() * primCtx.vel;
+			item.tm = getTm();
+			item.vel = getVel();
 
 			if (animOffsetHndl.isValid()) {
 				item.timeOffset = animOffsetHndl.get(primOffset);
@@ -918,13 +919,6 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			hairPrims.append(prim);
 		}
 	}
-
-	PrimContext primCtx;
-	primCtx.objNode = &objNode;
-	primCtx.styler = objStyler;
-	primCtx.mat = objMaterialOverride;
-
-	pushContext(primCtx);
 
 	if (polyPrims.size()) {
 		Hash::MHash meshStylerHash = 0;
@@ -966,8 +960,6 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 	if (hairPrims.size()) {
 		exportHair(objNode, gdp, hairPrims);
 	}
-
-	popContext();
 }
 
 static void appendSeparator(QString &userAttributes)
@@ -2147,11 +2139,11 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 			continue;
 		}
 
-		PrimContext primCtx;
-		primCtx.objNode = &objNode;
-		primCtx.mat.matNode = instaceObjNode->getMaterialNode(t);
+		PrimContext objCtx;
+		objCtx.objNode = &objNode;
+		objCtx.mat.matNode = instaceObjNode->getMaterialNode(t);
 
-		pushContext(primCtx);
+		PrimContextAuto objCtxPush(*this, objCtx);
 
 		const VRay::Plugin geometry = pluginExporter.exportObject(instaceObjNode);
 
@@ -2176,8 +2168,6 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 			pointInstancerItems += item;
 		}
 
-		popContext();
-
 		++validPointIdx;
 	}
 
@@ -2196,11 +2186,11 @@ void ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
 	const STY_Styler &currentPrimStyler = getStyler();
 	const STY_Styler &currentStyler = objectStyler.cloneWithAddedStyler(currentPrimStyler, STY_TargetHandle());
 
-	PrimContext primCtx;
-	primCtx.id = gdp.getUniqueId();
-	primCtx.styler = currentStyler;
+	PrimContext objCtx;
+	objCtx.id = gdp.getUniqueId();
+	objCtx.styler = currentStyler;
 
-	pushContext(primCtx);
+	PrimContextAuto rootAutoCtxPush(*this, objCtx);
 
 	const int isInstance = isInstanceNode(objNode);
 	if (isInstance || isPointInstancer(gdp)) {
@@ -2209,8 +2199,6 @@ void ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
 	else {
 		exportDetail(objNode, gdp);
 	}
-
-	popContext();
 }
 
 void ObjectExporter::exportGeometry(OBJ_Node &objNode, InstancerItems &items, SOP_Node *overrideSOP)

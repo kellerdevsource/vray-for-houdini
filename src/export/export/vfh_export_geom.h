@@ -247,7 +247,6 @@ struct InstancerItem {
 /// A type for collection of InstancerItem.
 typedef QList<InstancerItem> InstancerItems;
 
-
 /// Collect plugin lists the OBJ_Node has generated.
 /// Used by:
 ///  * LightLinker
@@ -555,6 +554,19 @@ public:
 	const OBJ_Node &getGenerator(const OBJ_Node &currentObj) const { return primContextStack.getGenerator(currentObj); }
 
 private:
+	struct PrimContextAuto {
+		PrimContextAuto(ObjectExporter &self, const PrimContext &ctx)
+			: self(self)
+		{
+			self.pushContext(ctx);
+		}
+		~PrimContextAuto() {
+			self.popContext();
+		}
+	private:
+		ObjectExporter &self;
+	};
+
 	/// Push context frame when exporting nested object.
 	void pushContext(const PrimContext &value) { primContextStack.pushContext(value); }
 
