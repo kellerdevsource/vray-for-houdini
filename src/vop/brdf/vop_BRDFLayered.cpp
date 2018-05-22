@@ -25,7 +25,7 @@ using namespace VRayForHoudini;
 void VOP::BRDFLayered::setPluginType()
 {
 	pluginType = VRayPluginType::BRDF;
-	pluginID   = "BRDFLayered";
+	pluginID = SL("BRDFLayered");
 }
 
 const char* VOP::BRDFLayered::inputLabel(unsigned idx) const
@@ -90,7 +90,7 @@ int VOP::BRDFLayered::getInputFromNameSubclass(const UT_String &in) const
 	const int numInputs = VOP::NodeBase::orderedInputs();
 
 	int inIdx;
-	if (in.startsWith("brdf_")) {
+	if (in.startsWith("brdf_") && in != "brdf_count") {
 		int idx;
 		sscanf(in.buffer(), "brdf_%i", &idx);
 		inIdx = numInputs + ((idx - 1) * 2);
