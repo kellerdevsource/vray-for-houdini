@@ -273,12 +273,15 @@ void VRayRendererNode::startRenderRT(fpreal time)
 
 void VRayRendererNode::renderLast()
 {
+#if 0
 	Log::getLog().debug("VRayRendererNode::renderLast()");
 
-	if (initSession(sessionType, numFrames, m_tstart, m_tend)) {
-		const fpreal t = m_exporter.getContext().getTime();
+	const fpreal t = m_exporter.getContext().getTime();
+
+	if (initSession(sessionType, 1, t, t)) {
 		m_exporter.exportFrame(t);
 	}
+#endif
 }
 
 int VRayRendererNode::startRender(int nframes, fpreal tstart, fpreal tend)
