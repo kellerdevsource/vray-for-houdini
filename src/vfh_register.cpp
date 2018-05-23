@@ -24,7 +24,9 @@
 #include "obj/obj_node_def.h"
 #include "sop/sop_node_def.h"
 #include "vop/vop_context.h"
+#ifdef WITH_VRAY_OSL
 #include "vop/vop_node_osl.h"
+#endif
 #include "vop/brdf/vop_brdf_def.h"
 #include "vop/material/vop_mtl_def.h"
 #include "vop/texture/vop_texture_def.h"
@@ -350,7 +352,9 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", Mtl2Sided);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlMaterialID);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlMulti);
+#ifdef WITH_VRAY_OSL
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlOSL);
+#endif
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlOverride);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlRenderStats);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlRoundEdges);
@@ -399,7 +403,9 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInvert);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexInvertFloat);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLayeredMax);
+#ifdef WITH_VRAY_OSL
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexOSL);
+#endif
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLuminance);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexLut);
 	VFH_VOP_ADD_OPERATOR(table, "TEXTURE", TexMaskMax);
