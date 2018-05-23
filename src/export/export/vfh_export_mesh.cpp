@@ -29,6 +29,12 @@ using namespace Hash;
 /// to specify that attribute is unset for a particular face.
 static const float ALMOST_FLT_MAX = FLT_MAX;
 
+/// Returns true if face is at least a tri-face.
+static int validNumVertices(const GA_Size numVertices)
+{
+	return numVertices >= 3;
+}
+
 template <typename T>
 static MHash getVRayValueHash(const VRay::VUtils::PtrArray<T> &idsList)
 {
@@ -642,14 +648,13 @@ VRay::VUtils::IntRefList& MeshExporter::getEdgeVisibility()
 VRay::Plugin MeshExporter::getMaterial()
 {
 	const int numFaces = getNumFaces();
-	if (!numFaces) {
+	if (!numFaces)
 		return VRay::Plugin();
-	}
 
-	const PrimMaterial &topPrimMaterial = objectExporter.getPrimMaterial();
+	const PrimMaterial &meshMaterial = objectExporter.getPrimMaterial();
 
-	OP_Node *objMatNode = topPrimMaterial.matNode
-	                      ? topPrimMaterial.matNode
+	OP_Node *objMatNode = meshMaterial.matNode
+	                      ? meshMaterial.matNode
 	                      : objNode.getMaterialNode(ctx.getTime());
 	VRay::Plugin objectMaterial = pluginExporter.exportMaterial(objMatNode);
 
@@ -661,25 +666,10 @@ VRay::Plugin MeshExporter::getMaterial()
 
 	VRay::VUtils::IntRefList face_mtlIDs(numFaces);
 
-	struct SubMaterial {
-		explicit SubMaterial(VRay::Plugin mtl, int index)
-			: mtl(mtl)
-			, index(index)
-		{}
-
-		VRay::Plugin mtl;
-		int index;
-	};
-
-	typedef VUtils::HashMap<OP_Node*, SubMaterial> OpNodeToSubMaterial;
-
-	OpNodeToSubMaterial matOpNodeToMatPlugin;
+	typedef QMap<OP_Node*, int> MatToIndex;
+	MatToIndex matToMtlId;
 
 	int matIndex = 0;
-
-	if (objectMaterial.isNotEmpty()) {
-		matOpNodeToMatPlugin.insert(objMatNode, SubMaterial(objectMaterial, matIndex));
-	}
 
 	const STY_Styler &geoStyler = objectExporter.getStyler();
 
@@ -693,66 +683,67 @@ VRay::Plugin MeshExporter::getMaterial()
 		const GA_Offset primOffset = prim->getMapOffset();
 
 		// Check if material comes from style sheet
-		PrimMaterial primMaterial;
-		primMaterial.matNode = topPrimMaterial.matNode;
+		PrimMaterial polyMaterial;
+		polyMaterial.matNode = meshMaterial.matNode;
 
-		const STY_Styler &primStyler = primStylers.getStyler(primIndex);
-		appendOverrideValues(primStyler, primMaterial, overrideMerge, true);
+		const STY_Styler &polyStyler = primStylers.getStyler(primIndex);
+		appendOverrideValues(polyStyler, polyMaterial, overrideMerge, true);
 
-		OP_Node *primMtlNode = primMaterial.matNode;
+		OP_Node *polyMatNode = polyMaterial.matNode;
 
 		// If there is no material from stylesheet, try top level material.
-		if (!primMtlNode) {
-			primMtlNode = objMatNode;
+		if (!polyMatNode) {
+			polyMatNode = objMatNode;
 		}
 
 		// If still no material then check material attributes.
-		if (!primMtlNode) {
+		if (!polyMatNode) {
 			if (hasStyleSheetAttr) {
 				const UT_String styleSheet(materialStyleSheetHndl.get(primOffset), true);
-				appendStyleSheet(primMaterial, styleSheet, ctx.getTime(), overrideAppend, true);
+				appendStyleSheet(polyMaterial, styleSheet, ctx.getTime(), overrideAppend, true);
 			}
 			else if (hasMaterialPathAttr) {
 				const UT_String matPath(materialPathHndl.get(primOffset));
-				primMtlNode = getOpNodeFromPath(objNode, matPath, ctx.getTime());
+				polyMatNode = getOpNodeFromPath(objNode, matPath, ctx.getTime());
 			}
 		}
 
-		int faceMtlID;
+		int faceMtlID = 0;
 
-		OpNodeToSubMaterial::iterator opIt = matOpNodeToMatPlugin.find(primMtlNode);
-		if (opIt != matOpNodeToMatPlugin.end()) {
-			faceMtlID = opIt.data().index;
+		MatToIndex::iterator opIt = matToMtlId.find(polyMatNode);
+		if (opIt != matToMtlId.end()) {
+			faceMtlID = opIt.value();
 		}
-		else {
-			faceMtlID = ++matIndex;
-
-			const VRay::Plugin matPlugin = pluginExporter.exportMaterial(primMtlNode);
-
-			matOpNodeToMatPlugin.insert(primMtlNode, SubMaterial(matPlugin, faceMtlID));
+		else if (polyMatNode) {
+			faceMtlID = matIndex;
+			matToMtlId.insert(polyMatNode, faceMtlID);
+			matIndex++;
 		}
 
 		switch (prim->getTypeId().get()) {
 			case GEO_PRIMPOLYSOUP: {
 				const GU_PrimPolySoup *polySoup = static_cast<const GU_PrimPolySoup*>(prim);
-				for (int i = 0; i < polySoup->getPolygonCount(); ++i) {
-					const GA_Size numVertices = std::max(polySoup->getPolygonSize(i) - 2, GA_Size(0));
-					for (int j = 0; j < numVertices; ++j) {
-						face_mtlIDs[faceIndex++] = faceMtlID;
+				for (GEO_PrimPolySoup::PolygonIterator pst(*polySoup); !pst.atEnd(); ++pst) {
+					const GA_Size numVertices = pst.getVertexCount();
+					if (validNumVertices(numVertices)) {
+						for (GA_Size i = 1; i < numVertices - 1; ++i) {
+							face_mtlIDs[faceIndex++] = faceMtlID;
+						}
 					}
 				}
 				break;
 			}
 			case GEO_PRIMPOLY: {
-				const GA_Size numVertices = std::max(prim->getVertexCount() - 2, GA_Size(0));
-				for (int j = 0; j < numVertices; ++j) {
-					face_mtlIDs[faceIndex++] = faceMtlID;
+				const GA_Size numVertices = prim->getVertexCount();
+				if (validNumVertices(numVertices)) {
+					for (GA_Size i = 1; i < numVertices - 1; ++i) {
+						face_mtlIDs[faceIndex++] = faceMtlID;
+					}
 				}
 				break;
 			}
-			default: {
-				break;
-			}
+			default:
+				vassert(false);
 		}
 
 		primIndex++;
@@ -760,18 +751,24 @@ VRay::Plugin MeshExporter::getMaterial()
 
 	UT_ASSERT(faceIndex == numFaces);
 
-	const int numMaterials = matOpNodeToMatPlugin.size();
+	const int numMaterials = matToMtlId.size();
 	if (numMaterials) {
 		ObjectExporter &objExproter = pluginExporter.getObjectExporter();
 
-		VRay::VUtils::ValueRefList materialList(numMaterials);
-		VRay::VUtils::IntRefList idsList(numMaterials);
+		Attrs::QValueList materialList(numMaterials);
+		Attrs::QIntList idsList(numMaterials);
 
-		FOR_IT (OpNodeToSubMaterial, mIt, matOpNodeToMatPlugin) {
-			const SubMaterial &subMat = mIt.data();
+		int mtlListIdx = 0;
+		FOR_CONST_IT (MatToIndex, it, matToMtlId) {
+			OP_Node *mat = it.key();
+			const int mtlId = it.value();
 
-			materialList[mItIdx].setPlugin(subMat.mtl);
-			idsList[mItIdx] = subMat.index;
+			const VRay::Plugin matPlugin = pluginExporter.exportMaterial(mat);
+			if (matPlugin.isNotEmpty()) {
+				materialList[mtlListIdx].setPlugin(matPlugin);
+				idsList[mtlListIdx] = mtlId;
+				mtlListIdx++;
+			}
 		}
 
 		VRay::Plugin texExtMaterialID;
@@ -780,7 +777,7 @@ VRay::Plugin MeshExporter::getMaterial()
 		if (!objExproter.getPluginFromCache(mtlIdListHash, texExtMaterialID)) {
 			Attrs::PluginDesc texExtMaterialIDDesc(SL("TexExtMaterialID|") % QString::number(mtlIdListHash) % SL("@") % objNode.getName().buffer(),
 												   SL("TexExtMaterialID"));
-			texExtMaterialIDDesc.add(Attrs::PluginAttr("ids_list", face_mtlIDs));
+			texExtMaterialIDDesc.add(SL("ids_list"), face_mtlIDs);
 
 			texExtMaterialID = pluginExporter.exportPlugin(texExtMaterialIDDesc);
 
@@ -792,9 +789,9 @@ VRay::Plugin MeshExporter::getMaterial()
 		if (!objExproter.getPluginFromCache(mtlMultiIdHash, objectMaterial)) {
 			Attrs::PluginDesc mtlMulti(SL("MtlMulti|") % QString::number(mtlMultiIdHash) % SL("@") % objNode.getName().buffer(),
 									   SL("MtlMulti"));
-			mtlMulti.add(Attrs::PluginAttr("mtls_list", materialList));
-			mtlMulti.add(Attrs::PluginAttr("ids_list", idsList));
-			mtlMulti.add(Attrs::PluginAttr("mtlid_gen", texExtMaterialID));
+			mtlMulti.add(SL("mtls_list"), materialList);
+			mtlMulti.add(SL("ids_list"), idsList);
+			mtlMulti.add(SL("mtlid_gen"), texExtMaterialID);
 
 			objectMaterial = pluginExporter.exportPlugin(mtlMulti);
 
@@ -896,12 +893,6 @@ static int getNumFaces(const GEOPrimList &primList)
 	}
 
 	return numFaces;
-}
-
-/// Returns true if face is at least a tri-face.
-static int validNumVertices(const GA_Size numVertices)
-{
-	return numVertices >= 3;
 }
 
 #if EXT_MAPCHANNEL_STRING_CHANNEL_SUPPORT
