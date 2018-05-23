@@ -13,7 +13,7 @@ find_package(VRayOSL)
 macro(use_vray_osl)
 	if(NOT VRayOSL_FOUND)
 		message(WARNING "V-Ray OSL NOT found!\n"
-						"Will compile without OSL support:\n")
+						"Will compile without OSL support\n")
 	else()
 		message_array("Using OSL" VRayOSL_INCLUDES)
 
