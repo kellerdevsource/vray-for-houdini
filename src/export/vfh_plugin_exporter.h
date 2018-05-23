@@ -89,9 +89,6 @@ struct SettingsRTEngine
     /// Min time, in milliseconds, between image updates (0=show all frames).
     int min_draw_interval{0};
 
-    /// Flag used to disable some production-only features in interactive mode.
-    int interactive{0};
-
     /// When using C++/CPU (CUDA), the noise pattern of the render is different compared to when using only CUDA GPU devices. If you want to mix CUDA C++/CPU renders and CUDA GPU renders, this should be set to 1. Otherwise, if you are using only CUDA GPU devices, this should be set to 0 (since the render results will be cleaner).
     int enable_cpu_interop{0};
 };

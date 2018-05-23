@@ -101,7 +101,6 @@ static void setSettingsRTEngineFromRopNode(SettingsRTEngine &self, const OP_Node
 	self.gi_depth = Parm::getParmInt(ropNode, "SettingsRTEngine_gi_depth");
 	self.gpu_bundle_size = Parm::getParmInt(ropNode, "SettingsRTEngine_gpu_bundle_size");
 	self.gpu_samples_per_pixel = Parm::getParmInt(ropNode, "SettingsRTEngine_gpu_samples_per_pixel");
-	self.interactive = Parm::getParmInt(ropNode, "SettingsRTEngine_interactive");
 	self.low_gpu_thread_priority = Parm::getParmInt(ropNode, "SettingsRTEngine_low_gpu_thread_priority");
 	self.max_draw_interval = Parm::getParmInt(ropNode, "SettingsRTEngine_max_draw_interval");
 	self.max_render_time = Parm::getParmFloat(ropNode, "SettingsRTEngine_max_render_time");

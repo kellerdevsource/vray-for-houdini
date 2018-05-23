@@ -312,7 +312,6 @@ static void fillSettingsRTEnginePlugin(const SettingsRTEngine &self, VRay::Plugi
 	plugin.setValue("gi_depth", self.gi_depth);
 	plugin.setValue("gpu_bundle_size", self.gpu_bundle_size);
 	plugin.setValue("gpu_samples_per_pixel", self.gpu_samples_per_pixel);
-	plugin.setValue("interactive", self.interactive);
 	plugin.setValue("low_gpu_thread_priority", self.low_gpu_thread_priority);
 	plugin.setValue("max_draw_interval", self.max_draw_interval);
 	plugin.setValue("max_render_time", self.max_render_time);
@@ -335,15 +334,16 @@ void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngin
 	if (!m_vray)
 		return;
 
-	fillSettingsRTEnginePlugin(settingsRTEngine, m_vray->getInstanceOrCreate("SettingsRTEngine"));
-
-	VRay::RendererOptions options(m_vray->getOptions());
-
 	const int isInteractiveMode =
 		mode >= VRay::VRayRenderer::RENDER_MODE_INTERACTIVE &&
 		mode <= VRay::VRayRenderer::RENDER_MODE_INTERACTIVE_CUDA;
 
+	VRay::RendererOptions options(m_vray->getOptions());
+
+	m_vray->setRenderMode(mode);
+
 	if (isInteractiveMode) {
+#pragma message("TODO: Reimplement numThreads")
 		options.numThreads = VUtils::Max(1, VUtils::getNumProcessors() - 1);
 
 		m_vray->setKeepInteractiveRunning(true);
@@ -352,6 +352,7 @@ void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngin
 		m_vray->setInteractiveSampleLevel(INT_MAX);
 	}
 	else {
+#pragma message("TODO: Reimplement numThreads")
 		options.numThreads = 0;
 
 		m_vray->setKeepInteractiveRunning(false);
@@ -360,15 +361,10 @@ void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngin
 		m_vray->setInteractiveSampleLevel(settingsRTEngine.max_sample_level);
 	}
 
-	const VRay::RendererState renderState = m_vray->getState();
+	fillSettingsRTEnginePlugin(settingsRTEngine, m_vray->getInstanceOrCreate("SettingsRTEngine"));
 
+	const VRay::RendererState renderState = m_vray->getState();
 	vassert(renderState >= VRay::IDLE_INITIALIZED && renderState <= VRay::IDLE_DONE);
-#if 1
-#pragma message("TODO: Reimplement without setOptions()")
-#else
-	m_vray->setOptions(options);
-#endif
-	m_vray->setRenderMode(mode);
 
 	const int isCPU =
 		mode == VRay::VRayRenderer::RENDER_MODE_PRODUCTION ||
@@ -506,7 +502,6 @@ void VRayPluginRenderer::reset()
 
 	unbindCallbacks(false);
 
-	m_vray->stop();
 	m_vray->clearScene();
 }
 
