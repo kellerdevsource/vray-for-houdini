@@ -228,12 +228,7 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 			setValueRes = plugin.setValue(paramName, VRay::AColor(p.paramValue.valVector[0], p.paramValue.valVector[1], p.paramValue.valVector[2], p.paramValue.valVector[3]));
 		}
 		else if (p.paramType == AttrTypePlugin) {
-			if (p.paramValue.valPluginOutput.isEmpty()) {
-				setValueRes = plugin.setValue(paramName, p.paramValue.valPlugin);
-			}
-			else {
-				setValueRes = plugin.setValue(paramName, VRay::PluginRef(p.paramValue.valPlugin, qPrintable(p.paramValue.valPluginOutput)));
-			}
+			setValueRes = plugin.setValue(paramName, p.paramValue.valPluginRef);
 		}
 		else if (p.paramType == AttrTypeTransform) {
 			setValueRes = plugin.setValue(paramName, p.paramValue.valTransform);

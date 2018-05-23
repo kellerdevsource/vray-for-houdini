@@ -454,23 +454,6 @@ VRay::Transform VRayExporter::exportTransformVop(VOP_Node &vop_node, ExportConte
 	return Matrix4ToTransform(m4);
 }
 
-/// Sets attribute plugin value to a specific output based on ConnectedPluginInfo.
-/// @param pluginDesc Plugin description to add parameter on.
-/// @param attrName Attribute name.
-/// @param conPluginInfo Connected plugin info.
-static void setPluginValueFromConnectedPluginInfo(Attrs::PluginDesc &pluginDesc, const QString &attrName, const ConnectedPluginInfo &conPluginInfo)
-{
-	if (conPluginInfo.plugin.isEmpty())
-		return;
-
-	if (!conPluginInfo.output.isEmpty()) {
-		pluginDesc.add(Attrs::PluginAttr(attrName, conPluginInfo.plugin, conPluginInfo.output));
-	}
-	else {
-		pluginDesc.add(Attrs::PluginAttr(attrName, conPluginInfo.plugin));
-	}
-}
-
 static int isConnectedToTexTriplanar(VOP_Node &vopNode)
 {
 	OP_NodeList outputs;
@@ -485,16 +468,17 @@ static int isConnectedToTexTriplanar(VOP_Node &vopNode)
 	return false;
 }
 
-void VRayExporter::autoconvertSocket(ConnectedPluginInfo &connectedPluginInfo,
-                                     const Parm::SocketDesc &currSocketInfo,
-                                     const Parm::SocketDesc &fromSocketInfo,
-                                     Attrs::PluginDesc &pluginDesc)
+VRay::PluginRef VRayExporter::autoWrapPluginFromSocket(const VRay::PluginRef &plugin,
+                                                       const Parm::SocketDesc &currSocketInfo,
+                                                       const Parm::SocketDesc &fromSocketInfo,
+                                                       const Attrs::PluginDesc &pluginDesc,
+                                                       int supportPluginOutputs)
 {
 	// Check if we need to auto-convert color / float.
 	QString floatColorConverterType;
 
 	// Check if some specific output was connected.
-	connectedPluginInfo.output = fromSocketInfo.attrName;
+	VRay::PluginRef wrappedPlugin(plugin);
 
 	// If connected plugin type is BRDF, but we expect a Material, wrap it into "MtlSingleBRDF".
 	if (fromSocketInfo.socketType == VOP_TYPE_BSDF &&
@@ -503,33 +487,37 @@ void VRayExporter::autoconvertSocket(ConnectedPluginInfo &connectedPluginInfo,
 		Attrs::PluginDesc brdfToMtl(pluginDesc.pluginName % SL("|") % currSocketInfo.attrName,
 		                            SL("MtlSingleBRDF"));
 
-		brdfToMtl.add(SL("brdf"), connectedPluginInfo.plugin);
+		brdfToMtl.add(SL("brdf"), plugin);
 
-		connectedPluginInfo.plugin = exportPlugin(brdfToMtl);
-		connectedPluginInfo.output.clear();
+		wrappedPlugin = VRay::PluginRef(exportPlugin(brdfToMtl));
 	}
 	else if (fromSocketInfo.socketType == VOP_TYPE_COLOR &&
 	         currSocketInfo.socketType == VOP_TYPE_FLOAT)
 	{
-		// Check if plugin has "out_intensity" output.
-		bool hasOutIntensity = false;
-
-		const Parm::VRayPluginInfo &vrayPlugInfo = *Parm::getVRayPluginInfo(connectedPluginInfo.plugin.getType());
-
-		for (const Parm::SocketDesc &sock : vrayPlugInfo.outputs) {
-			if (sock.attrName == SL("out_intensity")) {
-				hasOutIntensity = true;
-				break;
-			}
-		}
-
-		if (hasOutIntensity) {
-			// Use out_intensity
-			pluginDesc.add(currSocketInfo.attrName, connectedPluginInfo.plugin, SL("out_intensity"));
-		}
-		else {
+		if (!supportPluginOutputs) {
 			// Wrap in TexColorToFloat
 			floatColorConverterType = SL("TexColorToFloat");
+		}
+		else {
+			// Check if plugin has "out_intensity" output.
+			bool hasOutIntensity = false;
+
+			const Parm::VRayPluginInfo &vrayPlugInfo = *Parm::getVRayPluginInfo(plugin.getType());
+
+			for (const Parm::SocketDesc &sock : vrayPlugInfo.outputs) {
+				if (sock.attrName == SL("out_intensity")) {
+					hasOutIntensity = true;
+					break;
+				}
+			}
+
+			if (hasOutIntensity) {
+				wrappedPlugin = VRay::PluginRef(plugin, "out_intensity");
+			}
+			else {
+				// Wrap in TexColorToFloat
+				floatColorConverterType = SL("TexColorToFloat");
+			}
 		}
 	}
 	else if (fromSocketInfo.socketType == VOP_TYPE_FLOAT &&
@@ -541,32 +529,30 @@ void VRayExporter::autoconvertSocket(ConnectedPluginInfo &connectedPluginInfo,
 	if (!floatColorConverterType.isEmpty()) {
 		Attrs::PluginDesc convDesc(pluginDesc.pluginName % SL("@") % floatColorConverterType % SL("|") % currSocketInfo.attrName,
 		                           floatColorConverterType);
-		setPluginValueFromConnectedPluginInfo(convDesc, "input", connectedPluginInfo);
+		convDesc.add(SL("input"), plugin);
 
-		connectedPluginInfo.plugin = exportPlugin(convDesc);
-
-		// We've stored the original connected output in the "input" of the converter.
-		connectedPluginInfo.output.clear();
+		wrappedPlugin = VRay::PluginRef(exportPlugin(convDesc));
 	}
+
+	return wrappedPlugin;
 }
 
-void VRayExporter::convertInputPlugin(VRay::Plugin &inputPlugin, Attrs::PluginDesc &pluginDesc, OP_Node* node, VOP_Type socketType, const QString &socketName)
+VRay::PluginRef VRayExporter::autoWrapPluginFromSocket(const VRay::PluginRef &plugin,
+                                                       const Attrs::PluginDesc &pluginDesc,
+                                                       OP_Node &node,
+                                                       VOP_Type curSockType,
+                                                       const QString &curSocketAttrName,
+                                                       int supportPluginOutputs)
 {
-	// Output type of connected plugin.
-	const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(node, socketName);
+	const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(&node, curSocketAttrName);
 	if (!fromSocketInfo)
-		return;
+		return plugin;
 
-	// Socket input type.
 	Parm::SocketDesc curSockInfo;
-	curSockInfo.socketType = socketType;
-	curSockInfo.attrName = socketName;
+	curSockInfo.socketType = curSockType;
+	curSockInfo.attrName = curSocketAttrName;
 
-	// Wrap the socket in appropriate plugin.
-	ConnectedPluginInfo inputPlugInfo(inputPlugin);
-	autoconvertSocket(inputPlugInfo, curSockInfo, *fromSocketInfo, pluginDesc);
-
-	inputPlugin = inputPlugInfo.plugin;
+	return autoWrapPluginFromSocket(plugin, curSockInfo, *fromSocketInfo, pluginDesc, supportPluginOutputs);
 }
 
 void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode, ExportContext *parentContext)
@@ -598,7 +584,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 
 		const UT_String &sockName = curSockInfo.socketLabel;
 
-		VRay::Plugin conPlugin = exportConnectedVop(&vopNode, sockName, parentContext);
+		VRay::PluginRef conPlugin = exportConnectedVop(&vopNode, sockName, parentContext);
 		if (conPlugin.isEmpty()) {
 			if (!(attrDesc.flags & Parm::attrFlagLinkedOnly) &&
 				vrayNode.getVRayPluginType() == VRayPluginType::TEXTURE  &&
@@ -620,17 +606,17 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 					if (inpvop->getOperator()->getName() == "makexform") {
 						switch (curSockInfo.attrType) {
 							case Parm::eMatrix: {
-								const bool shouldRotate = pluginDesc.pluginID == "UVWGenPlanar" ||
-								                          pluginDesc.pluginID == "UVWGenProjection" ||
-								                          pluginDesc.pluginID == "UVWGenObject" ||
-								                          pluginDesc.pluginID == "UVWGenEnvironment";
+								const bool shouldRotate = pluginDesc.pluginID == SL("UVWGenPlanar") ||
+								                          pluginDesc.pluginID == SL("UVWGenProjection") ||
+								                          pluginDesc.pluginID == SL("UVWGenObject") ||
+								                          pluginDesc.pluginID == SL("UVWGenEnvironment");
 
 								const VRay::Transform &transform = exportTransformVop(*inpvop, parentContext, shouldRotate);
-								pluginDesc.add(Attrs::PluginAttr(attrName, transform.matrix));
+								pluginDesc.add(attrName, transform.matrix);
 								break;
 							}
 							case Parm::eTransform: {
-								pluginDesc.add(Attrs::PluginAttr(attrName, exportTransformVop(*inpvop, parentContext)));
+								pluginDesc.add(attrName, exportTransformVop(*inpvop, parentContext));
 								break;
 							}
 							default:
@@ -642,12 +628,10 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 		}
 
 		if (conPlugin.isNotEmpty()) {
-			// Autoconvert socket types.
-			ConnectedPluginInfo conPluginInfo(conPlugin);
-
 			const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(&vopNode, attrName);
 			if (fromSocketInfo) {
-				autoconvertSocket(conPluginInfo, curSockInfo, *fromSocketInfo, pluginDesc);
+				// Autoconvert socket types.
+				conPlugin = autoWrapPluginFromSocket(conPlugin, curSockInfo, *fromSocketInfo, pluginDesc);
 			}
 
 			// Set "scene_name" for Cryptomatte.
@@ -655,7 +639,7 @@ void VRayExporter::setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDe
 				conPlugin.setValue("scene_name", getSceneName(vopNode));
 			}
 
-			setPluginValueFromConnectedPluginInfo(pluginDesc, attrName, conPluginInfo);
+			pluginDesc.add(attrName, conPlugin);
 		}
 	}
 }

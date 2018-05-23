@@ -18,20 +18,59 @@
 namespace VRayForHoudini {
 namespace Attrs {
 
-typedef QVector<VRay::VUtils::Value> QValueList;
-typedef QVector<float> QFloatList;
-typedef QVector<int> QIntList;
-typedef QVector<VRay::Color> QColorList;
-
+/// Same as QVector, but the constructor call
+/// QVector::reserve(@a reserveSize) making it possible to use append()
+/// instead of indexed assignment.
 template <typename ValueType>
-VRay::VUtils::PtrArray<ValueType> toRefList(const std::vector<ValueType> &vrayVector)
+struct QReserveVector
+	: QVector<ValueType>
+{
+	QReserveVector() {}
+
+	explicit QReserveVector(int reserveSize) {
+		QVector<ValueType>::reserve(reserveSize);
+	}
+
+	explicit QReserveVector(int reserveSize, const ValueType &value)
+		: QVector<ValueType>(reserveSize, value)
+	{}
+};
+
+typedef QReserveVector<VRay::VUtils::Value> QValueList;
+typedef QReserveVector<float> QFloatList;
+typedef QReserveVector<int> QIntList;
+typedef QReserveVector<VRay::Color> QColorList;
+
+/// Converts QVector<ValueType> to VUtils::PtrArray<ValueType>.
+/// @tparam ValueType Array item value type.
+/// @param qList QVector<ValueType> array.
+/// @returns VUtils::PtrArray<ValueType>.
+template <typename ValueType>
+VRay::VUtils::PtrArray<ValueType> toRefList(const QVector<ValueType> &qList)
+{
+	VRay::VUtils::PtrArray<ValueType> refList;
+	if (qList.isEmpty())
+		return refList;
+	refList = VRay::VUtils::PtrArray<ValueType>(qList.size());
+	for (int i = 0; i < qList.size(); ++i) {
+		refList[i] = qList[i];
+	}
+	return refList;
+}
+
+/// Converts std::vector<ValueType> to VUtils::PtrArray<ValueType>.
+/// @tparam ValueType Array item value type.
+/// @param stdList std::vector<ValueType> array.
+/// @returns VUtils::PtrArray<ValueType>.
+template <typename ValueType>
+VRay::VUtils::PtrArray<ValueType> toRefList(const std::vector<ValueType> &stdList)
 {
 	VRay::VUtils::PtrArray<ValueType> vutilsList;
-	if (!vrayVector.size())
+	if (!stdList.size())
 		return vutilsList;
-	vutilsList = VRay::VUtils::PtrArray<ValueType>(vrayVector.size());
-	for (int i = 0; i < vrayVector.size(); ++i) {
-		vutilsList[i] = vrayVector[i];
+	vutilsList = VRay::VUtils::PtrArray<ValueType>(stdList.size());
+	for (int i = 0; i < stdList.size(); ++i) {
+		vutilsList[i] = stdList[i];
 	}
 	return vutilsList;
 }
@@ -69,6 +108,7 @@ struct VfhAttrValue
 	explicit VfhAttrValue(float value);
 	explicit VfhAttrValue(fpreal value);
 	explicit VfhAttrValue(const QString &value);
+	explicit VfhAttrValue(const VRay::PluginRef &value);
 	explicit VfhAttrValue(const VRay::Plugin &value, const QString &output = SL(""));
 	explicit VfhAttrValue(const VRay::Vector &value);
 	explicit VfhAttrValue(const VRay::Transform &value);
@@ -83,8 +123,7 @@ struct VfhAttrValue
 	int valInt = 0;
 	fpreal valVector[4] = {0.0f, 0.0f, 0.0f, 0.0f};
 	QString valString;
-	VRay::Plugin valPlugin;
-	QString valPluginOutput;
+	VRay::PluginRef valPluginRef;
 	VRay::Transform valTransform{1};
 	VRay::VUtils::IntRefList valRawListInt;
 	VRay::VUtils::FloatRefList valRawListFloat;
@@ -169,7 +208,7 @@ struct PluginDesc
 	void add(const QString &attrName, const char *attrValue);
 	void add(const QString &attrName, const QString &attrValue);
 	void add(const QString &attrName, const VRay::Matrix &attrValue);
-	void add(const QString &attrName, const VRay::Plugin &attrValue);
+	void add(const QString &attrName, const VRay::PluginRef &attrValue);
 	void add(const QString &attrName, const VRay::Plugin &attrValue, const QString &output);
 	void add(const QString &attrName, const VRay::Transform &attrValue);
 	void add(const QString &attrName, const VRay::Vector &attrValue);

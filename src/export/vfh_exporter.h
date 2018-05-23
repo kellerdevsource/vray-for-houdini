@@ -551,19 +551,30 @@ public:
 	void setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const QString &prefix="", bool remapInterp=false);
 
 	/// Converts different socket types
-	/// @param[out] conPluginInfo - generated connection plugin info
-	/// @param[in] curSockInfo - the socket 
-	/// @param[in] fromSocketInfo - type of the connection
-	/// @param[in] pluginDesc - the plugin description
-	void autoconvertSocket(ConnectedPluginInfo &conPluginInfo, const Parm::SocketDesc &curSockInfo, const Parm::SocketDesc &fromSocketInfo, Attrs::PluginDesc &pluginDesc);
+	/// @param plugin Plugin to wrap (convert).
+	/// @param currSocketInfo Currently processed socket.
+	/// @param fromSocketInfo Socket plugin is coming from.
+	/// @param pluginDesc The plugin description.
+	/// @param supportPluginOutputs True if we could reuse existing outputs (e.g. out_intensity).
+	VRay::PluginRef autoWrapPluginFromSocket(const VRay::PluginRef &plugin,
+	                                         const Parm::SocketDesc &currSocketInfo,
+	                                         const Parm::SocketDesc &fromSocketInfo,
+	                                         const Attrs::PluginDesc &pluginDesc,
+	                                         int supportPluginOutputs = true);
 
 	/// Converts the input plugin to plugin of socket type if needed
-	/// @param[out] inputPlugin - the plugin connected to the socket
-	/// @param[in] pluginDesc - description of the current exported plugin
-	/// @param[in] node - current node
-	/// @param[in] socketType - socket type
-	/// @param[in] socketName - socket name
-	void convertInputPlugin(VRay::Plugin& inputPlugin, Attrs::PluginDesc &pluginDesc, OP_Node* node, VOP_Type socketType, const QString &socketName);
+	/// @param plugin - the plugin connected to the socket
+	/// @param pluginDesc - description of the current exported plugin
+	/// @param node - current node
+	/// @param socketType - socket type
+	/// @param socketName - socket name
+	/// @param supportPluginOutputs True if we could reuse existing outputs (e.g. out_intensity).
+	VRay::PluginRef autoWrapPluginFromSocket(const VRay::PluginRef &plugin,
+	                                         const Attrs::PluginDesc &pluginDesc,
+	                                         OP_Node &node,
+	                                         VOP_Type socketType,
+	                                         const QString &socketName,
+	                                         int supportPluginOutputs = true);
 
 	/// Helper function to fill in plugin description attributes from VOP node connected inputs
 	/// @param pluginDesc[out] - the plugin description

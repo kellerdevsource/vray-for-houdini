@@ -102,13 +102,24 @@ struct RampHandler
 
 /// Singe frame data for either color or curve ramp
 struct RampData {
-	QVector<float>                          m_xS;      ///< contains all the keys of the ramp
-	QVector<float>                          m_yS;      ///< if this is curve, there are same nuber of values as m_xS, else there are 3 times more for rgb color
-	QVector<AurRamps::MultiCurvePointType>  m_interps; ///< interpolation types for each point
-	AurRamps::RampType                          m_type;    ///< the type of the data, either Ramp or Color but not both
-
 	/// Constructs default data with None type
-	RampData(): m_type(AurRamps::RampType_None) {};
+	RampData()
+		: m_type(RampType_None)
+	{}
+
+	/// Contains all the keys of the ramp.
+	Attrs::QFloatList m_xS;
+
+	/// If this is curve, there are same nuber
+	/// of values as m_xS, else there are 3 times
+	/// more for rgb color.
+	Attrs::QFloatList m_yS;
+
+	/// Interpolation types for each point.
+	QVector<MultiCurvePointType> m_interps;
+
+	/// The type of the data, either Ramp or Color, but not both.
+	RampType m_type;
 };
 
 /// RampContext is holder for one instance of ramp in the UI

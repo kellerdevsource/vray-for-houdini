@@ -14,22 +14,6 @@
 using namespace VRayForHoudini;
 using namespace Attrs;
 
-template <typename ValueType>
-VRay::VUtils::PtrArray<ValueType> toRefList(const QVector<ValueType> &qList)
-{
-	VRay::VUtils::PtrArray<ValueType> refList;
-	if (qList.isEmpty())
-		return refList;
-
-	refList = VRay::VUtils::PtrArray<ValueType>(qList.size());
-
-	for (int i = 0; i < qList.size(); ++i) {
-		refList[i] = qList[i];
-	}
-
-	return refList;
-}
-
 VfhAttrValue::VfhAttrValue()
 {}
 
@@ -53,9 +37,12 @@ VfhAttrValue::VfhAttrValue(const QString &value)
 	: valString(value)
 {}
 
+VfhAttrValue::VfhAttrValue(const VRay::PluginRef &value)
+	: valPluginRef(value)
+{}
+
 VfhAttrValue::VfhAttrValue(const VRay::Plugin &value, const QString &output)
-	: valPlugin(value)
-	, valPluginOutput(output)
+	: valPluginRef(value, qPrintable(output))
 {}
 
 VfhAttrValue::VfhAttrValue(const VRay::Vector &value)
@@ -334,7 +321,7 @@ void Attrs::PluginDesc::add(const QString &attrName, const VRay::Matrix &attrVal
 	add(PluginAttr(attrName, attrValue));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const VRay::Plugin &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const VRay::PluginRef &attrValue)
 {
 	add(PluginAttr(attrName, attrValue));
 }
