@@ -109,6 +109,7 @@ public:
 
 static const char intrAlembicFilename[] = "abcfilename";
 static const char intrAlembicObjectPath[] = "abcobjectpath";
+static const char intrAlembicUseTransform[] = "abcusetransform";
 static const char intrPackedPrimName[] = "packedprimname";
 static const char intrPackedPrimitiveName[] = "packedprimitivename";
 static const char intrPackedLocalTransform[] = "packedlocaltransform";
@@ -789,28 +790,18 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 
 		// Current level transform and velocity.
 		if (isPackedPrim) {
-			int usePackedTm = true;
-			if (primTypeID == primPackedTypeIDs.alembicRef) {
-				int abcUseTransform = true;
-				if (prim.getIntrinsic(prim.findIntrinsic("abcusetransform"), abcUseTransform)) {
-					usePackedTm = abcUseTransform;
-				}
+			const GU_PrimPacked &primPacked = static_cast<const GU_PrimPacked&>(prim);
+
+			UT_Matrix4D tm4;
+			if (isVolumePrim) {
+				// XXX: Check why local.
+				primPacked.getLocalTransform4(tm4);
+			}
+			else {
+				primPacked.getFullTransform4(tm4);
 			}
 
-			if (usePackedTm) {
-				const GU_PrimPacked &primPacked = static_cast<const GU_PrimPacked&>(prim);
-
-				UT_Matrix4D tm4;
-				if (isVolumePrim) {
-					// XXX: Check why local.
-					primPacked.getLocalTransform4(tm4);
-				}
-				else {
-					primPacked.getFullTransform4(tm4);
-				}
-
-				primCtx.tm = utMatrixToVRayTransform(tm4);
-			}
+			primCtx.tm = utMatrixToVRayTransform(tm4);
 
 			// Point attributes for packed instancing.
 			if (numPoints == numPrims) {
@@ -1460,9 +1451,29 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 	{
 		UT_String objName;
 		prim.getIntrinsic(prim.findIntrinsic(intrAlembicObjectPath), objName);
+
 		UT_String fileName;
 		prim.getIntrinsic(prim.findIntrinsic(intrAlembicFilename), fileName);
-		return objName.hash() ^ fileName.hash();
+
+		int isWorldTransform = true;
+		prim.getIntrinsic(prim.findIntrinsic(intrAlembicUseTransform), isWorldTransform);
+
+#pragma pack(push, 1)
+		struct AlembicPrimKey {
+			uint32 fileName;
+			uint32 objName;
+			int isWorld;
+		} alembicPrimKey = {
+			fileName.hash(),
+			objName.hash(),
+			isWorldTransform
+		};
+#pragma pack(pop)
+
+		int alembicPrimHash = 0;
+		Hash::MurmurHash3_x86_32(&alembicPrimKey, sizeof(AlembicPrimKey), 42, &alembicPrimHash);
+
+		return alembicPrimHash;
 	}
 	if (primTypeID == primPackedTypeIDs.pgYetiRef) {
 		const VRayPgYetiRef *pgYetiRef =
@@ -1544,6 +1555,9 @@ VRay::Plugin ObjectExporter::exportAlembicRef(OBJ_Node &objNode, const GU_PrimPa
 	UT_String objname;
 	prim.getIntrinsic(prim.findIntrinsic(intrAlembicObjectPath), objname);
 
+	int isWorldTransform = true;
+	prim.getIntrinsic(prim.findIntrinsic(intrAlembicUseTransform), isWorldTransform);
+
 	VRay::VUtils::CharStringRefList visibilityList(1);
 	visibilityList[0] = objname;
 
@@ -1552,12 +1566,13 @@ VRay::Plugin ObjectExporter::exportAlembicRef(OBJ_Node &objNode, const GU_PrimPa
 	Attrs::PluginDesc pluginDesc(SL("Alembic|") % QString::number(key),
 								 SL("GeomMeshFile"));
 
-	pluginDesc.add(Attrs::PluginAttr("use_full_names", true));
-	pluginDesc.add(Attrs::PluginAttr("visibility_lists_type", 1));
-	pluginDesc.add(Attrs::PluginAttr("visibility_list_names", visibilityList));
-	pluginDesc.add(Attrs::PluginAttr("file", filename));
-	pluginDesc.add(Attrs::PluginAttr("use_alembic_offset", true));
-	pluginDesc.add(Attrs::PluginAttr("particle_width_multiplier", 0.05f));
+	pluginDesc.add(SL("file"), filename);
+	pluginDesc.add(SL("visibility_lists_type"), 1);
+	pluginDesc.add(SL("visibility_list_names"), visibilityList);
+	pluginDesc.add(SL("particle_width_multiplier"), 0.05f);
+	pluginDesc.add(SL("use_alembic_offset"), true);
+	pluginDesc.add(SL("use_alembic_transform"), !isWorldTransform);
+	pluginDesc.add(SL("use_full_names"), true);
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
