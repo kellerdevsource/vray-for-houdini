@@ -153,7 +153,6 @@ set(SOURCES
 	vop/texture/vfh_TexMulti.cpp
 	vop/vop_context.cpp
 	vop/vop_node_base.cpp
-	vop/vop_node_osl.cpp
 )
 
 set(HEADERS
@@ -202,8 +201,12 @@ set(HEADERS
 	vop/uvwgen/vop_uvwgen_def.h
 	vop/vop_context.h
 	vop/vop_node_base.h
-	vop/vop_node_osl.h
 )
+
+if (VRayOSL_FOUND)
+	list(APPEND SOURCES vop/vop_node_osl.cpp)
+	list(APPEND HEADERS vop/vop_node_osl.h)
+endif()
 
 if (WIN32)
 	function(GroupSources curdir)
