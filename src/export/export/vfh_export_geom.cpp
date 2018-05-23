@@ -1322,8 +1322,8 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 	// This will set/update material/override.
 #pragma pack(push, 1)
 	struct MeshOverridesKey {
-		Hash::MHash meshKey = 0;
-		Hash::MHash styleHash = 0;
+		Hash::MHash meshKey;
+		Hash::MHash styleHash;
 	} meshOverridesKey = {
 		meshKey, styleHash
 	};
