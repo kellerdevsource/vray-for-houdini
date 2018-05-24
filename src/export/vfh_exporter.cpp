@@ -397,6 +397,7 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc,
 			attr.paramValue.valVector[1] = opNode.evalFloat(parmName, 1, t);
 			attr.paramValue.valVector[2] = opNode.evalFloat(parmName, 2, t);
 			if (attrDesc.value.type != Parm::eColor) {
+				attr.paramType = Attrs::AttrTypeAColor;
 				attr.paramValue.valVector[3] = opNode.evalFloat(parmName, 3, t);
 			}
 		}
@@ -786,7 +787,7 @@ bool VRayExporter::setAttrsFromUTOptions(Attrs::PluginDesc &pluginDesc, const UT
 		else if (attrDesc.value.type == Parm::eAColor ||
 		         attrDesc.value.type == Parm::eTextureColor)
 		{
-			attr.paramType = Attrs::AttrTypeColor;
+			attr.paramType = Attrs::AttrTypeAColor;
 
 			const UT_Vector4D &valVector = options.getOptionV4(attrNameChar);
 
