@@ -124,7 +124,7 @@ OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &p
 	for (int i = 1; i <= texCount; ++i) {
 		const QString texSockName(SL("tex_%1").arg(i));
 
-		OP_Node *texNode = VRayExporter::getConnectedNode(this, qPrintable(texSockName));
+		OP_Node *texNode = VRayExporter::getConnectedNode(this, texSockName);
 		if (!texNode) { 
 			Log::getLog().warning("Node \"%s\": Texture node is not connected to \"%s\", ignoring...",
 					   getName().buffer(), qPrintable(texSockName));
