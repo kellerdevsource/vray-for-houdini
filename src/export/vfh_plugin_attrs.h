@@ -78,9 +78,8 @@ VRay::VUtils::PtrArray<ValueType> toRefList(const std::vector<ValueType> &stdLis
 /// Attribute value types.
 enum VfhAttrType
 {
+	AttrTypeIgnore = -1, ///< To signal we should ignore this parameter.
 	AttrTypeUnknown = 0,
-	AttrTypeIgnore,
-	/// To signal we should ignore this parameter.
 	AttrTypeInt,
 	AttrTypeFloat,
 	AttrTypeVector,
@@ -103,22 +102,22 @@ enum VfhAttrType
 struct VfhAttrValue
 {
 	VfhAttrValue();
-	VfhAttrValue(float a, float b, float c, float d);
-	explicit VfhAttrValue(int value);
-	explicit VfhAttrValue(float value);
-	explicit VfhAttrValue(fpreal value);
-	explicit VfhAttrValue(const QString &value);
-	explicit VfhAttrValue(const VRay::PluginRef &value);
-	explicit VfhAttrValue(const VRay::Plugin &value, const QString &output = SL(""));
-	explicit VfhAttrValue(const VRay::Vector &value);
-	explicit VfhAttrValue(const VRay::Transform &value);
-	explicit VfhAttrValue(const VRay::Matrix &value);
-	explicit VfhAttrValue(const VRay::VUtils::IntRefList &value);
-	explicit VfhAttrValue(const VRay::VUtils::FloatRefList &value);
-	explicit VfhAttrValue(const VRay::VUtils::VectorRefList &value);
-	explicit VfhAttrValue(const VRay::VUtils::ColorRefList &value);
-	explicit VfhAttrValue(const VRay::VUtils::CharStringRefList &value);
-	explicit VfhAttrValue(const VRay::VUtils::ValueRefList &value, int isAnimatedGenericList = false);
+	VfhAttrValue(float a, float b, float c, float d, int isAnimated = false);
+	explicit VfhAttrValue(int value, int isAnimated = false);
+	explicit VfhAttrValue(float value, int isAnimated = false);
+	explicit VfhAttrValue(fpreal value, int isAnimated = false);
+	explicit VfhAttrValue(const QString &value, int isAnimated = false);
+	explicit VfhAttrValue(const VRay::PluginRef &value, int isAnimated = false);
+	explicit VfhAttrValue(const VRay::Plugin &value, const QString &output = SL(""), int isAnimated = false);
+	explicit VfhAttrValue(const VRay::Vector &value, int isAnimated = false);
+	explicit VfhAttrValue(const VRay::Transform &value, int isAnimated = false);
+	explicit VfhAttrValue(const VRay::Matrix &value, int isAnimated = false);
+	explicit VfhAttrValue(const VRay::VUtils::IntRefList &value, int isAnimated = false);
+	explicit VfhAttrValue(const VRay::VUtils::FloatRefList &value, int isAnimated = false);
+	explicit VfhAttrValue(const VRay::VUtils::VectorRefList &value, int isAnimated = false);
+	explicit VfhAttrValue(const VRay::VUtils::ColorRefList &value, int isAnimated = false);
+	explicit VfhAttrValue(const VRay::VUtils::CharStringRefList &value, int isAnimated = false);
+	explicit VfhAttrValue(const VRay::VUtils::ValueRefList &value, int isAnimated = false);
 
 	int valInt = 0;
 	fpreal valVector[4] = {0.0f, 0.0f, 0.0f, 0.0f};
@@ -132,8 +131,8 @@ struct VfhAttrValue
 	VRay::VUtils::CharStringRefList valRawListCharString;
 	VRay::VUtils::ValueRefList valRawListValue;
 
-	/// Generic list value (@a valRawListValue) need key-frames.
-	int isAnimatedGenericList = false;
+	/// If parameter value is animated.
+	int isAnimated = false;
 };
 
 /// Plugin attribute.
@@ -143,35 +142,34 @@ struct PluginAttr
 	explicit PluginAttr(const QString &attrName);
 	PluginAttr(const QString &attrName, VfhAttrType attrType);
 
-	PluginAttr(const QString &attrName, bool attrValue);
-	PluginAttr(const QString &attrName, const char *attrValue);
-	PluginAttr(const QString &attrName, const QString &attrValue);
-	PluginAttr(const QString &attrName, const VRay::Matrix &attrValue);
+	PluginAttr(const QString &attrName, bool attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const char *attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const QString &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const VRay::Matrix &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const VRay::Transform &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const VRay::Vector &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const QIntList &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const QFloatList &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const QColorList &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const QValueList &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const VRay::VUtils::CharStringRefList &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const VRay::VUtils::ColorRefList &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const VRay::VUtils::FloatRefList &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const VRay::VUtils::IntRefList &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const VRay::VUtils::VectorRefList &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const VRay::VUtils::ValueRefList &value, int isAnimated = false);
+	PluginAttr(const QString &attrName, exint attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, float attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, float r, float g, float b, int isAnimated = false);
+	PluginAttr(const QString &attrName, float r, float g, float b, float a, int isAnimated = false);
+	PluginAttr(const QString &attrName, fpreal attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, int attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const VRay::PluginRef &attrValue);
 	PluginAttr(const QString &attrName, const VRay::Plugin &attrValue);
 	PluginAttr(const QString &attrName, const VRay::Plugin &attrValue, const QString &output);
-	PluginAttr(const QString &attrName, const VRay::Transform &attrValue);
-	PluginAttr(const QString &attrName, const VRay::Vector &attrValue);
-	PluginAttr(const QString &attrName, const QIntList &attrValue);
-	PluginAttr(const QString &attrName, const QFloatList &attrValue);
-	PluginAttr(const QString &attrName, const QColorList &attrValue);
-	PluginAttr(const QString &attrName, const QValueList &attrValue);
-	PluginAttr(const QString &attrName, const VRay::VUtils::CharStringRefList &attrValue);
-	PluginAttr(const QString &attrName, const VRay::VUtils::ColorRefList &attrValue);
-	PluginAttr(const QString &attrName, const VRay::VUtils::FloatRefList &attrValue);
-	PluginAttr(const QString &attrName, const VRay::VUtils::IntRefList &attrValue);
-	PluginAttr(const QString &attrName, const VRay::VUtils::VectorRefList &attrValue);
-	PluginAttr(const QString &attrName, exint attrValue);
-	PluginAttr(const QString &attrName, float attrValue);
-	PluginAttr(const QString &attrName, float r, float g, float b);
-	PluginAttr(const QString &attrName, float r, float g, float b, float a);
-	PluginAttr(const QString &attrName, fpreal attrValue);
-	PluginAttr(const QString &attrName, int attrValue);
 
-	/// Override constructor for ValueRefList parameter.
-	/// @param attrName Plugin parameter name.
-	/// @param value Plugin parameter value as ValueRefList.
-	/// @param isAnimatedGenericList ValueRefList should create key-frames.
-	PluginAttr(const QString &attrName, const VRay::VUtils::ValueRefList &value, int isAnimatedGenericList = false);
+	/// Mark parameter value as animated;
+	void setAnimated(int value);
 
 	/// Get attribute type as string
 	QString getTypeAsString() const;
@@ -204,30 +202,32 @@ struct PluginDesc
 	/// @param attr attribute
 	void add(const PluginAttr &attr);
 
-	void add(const QString &attrName, bool attrValue);
-	void add(const QString &attrName, const char *attrValue);
-	void add(const QString &attrName, const QString &attrValue);
-	void add(const QString &attrName, const VRay::Matrix &attrValue);
+	void add(const QString &attrName, bool attrValue, int isAnimated = false);
+	void add(const QString &attrName, const char *attrValue, int isAnimated = false);
+	void add(const QString &attrName, const QString &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const VRay::Matrix &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const VRay::Transform &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const VRay::Vector &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const QIntList &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const QFloatList &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const QColorList &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const QValueList &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const VRay::VUtils::CharStringRefList &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const VRay::VUtils::ColorRefList &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const VRay::VUtils::FloatRefList &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const VRay::VUtils::IntRefList &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const VRay::VUtils::ValueRefList &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const VRay::VUtils::VectorRefList &attrValue, int isAnimated = false);
+	void add(const QString &attrName, exint attrValue, int isAnimated = false);
+	void add(const QString &attrName, float attrValue, int isAnimated = false);
+	void add(const QString &attrName, VfhAttrType attrType, float r, float g, float b, int isAnimated = false);
+	void add(const QString &attrName, float r, float g, float b, int isAnimated = false);
+	void add(const QString &attrName, float r, float g, float b, float a, int isAnimated = false);
+	void add(const QString &attrName, fpreal attrValue, int isAnimated = false);
+	void add(const QString &attrName, int attrValue, int isAnimated = false);
 	void add(const QString &attrName, const VRay::PluginRef &attrValue);
+	void add(const QString &attrName, const VRay::Plugin &attrValue);
 	void add(const QString &attrName, const VRay::Plugin &attrValue, const QString &output);
-	void add(const QString &attrName, const VRay::Transform &attrValue);
-	void add(const QString &attrName, const VRay::Vector &attrValue);
-	void add(const QString &attrName, const QIntList &attrValue);
-	void add(const QString &attrName, const QFloatList &attrValue);
-	void add(const QString &attrName, const QColorList &attrValue);
-	void add(const QString &attrName, const QValueList &attrValue);
-	void add(const QString &attrName, const VRay::VUtils::CharStringRefList &attrValue);
-	void add(const QString &attrName, const VRay::VUtils::ColorRefList &attrValue);
-	void add(const QString &attrName, const VRay::VUtils::FloatRefList &attrValue);
-	void add(const QString &attrName, const VRay::VUtils::IntRefList &attrValue);
-	void add(const QString &attrName, const VRay::VUtils::ValueRefList &attrValue, int isAnimatedGenericList = false);
-	void add(const QString &attrName, const VRay::VUtils::VectorRefList &attrValue);
-	void add(const QString &attrName, exint attrValue);
-	void add(const QString &attrName, float attrValue);
-	void add(const QString &attrName, float r, float g, float b);
-	void add(const QString &attrName, float r, float g, float b, float a);
-	void add(const QString &attrName, fpreal attrValue);
-	void add(const QString &attrName, int attrValue);
 
 	/// Remove attrubute.
 	/// @param name Attribute name.

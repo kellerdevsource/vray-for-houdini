@@ -210,6 +210,10 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 
 		const std::string paramName(p.paramName.toStdString());
 		
+		const int isValueAnimated = isAnimation && p.paramValue.isAnimated;
+
+		m_vray->useAnimatedValues(isValueAnimated);
+
 		int setValueRes = true;
 
 		if (p.paramType == AttrTypeInt) {
@@ -255,16 +259,7 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 			setValueRes = plugin.setValue(paramName, p.paramValue.valRawListCharString);
 		}
 		else if (p.paramType == AttrTypeRawListValue) {
-			const bool curAnimValue = m_vray->getUseAnimatedValuesState();
-
-			// Force animated generic list key-frames.
-			if (curAnimValue && !p.paramValue.isAnimatedGenericList) {
-				m_vray->useAnimatedValues(false);
-			}
-
 			setValueRes = plugin.setValue(paramName, p.paramValue.valRawListValue);
-
-			m_vray->useAnimatedValues(curAnimValue);
 		}
 
 		if (!setValueRes) {
@@ -274,6 +269,8 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 				                    qPrintable(pluginDesc.pluginID), paramName.c_str(), err.toString());
 			}
 		}
+
+		m_vray->useAnimatedValues(false);
 	}
 }
 
@@ -463,9 +460,7 @@ bool VRayPluginRenderer::isRendering() const
 
 void VRayPluginRenderer::setAnimation(bool on)
 {
-	if (m_vray) {
-		m_vray->useAnimatedValues(on);
-	}
+	isAnimation = on;
 }
 
 

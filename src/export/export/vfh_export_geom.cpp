@@ -1197,12 +1197,9 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 
 	Attrs::PluginDesc instancer2(SL("Instancer@") % objNode.getName().buffer(),
 	                             SL("Instancer2"));
-
-	const int needKeyFrames = pluginExporter.isAnimation() || pluginExporter.needVelocity();
-
-	instancer2.add(PluginAttr("instances", instances, needKeyFrames));
-	instancer2.add(PluginAttr("use_additional_params", true));
-	instancer2.add(PluginAttr("use_time_instancing", true));
+	instancer2.add(SL("instances"), instances, true);
+	instancer2.add(SL("use_additional_params"), true);
+	instancer2.add(SL("use_time_instancing"), true);
 
 	return pluginExporter.exportPlugin(instancer2);
 }

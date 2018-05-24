@@ -17,69 +17,84 @@ using namespace Attrs;
 VfhAttrValue::VfhAttrValue()
 {}
 
-VfhAttrValue::VfhAttrValue(int value)
+VfhAttrValue::VfhAttrValue(int value, int isAnimated)
 	: valInt(value)
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(float value)
+VfhAttrValue::VfhAttrValue(float value, int isAnimated)
 	: valVector{value, 0.0f, 0.0f, 0.0f}
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(fpreal value)
+VfhAttrValue::VfhAttrValue(fpreal value, int isAnimated)
 	: valVector{value, 0.0f, 0.0f, 0.0f}
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(float a, float b, float c, float d)
+VfhAttrValue::VfhAttrValue(float a, float b, float c, float d, int isAnimated)
 	: valVector{a, b, c, d}
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(const QString &value)
+VfhAttrValue::VfhAttrValue(const QString &value, int isAnimated)
 	: valString(value)
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(const VRay::PluginRef &value)
+VfhAttrValue::VfhAttrValue(const VRay::PluginRef &value, int isAnimated)
 	: valPluginRef(value)
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(const VRay::Plugin &value, const QString &output)
+VfhAttrValue::VfhAttrValue(const VRay::Plugin &value, const QString &output, int isAnimated)
 	: valPluginRef(value, qPrintable(output))
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(const VRay::Vector &value)
+VfhAttrValue::VfhAttrValue(const VRay::Vector &value, int isAnimated)
 	: valVector{value.x, value.y, value.z, 0.0f}
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(const VRay::Transform &value)
+VfhAttrValue::VfhAttrValue(const VRay::Transform &value, int isAnimated)
 	: valTransform(value)
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(const VRay::Matrix &value)
+VfhAttrValue::VfhAttrValue(const VRay::Matrix &value, int isAnimated)
 	: valTransform(value, VRay::Vector(0.0f, 0.0f, 0.0f))
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(const VRay::VUtils::IntRefList &value)
+VfhAttrValue::VfhAttrValue(const VRay::VUtils::IntRefList &value, int isAnimated)
 	: valRawListInt(value)
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(const VRay::VUtils::FloatRefList &value)
+VfhAttrValue::VfhAttrValue(const VRay::VUtils::FloatRefList &value, int isAnimated)
 	: valRawListFloat(value)
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(const VRay::VUtils::VectorRefList &value)
+VfhAttrValue::VfhAttrValue(const VRay::VUtils::VectorRefList &value, int isAnimated)
 	: valRawListVector(value)
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(const VRay::VUtils::ColorRefList &value)
+VfhAttrValue::VfhAttrValue(const VRay::VUtils::ColorRefList &value, int isAnimated)
 	: valRawListColor(value)
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(const VRay::VUtils::CharStringRefList &value)
+VfhAttrValue::VfhAttrValue(const VRay::VUtils::CharStringRefList &value, int isAnimated)
 	: valRawListCharString(value)
+	, isAnimated(isAnimated)
 {}
 
-VfhAttrValue::VfhAttrValue(const VRay::VUtils::ValueRefList &value, int isAnimatedGenericList)
+VfhAttrValue::VfhAttrValue(const VRay::VUtils::ValueRefList &value, int isAnimated)
 	: valRawListValue(value)
-	, isAnimatedGenericList(isAnimatedGenericList)
+	, isAnimated(isAnimated)
 {}
 
 PluginAttr::PluginAttr()
@@ -96,27 +111,33 @@ PluginAttr::PluginAttr(const QString &attrName, VfhAttrType attrType)
 	, paramType(attrType)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const QString &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const QString &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeString)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const char *attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const char *attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeString)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const VRay::Matrix &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const VRay::Matrix &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeMatrix)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const VRay::Transform &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const VRay::Transform &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeTransform)
+	, paramValue(attrValue, isAnimated)
+{}
+
+PluginAttr::PluginAttr(const QString &attrName, const VRay::PluginRef &attrValue)
+	: paramName(attrName)
+	, paramType(AttrTypePlugin)
 	, paramValue(attrValue)
 {}
 
@@ -132,113 +153,118 @@ PluginAttr::PluginAttr(const QString &attrName, const VRay::Plugin &attrValue, c
 	, paramValue(attrValue, output)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, float r, float g, float b)
+PluginAttr::PluginAttr(const QString &attrName, float r, float g, float b, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeColor)
-	, paramValue(r, g, b, 1.0)
+	, paramValue(r, g, b, 1.0, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, float r, float g, float b, float a)
+PluginAttr::PluginAttr(const QString &attrName, float r, float g, float b, float a, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeAColor)
-	, paramValue(r, g, b, a)
+	, paramValue(r, g, b, a, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const VRay::Vector &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const VRay::Vector &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeVector)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const QIntList &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const QIntList &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeRawListInt)
-	, paramValue(toRefList(attrValue))
+	, paramValue(toRefList(attrValue), isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const QFloatList &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const QFloatList &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeRawListFloat)
-	, paramValue(toRefList(attrValue))
+	, paramValue(toRefList(attrValue), isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const QColorList &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const QColorList &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeRawListColor)
-	, paramValue(toRefList(attrValue))
+	, paramValue(toRefList(attrValue), isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const QValueList &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const QValueList &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeRawListValue)
-	, paramValue(toRefList(attrValue))
+	, paramValue(toRefList(attrValue), isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, int attrValue)
+PluginAttr::PluginAttr(const QString &attrName, int attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeInt)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, exint attrValue)
+PluginAttr::PluginAttr(const QString &attrName, exint attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeInt)
-	, paramValue(static_cast<int>(attrValue))
+	, paramValue(static_cast<int>(attrValue), isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, bool attrValue)
+PluginAttr::PluginAttr(const QString &attrName, bool attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeInt)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, float attrValue)
+PluginAttr::PluginAttr(const QString &attrName, float attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeFloat)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, fpreal attrValue)
+PluginAttr::PluginAttr(const QString &attrName, fpreal attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeFloat)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const VRay::VUtils::IntRefList &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const VRay::VUtils::IntRefList &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeRawListInt)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const VRay::VUtils::FloatRefList &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const VRay::VUtils::FloatRefList &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeRawListFloat)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const VRay::VUtils::VectorRefList &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const VRay::VUtils::VectorRefList &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeRawListVector)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const VRay::VUtils::ColorRefList &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const VRay::VUtils::ColorRefList &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeRawListColor)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const VRay::VUtils::CharStringRefList &attrValue)
+PluginAttr::PluginAttr(const QString &attrName, const VRay::VUtils::CharStringRefList &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeRawListCharString)
-	, paramValue(attrValue)
+	, paramValue(attrValue, isAnimated)
 {}
 
-PluginAttr::PluginAttr(const QString &attrName, const VRay::VUtils::ValueRefList &value, int isAnimatedGenericList)
+PluginAttr::PluginAttr(const QString &attrName, const VRay::VUtils::ValueRefList &value, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeRawListValue)
-	, paramValue(value, isAnimatedGenericList)
+	, paramValue(value, isAnimated)
 {}
+
+void PluginAttr::setAnimated(int value)
+{
+	paramValue.isAnimated = value;
+}
 
 QString PluginAttr::getTypeAsString() const
 {
@@ -301,27 +327,27 @@ void Attrs::PluginDesc::add(const PluginAttr &attr)
 	pluginAttrs[attr.paramName] = attr;
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, bool attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, bool attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const char *attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const char *attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const QString &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const QString &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
-}
-
-void Attrs::PluginDesc::add(const QString &attrName, const VRay::Matrix &attrValue)
-{
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
 void Attrs::PluginDesc::add(const QString &attrName, const VRay::PluginRef &attrValue)
+{
+	add(PluginAttr(attrName, attrValue));
+}
+
+void Attrs::PluginDesc::add(const QString &attrName, const VRay::Plugin &attrValue)
 {
 	add(PluginAttr(attrName, attrValue));
 }
@@ -331,92 +357,102 @@ void Attrs::PluginDesc::add(const QString &attrName, const VRay::Plugin &attrVal
 	add(PluginAttr(attrName, attrValue, output));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const VRay::Transform &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const VRay::Matrix &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const VRay::Vector &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const VRay::Transform &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const QIntList &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const VRay::Vector &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const QFloatList &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const QIntList &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const QColorList &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const QFloatList &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const QValueList &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const QColorList &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const VRay::VUtils::CharStringRefList &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const QValueList &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const VRay::VUtils::ColorRefList &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const VRay::VUtils::CharStringRefList &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const VRay::VUtils::FloatRefList &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const VRay::VUtils::ColorRefList &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const VRay::VUtils::IntRefList &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const VRay::VUtils::FloatRefList &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const VRay::VUtils::VectorRefList &attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const VRay::VUtils::IntRefList &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, exint attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, const VRay::VUtils::VectorRefList &attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, float r, float g, float b)
+void Attrs::PluginDesc::add(const QString &attrName, exint attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, r, g, b));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, float r, float g, float b, float a)
+void Attrs::PluginDesc::add(const QString &attrName, float r, float g, float b, int isAnimated)
 {
-	add(PluginAttr(attrName, r, g, b, a));
+	add(PluginAttr(attrName, r, g, b, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, float attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, float r, float g, float b, float a, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, r, g, b, a, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, fpreal attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, float attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, int attrValue)
+void Attrs::PluginDesc::add(const QString &attrName, VfhAttrType attrType, float r, float g, float b, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue));
+	add(PluginAttr(attrName, attrType, r, g, b, isAnimated));
 }
 
-void Attrs::PluginDesc::add(const QString &attrName, const VRay::VUtils::ValueRefList &attrValue, int isAnimatedGenericList)
+void Attrs::PluginDesc::add(const QString &attrName, fpreal attrValue, int isAnimated)
 {
-	add(PluginAttr(attrName, attrValue, isAnimatedGenericList));
+	add(PluginAttr(attrName, attrValue, isAnimated));
+}
+
+void Attrs::PluginDesc::add(const QString &attrName, int attrValue, int isAnimated)
+{
+	add(PluginAttr(attrName, attrValue, isAnimated));
+}
+
+void Attrs::PluginDesc::add(const QString &attrName, const VRay::VUtils::ValueRefList &attrValue, int isAnimated)
+{
+	add(PluginAttr(attrName, attrValue, isAnimated));
 }

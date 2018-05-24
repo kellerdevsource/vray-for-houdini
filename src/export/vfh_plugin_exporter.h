@@ -263,6 +263,9 @@ private:
 
 	/// Flag indicating that we should use/init VFB related options.
 	int m_enableVFB{false};
+
+	/// Exporting animated data.
+	int isAnimation{false};
 };
 
 } // namespace VRayForHoudini

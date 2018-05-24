@@ -352,6 +352,7 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc,
 	const fpreal t = m_context.getTime();
 
 	Attrs::PluginAttr attr(attrDesc.attr);
+	attr.setAnimated(parm.isTimeDependent());
 
 	if (attrDesc.value.type == Parm::eBool ||
 	    attrDesc.value.type == Parm::eInt ||
@@ -665,8 +666,12 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 
 			const QString &parmName = prefix % attrName;
 
+			int isAnimated = false;
+
 			const PRM_Parm *parm = Parm::getParm(*opNode, parmName);
 			if (parm) {
+				isAnimated = parm->isTimeDependent();
+
 				if (attrDesc.flags & Parm::attrFlagEnabledOnly) {
 					if (!parm->getEnableState() || !parm->getVisibleState()) {
 						continue;
@@ -682,7 +687,7 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 
 				const VRay::Plugin opPlugin = exportNodeFromPath(opPath);
 				if (opPlugin.isNotEmpty()) {
-					pluginDesc.add(Attrs::PluginAttr(attrName, opPlugin));
+					pluginDesc.add(attrName, opPlugin);
 				}
 			}
 			else if (!(attrDesc.flags & Parm::attrFlagLinkedOnly)) {
@@ -705,7 +710,7 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 					                             /* As color list not plugin */ asColorList,
 					                             /* Remap to vray interpolations*/ remapInterp);
 
-					pluginDesc.add(Attrs::PluginAttr(attrName, Attrs::AttrTypeIgnore));
+					pluginDesc.add(attrName, Attrs::AttrTypeIgnore);
 				}
 				else if (attrDesc.value.type == Parm::eCurve) {
 					VRay::VUtils::IntRefList interpolations;
@@ -721,10 +726,13 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 					                      /* Don't need handles */ false,
 					                      /* Remap to vray interpolations*/ remapInterp);
 
-					pluginDesc.add(attrDesc.value.curveRampInfo.interpolations, interpolations);
-					pluginDesc.add(attrDesc.value.curveRampInfo.positions, positions);
+					// TODO: Detect ramp animation.
+					const int isRampAnimated = false;
+
+					pluginDesc.add(attrDesc.value.curveRampInfo.interpolations, interpolations, isRampAnimated);
+					pluginDesc.add(attrDesc.value.curveRampInfo.positions, positions, isRampAnimated);
 					if (values.size()) {
-						pluginDesc.add(attrDesc.value.curveRampInfo.values, values);
+						pluginDesc.add(attrDesc.value.curveRampInfo.values, values, isRampAnimated);
 					}
 				}
 				else {
