@@ -2202,30 +2202,41 @@ int VRayExporter::isStereoView() const
 	return Parm::getParmInt(*m_rop, "VRayStereoscopicSettings_use");
 }
 
+void VRayExporter::exportToVrscene(int currentFrameOnly)
+{
+	const fpreal t = getContext().getTime();
+
+	UT_String exportFilepath;
+	m_rop->evalString(exportFilepath, "render_export_filepath", 0, t);
+
+	if (!exportFilepath.isstring()) {
+		Log::getLog().error("Export mode is selected, but no filepath specified!");
+	}
+	else {
+		VRay::VRayExportSettings expSettings;
+		expSettings.useHexFormat = m_rop->evalInt("exp_hexdata", 0, t);
+		expSettings.compressed = m_rop->evalInt("exp_compressed", 0, t);
+
+		// TODO: Set motion blur interval.
+		expSettings.currentFrameOnly = currentFrameOnly;
+
+		exportVrscene(exportFilepath.buffer(), expSettings);
+	}
+}
 
 int VRayExporter::renderFrame(int locked)
 {
 	Log::getLog().debug("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
 
 	if (sessionType == VfhSessionType::production &&
+		exportFilePerFrame &&
 	    (m_workMode == ExpExport ||
 	     m_workMode == ExpExportRender))
 	{
-		const fpreal t = getContext().getTime();
+		// Pre-frame animation export.
+		exportToVrscene(true);
 
-		UT_String exportFilepath;
-		m_rop->evalString(exportFilepath, "render_export_filepath", 0, t);
-
-		if (!exportFilepath.isstring()) {
-			Log::getLog().error("Export mode is selected, but no filepath specified!");
-		}
-		else {
-			VRay::VRayExportSettings expSettings;
-			expSettings.useHexFormat = m_rop->evalInt("exp_hexdata", 0, t);
-			expSettings.compressed = m_rop->evalInt("exp_compressed", 0, t);
-
-			exportVrscene(exportFilepath.buffer(), expSettings);
-		}
+		// TODO: Clean-up parameter values.
 	}
 
 	if (m_workMode == ExpRender || m_workMode == ExpExportRender) {
@@ -2234,7 +2245,6 @@ int VRayExporter::renderFrame(int locked)
 
 	return 0;
 }
-
 
 int VRayExporter::exportVrscene(const QString &filepath, VRay::VRayExportSettings &settings)
 {
@@ -2248,7 +2258,6 @@ int VRayExporter::exportVrscene(const QString &filepath, VRay::VRayExportSetting
 
 	return m_renderer.exportScene(filepath, settings);
 }
-
 
 void VRayExporter::clearKeyFrames(double toTime)
 {
@@ -2613,6 +2622,14 @@ void VRayExporter::exportEnd()
 				}
 			}
 		}
+	}
+	else if (sessionType == VfhSessionType::production &&
+	         !exportFilePerFrame &&
+	         (m_workMode == ExpExport ||
+	          m_workMode == ExpExportRender))
+	{
+		// Full animation export.
+		exportToVrscene(false);
 	}
 
 	clearKeyFrames(SYS_FP64_MAX);

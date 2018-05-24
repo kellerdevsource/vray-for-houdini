@@ -356,6 +356,8 @@ public:
 	/// @returns 0 - no error
 	int exportVrscene(const QString &filepath, VRay::VRayExportSettings &settings);
 
+	void exportToVrscene(int currentFrameOnly);
+
 	/// Delete plugins created for the given OBJ node.
 	void removePlugin(OBJ_Node *node);
 
