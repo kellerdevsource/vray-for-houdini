@@ -403,7 +403,7 @@ bool MeshExporter::asPluginDesc(const GU_Detail &gdp, Attrs::PluginDesc &pluginD
 		VRay::VUtils::ValueRefList map_channels(map_channels_data.size());
 
 		FOR_IT (MapChannels, mcIt, map_channels_data) {
-			const QString map_channel_name = mcIt.key();
+			const QString &map_channel_name = mcIt.key();
 			const MapChannel &map_channel_data = mcIt.value();
 
 			// Channel data
@@ -758,16 +758,14 @@ VRay::Plugin MeshExporter::getMaterial()
 		Attrs::QValueList materialList(numMaterials);
 		Attrs::QIntList idsList(numMaterials);
 
-		int mtlListIdx = 0;
 		FOR_CONST_IT (MatToIndex, it, matToMtlId) {
 			OP_Node *mat = it.key();
 			const int mtlId = it.value();
 
 			const VRay::Plugin matPlugin = pluginExporter.exportMaterial(mat);
 			if (matPlugin.isNotEmpty()) {
-				materialList[mtlListIdx].setPlugin(matPlugin);
-				idsList[mtlListIdx] = mtlId;
-				mtlListIdx++;
+				materialList.append(VRay::VUtils::Value(matPlugin));
+				idsList.append(mtlId);
 			}
 		}
 
@@ -812,7 +810,7 @@ VRay::Plugin MeshExporter::exportExtMapChannels(const MapChannels &mapChannelOve
 	VRay::VUtils::ValueRefList map_channels(mapChannelOverrides.size());
 
 	FOR_CONST_IT (MapChannels, mcIt, mapChannelOverrides) {
-		const QString map_channel_name = mcIt.key();
+		const QString &map_channel_name = mcIt.key();
 		const MapChannel &map_channel_data = mcIt.value();
 
 		VRay::VUtils::ValueRefList map_channel(3);
@@ -1019,7 +1017,7 @@ static void setMapChannelOverrideFaceData(MapChannels &mapChannels, const GEOPri
 	const int v2 = (faceIndex * 3) + 2;
 
 	FOR_CONST_IT(MtlOverrideItems, oiIt, primMaterial.overrides) {
-		const QString paramName = oiIt.key();
+		const QString &paramName = oiIt.key();
 		const MtlOverrideItem &overrideItem = oiIt.value();
 
 		vassert(overrideItem.getType() != MtlOverrideItem::itemTypeNone);
