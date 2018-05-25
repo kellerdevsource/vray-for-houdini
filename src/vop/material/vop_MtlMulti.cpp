@@ -192,11 +192,11 @@ OP::VRayNode::PluginResult MtlMulti::asPluginDesc(Attrs::PluginDesc &pluginDesc,
 	OP_Node *mtlid_gen_float = VRayExporter::getConnectedNode(this, SL("mtlid_gen_float"));
 
 	if (mtlid_gen && !mtlid_gen_float) {
-		pluginDesc.add(SL("mtlid_gen_float"), Attrs::AttrTypeIgnore);
+		pluginDesc.setIngore(SL("mtlid_gen_float"));
 	}
 
 	if (mtlid_gen_float && !mtlid_gen) {
-		pluginDesc.add(SL("mtlid_gen"), Attrs::AttrTypeIgnore);
+		pluginDesc.setIngore(SL("mtlid_gen"));
 	}
 
 	return PluginResultContinue;

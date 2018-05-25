@@ -2356,7 +2356,6 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 
 		if (lightType != VRayLightSun) {
 			pluginDesc.add(SL("color"),
-			               Attrs::AttrTypeColor,
 			               objLight.evalFloat("light_color", 0, t),
 			               objLight.evalFloat("light_color", 1, t),
 			               objLight.evalFloat("light_color", 2, t));

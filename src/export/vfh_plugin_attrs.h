@@ -220,7 +220,6 @@ struct PluginDesc
 	void add(const QString &attrName, const VRay::VUtils::VectorRefList &attrValue, int isAnimated = false);
 	void add(const QString &attrName, exint attrValue, int isAnimated = false);
 	void add(const QString &attrName, float attrValue, int isAnimated = false);
-	void add(const QString &attrName, VfhAttrType attrType, float r, float g, float b, int isAnimated = false);
 	void add(const QString &attrName, float r, float g, float b, int isAnimated = false);
 	void add(const QString &attrName, float r, float g, float b, float a, int isAnimated = false);
 	void add(const QString &attrName, fpreal attrValue, int isAnimated = false);
@@ -229,9 +228,12 @@ struct PluginDesc
 	void add(const QString &attrName, const VRay::Plugin &attrValue);
 	void add(const QString &attrName, const VRay::Plugin &attrValue, const QString &output);
 
+	/// Set fake parameter to prevent automatic export and disable settings it to the plugin instance.
+	void setIngore(const QString &attrName);
+
 	/// Remove attrubute.
-	/// @param name Attribute name.
-	void remove(const char *name);
+	/// @param attrName Attribute name.
+	void remove(const QString &attrName);
 
 	/// Return the attibute with the specified name or nullptr
 	/// @param paramName Attribute name

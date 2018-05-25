@@ -170,7 +170,7 @@ OP::VRayNode::PluginResult MetaImageFile::asPluginDesc(Attrs::PluginDesc &plugin
 			COP2_Node *copNode = opNode->castToCOP2Node();
 			if (copNode) {
 				bitmapBufferDesc.pluginID = "RawBitmapBuffer";
-				bitmapBufferDesc.add(Attrs::PluginAttr("file", Attrs::AttrTypeIgnore));
+				bitmapBufferDesc.setIngore(SL("file"));
 
 				if (!exporter.fillCopNodeBitmapBuffer(*copNode, bitmapBufferDesc)) {
 					Log::getLog().error("Failed to bake texture data from \"%s\"", copNode->getName().buffer());

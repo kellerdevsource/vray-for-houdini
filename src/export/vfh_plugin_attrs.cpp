@@ -317,9 +317,14 @@ PluginAttr* Attrs::PluginDesc::get(const QString &paramName)
 	return nullptr;
 }
 
-void Attrs::PluginDesc::remove(const char *name)
+void Attrs::PluginDesc::remove(const QString &attrName)
 {
-	pluginAttrs.remove(name);
+	pluginAttrs.remove(attrName);
+}
+
+void Attrs::PluginDesc::setIngore(const QString &attrName)
+{
+	add(PluginAttr(attrName, AttrTypeIgnore));
 }
 
 void Attrs::PluginDesc::add(const PluginAttr &attr)
@@ -435,11 +440,6 @@ void Attrs::PluginDesc::add(const QString &attrName, float r, float g, float b, 
 void Attrs::PluginDesc::add(const QString &attrName, float attrValue, int isAnimated)
 {
 	add(PluginAttr(attrName, attrValue, isAnimated));
-}
-
-void Attrs::PluginDesc::add(const QString &attrName, VfhAttrType attrType, float r, float g, float b, int isAnimated)
-{
-	add(PluginAttr(attrName, attrType, r, g, b, isAnimated));
 }
 
 void Attrs::PluginDesc::add(const QString &attrName, fpreal attrValue, int isAnimated)

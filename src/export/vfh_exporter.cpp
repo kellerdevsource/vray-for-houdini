@@ -716,8 +716,6 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 					                             /* V-Ray attr: interp */ attrDesc.value.colorRampInfo.interpolations,
 					                             /* As color list not plugin */ asColorList,
 					                             /* Remap to vray interpolations*/ remapInterp);
-
-					pluginDesc.add(attrName, Attrs::AttrTypeIgnore);
 				}
 				else if (attrDesc.value.type == Parm::eCurve) {
 					VRay::VUtils::IntRefList interpolations;
@@ -973,8 +971,8 @@ ReturnValue VRayExporter::fillSettingsOutput(Attrs::PluginDesc &pluginDesc)
 		sessionType == VfhSessionType::ipr ||
 		!m_rop->evalInt("SettingsOutput_img_save", 0, 0.0))
 	{
-		pluginDesc.add(Attrs::PluginAttr("img_dir", Attrs::AttrTypeIgnore));
-		pluginDesc.add(Attrs::PluginAttr("img_file", Attrs::AttrTypeIgnore));
+		pluginDesc.setIngore(SL("img_dir"));
+		pluginDesc.setIngore(SL("img_file"));
 	}
 	else {
 		UT_String _filePathRaw;
