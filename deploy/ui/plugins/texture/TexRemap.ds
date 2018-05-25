@@ -430,4 +430,28 @@
         parmtag { "vray_pluginattr" "alpha_from_intensity" }
         parmtag { "vray_type" "boolean" }
     }
+
+    parm {
+        name "out_color"
+        label "Out Color"
+        type color4
+        parmtag { "cook_dependent" "0" }
+        parmtag { "vray_label" "color" }
+        parmtag { "vray_pluginattr" "out_color" }
+        parmtag { "vray_type" "OutputTexture" }
+        export none
+        invisible
+    }
+
+    parm {
+        name "out_color"
+        label "Out Value"
+        type float
+        parmtag { "cook_dependent" "0" }
+        parmtag { "vray_label" "value" }
+        parmtag { "vray_pluginattr" "out_color" }
+        parmtag { "vray_type" "OutputTextureFloat" }
+        export none
+        invisible
+    }
 }
