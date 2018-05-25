@@ -351,6 +351,8 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc,
 
 	const fpreal t = m_context.getTime();
 
+	int addAttr = true;
+
 	Attrs::PluginAttr attr(attrDesc.attr);
 	attr.setAnimated(parm.isTimeDependent());
 
@@ -419,15 +421,20 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc,
 		attr.paramValue.valString = buf.buffer();
 	}
 	else if (attrDesc.value.type > Parm::eManualExportStart &&
-	         attrDesc.value.type < Parm::eManualExportEnd) {
+	         attrDesc.value.type < Parm::eManualExportEnd)
+	{
 		// These are fake params and must be handled manually
+		addAttr = false;
 	}
 	else if (attrDesc.value.type < Parm::ePlugin) {
 		Log::getLog().error("Unhandled param type: %s at %s [%i]",
 		                    parmName, opNode.getOperator()->getName().buffer(), attrDesc.value.type);
+		addAttr = false;
 	}
 
-	pluginDesc.add(attr);
+	if (addAttr) {
+		pluginDesc.add(attr);
+	}
 }
 
 
