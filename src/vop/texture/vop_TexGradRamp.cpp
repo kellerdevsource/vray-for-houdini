@@ -21,10 +21,5 @@ void VOP::TexGradRamp::setPluginType()
 
 OP::VRayNode::PluginResult VOP::TexGradRamp::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
 {
-	Texture::exportRampAttribute(exporter, pluginDesc, *this,
-	                             SL("ramp"),
-	                             SL("colors"),
-	                             SL("positions"),
-	                             SL("interpolation"));
 	return PluginResultContinue;
 }
