@@ -255,14 +255,6 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 			const UT_String rampValue(parmSpare->getValue("rampvalues_var"));
 			const UT_String rampInterp(parmSpare->getValue("rampbasis_var"));
 
-			const char *vrayPluginAttr = parmSpare->getValue("vray_pluginattr");
-			if (!UTisstring(vrayPluginAttr)) {
-				Log::getLog().error("\"vray_pluginattr\" is missing for attribute \"%s\"",
-				                    tokenName);
-				vassert(false);
-				continue;
-			}
-
 			AttrDesc &attrDesc = pluginInfo.attributes[tokenName];
 			attrDesc.attr = parm->getToken();
 			attrDesc.label = parm->getLabel();
