@@ -23,6 +23,12 @@ static const QString FmtPos(SL("%1#pos"));
 static const QString FmtColor(SL("%1#c"));
 static const QString FmtValue(SL("%1#value"));
 static const QString FmtInterp(SL("%1#interp"));
+
+static const QString FmtPosAttrName(SL("%1%2pos"));
+static const QString FmtColorAttrName(SL("%1%2c"));
+static const QString FmtValueAttrName(SL("%1%2value"));
+static const QString FmtInterpAttrName(SL("%1%2interp"));
+
 static const QString FmtColorPluginName(SL("%1|%2"));
 
 void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter,
@@ -64,6 +70,10 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter,
 		types = VRay::VUtils::IntRefList(nPoints);
 	}
 
+	int isPosAnimated = 0;
+	int isColAnimated = 0;
+	int isInterpAnimated = 0;
+
 	for(int i = 1; i <= nPoints; i++) {
 		const int pntIdx = i - 1;
 
@@ -72,6 +82,14 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter,
 		const float colR = opNode.evalFloatInst(qPrintable(prmColName), &i, 0, t);
 		const float colG = opNode.evalFloatInst(qPrintable(prmColName), &i, 1, t);
 		const float colB = opNode.evalFloatInst(qPrintable(prmColName), &i, 2, t);
+
+		const QString posAttrInstName = FmtPosAttrName.arg(rampAttrName).arg(QString::number(i));
+		const QString colAttrInstName = FmtColorAttrName.arg(rampAttrName).arg(QString::number(i));
+		const QString interpAttrInstName = FmtInterpAttrName.arg(rampAttrName).arg(QString::number(i));
+
+		isPosAnimated |= opNode.isParmTimeDependent(qPrintable(posAttrInstName));
+		isColAnimated |= opNode.isParmTimeDependent(qPrintable(colAttrInstName));
+		isInterpAnimated |= opNode.isParmTimeDependent(qPrintable(interpAttrInstName));
 
 		int interp = opNode.evalIntInst(qPrintable(prmInterpName), &i, 0, t);
 		if (remapInterp) {
@@ -90,30 +108,30 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter,
 
 			Attrs::PluginDesc colPluginDesc(colPluginName,
 			                                SL("TexAColor"));
-			colPluginDesc.add(SL("texture"), colR, colG, colB, 1.0f);
+			colPluginDesc.add(SL("texture"), colR, colG, colB, 1.0f, isColAnimated);
 
 			const VRay::Plugin colPlugin = exporter.exportPlugin(colPluginDesc);
-			if (colPlugin.isNotEmpty()) {
-				colorPlugins[pntIdx].setPlugin(colPlugin);
-				positions[pntIdx] = pos;
-				if (needTypes) {
-					types[pntIdx] = interp;
-				}
+			vassert(colPlugin.isNotEmpty());
+
+			colorPlugins[pntIdx].setPlugin(colPlugin);
+			positions[pntIdx] = pos;
+			if (needTypes) {
+				types[pntIdx] = interp;
 			}
 		}
 	}
 
 	if (asColor) {
-		pluginDesc.add(colAttrName, colorList);
+		pluginDesc.add(colAttrName, colorList, isColAnimated);
 	}
 	else {
 		pluginDesc.add(colAttrName, colorPlugins);
 	}
 
-	pluginDesc.add(posAttrName, positions);
+	pluginDesc.add(posAttrName, positions, isPosAnimated);
 
 	if (needTypes) {
-		pluginDesc.add(typesAttrName, types);
+		pluginDesc.add(typesAttrName, types, isInterpAnimated);
 	}
 }
 
