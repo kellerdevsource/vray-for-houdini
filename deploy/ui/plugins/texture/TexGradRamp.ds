@@ -40,11 +40,9 @@
         parm {
             name    "color_ramp"
             label   "Color Ramp"
+            help    "Color Ramp"
             type    ramp_rgb
             default { "2" }
-            help    "Color Ramp"
-            range   { 1! 10 }
-            export  none
             parmtag { "cook_dependent" "1" }
             parmtag { "rampbasisdefault" "linear" }
             parmtag { "rampcolordefault" "1pos ( 0 ) 1c ( 0 0 1 ) 1interp ( linear )  2pos ( 1 ) 2c ( 1 0 0 ) 2interp ( linear )" }
