@@ -132,10 +132,9 @@ public:
 	/// Generate and export mesh plugins for each PolySoup primitive in the primitive in the prim list
 	/// @param gdp - the detail owning the primitives
 	/// @param instancerItems - output destination to save info for each poly soup exported
-	/// @param topItem - the parent item for all primitives (used for tm, vel and material)
 	/// @param exporter - the vray exporter used to export mesh plugins
 	/// @return - false on fail, success otherwise
-	bool asPolySoupPrimitives(const GU_Detail &gdp, InstancerItems &instancerItems, const InstancerItem &topItem, VRayExporter &exporter);
+	bool asPolySoupPrimitives(const GU_Detail &gdp, InstancerItems &instancerItems, VRayExporter &exporter);
 
 	/// Build material taking overrides into account.
 	VRay::Plugin getMaterial();

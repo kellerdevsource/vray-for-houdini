@@ -283,7 +283,7 @@ void MeshExporter::reset()
 	map_channels_data.clear();
 }
 
-bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, InstancerItems &instancerItems, const InstancerItem &topItem, VRayExporter &exporter)
+bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, InstancerItems &instancerItems, VRayExporter &exporter)
 {
 	using namespace VRay::VUtils;
 	const VectorRefList & allVertices = getVertices();
@@ -330,12 +330,14 @@ bool MeshExporter::asPolySoupPrimitives(const GU_Detail &gdp, InstancerItems &in
 		VectorRefList vertices(vertexCount);
 		memcpy(vertices.get(), allVertices.get() + vertexRange.first, vertexCount * sizeof(vertices[0]));
 
+		ObjectExporter &objectExporter = exporter.getObjectExporter();
+
 		InstancerItem item;
 		item.primID = soup->getMapIndex();
 		item.prim = soup;
-		item.tm = topItem.tm;
-		item.vel = topItem.vel;
-		item.material = topItem.material;
+		item.tm = objectExporter.getTm();
+		item.vel = objectExporter.getVel();
+		item.primMaterial = objectExporter.getPrimMaterial();
 
 		char geomName[512];
 		snprintf(geomName, 512, "GeomStaticMesh|%lld@%s", item.primID, objNode.getName().buffer());

@@ -1347,16 +1347,18 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 
 	if (doExportGeometry) {
 		if (hasPolySoup && partitionAttribute.isstring()) {
-#if 0
 			bool allCached = false;
 
-			PrimitiveItems soupItems;
+			InstancerItems soupItems;
+
 			const exint keyDetailID = getDetailID();
-			// check what we have in cache
+
+			// Check what we have in cache.
 			for (const auto *prim : primList) {
 				if (prim->getTypeId() != GEO_PRIMPOLYSOUP) {
 					continue;
 				}
+
 				const MeshPrimKey key = { prim->getMapIndex(), keyDetailID, keyDataPoly };
 				Hash::MHash meshKeyHash = 0;
 				Hash::MurmurHash3_x86_32(&key, sizeof(key), 42, &meshKeyHash);
@@ -1367,31 +1369,34 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 					allCached = false;
 					break;
 				}
-				PrimitiveItem soupItem;
+
+				InstancerItem soupItem;
 				soupItem.primID = prim->getMapIndex();
 				soupItem.prim = prim;
+				soupItem.primMaterial = getPrimMaterial();
 				soupItem.tm = getTm();
 				soupItem.vel = getVel();
-				soupItem.material = topItem.material;
 				soupItem.geometry = polySoupGeom;
 
 				soupItems += soupItem;
 			}
 
 			if (!allCached) {
-				// something changed - re-export primitives
-				soupItems.freeMem();
-				polyMeshExporter.asPolySoupPrimitives(gdp, soupItems, topItem, pluginExporter);
+				// Something changed - re-export primitives.
+				soupItems.clear();
+				polyMeshExporter.asPolySoupPrimitives(gdp, soupItems, pluginExporter);
 
 				// re-add to cache
-				for (const PrimitiveItem & primSoup : soupItems) {
-					MeshPrimKey key(primSoup.primID, keyDetailID, keyDataPoly);
-					addMeshPluginToCache(key.getHash(), item.geometry);
+				for (const InstancerItem &primSoup : soupItems) {
+					const MeshPrimKey key = { primSoup.primID, keyDetailID, keyDataPoly };
+					Hash::MHash meshKeyHash = 0;
+					Hash::MurmurHash3_x86_32(&key, sizeof(key), 42, &meshKeyHash);
+
+					addMeshPluginToCache(meshKeyHash, item.geometry);
 				}
 			}
 
 			instancerItems += soupItems;
-#endif
 		}
 		else if (!getMeshPluginFromCache(item.primID, item.geometry)) {
 			OP_Node *matNode = item.primMaterial.matNode
