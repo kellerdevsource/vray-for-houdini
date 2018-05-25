@@ -2198,14 +2198,16 @@ void ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
 		return;
 
 	const GU_Detail &gdp = *gdl;
+	const fpreal t = ctx.getTime();
 
-	const STY_Styler &objectStyler = getStylerForObject(objNode, ctx.getTime());
+	const STY_Styler &objectStyler = getStylerForObject(objNode, t);
 	const STY_Styler &currentPrimStyler = getStyler();
 	const STY_Styler &currentStyler = objectStyler.cloneWithAddedStyler(currentPrimStyler, STY_TargetHandle());
 
 	PrimContext objCtx;
 	objCtx.id = gdp.getUniqueId();
 	objCtx.styler = currentStyler;
+	objCtx.mat.matNode = objNode.getMaterialNode(t);
 
 	PrimContextAuto rootAutoCtxPush(*this, objCtx);
 
