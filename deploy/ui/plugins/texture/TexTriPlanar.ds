@@ -29,7 +29,6 @@
         range   { 0 10 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_linked_only" "1" }
         parmtag { "vray_plugin" "TexTriPlanar" }
         parmtag { "vray_pluginattr" "texture_x" }
         parmtag { "vray_type" "Texture" }
@@ -45,7 +44,6 @@
         range   { 0 10 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_linked_only" "1" }
         parmtag { "vray_plugin" "TexTriPlanar" }
         parmtag { "vray_pluginattr" "texture_y" }
         parmtag { "vray_type" "Texture" }
@@ -61,7 +59,6 @@
         range   { 0 10 }
         export  none
         parmtag { "cook_dependent" "1" }
-        parmtag { "vray_linked_only" "1" }
         parmtag { "vray_plugin" "TexTriPlanar" }
         parmtag { "vray_pluginattr" "texture_z" }
         parmtag { "vray_type" "Texture" }

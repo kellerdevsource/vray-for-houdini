@@ -334,6 +334,5 @@
         }
     }
 
-#include "vfh_texture_common_color.ds"
 #include "vfh_texture_default_output_color.ds"
 }

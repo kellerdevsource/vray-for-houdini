@@ -21,6 +21,9 @@ void VOP::TexFalloff::setPluginType()
 
 OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*)
 {
+	// Curve data will be baked into sub-plugin.
+	pluginDesc.setIngore("curve");
+
 	if (!evalInt("use_blend_curve", 0, 0.0))
 		return PluginResultContinue;
 

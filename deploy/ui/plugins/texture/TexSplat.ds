@@ -87,6 +87,6 @@
             parmtag { "vray_type" "float" }
         }
     }
-#define VFH_USE_3DMAPPING
+
 #include "vfh_texture_common.ds"
 }

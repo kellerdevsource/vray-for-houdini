@@ -125,18 +125,6 @@
         parmtag { "vray_type" "int" }
     }
 
-    parm {
-        name    "use_3d_mapping"
-        label   "3D Mapping"
-        type    toggle
-        default { "0" }
-        range   { 0 1 }
-        export  none
-        parmtag { "cook_dependent" "1" }
-        parmtag { "vray_plugin" "TexWater" }
-        parmtag { "vray_pluginattr" "use_3d_mapping" }
-        parmtag { "vray_type" "boolean" }
-    }
 #include "vfh_texture_common_inputs.ds"
 #include "vfh_texture_default_output_color.ds"
 }

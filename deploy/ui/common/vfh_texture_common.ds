@@ -133,8 +133,6 @@ groupcollapsible {
         label   "3D Mapping"
         type    toggle
         default { "0" }
-        range   { 0 1 }
-        export  none
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_pluginattr" "use_3d_mapping" }
         parmtag { "vray_type" "boolean" }
