@@ -70,9 +70,9 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter,
 		types = VRay::VUtils::IntRefList(nPoints);
 	}
 
-	int isPosAnimated = 0;
-	int isColAnimated = 0;
-	int isInterpAnimated = 0;
+	bool isPosAnimated = false;
+	bool isColAnimated = false;
+	bool isInterpAnimated = false;
 
 	for(int i = 1; i <= nPoints; i++) {
 		const int pntIdx = i - 1;
