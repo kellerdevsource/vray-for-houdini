@@ -335,18 +335,14 @@ void VRayPluginRenderer::setRendererMode(const SettingsRTEngine &settingsRTEngin
 	m_vray->setRenderMode(mode);
 
 	if (isInteractiveMode) {
-#pragma message("TODO: Reimplement numThreads")
-		options.numThreads = VUtils::Max(1, VUtils::getNumProcessors() - 1);
-
+		m_vray->setNumThreads(VUtils::Max(1, VUtils::getNumProcessors() - 1));
 		m_vray->setKeepInteractiveRunning(true);
 		m_vray->setInteractiveTimeout(0);
 		m_vray->setInteractiveNoiseThreshold(0.0f);
 		m_vray->setInteractiveSampleLevel(INT_MAX);
 	}
 	else {
-#pragma message("TODO: Reimplement numThreads")
-		options.numThreads = 0;
-
+		m_vray->setNumThreads(0);
 		m_vray->setKeepInteractiveRunning(false);
 		m_vray->setInteractiveTimeout(settingsRTEngine.max_render_time * 60 * 1000);
 		m_vray->setInteractiveNoiseThreshold(settingsRTEngine.noise_threshold);
