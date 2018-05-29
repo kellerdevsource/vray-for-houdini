@@ -69,6 +69,7 @@ struct ParmDefValue {
 		QString colors; ///< The name of the property for values
 		QString positions; ///< The name of the property for positions
 		QString interpolations; ///< The name of the property for interpolations
+		int colorAsTexture = false; ///< Export colors list as TexAColor.
 	};
 
 	/// Descriptor for a curve param

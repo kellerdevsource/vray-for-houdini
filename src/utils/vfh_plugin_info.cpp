@@ -270,6 +270,11 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 				if (rampInterp.isstring()) {
 					attrDesc.value.colorRampInfo.interpolations = rampInterp.buffer();
 				}
+
+				const UT_String vrayRampColorAsTexture(parmSpare->getValue("vray_ramp_color_as_texture"));
+				if (vrayRampColorAsTexture.isstring()) {
+					attrDesc.value.colorRampInfo.colorAsTexture = true;
+				}
 			}
 			else if (isCurve) {
 				attrDesc.value.type = eCurve;

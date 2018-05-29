@@ -699,14 +699,6 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 			}
 			else if (!(attrDesc.flags & Parm::attrFlagLinkedOnly)) {
 				if (attrDesc.value.type == Parm::eRamp) {
-					static StringSet rampColorAsPluginList;
-					if (rampColorAsPluginList.empty()) {
-						// TODO: Move to attribute description
-						rampColorAsPluginList.insert(SL("PhxShaderSim"));
-					}
-
-					const bool asColorList = rampColorAsPluginList.contains(pluginDesc.pluginID);
-
 					Texture::exportRampAttribute(*this,
 					                             pluginDesc,
 					                             *opNode,
@@ -714,7 +706,7 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 					                             /* V-Ray attr: colors */ attrDesc.value.colorRampInfo.colors,
 					                             /* V-Ray attr: pos    */ attrDesc.value.colorRampInfo.positions,
 					                             /* V-Ray attr: interp */ attrDesc.value.colorRampInfo.interpolations,
-					                             /* As color list not plugin */ asColorList,
+					                             /* As color list not plugin */ attrDesc.value.colorRampInfo.colorAsTexture,
 					                             /* Remap to vray interpolations*/ remapInterp);
 				}
 				else if (attrDesc.value.type == Parm::eCurve) {
