@@ -98,8 +98,7 @@
             parmtag { "vray_type" "Texture" }
         }
 
-        VFH_UI_PARM_FLOAT("BRDFVRayMtl",
-            "self_illumination_mult",
+        VFH_UI_PARM_FLOAT("self_illumination_mult",
             "Self-Illumination Mult.",
             "Self-Illumination color multiplier.",
             0.0
