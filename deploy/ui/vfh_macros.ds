@@ -83,4 +83,27 @@ parm { \
         invisible \
     }
 
+#define VFH_PLUGIN_PARM_NODE_LIST(PLUGIN, NAME, LABEL, HELP, INCLUSIVE_TRIGGER) \
+parm { \
+    name NAME \
+    label LABEL \
+    type oplist \
+    default { "" } \
+    help HELP \
+\
+    parmtag { "spare_category" "FOLDER" } \
+    parmtag { "cook_dependent" "1" } \
+\
+    parmtag { "opfilter" "!!OBJ/GEOMETRY!!" } \
+    parmtag { "opexpand" "1" } \
+    parmtag { "oprelative" "/obj" } \
+\
+    VFH_TAG_VRAY \
+\
+    parmtag { "vray_type" "NodeList" } \
+    parmtag { "vray_plugin" PLUGIN } \
+    parmtag { "vray_pluginattr" NAME } \
+    parmtag { "vray_list_inclusive" INCLUSIVE_TRIGGER } \
+}
+
 #endif // __VFH_MACROS_DS__

@@ -1,3 +1,4 @@
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 {
     name    TexDirt
     label   "Dirt"
@@ -114,16 +115,14 @@
             parmtag { "vray_pluginattr" "use_texture_for_excluded" }
             parmtag { "vray_type" "boolean" }
         }
-        parm {
-            name "render_nodes"
-            label "Render Nodes"
-            type oplist
-            help "Allows you to disable the calculation of the dirt map for specific objects. Excluded objects will not be shaded by the dirt map."
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexDirt" }
-            parmtag { "vray_pluginattr" "render_nodes" }
-            parmtag { "vray_type" "List<Plugin>" }
-        }
+
+        VFH_PLUGIN_PARM_NODE_LIST("TexDirt",
+            "render_nodes",
+            "Render Nodes",
+            "Allows you to disable the calculation of the dirt map for specific objects. Excluded objects will not be shaded by the dirt map.",
+            "render_nodes_inclusive"
+        )
+
         parm {
             name    "render_nodes_inclusive"
             label   "As Inclusive List"
@@ -137,16 +136,14 @@
             parmtag { "vray_pluginattr" "render_nodes_inclusive" }
             parmtag { "vray_type" "boolean" }
         }
-        parm {
-            name "affect_result_nodes"
-            label "Affect Result Nodes"
-            type oplist
-            help "Specifies a list of objects which will affect the calculation of the dirt map. Excluded objects will be considered invisible for the calculations of the dirt map."
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "TexDirt" }
-            parmtag { "vray_pluginattr" "affect_result_nodes" }
-            parmtag { "vray_type" "List<Plugin>" }
-        }
+
+        VFH_PLUGIN_PARM_NODE_LIST("TexDirt",
+            "affect_result_nodes",
+            "Affect Result Nodes",
+            "Specifies a list of objects which will affect the calculation of the dirt map. Excluded objects will be considered invisible for the calculations of the dirt map.",
+            "affect_result_nodes_inclusive"
+        )
+
         parm {
             name    "affect_result_nodes_inclusive"
             label   "As Inclusive List"

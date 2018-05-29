@@ -1,3 +1,4 @@
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 {
     name    TexDistance
     label   "Distance"
@@ -8,13 +9,12 @@
         name "VfhTexMain"
         label "Settings"
 
-        parm {
-            name "objects"
-            label "Objects"
-            type oplist
-            parmtag { "vray_pluginattr" "objects" }
-            parmtag { "vray_type" "List<Plugin>" }
-        }
+        VFH_PLUGIN_PARM_NODE_LIST("TexDistance",
+            "objects",
+            "Objects",
+            "",
+            ""
+        )
 
         parm {
             name    "far_tex"
