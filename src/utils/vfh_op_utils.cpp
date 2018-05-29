@@ -65,8 +65,7 @@ OP_Node* VRayForHoudini::getVRayNodeFromOp(OP_Node &matNode, const char *socketN
 	return res;
 }
 
-
-static OP_Bundle* getBundleFromOpNodePrm(OP_Node &node, const char *pn, fpreal time)
+OP_Bundle* VRayForHoudini::getBundleFromOpNodePrm(OP_Node &node, const char *pn, fpreal time)
 {
 	if (!UTisstring(pn)) {
 		return nullptr;

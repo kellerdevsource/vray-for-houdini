@@ -31,6 +31,8 @@ int isOpType(OP_Node &opNode, const char *opName);
 /// @param pluginID V-Ray plugin ID to match.
 OP_Node *getVRayNodeFromOp(OP_Node &matNode, const char *socketName, const char *pluginID=nullptr);
 
+OP_Bundle *getBundleFromOpNodePrm(OP_Node &node, const char *pn, fpreal time);
+
 /// Get the internal budle holding active lights that should be exported to V-Ray.
 /// It will take into account parameters on the V-Ray ROP Object tab
 OP_Bundle* getActiveLightsBundle(OP_Node &rop, fpreal t);
