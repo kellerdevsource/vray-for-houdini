@@ -2457,15 +2457,14 @@ static void appendToLightIlluminationLists(OpCacheMan &cacheMan, OBJ_Node &objNo
 	if (!objGeom)
 		return;
 
-	// Get the list of lights that will illuminate this OBJ_Node.
-	OP_NodeList lightOpList;
-	objGeom->getLightMaskObjects(lightOpList, 0.0);
-
 	UT_String lightmask;
 	objNode.evalString(lightmask, "lightmask", 0, 0.0);
 	if (lightmask.equal("*"))
 		return;
 
+	// Get the list of lights that will illuminate this OBJ_Node.
+	OP_NodeList lightOpList;
+	objGeom->getLightMaskObjects(lightOpList, 0.0);
 	if (lightOpList.isEmpty())
 		return;
 
