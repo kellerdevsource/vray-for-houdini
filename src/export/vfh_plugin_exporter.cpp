@@ -210,7 +210,7 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 
 		const std::string paramName(p.paramName.toStdString());
 		
-		const int isValueAnimated = isAnimation && p.paramValue.isAnimated;
+		const int isValueAnimated = isAnimation /* && p.paramValue.isAnimated */;
 
 		m_vray->useAnimatedValues(isValueAnimated);
 
@@ -259,7 +259,14 @@ void VRayPluginRenderer::exportPluginProperties(VRay::Plugin &plugin, const Attr
 			setValueRes = plugin.setValue(paramName, p.paramValue.valRawListCharString);
 		}
 		else if (p.paramType == AttrTypeRawListValue) {
+			const int useAnimated = m_vray->getUseAnimatedValuesState();
+			if (!p.paramValue.isAnimated) {
+				m_vray->useAnimatedValues(false);
+			}
+
 			setValueRes = plugin.setValue(paramName, p.paramValue.valRawListValue);
+
+			m_vray->useAnimatedValues(useAnimated);
 		}
 
 		if (!setValueRes) {
