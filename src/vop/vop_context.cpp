@@ -26,6 +26,7 @@ static PRM_Template templates[] = {
 };
 
 static const StringSet vrayVopAllowedTypes = {
+	"subnet",
 	"parameter",
 	"switch",
 	"null",
