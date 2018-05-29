@@ -1,0 +1,81 @@
+#include "$HFS/houdini/OPbindings"
+
+Object/VRayNodeSunLight
+{
+	bindhandle light "Light Manipulator" ""
+	{
+		OBJ_BASECAMERA_BINDINGS
+	}
+}
+
+Object/VRayNodeLightDirect
+{
+	bindhandle light "Light Manipulator" ""
+	{
+		OBJ_BASECAMERA_BINDINGS
+	}
+}
+
+Object/VRayNodeLightAmbient
+{
+	bindhandle light "Light Manipulator" ""
+	{
+		OBJ_BASECAMERA_BINDINGS
+	}
+}
+
+Object/VRayNodeLightOmni
+{
+	bindhandle light "Light Manipulator" ""
+	{
+		OBJ_BASECAMERA_BINDINGS
+	}
+}
+
+Object/VRayNodeLightSphere
+{
+	bindhandle light "Light Manipulator" ""
+	{
+		OBJ_BASECAMERA_BINDINGS
+	}
+}
+
+Object/VRayNodeLightSpot
+{
+	bindhandle light "Light Manipulator" ""
+	{
+		OBJ_BASECAMERA_BINDINGS
+	}
+}
+
+Object/VRayNodeLightRectangle
+{
+	bindhandle light "Light Manipulator" ""
+	{
+		OBJ_BASECAMERA_BINDINGS
+	}
+}
+
+Object/VRayNodeLightMesh
+{
+	bindhandle light "Light Manipulator" ""
+	{
+		OBJ_BASECAMERA_BINDINGS
+	}
+}
+
+Object/VRayNodeLightIES
+{
+	bindhandle light "Light Manipulator" ""
+	{
+		OBJ_BASECAMERA_BINDINGS
+	}
+}
+
+Object/VRayNodeLightDome
+{
+	bindhandle light "Light Manipulator" ""
+	{
+		OBJ_BASECAMERA_BINDINGS
+	}
+}
