@@ -332,10 +332,21 @@ OP_Node* VRayExporter::FindChildNodeByType(OP_Node *op_node, const QString &op_t
 	return nullptr;
 }
 
+template <typename ListType>
+static void mergePluginListToValueList(Attrs::QValueList &dstList, const ListType &srcList)
+{
+	for (const VRay::Plugin &plugin : srcList) {
+		if (plugin.isEmpty())
+			continue;
+
+		dstList.append(VRay::VUtils::Value(plugin));
+	}
+}
+
 void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc,
                                              const Parm::AttrDesc &attrDesc,
                                              OP_Node &opNode,
-                                             const QString &parmNameStr) const
+                                             const QString &parmNameStr)
 {
 	if (!Parm::isParmExist(opNode, parmNameStr))
 		return;
@@ -420,14 +431,24 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc,
 		attr.paramType = Attrs::AttrTypeString;
 		attr.paramValue.valString = buf.buffer();
 	}
+	else if (attrDesc.value.type == Parm::eListNode) {
+		DelayedExportItem item;
+		item.opNode = &opNode;
+		item.pluginName = pluginDesc.pluginName;
+		item.pluginID = pluginDesc.pluginID;
+		item.parmName = parmNameStr;
+		item.attrDesc = attrDesc;
+
+		delayedExport.append(item);
+	}
 	else if (attrDesc.value.type > Parm::eManualExportStart &&
 	         attrDesc.value.type < Parm::eManualExportEnd)
 	{
 		// These are fake params and must be handled manually
 		addAttr = false;
 	}
-	else if (attrDesc.value.type < Parm::ePlugin) {
-		Log::getLog().error("Unhandled param type: %s at %s [%i]",
+	else if (attrDesc.value.type < Parm::eOutputPlugin) {
+		Log::getLog().debug("Unhandled param type: %s at %s [%i]",
 		                    parmName, opNode.getOperator()->getName().buffer(), attrDesc.value.type);
 		addAttr = false;
 	}
@@ -1786,7 +1807,6 @@ void VRayExporter::resetOpCallbacks()
 	m_opRegCallbacks.clear();
 }
 
-
 void VRayExporter::addOpCallback(OP_Node *op_node, OP_EventMethod cb)
 {
 	if (sessionType == VfhSessionType::production)
@@ -1937,6 +1957,58 @@ static void onRendererClosed(VRay::VRayRenderer& /*renderer*/, double, void *dat
 	Log::getLog().debug("onRendererClosed");
 }
 
+void VRayExporter::exportDelayed()
+{
+	const fpreal t = getContext().getTime();
+
+	for (const DelayedExportItem &item : delayedExport) {
+		vassert(item.opNode);
+
+		Attrs::PluginDesc pluginDesc(item.pluginName, item.pluginID);
+
+		if (item.attrDesc.value.type == Parm::eListNode) {
+			UT_String listAttrValue;
+			item.opNode->evalString(listAttrValue, qPrintable(item.parmName), 0, t);
+
+			const int isListExcludeAll = listAttrValue.equal("*");
+			const int isListExcludeNone = listAttrValue.equal("");
+			if (isListExcludeAll || isListExcludeNone) {
+				int isListInclusive = false;
+				if (!item.attrDesc.value.nodeList.inclusiveFlag.isEmpty()) {
+					isListInclusive = item.opNode->evalInt(qPrintable(item.attrDesc.value.nodeList.inclusiveFlag), 0, 0.0);
+				}
+
+				pluginDesc.add(item.attrDesc.value.nodeList.inclusiveFlag, !isListInclusive ^ isListExcludeNone);
+				pluginDesc.add(item.parmName, Attrs::QValueList());
+			}
+			else {
+				Attrs::QValueList excludeList;
+
+				OP_Bundle *opBundle = getBundleFromOpNodePrm(*item.opNode, qPrintable(item.parmName), t);
+				if (opBundle) {
+					OP_NodeList opList;
+					opBundle->getMembers(opList);
+
+					for (OP_Node *listNode : opList) {
+						if (OBJ_Node *objNode = listNode->castToOBJNode()) {
+							const ObjCacheEntry &objEntry = cacheMan.getObjEntry(*objNode);
+
+							mergePluginListToValueList(excludeList, objEntry.nodes);
+						}
+					}
+				}
+
+				pluginDesc.add(item.parmName, excludeList);
+			}
+		}
+
+		// This will append new data to existing plugin.
+		exportPlugin(pluginDesc);
+	}
+
+	delayedExport.clear();
+}
+
 void VRayExporter::exportScene()
 {
 	QAtomicIntRaii inSceneLock(inSceneExport);
@@ -1988,6 +2060,8 @@ void VRayExporter::exportScene()
 			exportEffects(env_network);
 		}
 	}
+
+	exportDelayed();
 
 	OP_Node *channels_network = getOpNodeFromAttr(*m_rop, "render_network_render_channels");
 	if (channels_network) { 

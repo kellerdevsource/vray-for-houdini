@@ -60,6 +60,8 @@ static void initVRayParmTypesMap()
 
 	vrayParmTypes.insert("Object", ePlugin);
 
+	vrayParmTypes.insert("NodeList", eListNode);
+
 	vrayParmTypes.insert("Texture",       eTextureColor);
 	vrayParmTypes.insert("OutputTexture", eOutputTextureColor);
 
@@ -198,8 +200,8 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 		const UT_String vrayType(parmSpare->getValue("vray_type"));
 		if (vrayType.isstring()) {
 			// We don't store output and list attributes.
-			// XXX: Refactor code that relates on output attribute info.
-			if (vrayType.startsWith("Output") || vrayType.startsWith("List"))
+			if (vrayType.startsWith("Output") ||
+				vrayType.startsWith("List"))
 				continue;
 
 			vassert(vrayParmTypes.find(vrayType.buffer()) != vrayParmTypes.end());
@@ -208,6 +210,8 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 			if (!UTisstring(vrayPluginAttr)) {
 				vrayPluginAttr = tokenName;
 			}
+
+			vassert(pluginInfo.attributes.find(vrayPluginAttr) == pluginInfo.attributes.end());
 
 			uint32_t attrFlags = attrFlagNone;
 
@@ -226,12 +230,8 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 				attrFlags |= attrFlagCustomHandling;
 			}
 
-			const char *vrayEnumKeys = parmSpare->getValue("vray_enumkeys");
-
 			const char *vrayLabel = parmSpare->getValue("vray_label");
 			const char *uiLabel = UTisstring(vrayLabel) ? vrayLabel : parm->getLabel();
-
-			vassert(pluginInfo.attributes.find(vrayPluginAttr) == pluginInfo.attributes.end());			
 
 			AttrDesc &attrDesc = pluginInfo.attributes[vrayPluginAttr];
 			attrDesc.label = uiLabel;
@@ -243,11 +243,20 @@ static void initAttributes(const PRMList &parmList, VRayPluginInfo &pluginInfo)
 				attrDesc.flags |= attrFlagEnabledOnly;
 			}
 
+			// TODO: Get rid of "vray_enumkeys". Use "vray_type" only.
+			const char *vrayEnumKeys = parmSpare->getValue("vray_enumkeys");
 			if (UTisstring(vrayEnumKeys)) {
 				attrDesc.value.type = eEnum;
 			}
 			else {
 				attrDesc.value.type = vrayParmTypes[vrayType.buffer()];
+			}
+
+			if (attrDesc.value.type == eListNode) {
+				const UT_String listInclusiveAttr(parmSpare->getValue("vray_list_inclusive"));
+				if (listInclusiveAttr.isstring()) {
+					attrDesc.value.nodeList.inclusiveFlag = listInclusiveAttr.buffer();
+				}
 			}
 		}
 		else if (isCurve || isRamp) {

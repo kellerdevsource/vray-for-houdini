@@ -543,7 +543,7 @@ public:
 	/// @param parmDesc[in] - plugin attribute description
 	/// @param opNode[in] - the node
 	/// @param parmName[in] - parameter name
-	void setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const QString &parmName) const;
+	void setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const QString &parmName);
 
 	/// Helper function to fill in plugin description attributes from matching node parameters
 	/// @param pluginDesc[out] - the plugin description
@@ -726,6 +726,19 @@ private:
 
 	/// Plugins cache.
 	OpCacheMan cacheMan;
+
+	struct DelayedExportItem {
+		OP_Node *opNode;
+		QString pluginID;
+		QString pluginName;
+		QString parmName;
+		Parm::AttrDesc attrDesc;
+	};
+
+	typedef QList<DelayedExportItem> DelayedExport;
+	DelayedExport delayedExport;
+
+	void exportDelayed();
 
 public:
 	/// Register event callback for a given node. This callback will be invoked when

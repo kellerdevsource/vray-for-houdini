@@ -24,7 +24,6 @@ namespace Parm {
 enum ParmType {
 	eInt = 0,
 	eFloat,
-	eFloatList,
 	eEnum,
 	eBool,
 	eColor,
@@ -43,6 +42,7 @@ enum ParmType {
 	eCurve,
 	eRamp,
 	ePlugin,
+	eListNode,
 	eManualExportEnd,
 	eOutputPlugin,
 	eOutputColor,
@@ -79,6 +79,15 @@ struct ParmDefValue {
 		QString interpolations; ///< The name of the property for itnerpolations
 	};
 
+	/// Descriptor for Node list parameter.
+	struct ParmNodeListDesc {
+		/// The name of the property that sets the list to be inclusive.
+		QString inclusiveFlag;
+
+		/// Is list exclusive by default.
+		int exclusive = true;
+	};
+
 	ParmDefValue()
 		: type(eUnknown)
 	{}
@@ -91,6 +100,9 @@ struct ParmDefValue {
 
 	/// Data for exporting curve ramp.
 	ParmCurveDesc curveRampInfo;
+
+	/// Data for exporting exclude lists.
+	ParmNodeListDesc nodeList;
 };
 
 enum AttrDescFlags {
