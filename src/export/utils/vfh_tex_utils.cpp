@@ -184,9 +184,9 @@ void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter,
 		const QString valAttrInstName = FmtValueAttrName.arg(curveAttrName).arg(QString::number(i));
 		const QString interpAttrInstName = FmtInterpAttrName.arg(curveAttrName).arg(QString::number(i));
 
-		isAnimated |= opNode.isParmTimeDependent(qPrintable(posAttrInstName));
-		isAnimated |= opNode.isParmTimeDependent(qPrintable(valAttrInstName));
-		isAnimated |= opNode.isParmTimeDependent(qPrintable(interpAttrInstName));
+		isAnimated |= int(opNode.isParmTimeDependent(qPrintable(posAttrInstName)));
+		isAnimated |= int(opNode.isParmTimeDependent(qPrintable(valAttrInstName)));
+		isAnimated |= int(opNode.isParmTimeDependent(qPrintable(interpAttrInstName)));
 
 		if (!needHandles) {
 			positions[posIdx++] = pos;
