@@ -722,23 +722,19 @@ void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node
 					VRay::VUtils::FloatRefList positions;
 					VRay::VUtils::FloatRefList values;
 
+					int isRampAnimated = false;
+
 					Texture::getCurveData(*this,
-					                      opNode,
+					                      *opNode,
 					                      /* Houdini curve attr */ parmName,
 					                      /* V-Ray attr: interp */ interpolations,
 					                      /* V-Ray attr: x      */ positions,
 					                      /* V-Ray attr: y      */ values,
-					                      /* Don't need handles */ false,
-					                      /* Remap to vray interpolations*/ remapInterp);
-
-					// TODO: Detect ramp animation.
-					const int isRampAnimated = false;
+					                      /* Is ramp  animated  */ isRampAnimated);
 
 					pluginDesc.add(attrDesc.value.curveRampInfo.interpolations, interpolations, isRampAnimated);
 					pluginDesc.add(attrDesc.value.curveRampInfo.positions, positions, isRampAnimated);
-					if (values.size()) {
-						pluginDesc.add(attrDesc.value.curveRampInfo.values, values, isRampAnimated);
-					}
+					pluginDesc.add(attrDesc.value.curveRampInfo.values, values, isRampAnimated);
 				}
 				else {
 					setAttrValueFromOpNodePrm(pluginDesc, attrDesc, *opNode, parmName);

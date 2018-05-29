@@ -135,22 +135,25 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter,
 	}
 }
 
-void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_node,
+void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter,
+                                           OP_Node &opNode,
                                            const QString &curveAttrName,
                                            VRay::VUtils::IntRefList &interpolations,
                                            VRay::VUtils::FloatRefList &positions,
                                            VRay::VUtils::FloatRefList &values,
-                                           bool needValues,
-                                           bool needHandles,
-                                           bool remapInterp)
+                                           int &isAnimated,
+                                           int flags)
 {
 	const fpreal &t = exporter.getContext().getTime();
 
-	const int numPoints = op_node->evalInt(qPrintable(curveAttrName), 0, t);
+	const int numPoints = opNode.evalInt(qPrintable(curveAttrName), 0, t);
 	if (!numPoints)
 		return;
 
 	interpolations = VRay::VUtils::IntRefList(numPoints);
+
+	const int needHandles = isBitSet(flags, curveDataFlagsNeedHandles);
+	const int needValues = isBitSet(flags, curveDataFlagsNeedValues);
 
 	if (!needHandles) {
 		if (needValues) {
@@ -169,17 +172,21 @@ void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_n
 	const QString &prmValName    = FmtValue.arg(curveAttrName);
 	const QString &prmInterpName = FmtInterp.arg(curveAttrName);
 
-	const char *prmPosPtr = qPrintable(prmPosName);
-	const char *prmValNamePtr = qPrintable(prmValName);
-	const char *prmInterpNamePtr = qPrintable(prmInterpName);
-
 	int p = 0;
 	int posIdx = 0;
 
 	for(int i = 1; i <= numPoints; ++i, ++p) {
-		const float pos = op_node->evalFloatInst(prmPosPtr, &i, 0, t);
-		const float val = op_node->evalFloatInst(prmValNamePtr, &i, 0, t);
-		int interp      = op_node->evalIntInst(prmInterpNamePtr, &i, 0, t);
+		const float pos = opNode.evalFloatInst(qPrintable(prmPosName), &i, 0, t);
+		const float val = opNode.evalFloatInst(qPrintable(prmValName), &i, 0, t);
+		int interp      = opNode.evalIntInst(qPrintable(prmInterpName), &i, 0, t);
+
+		const QString posAttrInstName = FmtPosAttrName.arg(curveAttrName).arg(QString::number(i));
+		const QString valAttrInstName = FmtValueAttrName.arg(curveAttrName).arg(QString::number(i));
+		const QString interpAttrInstName = FmtInterpAttrName.arg(curveAttrName).arg(QString::number(i));
+
+		isAnimated |= opNode.isParmTimeDependent(qPrintable(posAttrInstName));
+		isAnimated |= opNode.isParmTimeDependent(qPrintable(valAttrInstName));
+		isAnimated |= opNode.isParmTimeDependent(qPrintable(interpAttrInstName));
 
 		if (!needHandles) {
 			positions[posIdx++] = pos;
@@ -195,11 +202,7 @@ void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter, OP_Node *op_n
 			point[p].y = val;
 		}
 
-		if (remapInterp) {
-			interp = static_cast<int>(mapToVray(static_cast<HOU_InterpolationType>(interp)));
-		}
-
-		interpolations[p] = interp;
+		interpolations[p] = static_cast<int>(mapToVray(static_cast<HOU_InterpolationType>(interp)));
 	}
 
 	if (!needHandles)

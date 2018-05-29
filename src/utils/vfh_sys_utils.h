@@ -12,7 +12,16 @@
 #ifndef VRAY_FOR_HOUDINI_VFH_SYS_UTILS_H
 #define VRAY_FOR_HOUDINI_VFH_SYS_UTILS_H
 
+#include "vfh_vray.h"
+
+#define VFH_BIT(b) (1<<(b))
+
 namespace VRayForHoudini {
+
+FORCEINLINE int isBitSet(int storage, int mask) {
+	return (storage & mask) != 0;
+}
+
 namespace Sys {
 
 /// Returns environment variable value as string.

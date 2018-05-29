@@ -37,13 +37,15 @@ OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &plug
 	VRay::VUtils::IntRefList types;
 	VRay::VUtils::FloatRefList points;
 	VRay::VUtils::FloatRefList values;
-	Texture::getCurveData(exporter, this, SL("curve"), types, points, values, false, true);
+
+	int isAnimated = false;
+	Texture::getCurveData(exporter, *this, SL("curve"), types, points, values, isAnimated, Texture::curveDataFlagsNeedHandles);
 
 	Attrs::PluginDesc texBezierCurveDesc(VRayExporter::getPluginName(*this, SL("SubCurve")),
 	                                     SL("TexBezierCurve"));
 	texBezierCurveDesc.add(SL("input_float"), subFalloffTex, "blend_output");
-	texBezierCurveDesc.add(SL("points"), points);
-	texBezierCurveDesc.add(SL("types"), types);
+	texBezierCurveDesc.add(SL("points"), points, isAnimated);
+	texBezierCurveDesc.add(SL("types"), types, isAnimated);
 
 	const VRay::Plugin texBezierCurve = exporter.exportPlugin(texBezierCurveDesc);
 
