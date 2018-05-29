@@ -1201,26 +1201,6 @@ voptoolutils.genericTool(kwargs, 'VRayNodeTexUserScalar', nodename="userFloat")
 </tool>
 
 
-<tool name="vop_VRayNodeTexUserInteger" label="V-Ray User Integer" icon="ROP_vray">
-    <readOnly/>
-    <toolMenuContext name="viewer">
-        <contextNetType>VOP</contextNetType>
-    </toolMenuContext>
-    <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodeTexUserInteger</contextOpType>
-    </toolMenuContext>
-    <toolSubmenu>V-Ray/Texture</toolSubmenu>
-    <script scriptType="python">
-<![CDATA[
-
-import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeTexUserInteger', nodename="userInteger")
-
-]]>
-    </script>
-</tool>
-
-
 <tool name="vop_VRayNodeTexVector" label="V-Ray Vector To Texture" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
