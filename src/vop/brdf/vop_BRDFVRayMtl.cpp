@@ -23,10 +23,21 @@ OP::VRayNode::PluginResult BRDFVRayMtl::asPluginDesc(Attrs::PluginDesc &pluginDe
 	const fpreal t = exporter.getContext().getTime();
 
 	const int hilightLockVal = evalInt("hilight_glossiness_lock", 0, t);
-	const fpreal hilightGlossinessValue = evalFloat("hilight_glossiness", 0, t);
-	const fpreal reflectionColourValue = evalFloat("reflect_glossiness", 0, t);
 
-	pluginDesc.add(Attrs::PluginAttr("hilight_glossiness", hilightLockVal ? reflectionColourValue : hilightGlossinessValue));
+	const fpreal hilightGlossiness = evalFloat("hilight_glossiness", 0, t);
+	const fpreal reflectGlossiness = evalFloat("reflect_glossiness", 0, t);
+
+	pluginDesc.add(SL("hilight_glossiness"), hilightLockVal ? reflectGlossiness : hilightGlossiness);
+
+	const fpreal selfIlluminationMult = evalFloat("self_illumination_mult", 0, t);
+
+	pluginDesc.add(SL("self_illumination"),
+	               evalFloat("self_illumination", 0, t) * selfIlluminationMult,
+	               evalFloat("self_illumination", 1, t) * selfIlluminationMult,
+	               evalFloat("self_illumination", 2, t) * selfIlluminationMult,
+	               evalFloat("self_illumination", 3, t) * selfIlluminationMult,
+	               isParmTimeDependent("self_illumination_mult") || isParmTimeDependent("self_illumination")
+	);
 
 	return PluginResultNA;
 }

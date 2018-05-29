@@ -85,7 +85,7 @@
         }
         parm {
             name  "self_illumination"
-            label "Self - Illumination Color"
+            label "Self-Illumination"
             type  color4
             size  4
             default { "0" "0" "0" "1" }
@@ -97,6 +97,14 @@
             parmtag { "vray_pluginattr" "self_illumination" }
             parmtag { "vray_type" "Texture" }
         }
+
+        VFH_UI_PARM_FLOAT("BRDFVRayMtl",
+            "self_illumination_mult",
+            "Self-Illumination Mult.",
+            "Self-Illumination color multiplier.",
+            0.0
+        )
+
         parm {
             name  "self_illumination_gi"
             label "Self - Illumination Affects GI"
