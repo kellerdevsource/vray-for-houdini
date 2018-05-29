@@ -1303,6 +1303,9 @@ VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentConte
 	else if (opType == "parameter") {
 		texPlugin = exportConnectedVop(vop_node, 0, parentContext);
 	}
+	else if (opType == "subnet") {
+		texPlugin = exportSubnet(*vop_node);
+	}
 	else if (opType.equal(vfhNodeMaterialOutput)) {
 		texPlugin = exportVop(getVRayNodeFromOp(*opNode, vfhSocketMaterialOutputMaterial), parentContext);
 	}

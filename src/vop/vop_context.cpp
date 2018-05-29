@@ -31,6 +31,7 @@ static const StringSet vrayVopAllowedTypes = {
 	"switch",
 	"null",
 	"makexform",
+	"subnet",
 };
 
 bool VOP::VRayVOPContextOPFilter::allowOperatorAsChild(OP_Operator *op)

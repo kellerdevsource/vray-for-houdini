@@ -70,3 +70,27 @@ VRay::Plugin VRayExporter::exportPrincipledShader(OP_Node &opNode, ExportContext
 
 	return exportPlugin(mtlSingleBRDF);
 }
+
+VRay::PluginRef VRayExporter::exportConnectedSocket(OP_Node &opNode, const QString &sockName)
+{
+	return VRay::PluginRef();
+}
+
+VRay::PluginRef VRayExporter::exportConnectedSocket(OP_Node &opNode, int socketIndex)
+{
+	return VRay::PluginRef();
+}
+
+VRay::Plugin VRayExporter::exportSubnet(VOP_Node &subnet, ExportContext*)
+{
+	// OP_Network *subnet = opNode.getParentNetwork();
+	VOP_Node *n = subnet.findSimpleInputFromOutput(0);
+
+	const int insideSubnet = n->isInSubNetwork();
+
+	VOP_Node *output = subnet.getSubnetOutputNode();
+
+	const int isConnected = output->isConnected(0, true);
+
+	return VRay::Plugin();
+}
