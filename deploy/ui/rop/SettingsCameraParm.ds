@@ -51,20 +51,33 @@ parm {
     parmtag { "vray_units" "radians" }
     hidewhen "{ SettingsCamera_override_fov == 0 }"
 }
+
 parm {
     name    "SettingsCamera_height"
-    label   "Camera Height"
+    label   "Height"
+    help    "Height of the cylindrical (ortho) camera"
     type    float
     default { "400" }
-    help    "Height of the cylindrical (ortho) camera"
-    range   { 0 800 }
-    export  none
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_plugin" "SettingsCamera" }
     parmtag { "vray_pluginattr" "height" }
     parmtag { "vray_type" "float" }
-    hidewhen "{ SettingsCamera_type != 3 }"
+    hidewhen "{ SettingsCamera_type != 3 } "
 }
+
+parm {
+    name    "SettingsCamera_vertical_fov"
+    label   "Vertical FOV"
+    help    "Height of the cylindrical (ortho) camera"
+    type    float
+    default { "180" }
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_plugin" "SettingsCamera" }
+    parmtag { "vray_pluginattr" "height" }
+    parmtag { "vray_type" "float" }
+    hidewhen "{ SettingsCamera_type != 9 } "
+}
+
 parm {
     name    "SettingsCamera_auto_fit"
     label   "Auto-fit"

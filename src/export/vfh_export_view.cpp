@@ -210,7 +210,12 @@ void VRayExporter::fillViewParamsFromRopNode(const OP_Node &ropNode, ViewParams 
 	const fpreal t = getContext().getTime();
 
 	viewParams.settingsCamera.type = ropNode.evalInt("SettingsCamera_type", 0, t);
-	viewParams.settingsCamera.height = ropNode.evalFloat("SettingsCamera_height", 0, t);
+
+	const char *heightParmName = viewParams.settingsCamera.type == 9
+		                             ? "SettingsCamera_vertical_fov"
+		                             : "SettingsCamera_height";
+	viewParams.settingsCamera.height = ropNode.evalFloat(heightParmName, 0, t);
+
 	viewParams.settingsCamera.dist = ropNode.evalFloat("SettingsCamera_dist", 0, t);
 	viewParams.settingsCamera.fov = ropNode.evalFloat("SettingsCamera_fov", 0, t);
 	viewParams.settingsCamera.auto_fit = ropNode.evalInt("SettingsCamera_auto_fit", 0, t);
