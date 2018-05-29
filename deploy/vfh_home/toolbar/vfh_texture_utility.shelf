@@ -9,7 +9,7 @@
     <toolMenuContext name="network">
         <contextOpType>Vop/VRayNodeFloatToTex</contextOpType>
     </toolMenuContext>
-    <toolSubmenu>V-Ray/Utility Texture</toolSubmenu>
+    <toolSubmenu>V-Ray/Utility Textures</toolSubmenu>
     <script scriptType="python">
 <![CDATA[
 
