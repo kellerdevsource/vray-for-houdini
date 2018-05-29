@@ -261,26 +261,6 @@ voptoolutils.genericTool(kwargs, 'VRayNodeFilterTriangle', nodename="triangle")
 </tool>
 
 
-<tool name="vop_VRayNodeFloatToTex" label="FloatToTex" icon="ROP_vray">
-    <readOnly/>
-    <toolMenuContext name="viewer">
-        <contextNetType>VOP</contextNetType>
-    </toolMenuContext>
-    <toolMenuContext name="network">
-        <contextOpType>Vop/VRayNodeFloatToTex</contextOpType>
-    </toolMenuContext>
-    <toolSubmenu>V-Ray/Texture</toolSubmenu>
-    <script scriptType="python">
-<![CDATA[
-
-import voptoolutils;
-voptoolutils.genericTool(kwargs, 'VRayNodeFloatToTex', nodename="floattotex")
-
-]]>
-    </script>
-</tool>
-
-
 <tool name="vop_VRayNodeGeomDisplacedMesh" label="Displacement" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">

@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <shelfDocument>
 
+<tool name="vop_VRayNodeFloatToTex" label="V-Ray Float" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeFloatToTex</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Utility Texture</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeFloatToTex', nodename="floattotex")
+
+]]>
+    </script>
+</tool>
+
 <tool name="vop_VRayNodeColorTextureToMono" label="V-Ray Color To Mono" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
@@ -19,7 +38,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeColorTextureToMono', nodename="colorTo
 </tool>
 
 
-<tool name="vop_VRayNodeColorCorrection" label="Color Correction" icon="ROP_vray">
+<tool name="vop_VRayNodeColorCorrection" label="V-Ray Color Correction" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
@@ -37,7 +56,7 @@ voptoolutils.genericTool(kwargs, 'VRayNodeColorCorrection', nodename="colorCorre
 </tool>
 
 
-<tool name="vop_VRayNodeColorCorrect" label="Color Correct" icon="ROP_vray">
+<tool name="vop_VRayNodeColorCorrect" label="V-Ray Color Correct" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">
         <contextNetType>VOP</contextNetType>
