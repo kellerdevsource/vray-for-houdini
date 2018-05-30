@@ -251,7 +251,7 @@ public:
 
 	/// Restores VFB state.
 	/// @param stateData State data as Base64 string.
-	void restoreVfbState(const QString &stateData) const;
+	void restoreVfbState(const QString &stateData, int setHistory) const;
 
 	/// Obtains VFB state as VFBSettings.
 	/// @param settings Output state as VFBSettings.

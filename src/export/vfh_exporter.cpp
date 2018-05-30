@@ -2412,10 +2412,15 @@ void VRayExporter::initExporter(int hasUI, int nframes, fpreal tstart, fpreal te
 		}
 		else {
 			if (!getRenderer().getVRay().vfb.isShown()) {
-				restoreVfbState();
+				// Set initial position.
+				restoreVfbState(false);
 			}
+
 			getRenderer().getVfbSettings(vfbSettings);
 			getRenderer().showVFB(m_workMode != ExpExport, m_rop->getFullPath());
+
+			// Restore history state.
+			restoreVfbState(true);
 		}
 	}
 
@@ -2799,7 +2804,7 @@ void VRayExporter::saveVfbState()
 	}
 }
 
-void VRayExporter::restoreVfbState()
+void VRayExporter::restoreVfbState(int setHistory)
 {
 	if (!m_rop)
 		return;
@@ -2812,7 +2817,7 @@ void VRayExporter::restoreVfbState()
 	m_rop->evalString(vfbState, "_vfb_settings", 0, 0.0);
 
 	if (vfbState.isstring()) {
-		getRenderer().restoreVfbState(vfbState.buffer());
+		getRenderer().restoreVfbState(vfbState.buffer(), setHistory);
 	}
 }
 

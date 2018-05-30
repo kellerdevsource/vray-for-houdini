@@ -620,7 +620,7 @@ public:
 	void saveVfbState();
 
 	/// Restores VFB state.
-	void restoreVfbState();
+	void restoreVfbState(int setHistory);
 
 	/// Executed when user presses "Render" button in the VFB.
 	void renderLast() const;
