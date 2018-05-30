@@ -44,36 +44,6 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 	csect.leave();
 }
 
-VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
-{
-	if (!vopNode) {
-		return VRay::Plugin();
-	}
-
-	VRay::Plugin material = exportVop(vopNode);
-
-	const VOP_Type vopType = vopNode->getShaderType();
-	if (vopType == VOP_TYPE_BSDF) {
-		// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly.
-		Attrs::PluginDesc mtlPluginDesc(getPluginName(*vopNode, SL("MtlSingle")),
-		                                SL("MtlSingleBRDF"));
-		mtlPluginDesc.add(Attrs::PluginAttr(SL("brdf"), material));
-		mtlPluginDesc.add(Attrs::PluginAttr(SL("scene_name"), getSceneName(*vopNode)));
-		material = exportPlugin(mtlPluginDesc);
-	}
-
-	if (material.isNotEmpty() && isInteractive()) {
-		// Wrap material into MtlRenderStats to always have the same material name.
-		// Used when rewiring materials when running interactive RT session.
-		Attrs::PluginDesc pluginDesc(getPluginName(*vopNode, SL("MtlStats")),
-		                             SL("MtlRenderStats"));
-		pluginDesc.add(Attrs::PluginAttr(SL("base_mtl"), material));
-		material = exportPlugin(pluginDesc);
-	}
-
-	return material;
-}
-
 VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 {
 	VRay::Plugin material;
@@ -82,29 +52,33 @@ VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 		material = exportDefaultMaterial();
 	}
 	else if (!cacheMan.getMatPlugin(*matNode, material)) {
-		VOP_Node *vopNode = CAST_VOPNODE(matNode);
-		SHOP_Node *shopNode = CAST_SHOPNODE(matNode);
-
-		// MAT context
-		if (vopNode) {
-			material = exportMaterial(vopNode);
-		}
-		// SHOP context
-		else if (shopNode) {
-			const UT_String &opType = shopNode->getOperator()->getName();
-			// We support only "V-Ray Material" SHOP node.
-			if (opType.equal("vray_material")) {
-				OP_Node *materialNode = getVRayNodeFromOp(*matNode, vfhSocketMaterialOutputMaterial);
-				if (materialNode) {
-					material = exportMaterial(CAST_VOPNODE(materialNode));
-				}
-			}
-		}
+		material = exportVop(matNode);
 
 		if (material.isEmpty()) {
 			material = exportDefaultMaterial();
 		}
 		else {
+			if (VOP_Node *vopNode = CAST_VOPNODE(matNode)) {
+				const VOP_Type vopType = vopNode->getShaderType();
+				if (vopType == VOP_TYPE_BSDF) {
+					// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly.
+					Attrs::PluginDesc mtlPluginDesc(getPluginName(*vopNode, SL("MtlSingle")),
+					                                SL("MtlSingleBRDF"));
+					mtlPluginDesc.add(Attrs::PluginAttr(SL("brdf"), material));
+					mtlPluginDesc.add(Attrs::PluginAttr(SL("scene_name"), getSceneName(*vopNode)));
+					material = exportPlugin(mtlPluginDesc);
+				}
+			}
+
+			if (isInteractive()) {
+				// Wrap material into MtlRenderStats to always have the same material name.
+				// Used when rewiring materials when running interactive RT session.
+				Attrs::PluginDesc pluginDesc(getPluginName(*matNode, SL("MtlStats")),
+				                             SL("MtlRenderStats"));
+				pluginDesc.add(Attrs::PluginAttr(SL("base_mtl"), material));
+				material = exportPlugin(pluginDesc);
+			}
+
 			addOpCallback(matNode, RtCallbackSurfaceShop);
 		}
 

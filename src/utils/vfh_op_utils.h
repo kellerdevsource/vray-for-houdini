@@ -16,6 +16,7 @@
 
 namespace VRayForHoudini {
 
+const char vfhNodeMaterialBuilder[] = "vray_material";
 const char vfhNodeMaterialOutput[] = "vray_material_output";
 
 const char vfhSocketMaterialOutputMaterial[]   = "Material";

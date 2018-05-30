@@ -62,11 +62,6 @@ static UT_DMatrix4 yAxisUpRotationMatrix(1.0, 0.0, 0.0, 0.0,
                                          0.0, -1.0, 0.0, 0.0,
                                          0.0, 0.0, 0.0, 0.0);
 
-static const VRay::Transform envMatrix(VRay::Matrix(VRay::Vector(1.f, 0.f, 0.f),
-                                                    VRay::Vector(0.f, 0.f, 1.f),
-                                                    VRay::Vector(0.f, -1.f, 0.f)),
-                                       VRay::Vector(0.f));
-
 /// Matches frame number like "$F" and "$F4".
 static QRegExp frameMatch("\\$F(\\d+)?");
 static QRegularExpression frameMatchExpr(frameMatch.pattern());
@@ -192,6 +187,7 @@ void VRayExporter::reset()
 
 void VRayExporter::clearCaches()
 {
+	shaderExporter.reset();
 	objectExporter.reset();
 }
 
@@ -847,6 +843,7 @@ VRayExporter::VRayExporter(OP_Node *rop)
 	, m_timeStart(0)
 	, m_timeEnd(0)
 	, objectExporter(*this)
+	, shaderExporter(*this)
 {
 	Log::getLog().debug("VRayExporter()");
 }
@@ -1277,101 +1274,7 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 
 VRay::Plugin VRayExporter::exportVop(OP_Node *opNode, ExportContext *parentContext)
 {
-	VOP_Node *vop_node = CAST_VOPNODE(opNode);
-	if (!vop_node)
-		return VRay::Plugin();
-
-	const UT_String &opType = vop_node->getOperator()->getName();
-
-	Log::getLog().debug("Exporting node \"%s\" [%s]...",
-					   vop_node->getName().buffer(),
-					   opType.buffer());
-
-	VRay::Plugin texPlugin;
-
-	if (opType == "switch") {
-		const fpreal t = m_context.getTime();
-		const int switcher = vop_node->evalInt("switcher", 0, t);
-		texPlugin = exportConnectedVop(vop_node, switcher+1, parentContext);
-	}
-	else if (opType == "null") {
-		texPlugin = exportConnectedVop(vop_node, 0, parentContext);
-	}
-	else if (opType.startsWith("principledshader")) {
-		texPlugin = exportPrincipledShader(*opNode, parentContext);
-	}
-	else if (opType == "parameter") {
-		texPlugin = exportConnectedVop(vop_node, 0, parentContext);
-	}
-	else if (opType == "subnet") {
-		texPlugin = exportSubnet(*vop_node);
-	}
-	else if (opType.equal(vfhNodeMaterialOutput)) {
-		texPlugin = exportVop(getVRayNodeFromOp(*opNode, vfhSocketMaterialOutputMaterial), parentContext);
-	}
-	else if (opType.startsWith("VRayNode")) {
-		VOP::NodeBase *vrayNode = static_cast<VOP::NodeBase*>(vop_node);
-
-		// TODO: need consistent naming for surface/displacement/other vops and their overrides.
-		Attrs::PluginDesc pluginDesc(getPluginName(*vop_node), vrayNode->getVRayPluginID());
-
-		if (opType.equal("VRayNodeTexSky")) {
-			fillNodeTexSky(*opNode, pluginDesc);
-		}
-
-		//TODO: need consistent naming for surface/displacement/other vops and their overrides
-		const OP::VRayNode::PluginResult res = vrayNode->asPluginDesc(pluginDesc, *this, parentContext);
-		if (res == OP::VRayNode::PluginResultError) {
-			Log::getLog().error("Error creating plugin descripion for node: \"%s\" [%s]",
-								vop_node->getName().buffer(),
-								opType.buffer());
-		}
-		else if (res == OP::VRayNode::PluginResultNA ||
-				 res == OP::VRayNode::PluginResultContinue)
-		{
-			// NOTE: first handle all connected inputs on a VOP
-			//       then consider any material overrides
-			//       lastly take attr values from VOP params
-			setAttrsFromOpNodeConnectedInputs(pluginDesc, *vop_node, parentContext);
-
-			// handle VOP overrides if any
-			setAttrsFromSHOPOverrides(pluginDesc, *vop_node);
-
-			setAttrsFromOpNodePrms(pluginDesc, vop_node);
-
-			if (vrayNode->getVRayPluginType() == VRayPluginType::RENDERCHANNEL) {
-				Attrs::PluginAttr *attrChanName = pluginDesc.get(SL("name"));
-				if (!attrChanName ||
-				    attrChanName->paramValue.valString.isEmpty())
-				{
-					const QString channelName(vop_node->getName().buffer());
-					if (!attrChanName) {
-						pluginDesc.add(SL("name"), channelName);
-					}
-					else {
-						attrChanName->paramValue.valString = channelName;
-					}
-				}
-			}
-
-			if (pluginDesc.pluginID == SL("UVWGenEnvironment") &&
-				!pluginDesc.contains(SL("uvw_matrix")))
-			{
-				pluginDesc.add(SL("uvw_matrix"), envMatrix);
-			}
-
-			texPlugin = exportPlugin(pluginDesc);
-		}
-	}
-
-	if (!texPlugin.isNotEmpty()) {
-		Log::getLog().error("Unsupported VOP node: %s", opType.buffer());
-	}
-	else {
-		addOpCallback(vop_node, RtCallbackVop);
-	}
-
-	return texPlugin;
+	return shaderExporter.exportShaderNode(*opNode);
 }
 
 
@@ -2024,7 +1927,7 @@ void VRayExporter::exportScene()
 
 	bundleMap.init();
 
-	objectExporter.reset();
+	clearCaches();
 
 	OP_Bundle *activeGeo = getActiveGeometryBundle(*m_rop, m_context.getTime());
 	if (activeGeo) {

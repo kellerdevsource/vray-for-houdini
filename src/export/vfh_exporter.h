@@ -18,6 +18,7 @@
 #include "vfh_export_view.h"
 #include "vfh_hashes.h"
 #include "vfh_export_geom.h"
+#include "vfh_export_vop.h"
 #include "vfh_log.h"
 #include "vfh_export_context.h"
 
@@ -478,16 +479,6 @@ public:
 	static OP_Input* getConnectedInput(OP_Node *op_node, const QString &inputName);
 	static OP_Node* getConnectedNode(OP_Node *op_node, const QString &inputName);
 
-	/// Export plugin from node connected to the socket.
-	/// @param opNode Currently processed node.
-	/// @param socketName Currently processed socket name.
-	VRay::PluginRef exportConnectedSocket(OP_Node &opNode, const QString &socketName);
-
-	/// Export plugin from node connected to the socket.
-	/// @param opNode Currently processed node.
-	/// @param socketIndex Currently processed socket index.
-	VRay::PluginRef exportConnectedSocket(OP_Node &opNode, int socketIndex);
-
 	/// Helper function to retrieve the connection type given an input connection name
 	/// @param op_node[in] - VOP node
 	/// @param inputName[in] -  the input connection name
@@ -605,7 +596,6 @@ public:
 	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
 
 	VRay::Plugin exportPrincipledShader(OP_Node &opNode, ExportContext *parentContext=nullptr);
-	VRay::Plugin exportSubnet(VOP_Node &opNode, ExportContext *parentContext=nullptr);
 
 	void fillNodeTexSky(const OP_Node &opNode, Attrs::PluginDesc &pluginDesc);
 
@@ -646,11 +636,6 @@ public:
 	OpCacheMan &getCacheMan() { return cacheMan; }
 
 private:
-	/// Export V-Ray material from VOP node.
-	/// @param node VOP node.
-	/// @returns V-Ray plugin.
-	VRay::Plugin exportMaterial(VOP_Node *node);
-
 	/// The driver node bound to this exporter.
 	OP_Node *m_rop;
 
@@ -691,6 +676,9 @@ private:
 
 	/// Object exporter.
 	ObjectExporter objectExporter;
+
+	/// VOP nodes exporter.
+	ShaderExporter shaderExporter;
 
 	/// Frame buffer settings.
 	VFBSettings vfbSettings;
