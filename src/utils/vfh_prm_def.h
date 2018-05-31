@@ -13,6 +13,7 @@
 
 #include "vfh_vray.h"
 #include "vfh_prm_defaults.h"
+#include "vfh_sys_utils.h"
 
 // For VOP_Type
 #include <VOP/VOP_Node.h>
@@ -107,10 +108,10 @@ struct ParmDefValue {
 
 enum AttrDescFlags {
 	attrFlagNone           = 0,
-	attrFlagCustomHandling = (1 << 0), ///< Parameter requires custom handling.
-	attrFlagLinkedOnly     = (1 << 1), ///< Skip parameter if socket is not connected.
-	attrFlagToRadians      = (1 << 2), ///< Value needs to be converted from degrees to radians.
-	attrFlagEnabledOnly    = (1 << 3), ///< Skip parameter is it's UI is disabled or hidden.
+	attrFlagCustomHandling = VFH_BIT(0), ///< Parameter requires custom handling.
+	attrFlagLinkedOnly     = VFH_BIT(1), ///< Skip parameter if socket is not connected.
+	attrFlagToRadians      = VFH_BIT(2), ///< Value needs to be converted from degrees to radians.
+	attrFlagEnabledOnly    = VFH_BIT(3), ///< Skip parameter is it's UI is disabled or hidden.
 };
 
 /// Descriptor for a single param

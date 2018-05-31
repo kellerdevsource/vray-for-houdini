@@ -329,20 +329,20 @@ const ObjLightCacheEntry &OpCacheMan::getObjLightEntry(const OBJ_Light &objLight
 	return it != objLightPlugins.end() ? it.value() : fakeEntry;
 }
 
-int OpCacheMan::getMatPlugin(const OP_Node &opNode, VRay::Plugin &matPlugin)
+int OpCacheMan::getShaderPlugin(const OP_Node &opNode, VRay::PluginRef &shaderPlugin)
 {
-	const MatPluginCache::const_iterator it = matCache.find(&opNode);
+	const ShaderPluginCache::const_iterator it = matCache.find(&opNode);
 	if (it != matCache.end()) {
-		matPlugin = it.value();
+		shaderPlugin = it.value();
 		return true;
 	}
 	return false;
 }
 
-void OpCacheMan::addMatPlugin(const OP_Node &opNode, const VRay::Plugin &matPlugin)
+void OpCacheMan::addShaderPlugin(const OP_Node &opNode, const VRay::PluginRef &shaderPlugin)
 {
 	vassert(matCache.find(&opNode) == matCache.end());
-	matCache[&opNode] = matPlugin;
+	matCache[&opNode] = shaderPlugin;
 }
 
 void OpCacheMan::clear()
@@ -1695,22 +1695,22 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 
 						OP_Node *opNode = getOpNodeFromPath(objNode, opPath, ctx.getTime());
 						if (opNode) {
-							VRay::Plugin opPlugin;
-							if (!getPluginFromCache(*opNode, opPlugin)) {
+							VRay::PluginRef opPlugin;
+
+							if (!cacheMan.getShaderPlugin(*opNode, opPlugin)) {
 								// XXX: Move this to method.
 								COP2_Node *copNode = opNode->castToCOP2Node();
-								VOP_Node *vopNode = opNode->castToVOPNode();
 								if (copNode) {
 									opPlugin = pluginExporter.exportCopNodeWithDefaultMapping(*copNode, VRayExporter::defaultMappingTriPlanar);
 								}
-								else if (vopNode) {
-									opPlugin = pluginExporter.exportVop(vopNode);
+								else {
+									opPlugin = pluginExporter.exportShaderNode(opNode);
 								}
 
 								if (opPlugin.isNotEmpty()) {
 									opPlugin.setName(pluginName.ptr());
 
-									addPluginToCache(*opNode, opPlugin);
+									cacheMan.addShaderPlugin(*opNode, opPlugin);
 								}
 							}
 						}
@@ -1723,7 +1723,7 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 				VUtils::CharString snippetText(overrideSnippet.buffer());
 				vutils_replaceTokenWithValue(snippetText, "\"", "'");
 
-				pluginDesc.add(Attrs::PluginAttr("override_snippet", snippetText.ptr()));
+				pluginDesc.add(SL("override_snippet"), snippetText.ptr());
 			}
 		}
 	}
@@ -1742,7 +1742,7 @@ VRay::Plugin ObjectExporter::exportGeomPlaneRef(OBJ_Node &objNode, const GU_Prim
 	const int key = getPrimPackedID(prim);
 
 	const Attrs::PluginDesc pluginDesc(SL("GeomPlane|") % QString::number(key),
-	                                   "GeomPlane");
+	                                   SL("GeomPlane"));
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }

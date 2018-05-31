@@ -1,3 +1,16 @@
+#ifdef VFH_HAS_INPUT_UVWGEN
+parm {
+    name "uvwgen"
+    label "uvwgen"
+    type int
+    parmtag { "cook_dependent" "1" }
+    parmtag { "vray_label" "uvwgen" }
+    parmtag { "vray_pluginattr" "uvwgen" }
+    parmtag { "vray_type" "Plugin" }
+    invisible
+}
+#endif
+
 parm {
     name "uvwgen"
     label "uvwgen"

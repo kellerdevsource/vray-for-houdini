@@ -26,8 +26,7 @@ public:
 	{}
 
 	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc,
-							  VRayExporter &exporter,
-							  ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
+	                          VRayExporter &exporter) VRAY_OVERRIDE;
 
 	const char*inputLabel(unsigned idx) const VRAY_OVERRIDE;
 	unsigned getNumVisibleInputs() const VRAY_OVERRIDE;

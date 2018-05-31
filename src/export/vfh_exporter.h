@@ -115,19 +115,6 @@ typedef VUtils::HashMap<VRay::Plugin, OP_NodeList> PluginNodeListMap;
 typedef VUtils::Table<VRay::Plugin> PluginTable;
 typedef VUtils::Table<PluginTable*> PluginTables;
 
-struct ConnectedPluginInfo {
-	explicit ConnectedPluginInfo(VRay::Plugin plugin = VRay::Plugin(), const QString &output = "")
-		: plugin(plugin)
-		, output(output)
-	{}
-
-	/// Connected plugin.
-	VRay::Plugin plugin;
-
-	/// Connected output. May be empty.
-	QString output;
-};
-
 /// Vfh main exporter. This is the main class responsible for translating
 /// Houdini geometry and nodes to V-Ray plugins, initializing and starting
 /// the rendering process.
@@ -265,12 +252,7 @@ public:
 	/// Export VOP node
 	/// @param opNode VOP node instance.
 	/// @return V-Ray plugin.
-	VRay::Plugin exportVop(OP_Node *opNode, ExportContext *parentContext=nullptr);
-
-	/// Export Make transform VOP node
-	/// @param rotate Rotate the transformation matrix so that Y-axis is up.
-	/// @returns V-Ray transform for that node
-	VRay::Transform exportTransformVop(VOP_Node &vop_node, ExportContext *parentContext = nullptr, bool rotate = false);
+	VRay::Plugin exportShaderNode(OP_Node *opNode);
 
 	/// Export V-Ray material from SHOP network or VOP node.
 	/// @param node SHOP or VOP node. May be nullptr (the default material will be returned in this case). 
@@ -472,19 +454,6 @@ public:
 	/// Clear exporter plugin caches.
 	void clearCaches();
 
-	/// Helper functions to retrieve the input node given an input connection name
-	/// @param op_node[in] - VOP node
-	/// @param inputName[in] -  the input connection name
-	/// @returns the VOP input
-	static OP_Input* getConnectedInput(OP_Node *op_node, const QString &inputName);
-	static OP_Node* getConnectedNode(OP_Node *op_node, const QString &inputName);
-
-	/// Helper function to retrieve the connection type given an input connection name
-	/// @param op_node[in] - VOP node
-	/// @param inputName[in] -  the input connection name
-	/// @returns the connection type
-	static const Parm::SocketDesc* getConnectedOutputType(OP_Node *op_node, const QString &inputName);
-
 	/// Helper functions to generate a plugin name for a given node
 	/// @param opNode Node instance.
 	/// @param prefix Optional prefix.
@@ -553,62 +522,15 @@ public:
 	/// @param remapInterp[in] - whether to remap ramp interpotaion type (used for ramp parameters)
 	void setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const QString &prefix="", bool remapInterp=false);
 
-	/// Converts different socket types
-	/// @param plugin Plugin to wrap (convert).
-	/// @param currSocketInfo Currently processed socket.
-	/// @param fromSocketInfo Socket plugin is coming from.
-	/// @param pluginDesc The plugin description.
-	/// @param supportPluginOutputs True if we could reuse existing outputs (e.g. out_intensity).
-	VRay::PluginRef autoWrapPluginFromSocket(const VRay::PluginRef &plugin,
-	                                         const Parm::SocketDesc &currSocketInfo,
-	                                         const Parm::SocketDesc &fromSocketInfo,
-	                                         const Attrs::PluginDesc &pluginDesc,
-	                                         int supportPluginOutputs = true);
-
-	/// Converts the input plugin to plugin of socket type if needed
-	/// @param plugin - the plugin connected to the socket
-	/// @param pluginDesc - description of the current exported plugin
-	/// @param node - current node
-	/// @param socketType - socket type
-	/// @param socketName - socket name
-	/// @param supportPluginOutputs True if we could reuse existing outputs (e.g. out_intensity).
-	VRay::PluginRef autoWrapPluginFromSocket(const VRay::PluginRef &plugin,
-	                                         const Attrs::PluginDesc &pluginDesc,
-	                                         OP_Node &node,
-	                                         VOP_Type socketType,
-	                                         const QString &socketName,
-	                                         int supportPluginOutputs = true);
-
-	/// Helper function to fill in plugin description attributes from VOP node connected inputs
-	/// @param pluginDesc[out] - the plugin description
-	/// @param vopNode[in] - the VOP node
-	/// @param parentContext - not used
-	void setAttrsFromOpNodeConnectedInputs(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode, ExportContext *parentContext=nullptr);
-
-	/// Export connected input for a VOP node
-	/// @param pluginDesc[out] - the plugin description
-	/// @param vopNode[in] - the VOP node
-	/// @param inpidx[in] - input index
-	/// @param inputName[in] - input connection name
-	/// @param parentContext - not used
-	/// @returns VRay::Plugin for the input VOP or invalid plugin on error
-	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, int inpidx, ExportContext *parentContext = nullptr);
-	VRay::Plugin exportConnectedVop(VOP_Node *vop_node, const UT_String &inputName, ExportContext *parentContext = nullptr);
-
-	VRay::Plugin exportPrincipledShader(OP_Node &opNode, ExportContext *parentContext=nullptr);
+	VRay::Plugin exportPrincipledShader(OP_Node &opNode);
 
 	void fillNodeTexSky(const OP_Node &opNode, Attrs::PluginDesc &pluginDesc);
 
-	/// Export input parameter VOPs for a given VOP node as V-Ray user textures.
-	/// Default values for the textures will be queried from the corresponding
-	/// SHOP parameter. Exported user textures are added as attibutes to the plugin
-	/// description.
-	/// @param pluginDesc[out] - VOP plugin description
-	/// @param vopNode[in] - the VOP node
-	void setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode);
-
 	/// Returns object exporter.
 	ObjectExporter& getObjectExporter() { return objectExporter; }
+
+	/// Returns shader exporter.
+	ShaderExporter& getShaderExporter() { return shaderExporter; }
 
 	/// Applies which take to use for scene export.
 	/// @param take Take name. If not specified ROP's take will be used (if ROP is a VRayRendererNode instance).
@@ -636,6 +558,14 @@ public:
 	OpCacheMan &getCacheMan() { return cacheMan; }
 
 private:
+	/// Export input parameter VOPs for a given VOP node as V-Ray user textures.
+	/// Default values for the textures will be queried from the corresponding
+	/// SHOP parameter. Exported user textures are added as attibutes to the plugin
+	/// description.
+	/// @param pluginDesc VOP plugin description.
+	/// @param vopNode VOP node instance.
+	void setAttrsFromNetworkParameters(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode);
+
 	/// The driver node bound to this exporter.
 	OP_Node *m_rop;
 

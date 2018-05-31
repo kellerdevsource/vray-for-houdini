@@ -309,14 +309,14 @@ struct OpCacheMan
 
 	/// Get material plugin from cache.
 	/// @param opNode VOP or SHOP node.
-	/// @param[out] matPlugin Material plugin.
+	/// @param[out] shaderPlugin Shader plugin.
 	/// @returns True if plugin was found in cache, false - otherwise.
-	int getMatPlugin(const OP_Node &opNode, VRay::Plugin &matPlugin);
+	int getShaderPlugin(const OP_Node &opNode, VRay::PluginRef &shaderPlugin);
 
 	/// Add material plugin to cache.
 	/// @param opNode VOP or SHOP node.
-	/// @param matPlugin Material plugin.
-	void addMatPlugin(const OP_Node &opNode, const VRay::Plugin &matPlugin);
+	/// @param shaderPlugin Shader plugin.
+	void addShaderPlugin(const OP_Node &opNode, const VRay::PluginRef &shaderPlugin);
 
 	/// Clear cached plugins. This won't delete plugin instances.
 	void clear();
@@ -331,10 +331,10 @@ private:
 	/// A type mapping material node with the exported material plugin.
 	/// @tparam key VOP or SHOP node.
 	/// @tparam value VRay::Plugin instance.
-	typedef QMap<const OP_Node*, VRay::Plugin> MatPluginCache;
+	typedef QMap<const OP_Node*, VRay::PluginRef> ShaderPluginCache;
 
 	/// Shading node centric plugins cache.
-	MatPluginCache matCache;
+	ShaderPluginCache matCache;
 };
 
 template <typename ListType>

@@ -19,7 +19,7 @@ void VOP::TexFalloff::setPluginType()
 	pluginID = SL("TexFalloff");
 }
 
-OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*)
+OP::VRayNode::PluginResult VOP::TexFalloff::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	// Curve data will be baked into sub-plugin.
 	pluginDesc.setIngore("curve");

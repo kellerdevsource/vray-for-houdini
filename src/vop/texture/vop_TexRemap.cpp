@@ -19,7 +19,7 @@ void VOP::TexRemap::setPluginType()
 	pluginID = SL("TexRemap");
 }
 
-OP::VRayNode::PluginResult VOP::TexRemap::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*)
+OP::VRayNode::PluginResult VOP::TexRemap::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	return PluginResultContinue;
 }

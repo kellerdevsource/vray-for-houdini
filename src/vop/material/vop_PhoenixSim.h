@@ -56,7 +56,7 @@ public:
 	/// Called by Houdini on each packet in preset and we only load the one saved with savePresetContents
 	bool loadPresetContents(const char *tok, UT_IStream &is) VRAY_OVERRIDE;
 
-	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext = nullptr) VRAY_OVERRIDE;
+	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter) VRAY_OVERRIDE;
 
 	/// Load data ranges from the selectedSopPath's value
 	void loadDataRanges();

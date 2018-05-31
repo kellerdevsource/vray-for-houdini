@@ -20,12 +20,12 @@
 
 using namespace VRayForHoudini;
 
-int VRayForHoudini::isOpType(OP_Node &opNode, const char *opName)
+int VRayForHoudini::isOpType(const OP_Node &opNode, const char *opName)
 {
 	return opNode.getOperator()->getName().equal(opName);
 }
 
-static int isVRayMaterialOutput(OP_Node &opNode)
+static int isVRayMaterialOutput(const OP_Node &opNode)
 {
 	return isOpType(opNode, vfhNodeMaterialOutput);
 }

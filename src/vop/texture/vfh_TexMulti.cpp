@@ -113,33 +113,23 @@ unsigned VOP::TexMulti::orderedInputs() const
 void VOP::TexMulti::getCode(UT_String&, const VOP_CodeGenContext &)
 {}
 
-OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult VOP::TexMulti::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
-	const int numTextures = evalInt("tex_count", 0, 0.0);
+	const int numTextures = customInputsCount();
 
 	Attrs::QValueList textures(numTextures);
 	Attrs::QIntList textureIds(numTextures);
 
+	ShaderExporter &shaderExporter = exporter.getShaderExporter();
+
+	UT_String texSockName;
 	for (int i = 1; i <= numTextures; ++i) {
-		const QString texSockName = SL("tex_%1").arg(i);
+		texSockName.sprintf("tex_%i", i);
 
-		OP_Node *texNode = VRayExporter::getConnectedNode(this, texSockName);
-		if (!texNode) {
-			Log::getLog().warning("Node \"%s\": Texture node is not connected to \"%s\", ignoring...",
-								  getName().buffer(), qPrintable(texSockName));
-		}
-		else {
-			VRay::PluginRef texPlugin = exporter.exportVop(texNode, parentContext);
-			if (texPlugin.isEmpty()) {
-				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
-									getName().buffer(), qPrintable(texSockName));
-			}
-			else {
-				texPlugin = exporter.autoWrapPluginFromSocket(texPlugin, pluginDesc, *texNode, VOP_TYPE_COLOR, texSockName, false);
-
-				textures.append(VRay::VUtils::Value(texPlugin));
-				textureIds.append(i - 1);
-			}
+		const VRay::PluginRef texPlugin = shaderExporter.exportConnectedSocket(*this, texSockName);
+		if (texPlugin.isNotEmpty()) {
+			textures.append(VRay::VUtils::Value(texPlugin));
+			textureIds.append(i - 1);
 		}
 	}
 

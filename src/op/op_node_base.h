@@ -57,7 +57,7 @@ public:
 	/// @param pluginDesc[out] - accumulates attributes' changes
 	/// @param exporter[in] - reference to the main vfh exporter
 	/// @param parentContext[in] - not used
-	virtual PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) {
+	virtual PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter) {
 		return PluginResultNA;
 	}
 

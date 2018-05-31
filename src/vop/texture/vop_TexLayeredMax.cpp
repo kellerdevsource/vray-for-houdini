@@ -111,38 +111,31 @@ unsigned VOP::TexLayeredMax::orderedInputs() const
 	return orderedInputs;
 }
 
-OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult VOP::TexLayeredMax::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	const fpreal t = exporter.getContext().getTime();
 
-	const int texCount = evalInt("textures_count", 0, 0.0);
+	const int texCount = customInputsCount();
 
 	Attrs::QValueList textures(texCount);
 	Attrs::QIntList   blend_modes(texCount);
 	Attrs::QFloatList opacities(texCount);
 
+	ShaderExporter &shaderExporter = exporter.getShaderExporter();
+
+	UT_String texSockName;
+
 	for (int i = 1; i <= texCount; ++i) {
-		const QString texSockName(SL("tex_%1").arg(i));
+		texSockName.sprintf("tex_%i", i);
 
-		OP_Node *texNode = VRayExporter::getConnectedNode(this, texSockName);
-		if (!texNode) { 
-			Log::getLog().warning("Node \"%s\": Texture node is not connected to \"%s\", ignoring...",
-					   getName().buffer(), qPrintable(texSockName));
-		}
-		else {
-			const VRay::Plugin texPlugin = exporter.exportVop(texNode, parentContext);
-			if (texPlugin.isEmpty()) {
-				Log::getLog().error("Node \"%s\": Failed to export texture node connected to \"%s\", ignoring...",
-							getName().buffer(), qPrintable(texSockName));
-			}
-			else {
-				const int blendMode = evalIntInst("tex#blend_mode", &i, 0, t);
-				const float blendAmount = evalFloatInst("tex#blend_amount", &i, 0, t);
+		const VRay::PluginRef texPlugin = shaderExporter.exportConnectedSocket(*this, texSockName);
+		if (texPlugin.isNotEmpty()) {
+			const int blendMode = evalIntInst("tex#blend_mode", &i, 0, t);
+			const float blendAmount = evalFloatInst("tex#blend_amount", &i, 0, t);
 
-				textures.append(VRay::VUtils::Value(texPlugin));
-				blend_modes.append(blendMode);
-				opacities.append(blendAmount);
-			}
+			textures.append(VRay::VUtils::Value(texPlugin));
+			blend_modes.append(blendMode);
+			opacities.append(blendAmount);
 		}
 	}
 

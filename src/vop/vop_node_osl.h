@@ -49,8 +49,7 @@ public:
 	{}
 
 	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc,
-		VRayExporter &exporter,
-		ExportContext *parentContext = nullptr) VRAY_OVERRIDE;
+	                          VRayExporter &exporter) VRAY_OVERRIDE;
 
 	/// Map index to input label
 	const char * inputLabel(unsigned idx) const VRAY_OVERRIDE;
@@ -111,11 +110,11 @@ protected:
 
 protected:
 	Hash::MHash m_codeHash; ///< Hash of the OSL code
-	QVector<QString> m_inputList; ///< Names of all inputs (string params)
+	QVector<UT_String> m_inputList; ///< Names of all inputs (string params)
 	OSLParamList m_paramList; ///< All params from OSL code (inputs and params)
 
 	// TODO: support more than one 1 output?
-	QString m_outputName; ///< The output color parameter name
+	UT_String m_outputName; ///< The output color parameter name
 	mutable char m_outputNameBuff[1024]; ///< Buffer containing the output parameter name, used so we have pointer that will not move
 };
 

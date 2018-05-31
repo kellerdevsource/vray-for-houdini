@@ -193,6 +193,20 @@ VRay::Plugin VRayPluginRenderer::exportPlugin(const Attrs::PluginDesc &pluginDes
 		}
 	}
 	else {
+		const VRay::VRayRenderer::RenderMode mode = m_vray->getRenderMode();
+		const int isCPU =
+			mode == VRay::VRayRenderer::RENDER_MODE_PRODUCTION ||
+			mode == VRay::VRayRenderer::RENDER_MODE_INTERACTIVE;
+		if (!isCPU) {
+			const VRay::GPUPluginSupport gpuSupport = plug.getMeta().getGPUSupport();
+			if (gpuSupport == VRay::GPUPluginSupport_Partial) {
+				Log::getLog().warning("GPU: Partial support for plugin \"%s\"", qPrintable(pluginDesc.pluginName));
+			}
+			else if (gpuSupport == VRay::GPUPluginSupport_None) {
+				Log::getLog().warning("GPU: Plugin \"%s\" is not supported!", qPrintable(pluginDesc.pluginName));
+			}
+		}
+
 		exportPluginProperties(plug, pluginDesc);
 	}
 

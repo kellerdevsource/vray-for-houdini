@@ -422,8 +422,7 @@ void VolumeExporter::exportPrimitive(const GA_Primitive &prim, const PrimMateria
 	                         SL("PhxShaderSim"));
 	phxShaderSim->asPluginDesc(phxSim, pluginExporter);
 
-	pluginExporter.setAttrsFromOpNodeConnectedInputs(phxSim, *phxShaderSim);
-	pluginExporter.setAttrsFromSHOPOverrides(phxSim, *phxShaderSim);
+	pluginExporter.getShaderExporter().exportConnectedSockets(*phxShaderSim, phxSim);
 
 	phxSim.add(Attrs::PluginAttr(SL("node_transform"), tm));
 	phxSim.add(Attrs::PluginAttr(SL("cache"), cachePlugin));

@@ -35,8 +35,7 @@ public:
 	~VRayClipper() VRAY_DTOR_OVERRIDE
 	{}
 
-	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter,
-	                                  ExportContext *parentContext = nullptr) VRAY_OVERRIDE;
+	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter) VRAY_OVERRIDE;
 
 protected:
 	void setPluginType() VRAY_OVERRIDE;
@@ -58,8 +57,7 @@ public:
 	~LightNodeBase() VRAY_DTOR_OVERRIDE
 	{}
 
-	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter,
-	                                  ExportContext *parentContext = nullptr) VRAY_OVERRIDE;
+	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter) VRAY_OVERRIDE;
 
 protected:
 	void setPluginType() VRAY_OVERRIDE;

@@ -58,6 +58,12 @@ struct ShaderExporter
 	/// Clear export caches.
 	void reset();
 
+	/// Export plugin from "transform" node.
+	/// @param transform "transform" node.
+	/// @param flipAxis Whether to flip axis.
+	/// @returns VRay::Transform.
+	VRay::Transform getTransformFromXform(const VOP_Node &transform, bool flipAxis = false) const;
+
 	/// Export plugin from the supported VOP_Node type.
 	/// This should be used when it's not possible to obtain
 	/// the socket the connection is coming from. This could be the case
@@ -75,17 +81,67 @@ struct ShaderExporter
 
 	/// Export plugin from node connected to the socket.
 	/// @param vopNode Currently processed node.
+	/// @param socketName Currently processed socket name.
+	/// @returns VRay::PluginRef. May be empty for unsupported types or any exporting error.
+	VRay::PluginRef exportConnectedSocket(VOP_Node &vopNode, const QString &socketName);
+
+	/// Export plugin from node connected to the socket.
+	/// @param vopNode Currently processed node.
 	/// @param socketIndex Currently processed socket index.
 	/// @returns VRay::PluginRef. May be empty for unsupported types or any exporting error.
 	VRay::PluginRef exportConnectedSocket(VOP_Node &vopNode, int socketIndex);
 
 	/// Export plugin from node connected to the socket.
 	/// @param vopNode Currently processed node.
-	/// @param socketInfo Currently processed socket info.
+	/// @param fromSocket Currently processed socket info.
 	/// @returns VRay::PluginRef. May be empty for unsupported types or any exporting error.
-	VRay::PluginRef exportConnectedSocket(VOP_Node &vopNode, const SocketInfo &socketInfo);
+	VRay::PluginRef exportConnectedSocket(VOP_Node &vopNode, const SocketInfo &fromSocket);
+
+	/// Export plugins from all connected sockets.
+	/// @param vopNode Currently processed node.
+	/// @param pluginDesc Plugin description for @a vopNode.
+	void exportConnectedSockets(VOP_Node &vopNode, Attrs::PluginDesc &pluginDesc);
+
+	/// Get node connected to the input socket defined by name.
+	/// @param vopNode Socket owner.
+	/// @param socketName Socket name.
+	/// @returns Connected node instance or nullptr if socket is not connected.
+	static VOP_Node *getConnectedNode(const VOP_Node &vopNode, const QString &socketName);
+
+	/// Get node connected to the input socket defined by name.
+	/// @param vopNode Socket owner.
+	/// @param socketName Socket name.
+	/// @returns Connected node instance or nullptr if socket is not connected.
+	static VOP_Node *getConnectedNode(const VOP_Node &vopNode, const UT_String &socketName);
+
+	/// Get node connected to the input socket defined by index.
+	/// @param vopNode Socket owner.
+	/// @param socketIndex Socket index.
+	/// @returns Connected node instance or nullptr if socket is not connected.
+	static VOP_Node *getConnectedNode(const VOP_Node &vopNode, int socketIndex);
+
+	/// Check if socket is linked.
+	/// @param vopNode VOP_Node instance.
+	/// @param socketName Socket name.
+	static int isSocketLinked(const VOP_Node &vopNode, const UT_String &socketName);
+
+	/// Check if socket is linked.
+	/// @param vopNode VOP_Node instance.
+	/// @param socketName Socket name.
+	static int isSocketLinked(const VOP_Node &vopNode, const QString &socketName);
+
+	/// Check if socket is linked.
+	/// @param vopNode VOP_Node instance.
+	/// @param socketIndex Socket index.
+	static int isSocketLinked(const VOP_Node &vopNode, int socketIndex);
 
 private:
+	/// Export plugin from "null" node.
+	/// @param null "null" node.
+	/// @param fromSocket Where this node is connected to.
+	/// @returns VRay::PluginRef. May be empty for unsupported types or any exporting error.
+	VRay::PluginRef exportNull(VOP_Node &null, const SocketInfo &fromSocket);
+
 	/// Export plugin from "switcher" node.
 	/// @param switcher "switcher" node.
 	/// @param fromSocket Where this node is connected to.
