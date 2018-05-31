@@ -24,7 +24,7 @@ public:
 	{}
 	virtual ~BRDFVRayMtl() {} 
 
-	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
+	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter) VRAY_OVERRIDE;
 
 protected:
 	void setPluginType() VRAY_OVERRIDE;

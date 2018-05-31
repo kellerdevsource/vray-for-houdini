@@ -205,8 +205,7 @@ unsigned BRDFLayered::orderedInputs() const
 void BRDFLayered::getCode(UT_String &, const VOP_CodeGenContext &)
 {}
 
-OP::VRayNode::PluginResult BRDFLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter,
-                                                     ExportContext *parentContext)
+OP::VRayNode::PluginResult BRDFLayered::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	const fpreal t = exporter.getContext().getTime();
 
@@ -215,49 +214,40 @@ OP::VRayNode::PluginResult BRDFLayered::asPluginDesc(Attrs::PluginDesc &pluginDe
 	Attrs::QValueList brdfs(brdfCount);
 	Attrs::QValueList weights(brdfCount);
 
-	for (int i = 1; i <= brdfCount; ++i) {
-		const QString &brdfSockName = SL("brdf_%1").arg(QString::number(i));
+	ShaderExporter &shaderExporter = exporter.getShaderExporter();
 
-		OP_Node *brdfNode = VRayExporter::getConnectedNode(this, brdfSockName);
-		if (!brdfNode) {
-			Log::getLog().warning("Node \"%s\": BRDF node is not connected to \"%s\", ignoring...",
-			                      getName().buffer(), qPrintable(brdfSockName));
+	UT_String brdfSockName;
+	UT_String weightSockName;
+
+	for (int i = 1; i <= brdfCount; ++i) {
+		brdfSockName.sprintf("brdf_%i", i);
+		weightSockName.sprintf("weight_%i", i);
+
+		const VRay::PluginRef brdfPlugin = shaderExporter.exportConnectedSocket(*this, brdfSockName);
+		if (brdfPlugin.isEmpty()) {
+			Log::getLog().error("Node \"%s\": Failed to export BRDF node connected to \"%s\", ignoring...",
+			                    getName().buffer(), qPrintable(brdfSockName));
 		}
 		else {
-			const QString weightSockName = SL("weight_%1").arg(QString::number(i));
+			VRay::PluginRef weightPlugin = shaderExporter.exportConnectedSocket(*this, weightSockName);
+			if (weightPlugin.isEmpty()) {
+				const fpreal weightValue = evalFloatInst("brdf#weight", &i, 0, t);
+				const QString paramPrefix = SL("|weight|%1").arg(QString::number(i));
 
-			VRay::PluginRef brdfPlugin = exporter.exportVop(brdfNode, parentContext);
-			if (brdfPlugin.isEmpty()) {
-				Log::getLog().error("Node \"%s\": Failed to export BRDF node connected to \"%s\", ignoring...",
+				Attrs::PluginDesc weightTex(VRayExporter::getPluginName(*this, SL(""), paramPrefix),
+				                            SL("TexAColor"));
+				weightTex.add(SL("texture"), weightValue, weightValue, weightValue, 1.0f);
+
+				weightPlugin = exporter.exportPlugin(weightTex);
+			}
+
+			if (weightPlugin.isEmpty()) {
+				Log::getLog().error("Node \"%s\": Failed to export BRDF weight node connected to \"%s\", ignoring...",
 				                    getName().buffer(), qPrintable(brdfSockName));
 			}
 			else {
-				VRay::PluginRef weightPlugin;
-
-				OP_Node *weightNode = VRayExporter::getConnectedNode(this, weightSockName);
-				if (weightNode) {
-					weightPlugin = exporter.exportVop(weightNode, parentContext);
-				}
-				else {
-					const fpreal weightValue = evalFloatInst("brdf#weight", &i, 0, t);
-					const QString paramPrefix = SL("|weight|%1").arg(QString::number(i));
-
-					Attrs::PluginDesc weightTex(VRayExporter::getPluginName(*this, SL(""), paramPrefix),
-					                             SL("TexAColor"));
-
-					weightTex.add(SL("texture"), weightValue, weightValue, weightValue, 1.0f);
-
-					weightPlugin = exporter.exportPlugin(weightTex);
-				}
-
-				if (weightPlugin.isEmpty()) {
-					Log::getLog().error("Node \"%s\": Failed to export BRDF weight node connected to \"%s\", ignoring...",
-					                    getName().buffer(), qPrintable(brdfSockName));
-				}
-				else {
-					brdfs.append(VRay::VUtils::Value(brdfPlugin));
-					weights.append(VRay::VUtils::Value(weightPlugin));
-				}
+				brdfs.append(VRay::VUtils::Value(brdfPlugin));
+				weights.append(VRay::VUtils::Value(weightPlugin));
 			}
 		}
 	}

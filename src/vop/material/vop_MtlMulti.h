@@ -25,7 +25,7 @@ public:
 	virtual ~MtlMulti() VRAY_DTOR_OVERRIDE {}
 
 	// From OP::VRayNode
-	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*) VRAY_OVERRIDE;
+	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter) VRAY_OVERRIDE;
 
 protected:
 	void setPluginType() VRAY_OVERRIDE;

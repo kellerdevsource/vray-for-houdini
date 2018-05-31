@@ -999,7 +999,7 @@ void PhxShaderSim::setPluginType()
 	pluginID = SL("PhxShaderSim");
 }
 
-OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	const fpreal t = exporter.getContext().getTime();
 

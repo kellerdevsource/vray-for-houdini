@@ -28,8 +28,7 @@ public:
 
 	virtual bool          updateParmsFlags() VRAY_OVERRIDE;
 	virtual PluginResult  asPluginDesc(Attrs::PluginDesc &pluginDesc,
-									   VRayExporter &exporter,
-									   ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
+	                                   VRayExporter &exporter) VRAY_OVERRIDE;
 
 protected:
 	virtual void          getNodeSpecificInfoText (OP_Context &context,

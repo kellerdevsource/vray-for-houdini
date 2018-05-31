@@ -4,6 +4,7 @@
     parmtag { spare_category "Channel (Named)" }
     parmtag { vray_plugin "UVWGenMayaPlace2dTexture" }
 
+#define VFH_HAS_INPUT_UVWGEN
 #include "UVWGenMayaPlace2dTextureParms.ds"
 #include "vfh_uvwgen_common.ds"
 }

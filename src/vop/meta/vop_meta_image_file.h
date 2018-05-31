@@ -49,7 +49,7 @@ public:
 	MetaImageFile(OP_Network *parent, const char *name, OP_Operator *entry):NodeBase(parent, name, entry) {}
 	virtual ~MetaImageFile() {}
 
-	PluginResult  asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext=nullptr) VRAY_OVERRIDE;
+	PluginResult  asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter) VRAY_OVERRIDE;
 
 	const char *inputLabel(unsigned idx) const VRAY_OVERRIDE;
 

@@ -1034,3 +1034,17 @@ PRM_Template Parm::PRMFactory::getPRMTemplate() const
 
 	return tmpl;
 }
+
+void VRayForHoudini::getParmFloat3(const OP_Node &opNode, const char *parmName, fpreal color[3], fpreal t)
+{
+	color[0] = opNode.evalFloat(parmName, 0, t);
+	color[1] = opNode.evalFloat(parmName, 1, t);
+	color[2] = opNode.evalFloat(parmName, 2, t);
+}
+
+void VRayForHoudini::getParmFloat4(const OP_Node &opNode, const char *parmName, fpreal color[4], fpreal t)
+{
+	getParmFloat3(opNode, parmName, color, t);
+
+	color[3] = opNode.evalFloat(parmName, 3, t);
+}

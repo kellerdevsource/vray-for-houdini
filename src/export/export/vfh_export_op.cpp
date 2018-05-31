@@ -310,7 +310,7 @@ VRay::Plugin VRayExporter::exportNodeFromPathWithDefaultMapping(const UT_String 
 				res = exportCopNodeWithDefaultMapping(*copNode, mappingType);
 			}
 			else if (vopNode) {
-				res = exportVop(vopNode);
+				res = exportShaderNode(vopNode);
 			}
 		}
 	}

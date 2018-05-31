@@ -16,13 +16,22 @@
 
 namespace VRayForHoudini {
 
+const char vfhNodeMaterialBuilder[] = "vray_material";
 const char vfhNodeMaterialOutput[] = "vray_material_output";
 
 const char vfhSocketMaterialOutputMaterial[]   = "Material";
 const char vfhSocketMaterialOutputSurface[]    = "Surface";
 const char vfhSocketMaterialOutputSimulation[] = "Simulation";
 
-int isOpType(OP_Node &opNode, const char *opName);
+const int vfhSocketMaterialOutputMaterialIndex   = 0;
+const int vfhSocketMaterialOutputSurfaceIndex    = 1;
+const int vfhSocketMaterialOutputSimulationIndex = 2;
+
+/// Match node operator type.
+/// @param opNode OP_Node instance.
+/// @param opName Operator type.
+/// @returns True if operator matches, false - otherwise.
+int isOpType(const OP_Node &opNode, const char *opName);
 
 /// Returns node of type "pluginID" connected to the socket "socketName" if matNode is a SHOP node.
 /// Otherwize checks type "pluginID" of the matNode.

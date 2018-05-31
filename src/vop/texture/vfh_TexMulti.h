@@ -27,8 +27,7 @@ public:
 
 	// From OP::VRayNode
 	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc,
-	                          VRayExporter &exporter,
-	                          ExportContext *parentContext = nullptr) VRAY_OVERRIDE;
+	                          VRayExporter &exporter) VRAY_OVERRIDE;
 
 protected:
 	void setPluginType() VRAY_OVERRIDE;

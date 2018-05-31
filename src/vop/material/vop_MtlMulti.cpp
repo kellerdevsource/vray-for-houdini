@@ -154,31 +154,28 @@ unsigned MtlMulti::orderedInputs() const
 	return orderedInputs;
 }
 
-OP::VRayNode::PluginResult MtlMulti::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult MtlMulti::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
-	const int mtlsCount = evalInt("mtl_count", 0, 0.0);
+	ShaderExporter &shaderExporter = exporter.getShaderExporter();
+
+	const int mtlsCount = customInputsCount();
 
 	Attrs::QValueList mtlsList(mtlsCount);
 	Attrs::QIntList   idsList(mtlsCount);
 
-	for (int i = 1; i <= mtlsCount; ++i) {
-		const QString mtlSockName = SL("mtl_%1").arg(i);
+	UT_String mtlSockName;
 
-		OP_Node *mtlNode = VRayExporter::getConnectedNode(this, mtlSockName);
-		if (!mtlNode) {
-			Log::getLog().warning("Node \"%s\": Material node is not connected to \"%s\", ignoring...",
-			                      getName().buffer(), qPrintable(mtlSockName));
+	for (int i = 1; i <= mtlsCount; ++i) {
+		mtlSockName.sprintf("mtl_%i", i);
+
+		const VRay::Plugin mtlPlugin = shaderExporter.exportConnectedSocket(*this, mtlSockName);
+		if (mtlPlugin.isEmpty()) {
+			Log::getLog().error("\"%s\": Failed to export node connected to \"%s\"!",
+			                    getFullPath().buffer(), mtlSockName.buffer());
 		}
 		else {
-			const VRay::Plugin mtlPlugin = exporter.exportVop(mtlNode, parentContext);
-			if (mtlPlugin.isEmpty()) {
-				Log::getLog().error("Node \"%s\": Failed to export material node connected to \"%s\", ignoring...",
-				                    getName().buffer(), qPrintable(mtlSockName));
-			}
-			else {
-				mtlsList.append(VRay::VUtils::Value(mtlPlugin));
-				idsList.append(i - 1);
-			}
+			mtlsList.append(VRay::VUtils::Value(mtlPlugin));
+			idsList.append(i - 1);
 		}
 	}
 
@@ -188,14 +185,14 @@ OP::VRayNode::PluginResult MtlMulti::asPluginDesc(Attrs::PluginDesc &pluginDesc,
 	pluginDesc.add(SL("mtls_list"), mtlsList);
 	pluginDesc.add(SL("ids_list"), idsList);
 
-	OP_Node *mtlid_gen       = VRayExporter::getConnectedNode(this, SL("mtlid_gen"));
-	OP_Node *mtlid_gen_float = VRayExporter::getConnectedNode(this, SL("mtlid_gen_float"));
+	const int isMtlIdGenInt   = ShaderExporter::isSocketLinked(*this, SL("mtlid_gen"));
+	const int isMtlIdGenFloat = ShaderExporter::isSocketLinked(*this, SL("mtlid_gen_float"));
 
-	if (mtlid_gen && !mtlid_gen_float) {
+	if (isMtlIdGenInt && !isMtlIdGenFloat) {
 		pluginDesc.setIngore(SL("mtlid_gen_float"));
 	}
 
-	if (mtlid_gen_float && !mtlid_gen) {
+	if (isMtlIdGenFloat && !isMtlIdGenInt) {
 		pluginDesc.setIngore(SL("mtlid_gen"));
 	}
 

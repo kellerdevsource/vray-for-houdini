@@ -20,10 +20,8 @@
 #include <list>
 #include <memory>
 
-
 class OP_Node;
 class PRM_ScriptGroup;
-
 
 namespace VRayForHoudini {
 namespace Parm {
@@ -349,6 +347,11 @@ int getParmEnum(const OP_Node &opNode, const char *name, int defaultValue, fprea
 float getParmFloat(const OP_Node &node, const QString &attrName, fpreal t=0.0);
 
 } // namespace Parm
+
+void getParmFloat3(const OP_Node &opNode, const char *parmName, fpreal color[3], fpreal t);
+
+void getParmFloat4(const OP_Node &opNode, const char *parmName, fpreal color[4], fpreal t);
+
 } // namespace VRayForHoudini
 
 #endif

@@ -352,7 +352,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 				}
 				if (info.widget != ParamInfo::String) {
 					// if the metadata type is string, this means it is not plugin input so don't add to inputs
-					self->m_inputList.push_back(param->name.c_str());
+					self->m_inputList.push_back(UT_String(param->name.c_str(), true));
 				}
 			}
 		}
@@ -362,7 +362,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		}
 	}
 
-	if (MTL && m_outputName.isEmpty()) {
+	if (MTL && m_outputName.isstring()) {
 		self->m_outputName = "Ci";
 	}
 
@@ -488,7 +488,7 @@ const char * OSLNodeBase<MTL>::outputLabel(unsigned idx) const
 	}
 
 	updateParamsIfNeeded();
-	if (!m_outputName.isEmpty()) {
+	if (!m_outputName.isstring()) {
 		return OSLNodeBase<MTL>::getOutputName();
 	} else {
 		Log::getLog().warning("outputLabel(%d) out of range", idx);
@@ -508,10 +508,10 @@ const char* OSLNodeBase<MTL>::inputLabel(unsigned idx) const
 	const int socketIndex = idx - numBaseInputs;
 	updateParamsIfNeeded();
 	if (socketIndex < m_inputList.size()) {
-		return qPrintable(m_inputList[socketIndex]);
-	} else {
-		Log::getLog().warning("inputLabel(%d [%d]) out of range", idx, socketIndex);
+		return m_inputList[socketIndex].buffer();
 	}
+
+	Log::getLog().warning("inputLabel(%d [%d]) out of range", idx, socketIndex);
 
 	return "UNDEFINED";
 }
@@ -550,8 +550,8 @@ void OSLNodeBase<MTL>::getOutputNameSubclass(UT_String &out, int idx) const
 {
 	if (idx >= NodeBase::getNumVisibleOutputs()) {
 		updateParamsIfNeeded();
-		if (!m_outputName.isEmpty()) {
-			out = qPrintable(m_outputName);
+		if (!m_outputName.isstring()) {
+			out = m_outputName;
 		} else {
 			Log::getLog().warning("Output index out of range");
 		}
@@ -566,7 +566,7 @@ int OSLNodeBase<MTL>::getInputFromNameSubclass(const UT_String &in) const
 	updateParamsIfNeeded();
 	const int numBaseInputs = NodeBase::orderedInputs();
 	for (int c = 0; c < m_inputList.size(); c++) {
-		if (in.equal(qPrintable(m_inputList[c]))) {
+		if (in.equal(m_inputList[c])) {
 			return c + numBaseInputs;
 		}
 	}
@@ -598,7 +598,7 @@ void OSLNodeBase<MTL>::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int id
 {
 	if (idx >= NodeBase::getNumVisibleOutputs()) {
 		updateParamsIfNeeded();
-		if (!m_outputName.isEmpty()) {
+		if (!m_outputName.isstring()) {
 			type_info.setType(OSLNodeBase<MTL>::getOutputType());
 		} else {
 			Log::getLog().warning("Trying to get output type of non-existent output!");
@@ -654,11 +654,11 @@ template <bool MTL>
 unsigned OSLNodeBase<MTL>::maxOutputs() const
 {
 	updateParamsIfNeeded();
-	return NodeBase::maxOutputs() + !m_outputName.isEmpty();
+	return NodeBase::maxOutputs() + !m_outputName.isstring();
 }
 
 template <bool MTL>
-OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	if (m_codeHash == 0) {
 		Log::getLog().warning("Exporting \"%s\" does not have valid OSL code.", getName().nonNullBuffer());
@@ -761,13 +761,17 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 					paramValue = VRay::VUtils::Value(stringVal.nonNullBuffer());
 				}
 				else {
-					// TODO: if exporting .vrscene file, appsdk will export empty element here which is incorrect for .vrscene
-					//       it is possible to patch this by setting some dummy plugin that will return always black (to preserve default OSL behaviour)
+					// TODO: if exporting .vrscene file, appsdk will export empty
+					// element here which is incorrect for .vrscene
+					// it is possible to patch this by setting some
+					// dummy plugin that will return always black
+					// (to preserve default OSL behaviour).
 
-					// TODO: consider using std::string in exportConnectedVop
-					paramValue = VRay::VUtils::
-						Value(exporter.exportConnectedVop(this, UT_String(qPrintable(m_inputList[inputIdx++]), true),
-						                                  parentContext));
+					ShaderExporter &shaderExporter = exporter.getShaderExporter();
+
+					const VRay::PluginRef plugin = shaderExporter.exportConnectedSocket(*this, m_inputList[inputIdx++]);
+
+					paramValue = VRay::VUtils::Value(plugin);
 				}
 				break;
 			}
@@ -787,3 +791,4 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 /// NOTE [MacOS]: Use full namespace.
 template class VRayForHoudini::VOP::OSLNodeBase<true>;
 template class VRayForHoudini::VOP::OSLNodeBase<false>;
+

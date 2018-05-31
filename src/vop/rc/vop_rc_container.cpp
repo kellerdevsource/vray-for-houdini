@@ -72,28 +72,24 @@ unsigned VOP::RenderChannelsContainer::orderedInputs() const
 	return 1;
 }
 
-OP::VRayNode::PluginResult VOP::RenderChannelsContainer::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult VOP::RenderChannelsContainer::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	pluginDesc.pluginID = pluginID;
 	pluginDesc.pluginName = SL("RenderChannels");
 
-	// Last is always not connected
-	const int channels_count = nInputs();
+	// Last is always not connected.
+	const int channelsCount = nInputs();
 
-	for (int i = 1; i <= channels_count; ++i) {
-		const QString &chanSockName = SL("chan_%1").arg(QString::number(i));
+	ShaderExporter &shaderExporter = exporter.getShaderExporter();
+	UT_String sockName;
 
-		OP_Node *chan_node = VRayExporter::getConnectedNode(this, chanSockName);
-		if (!chan_node) {
-			Log::getLog().warning("Node \"%s\": Render channel node is not connected to \"%s\", ignoring...",
-			                      getName().buffer(), qPrintable(chanSockName));
-		}
-		else {
-			VRay::Plugin chan_plugin = exporter.exportVop(chan_node, parentContext);
-			if (chan_plugin.isEmpty()) {
-				Log::getLog().error("Node \"%s\": Failed to export render channel node connected to \"%s\", ignoring...",
-				                    getName().buffer(), qPrintable(chanSockName));
-			}
+	for (int i = 1; i <= channelsCount; ++i) {
+		sockName.sprintf("chan_%i", i);
+
+		const VRay::PluginRef chanPlugin = shaderExporter.exportConnectedSocket(*this, sockName);
+		if (chanPlugin.isEmpty()) {
+			Log::getLog().error("\"%s\": Failed to export render channel node connected to \"%s\"!",
+			                    getFullPath().buffer(), sockName.buffer());
 		}
 	}
 

@@ -18,7 +18,7 @@ void BRDFVRayMtl::setPluginType()
 	pluginID = "BRDFVRayMtl";
 }
 
-OP::VRayNode::PluginResult BRDFVRayMtl::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*)
+OP::VRayNode::PluginResult BRDFVRayMtl::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	const fpreal t = exporter.getContext().getTime();
 

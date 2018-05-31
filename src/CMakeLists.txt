@@ -30,6 +30,7 @@ include_directories(export/export)
 include_directories(utils)
 
 set(EXPORTER_SOURCES
+	export/export/vfh_export_vop.cpp
 	export/export/vfh_export_geom.cpp
 	export/export/vfh_export_hair.cpp
 	export/export/vfh_export_mesh.cpp
@@ -78,6 +79,7 @@ set(EXPORTER_SOURCES
 )
 
 set(EXPORTER_HEADERS
+	export/export/vfh_export_vop.h
 	export/export/vfh_export_geom.h
 	export/export/vfh_export_hair.h
 	export/export/vfh_export_mesh.h

@@ -44,76 +44,50 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 	csect.leave();
 }
 
-VRay::Plugin VRayExporter::exportMaterial(VOP_Node *vopNode)
-{
-	if (!vopNode) {
-		return VRay::Plugin();
-	}
-
-	VRay::Plugin material = exportVop(vopNode);
-
-	const VOP_Type vopType = vopNode->getShaderType();
-	if (vopType == VOP_TYPE_BSDF) {
-		// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly.
-		Attrs::PluginDesc mtlPluginDesc(getPluginName(*vopNode, SL("MtlSingle")),
-		                                SL("MtlSingleBRDF"));
-		mtlPluginDesc.add(Attrs::PluginAttr(SL("brdf"), material));
-		mtlPluginDesc.add(Attrs::PluginAttr(SL("scene_name"), getSceneName(*vopNode)));
-		material = exportPlugin(mtlPluginDesc);
-	}
-
-	if (material.isNotEmpty() && isInteractive()) {
-		// Wrap material into MtlRenderStats to always have the same material name.
-		// Used when rewiring materials when running interactive RT session.
-		Attrs::PluginDesc pluginDesc(getPluginName(*vopNode, SL("MtlStats")),
-		                             SL("MtlRenderStats"));
-		pluginDesc.add(Attrs::PluginAttr(SL("base_mtl"), material));
-		material = exportPlugin(pluginDesc);
-	}
-
-	return material;
-}
-
 VRay::Plugin VRayExporter::exportMaterial(OP_Node *matNode)
 {
-	VRay::Plugin material;
+	VRay::PluginRef material;
 
 	if (!matNode) {
 		material = exportDefaultMaterial();
 	}
-	else if (!cacheMan.getMatPlugin(*matNode, material)) {
-		VOP_Node *vopNode = CAST_VOPNODE(matNode);
-		SHOP_Node *shopNode = CAST_SHOPNODE(matNode);
-
-		// MAT context
-		if (vopNode) {
-			material = exportMaterial(vopNode);
-		}
-		// SHOP context
-		else if (shopNode) {
-			const UT_String &opType = shopNode->getOperator()->getName();
-			// We support only "V-Ray Material" SHOP node.
-			if (opType.equal("vray_material")) {
-				OP_Node *materialNode = getVRayNodeFromOp(*matNode, vfhSocketMaterialOutputMaterial);
-				if (materialNode) {
-					material = exportMaterial(CAST_VOPNODE(materialNode));
-				}
-			}
-		}
+	else if (!cacheMan.getShaderPlugin(*matNode, material)) {
+		material = exportShaderNode(matNode);
 
 		if (material.isEmpty()) {
 			material = exportDefaultMaterial();
 		}
 		else {
+			if (VOP_Node *vopNode = CAST_VOPNODE(matNode)) {
+				const VOP_Type vopType = vopNode->getShaderType();
+				if (vopType == VOP_TYPE_BSDF) {
+					// Wrap BRDF into MtlSingleBRDF for RT GPU to work properly.
+					Attrs::PluginDesc mtlPluginDesc(getPluginName(*vopNode, SL("MtlSingle")),
+					                                SL("MtlSingleBRDF"));
+					mtlPluginDesc.add(Attrs::PluginAttr(SL("brdf"), material));
+					mtlPluginDesc.add(Attrs::PluginAttr(SL("scene_name"), getSceneName(*vopNode)));
+					material = exportPlugin(mtlPluginDesc);
+				}
+			}
+
+			if (isInteractive()) {
+				// Wrap material into MtlRenderStats to always have the same material name.
+				// Used when rewiring materials when running interactive RT session.
+				Attrs::PluginDesc pluginDesc(getPluginName(*matNode, SL("MtlStats")),
+				                             SL("MtlRenderStats"));
+				pluginDesc.add(Attrs::PluginAttr(SL("base_mtl"), material));
+				material = exportPlugin(pluginDesc);
+			}
+
 			addOpCallback(matNode, RtCallbackSurfaceShop);
 		}
 
 		vassert(material.isNotEmpty());
 
-		cacheMan.addMatPlugin(*matNode, material);
+		cacheMan.addShaderPlugin(*matNode, material);
 	}
 
-	return material;
+	return VRay::Plugin(material);
 }
 
 
@@ -137,45 +111,42 @@ VRay::Plugin VRayExporter::exportDefaultMaterial()
 }
 
 
-void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode)
+void VRayExporter::setAttrsFromNetworkParameters(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode)
 {
 	OP_Network *creator = vopNode.getCreator();
-	if (NOT(creator)) {
+	if (!creator)
 		return;
-	}
 
 	const Parm::VRayPluginInfo *pluginInfo = Parm::getVRayPluginInfo(pluginDesc.pluginID);
-	if (!pluginInfo) {
+	if (!pluginInfo)
 		return;
-	}
 
 	const fpreal t = m_context.getTime();
 
 	VOP_ParmGeneratorList prmVOPs;
 	vopNode.getParmInputs(prmVOPs);
+
 	for (VOP_ParmGenerator *prmVOP : prmVOPs) {
 		const int inpidx = vopNode.whichInputIs(prmVOP);
-		if (inpidx < 0) {
+		if (inpidx < 0)
 			continue;
-		}
 
 		UT_String inpName;
 		vopNode.getInputName(inpName, inpidx);
 
 		const QString attrName(inpName.buffer());
-		// plugin doesn't have such attribute or
-		// it has already been exported
-		if (!pluginInfo->hasAttribute(attrName) ||
-			pluginDesc.contains(attrName))
-		{
+
+		// Plugin doesn't have such attribute or it has already been exported.
+		if (!pluginInfo->hasAttribute(attrName) || pluginDesc.contains(attrName))
 			continue;
-		}
 
 		const UT_String &prmToken = prmVOP->getParmNameCache();
 
 		const PRM_Parm *prm = creator->getParmList()->getParmPtr(prmToken.buffer());
 		if (!prm)
 			continue;
+
+		const int isAnimated = prm->isTimeDependent();
 
 		const PRM_Type prmType = prm->getType();
 
@@ -185,7 +156,7 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 
 			const VRay::Plugin opPlugin = exportNodeFromPath(path);
 			if (opPlugin.isNotEmpty()) {
-				pluginDesc.add(Attrs::PluginAttr(attrName, opPlugin));
+				pluginDesc.add(attrName, opPlugin);
 			}
 		}
 
@@ -197,62 +168,67 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 			case Parm::eBool:
 			case Parm::eEnum:
 			case Parm::eInt:
-			case Parm::eTextureInt:
-			{
-				Attrs::PluginDesc mtlOverrideDesc(getPluginName(vopNode, attrName), SL("TexUserScalar"));
-				mtlOverrideDesc.add(Attrs::PluginAttr("default_value", creator->evalInt(prm, 0, t)));
-				mtlOverrideDesc.add(Attrs::PluginAttr("user_attribute", prm->getToken()));
+			case Parm::eTextureInt: {
+				Attrs::PluginDesc texUserDesc(getPluginName(vopNode, attrName),
+				                                  SL("TexUserInteger"));
+				texUserDesc.add(SL("default_value"), creator->evalInt(prm, 0, t), isAnimated);
+				texUserDesc.add(SL("user_attribute"), prm->getToken());
 
-				VRay::Plugin overridePlg = exportPlugin(mtlOverrideDesc);
-				pluginDesc.add(Attrs::PluginAttr(attrName, overridePlg, "scalar"));
+				const VRay::Plugin texUser = exportPlugin(texUserDesc);
+				texUserDesc.add(attrName, texUser);
 
 				break;
 			}
 			case Parm::eFloat:
-			case Parm::eTextureFloat:
-			{
-				Attrs::PluginDesc mtlOverrideDesc(getPluginName(vopNode, attrName), SL("TexUserScalar"));
-				mtlOverrideDesc.add(Attrs::PluginAttr("default_value", creator->evalFloat(prm, 0, t)));
-				mtlOverrideDesc.add(Attrs::PluginAttr("user_attribute", prm->getToken()));
+			case Parm::eTextureFloat: {
+				Attrs::PluginDesc texUserDesc(getPluginName(vopNode, attrName),
+				                                  SL("TexUserScalar"));
+				texUserDesc.add(SL("default_value"), creator->evalFloat(prm, 0, t), isAnimated);
+				texUserDesc.add(SL("user_attribute"), prm->getToken());
 
-				VRay::Plugin overridePlg = exportPlugin(mtlOverrideDesc);
-				pluginDesc.add(Attrs::PluginAttr(attrName, overridePlg, "scalar"));
+				const VRay::Plugin texUser = exportPlugin(texUserDesc);
+				texUserDesc.add(attrName, texUser);
 
 				break;
 			}
 			case Parm::eColor:
 			case Parm::eAColor:
-			case Parm::eTextureColor:
-			{
-				Attrs::PluginDesc mtlOverrideDesc(getPluginName(vopNode, attrName), SL("TexUserColor"));
+			case Parm::eTextureColor: {
+				Attrs::PluginDesc texUserDesc(getPluginName(vopNode, attrName),
+				                                  SL("TexUserColor"));
 
-				Attrs::PluginAttr attr("default_color", Attrs::AttrTypeAColor);
-				for (int i = 0; i < std::min(prm->getVectorSize(), 4); ++i) {
-					attr.paramValue.valVector[i] = creator->evalFloat(prm, i, t);
+				Attrs::PluginAttr defaultColor(SL("default_color"),
+				                               Attrs::AttrTypeAColor);
+				const int colorSize = prm->getVectorSize();
+				for (int i = 0; i < std::min(colorSize, 4); ++i) {
+					defaultColor.paramValue.valVector[i] = creator->evalFloat(prm, i, t);
 				}
-				mtlOverrideDesc.add(attr);
-				mtlOverrideDesc.add(Attrs::PluginAttr("user_attribute", prm->getToken()));
+				if (colorSize == 3) {
+					defaultColor.paramValue.valVector[3] = 1.0f;
+				}
+				defaultColor.setAnimated(isAnimated);
+
+				texUserDesc.add(defaultColor);
 
 				// Set priority to user attribute.
-				mtlOverrideDesc.add(Attrs::PluginAttr("attribute_priority", 1));
+				texUserDesc.add(SL("attribute_priority"), 1);
+				texUserDesc.add(SL("user_attribute"), prm->getToken());
 
-				VRay::Plugin mtlOverridePlg = exportPlugin(mtlOverrideDesc);
-				pluginDesc.add(Attrs::PluginAttr(attrName, mtlOverridePlg, "color"));
+				const VRay::Plugin texUser = exportPlugin(texUserDesc);
+				pluginDesc.add(attrName, texUser);
 
 				break;
 			}
-			case Parm::eVector:
-			{
+			case Parm::eVector: {
 				VRay::Vector v;
 				for (int i = 0; i < std::min(3, prm->getVectorSize()); ++i) {
 					v[i] = creator->evalFloat(prm->getToken(), i, t);
 				}
 
-				pluginDesc.add(Attrs::PluginAttr(attrName, v));
+				pluginDesc.add(attrName, v, isAnimated);
 				break;
 			}
-			case Parm::eMatrix:
-			{
+			case Parm::eMatrix: {
 				VRay::Matrix m(1);
 
 				for (int k = 0; k < std::min(9, prm->getVectorSize()); ++k) {
@@ -261,11 +237,10 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 					m[i][j] = creator->evalFloat(prm->getToken(), k, t);
 				}
 
-				pluginDesc.add(Attrs::PluginAttr(attrName, m));
+				pluginDesc.add(attrName, m, isAnimated);
 				break;
 			}
-			case Parm::eTransform:
-			{
+			case Parm::eTransform: {
 				VRay::Transform tm(1);
 
 				for (int k = 0; k < std::min(16, prm->getVectorSize()); ++k) {
@@ -283,12 +258,11 @@ void VRayExporter::setAttrsFromSHOPOverrides(Attrs::PluginDesc &pluginDesc, VOP_
 					}
 				}
 
-				pluginDesc.add(Attrs::PluginAttr(attrName, tm));
+				pluginDesc.add(attrName, tm, isAnimated);
 				break;
 			}
 			default:
-			// ignore other types for now
-				;
+				break;
 		}
 	}
 }

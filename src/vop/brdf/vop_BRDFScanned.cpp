@@ -59,7 +59,7 @@ void VOP::BRDFScanned::setPluginType()
 }
 
 
-OP::VRayNode::PluginResult VOP::BRDFScanned::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult VOP::BRDFScanned::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	const fpreal t = exporter.getContext().getTime();
 
@@ -75,14 +75,15 @@ OP::VRayNode::PluginResult VOP::BRDFScanned::asPluginDesc(Attrs::PluginDesc &plu
 	parms.saturation = options.getOptionF("saturation");
 	parms.depthMul = options.getOptionF("depth_mult");
 	parms.disablewmap = options.getOptionI("disablewmap");
-	// filter color
-	parms.filter.rgb[0] = options.getOptionV3("filter").r();
-	parms.filter.rgb[1] = options.getOptionV3("filter").g();
-	parms.filter.rgb[2] = options.getOptionV3("filter").b();
-	// uvtrans
-	OP_Node *uvtrans = VRayExporter::getConnectedNode(this, "uvtrans");
+
+	const UT_Vector3D filterColor = options.getOptionV3("filter");
+	parms.filter.rgb[0] = filterColor.r();
+	parms.filter.rgb[1] = filterColor.g();
+	parms.filter.rgb[2] = filterColor.b();
+
+	const OP_Node *uvtrans = ShaderExporter::getConnectedNode(*this, UT_String("uvtrans"));
 	if (uvtrans && uvtrans->getOpTypeID() == VOP_OPTYPE_ID) {
-		parms.uvtrans = exporter.exportTransformVop(*(uvtrans->castToVOPNode()));
+		parms.uvtrans = exporter.getShaderExporter().getTransformFromXform(*CAST_VOPNODE(uvtrans));
 	}
 	else {
 		parms.uvtrans.makeIdentity();

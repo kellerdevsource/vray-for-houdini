@@ -19,7 +19,7 @@ void VOP::TexGradRamp::setPluginType()
 	pluginID = SL("TexGradRamp");
 }
 
-OP::VRayNode::PluginResult VOP::TexGradRamp::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext *parentContext)
+OP::VRayNode::PluginResult VOP::TexGradRamp::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	return PluginResultContinue;
 }

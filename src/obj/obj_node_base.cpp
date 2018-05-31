@@ -36,7 +36,7 @@ PRM_Template* OBJ::VRayClipper::GetPrmTemplate()
 	return myPrmList.getPRMTemplate();
 }
 
-OP::VRayNode::PluginResult OBJ::VRayClipper::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter& /*exporter*/, ExportContext* /*parentContext*/)
+OP::VRayNode::PluginResult OBJ::VRayClipper::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter& /*exporter*/)
 {
 	pluginDesc.pluginID   = pluginID;
 	pluginDesc.pluginName = VRayExporter::getPluginName(*this);
@@ -111,7 +111,7 @@ int LightNodeBase< PluginID >::GetMyPrmTemplate(Parm::PRMList &myPrmList)
 }
 
 template<VRayPluginID PluginID>
-OP::VRayNode::PluginResult LightNodeBase<PluginID>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter& /*exporter*/, ExportContext* /*parentContext*/)
+OP::VRayNode::PluginResult LightNodeBase<PluginID>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter& /*exporter*/)
 {
 	pluginDesc.pluginID   = pluginID;
 	pluginDesc.pluginName = VRayExporter::getPluginName(*this);
@@ -189,7 +189,7 @@ static int fillLightPluginDesc(Attrs::PluginDesc &pluginDesc, OP_Node &objLight,
 }
 
 template<>
-OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*)
+OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	const fpreal t = exporter.getContext().getTime();
 
@@ -238,7 +238,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightMesh>::asPluginDesc(
 }
 
 template<>
-OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::SunLight>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
+OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::SunLight>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	pluginDesc.pluginID   = pluginID;
 	pluginDesc.pluginName = VRayExporter::getPluginName(*this);
@@ -292,7 +292,7 @@ static VRay::Plugin exportAttributeFromPathAuto(VRayExporter &exporter,
 }
 
 template<>
-OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightDome>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
+OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightDome>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	pluginDesc.pluginID = pluginID;
 	pluginDesc.pluginName = VRayExporter::getPluginName(*this);
@@ -312,7 +312,7 @@ OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightDome>::asPluginDesc(
 }
 
 template<>
-OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightRectangle>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext* /*parentContext*/)
+OP::VRayNode::PluginResult LightNodeBase<VRayPluginID::LightRectangle>::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	const fpreal t = exporter.getContext().getTime();
 

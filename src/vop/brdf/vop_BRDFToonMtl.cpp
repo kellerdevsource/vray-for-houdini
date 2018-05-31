@@ -18,7 +18,7 @@ void BRDFToonMtl::setPluginType()
 	pluginID = "BRDFToonMtl";
 }
 
-OP::VRayNode::PluginResult BRDFToonMtl::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter, ExportContext*)
+OP::VRayNode::PluginResult BRDFToonMtl::asPluginDesc(Attrs::PluginDesc &pluginDesc, VRayExporter &exporter)
 {
 	return BRDFVRayMtl::asPluginDesc(pluginDesc, exporter);
 }
