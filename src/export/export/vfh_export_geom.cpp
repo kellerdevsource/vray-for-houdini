@@ -1145,6 +1145,9 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 			additional_params_flags |= VRay::InstancerParamFlags::useMaterial;
 		}
 		if (!userAttributes.isEmpty()) {
+			if (!userAttributes.endsWith(';')) {
+				userAttributes.append(';');
+			}
 			additional_params_flags |= VRay::InstancerParamFlags::useUserAttributes;
 		}
 		static const int useMapChannels = (1 << 7);
@@ -2102,6 +2105,11 @@ static VRay::Transform getPointInstanceTM(const GU_Detail &gdp, const PointInsta
 	return utMatrixToVRayTransform(Transform);
 }
 
+static void rescaleVelocity(UT_Vector3F &v)
+{
+	v /= OPgetDirector()->getChannelManager()->getSamplesPerSec();
+}
+
 void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gdp, int isInstanceNode)
 {
 	const fpreal t = ctx.getTime();
@@ -2156,33 +2164,59 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 			continue;
 		}
 
-		PrimContext objCtx;
-		objCtx.objNode = &objNode;
-		objCtx.mat.matNode = instaceObjNode->getMaterialNode(t);
-
-		PrimContextAuto objCtxPush(*this, objCtx);
-
-		const VRay::Plugin geometry = pluginExporter.exportObject(instaceObjNode);
+		const VRay::Transform &pointTm =
+			getPointInstanceTM(gdp, pointInstanceAttrs, pointOffset);
 
 		const bool isLight = bool(instaceObjNode->castToOBJLight());
-		if (!isLight && geometry.isNotEmpty()) {
-			InstancerItem item;
-			item.geometry = geometry;
+		if (isLight) {
+			PrimContext lightCtx;
+			lightCtx.objNode = &objNode;
+			lightCtx.id = objNode.getUniqueId() ^ gdp.getUniqueId() ^ pointOffset;
+			lightCtx.mat.matNode = instaceObjNode->getMaterialNode(t);
+			// Push point transform. Lights are using full transform.
+			lightCtx.tm = pointTm;
 
-			// Check parent overrides.
-			item.primMaterial = getPrimMaterial();
+			// Append point overrides.
+			appendMaterialOverride(lightCtx.mat, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, pointOffset, ctx.getTime());
+			attrExp.fromPoint(lightCtx.mat.overrides, pointOffset);
 
-			// Use offset as ID.
-			item.primID = objNode.getUniqueId() ^ gdp.getUniqueId() ^ pointOffset;
+			PrimContextAuto lightCtxPush(*this, lightCtx);
+			pluginExporter.exportObject(instaceObjNode);
+		}
+		else {
+			VRay::Transform pointVel(0);
+			if (instanceHndl.isValid()) {
+				UT_Vector3F vel = velocityHndl.get(pointOffset);
+				rescaleVelocity(vel);
+				pointVel.offset.set(vel.x(), vel.y(), vel.z());
+			}
 
-			// Particle transform.
-			item.tm = getPointInstanceTM(gdp, pointInstanceAttrs, pointOffset);
+			// NOTE: Do not push point transform for objects (Node).
+			// It'll be baked into InstancerItem.
+			PrimContext objCtx;
+			objCtx.objNode = &objNode;
+			objCtx.id = objNode.getUniqueId() ^ gdp.getUniqueId() ^ pointOffset;
+			objCtx.mat.matNode = instaceObjNode->getMaterialNode(t);
 
-			// Material overrides.
-			appendMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, pointOffset, ctx.getTime());
-			attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
+			PrimContextAuto objCtxPush(*this, objCtx);
 
-			pointInstancerItems += item;
+			const VRay::Plugin node = pluginExporter.exportObject(instaceObjNode);
+			if (node.isNotEmpty()) {
+				InstancerItem item;
+				item.geometry = node;
+				item.primMaterial = getPrimMaterial();
+				item.primID = getDetailID();
+
+				// Need to store only local TM here.
+				item.tm = pointTm;
+				item.vel = pointVel;
+
+				// Append point overrides.
+				appendMaterialOverride(item.primMaterial, materialStyleSheetHndl, materialPathHndl, materialOverrideHndl, pointOffset, ctx.getTime());
+				attrExp.fromPoint(item.primMaterial.overrides, pointOffset);
+
+				pointInstancerItems += item;
+			}
 		}
 
 		++validPointIdx;
@@ -2454,7 +2488,7 @@ void ObjectExporter::removeObject(const char *objNode)
 static void appendToLightIlluminationLists(OpCacheMan &cacheMan, OBJ_Node &objNode)
 {
 	OBJ_Geometry *objGeom = objNode.castToOBJGeometry();
-	if (!objGeom)
+	if (!objGeom || !Parm::isParmExist(objNode, "lightmask"))
 		return;
 
 	UT_String lightmask;
