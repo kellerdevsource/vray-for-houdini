@@ -12,6 +12,7 @@
 #define VRAY_FOR_HOUDINI_VOP_NODE_MTL_DEF_H
 
 #include "vop_MtlMulti.h"
+#include "vop_MtlVRayMesh.h"
 #include "vop_MaterialOutput.h"
 #include "vop_PhoenixSim.h"
 

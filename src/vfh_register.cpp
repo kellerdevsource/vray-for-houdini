@@ -352,6 +352,7 @@ void newVopOperator(OP_OperatorTable *table)
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", Mtl2Sided);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlMaterialID);
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlMulti);
+	VFH_VOP_ADD_OPERATOR_CUSTOM(table, "MATERIAL", MtlVRayMesh, MtlVRayMesh::getPrmTemplate(), OP_FLAG_UNORDERED);
 #ifdef WITH_VRAY_OSL
 	VFH_VOP_ADD_OPERATOR(table, "MATERIAL", MtlOSL);
 #endif

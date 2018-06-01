@@ -191,7 +191,7 @@ PluginAttr::PluginAttr(const QString &attrName, const QColorList &attrValue, int
 
 PluginAttr::PluginAttr(const QString &attrName, const QCharStringList &attrValue, int isAnimated)
 	: paramName(attrName)
-	, paramType(AttrTypeRawListColor)
+	, paramType(AttrTypeRawListCharString)
 	, paramValue(toRefList(attrValue), isAnimated)
 {}
 

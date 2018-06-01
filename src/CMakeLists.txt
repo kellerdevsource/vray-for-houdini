@@ -144,6 +144,7 @@ set(SOURCES
 	vop/env/vop_SettingsEnvironment.cpp
 	vop/material/vop_MaterialOutput.cpp
 	vop/material/vop_MtlMulti.cpp
+	vop/material/vop_MtlVRayMesh.cpp
 	vop/material/vop_PhoenixSim.cpp
 	vop/meta/vop_meta_image_file.cpp
 	vop/rc/vop_rc_container.cpp
@@ -188,6 +189,7 @@ set(HEADERS
 	vop/material/vop_MaterialOutput.h
 	vop/material/vop_mtl_def.h
 	vop/material/vop_MtlMulti.h
+	vop/material/vop_MtlVRayMesh.h
 	vop/material/vop_PhoenixSim.h
 	vop/meta/vop_meta_def.h
 	vop/meta/vop_meta_image_file.h
