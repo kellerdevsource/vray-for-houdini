@@ -18,21 +18,35 @@
 namespace VRayForHoudini {
 namespace Attrs {
 
-/// Same as QVector, but the constructor call
-/// QVector::reserve(@a reserveSize) making it possible to use append()
-/// instead of indexed assignment.
 template <typename ValueType>
 struct QReserveVector
 	: QVector<ValueType>
 {
+	enum class Flags {
+		/// Call QVector::resize() for indexed access.
+		/// Useful when size is known in advance.
+		resize = 0,
+
+		/// Call QVector::reserve() for faster append().
+		/// Useful when size is not known in advance.
+		reserve,
+	};
+
 	QReserveVector() {}
 
-	explicit QReserveVector(int reserveSize) {
-		QVector<ValueType>::reserve(reserveSize);
+	explicit QReserveVector(int size, Flags flags=Flags::reserve) {
+		if (flags == Flags::resize) {
+			QVector<ValueType>::resize(size);
+		}
+		else if (flags == Flags::reserve) {
+			QVector<ValueType>::reserve(size);
+		}
 	}
 
-	explicit QReserveVector(int reserveSize, const ValueType &value)
-		: QVector<ValueType>(reserveSize, value)
+	/// @param size Size.
+	/// @param value Init items with this value.
+	explicit QReserveVector(int size, const ValueType &value)
+		: QVector<ValueType>(size, value)
 	{}
 };
 

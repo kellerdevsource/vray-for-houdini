@@ -1029,7 +1029,7 @@ OP::VRayNode::PluginResult PhxShaderSim::asPluginDesc(Attrs::PluginDesc &pluginD
 				const int pointCount = data.m_xS.size();
 
 				if (data.m_type == RampType_Color) {
-					Attrs::QColorList colorList(pointCount);
+					Attrs::QColorList colorList(pointCount, Attrs::QColorList::Flags::resize);
 					for (int c = 0; c < pointCount; ++c) {
 						colorList[c] = VRay::Color(data.m_yS[c * 3 + 0], data.m_yS[c * 3 + 1], data.m_yS[c * 3 + 2]);
 					}
