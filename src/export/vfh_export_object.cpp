@@ -358,11 +358,6 @@ VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
 	if (objOpType.equal("VRayNodeVRayClipper")) {
 		return exportVRayClipper(*objNode);
 	}
-#ifdef CGR_HAS_VRAYSCENE
-	if (objOpType.equal("VRayNodeVRayScene")) {
-		return exportVRayScene(objNode, CAST_SOPNODE(renderOp));
-	}
-#endif
 
 	if (!objLight && !renderOp) {
 		Log::getLog().error("OBJ \"%s\": Render OP is not found!",

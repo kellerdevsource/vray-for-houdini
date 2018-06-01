@@ -317,10 +317,6 @@ public:
 	                                                 DefaultMappingType mappingType,
 	                                                 BitmapBufferColorSpace colorSpace);
 
-#ifdef CGR_HAS_VRAYSCENE
-	VRay::Plugin exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node);
-#endif
-
 	/// Create or update a plugin from a plugin description
 	/// @param pluginDesc - plugin description with relevant properties set
 	/// @returns invalid Plugin object if not successul

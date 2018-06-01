@@ -135,6 +135,9 @@ struct PrimContext
 	/// Local transform.
 	VRay::Transform tm{1};
 
+	/// World transform.
+	VRay::Transform worldTm{1};
+
 	/// Local velocity.
 	VRay::Transform vel{0};
 
@@ -154,6 +157,9 @@ struct PrimContextStack
 	void pushContext(const PrimContext &value);
 
 	PrimContext popContext();
+
+	/// Get final world space transform for current level.
+	VRay::Transform getWorldTm() const;
 
 	/// Get final transform for current level.
 	VRay::Transform getTm() const;
@@ -353,6 +359,11 @@ class VRayRendererNode;
 class ObjectExporter
 {
 public:
+	enum GeoExportMode {
+		geoExportModeFull = 0,
+		geoExportModeNonInstancerOnly,
+	};
+
 	explicit ObjectExporter(VRayExporter &pluginExporter);
 
 	/// Reset exporter state. Clear plugin caches.
@@ -535,6 +546,9 @@ public:
 	/// @param items Output geometry list.
 	void exportGeometry(OBJ_Node &objNode, InstancerItems &items, SOP_Node *overrideSOP = nullptr);
 
+	/// Returns full world space transform from the primitive context stack.
+	VRay::Transform getWorldTm() const { return primContextStack.getWorldTm(); }
+
 	/// Returns transform from the primitive context stack.
 	VRay::Transform getTm() const { return primContextStack.getTm(); }
 
@@ -598,6 +612,12 @@ private:
 	/// to re-export geometry plugins (i.e. something on the actual
 	/// geometry has changed). By default this flag is on.
 	int doExportGeometry;
+
+	/// We're caching Node plugin per OBJ_Node, however when using instancing
+	/// we may instance object that may be contain non-directly instanceable data
+	/// (e.g. VRaySceneRef, VRayVolumeGridRef).
+	/// Use geoExportModeNonInstancerOnly to force export of such data when instancing is used.
+	GeoExportMode exportMode = geoExportModeFull;
 
 	/// NOTE: mutable because HashMapKey doesn't have const methods.
 	mutable struct PluginCaches {

@@ -40,7 +40,7 @@
 
         VFH_PLUGIN_PARM_TOGGLE("VRayScene", "add_nodes", "Add Objects", "Add geometry from the included files", 1)
         VFH_PLUGIN_PARM_TOGGLE("VRayScene", "add_lights", "Add Lights", "Add lights from the included files", 1)
-        VFH_PLUGIN_PARM_TOGGLE("VRayScene", "animated_preview", "Animated Preview", "Update mesh based on selected frame", 0)
+        VFH_UI_PARM_TOGGLE("animated_preview", "Animated Preview", "Update mesh based on selected frame", 0)
     }
 
     group {

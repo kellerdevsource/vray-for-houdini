@@ -1333,26 +1333,6 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node &objNode, const VRay::Plu
 	return exportPlugin(pluginDesc);
 }
 
-
-#ifdef CGR_HAS_VRAYSCENE
-
-VRay::Plugin VRayExporter::exportVRayScene(OBJ_Node *obj_node, SOP_Node *geom_node)
-{
-	SOP::VRayScene *vraySceneNode = static_cast<SOP::VRayScene*>(geom_node);
-
-	Attrs::PluginDesc pluginDesc;
-
-	const OP::VRayNode::PluginResult res = vraySceneNode->asPluginDesc(pluginDesc, *this);
-	if (res == OP::VRayNode::PluginResultSuccess) {
-		return exportPlugin(pluginDesc);
-	}
-
-	return VRay::Plugin();
-}
-
-#endif // CGR_HAS_VRAYSCENE
-
-
 static QString ObjectTypeToString(const OBJ_OBJECT_TYPE &ob_type)
 {
 	QString object_type;
