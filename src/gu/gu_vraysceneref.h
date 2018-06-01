@@ -76,7 +76,7 @@ public:
 	// From GU_PackedImpl.
 	GU_PackedFactory *getFactory() const VRAY_OVERRIDE;
 	GU_PackedImpl *copy() const VRAY_OVERRIDE;
-	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
+	bool unpack(GU_Detail &destGdp) const VRAY_OVERRIDE;
 
 	/// Collect plugin names list from the *.vrscene that this primitive is loading.
 	VRay::VUtils::CharStringRefList getObjectNamesFromPath() const;
