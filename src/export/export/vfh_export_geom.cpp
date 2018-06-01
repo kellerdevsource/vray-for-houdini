@@ -1697,9 +1697,6 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	pluginDesc.add(SL("transform"), getWorldTm());
 	pluginDesc.add(SL("flip_axis"), static_cast<int>(flipAxis));
 
-	PrimitiveItem item;
-	getPrimMaterial(item.primMaterial);
-
 	{
 		VRay::VUtils::CharStringRefList namesList;
 
@@ -1714,8 +1711,9 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 		}
 	}
 
-	if (item.primMaterial.matNode) {
-		const VRay::Plugin &materialOverride = pluginExporter.exportMaterial(item.primMaterial.matNode);
+	const PrimMaterial &primMaterial = getPrimMaterial();
+	if (primMaterial.matNode) {
+		const VRay::Plugin &materialOverride = pluginExporter.exportMaterial(primMaterial.matNode);
 		if (materialOverride.isNotEmpty()) {
 			pluginDesc.add(Attrs::PluginAttr(SL("material_override"), materialOverride));
 		}
