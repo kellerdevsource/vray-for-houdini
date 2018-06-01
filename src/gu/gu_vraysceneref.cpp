@@ -293,7 +293,7 @@ private:
 							// XXX: Check if more filtering must be done!
 							childPathChunk = childPathChunk.remove(':');
 
-							GA_PrimitiveGroup *primGroup = gdp->newPrimitiveGroup(_toChar(childPathChunk));
+							GA_PrimitiveGroup *primGroup = gdp->newPrimitiveGroup(qPrintable(childPathChunk));
 							vassert(primGroup);
 
 							primGroup->add(prim);

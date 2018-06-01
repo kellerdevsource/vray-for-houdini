@@ -67,7 +67,7 @@ static void enumSceneObjectChildren(const VrsceneSceneObject &object)
 
 	if (!children.empty()) {
 		const QString indentStr(indent * 2, ' ');
-		printf("%s\"%s\" [%s]:\n", _toChar(indentStr), object.getName().ptr(), object.getPath().ptr());
+		printf("%s\"%s\" [%s]:\n", qPrintable(indentStr), object.getName().ptr(), object.getPath().ptr());
 
 		FOR_CONST_IT(VrsceneSceneObjects, it, children) {
 			indent++;
@@ -80,7 +80,7 @@ static void enumSceneObjectChildren(const VrsceneSceneObject &object)
 			const VrsceneObjectBase *plugin = plugins[i];
 
 			const QString indentStr(indent * 2, ' ');
-			printf("%s  %s\n", _toChar(indentStr), plugin->getName());
+			printf("%s  %s\n", qPrintable(indentStr), plugin->getName());
 		}
 	}
 }
