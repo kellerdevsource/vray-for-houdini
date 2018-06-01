@@ -1,0 +1,25 @@
+{
+    name MtlVRayMesh
+    label "VRayProxy Material"
+    parmtag { spare_category "VRayProxy Material" }
+    parmtag { vray_plugin "MtlMulti" }
+
+#include "$VRAY_UI_DS_PATH/common/vfh_material_common.ds"
+
+    parm {
+        name "vrayproxy_sop"
+        label "VRayProxy SOP"
+        help "Path to VRayProxy SOP to get material information from."
+        type oppath
+        default { "" }
+        parmtag { "opfilter" "!!SOP!!" }
+        parmtag { "oprelative" "." }
+    }
+
+    parm {
+        name "force_update"
+        label "Force Update"
+        help "Force reload material information from VRayProxy SOP."
+        type button
+    }
+}

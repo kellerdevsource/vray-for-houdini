@@ -36,10 +36,11 @@ struct QReserveVector
 	{}
 };
 
-typedef QReserveVector<VRay::VUtils::Value> QValueList;
 typedef QReserveVector<float> QFloatList;
 typedef QReserveVector<int> QIntList;
 typedef QReserveVector<VRay::Color> QColorList;
+typedef QReserveVector<VRay::VUtils::Value> QValueList;
+typedef QReserveVector<VRay::VUtils::CharString> QCharStringList;
 
 /// Converts QVector<ValueType> to VUtils::PtrArray<ValueType>.
 /// @tparam ValueType Array item value type.
@@ -151,6 +152,7 @@ struct PluginAttr
 	PluginAttr(const QString &attrName, const QIntList &attrValue, int isAnimated = false);
 	PluginAttr(const QString &attrName, const QFloatList &attrValue, int isAnimated = false);
 	PluginAttr(const QString &attrName, const QColorList &attrValue, int isAnimated = false);
+	PluginAttr(const QString &attrName, const QCharStringList &attrValue, int isAnimated = false);
 	PluginAttr(const QString &attrName, const QValueList &attrValue, int isAnimated = false);
 	PluginAttr(const QString &attrName, const VRay::VUtils::CharStringRefList &attrValue, int isAnimated = false);
 	PluginAttr(const QString &attrName, const VRay::VUtils::ColorRefList &attrValue, int isAnimated = false);
@@ -211,6 +213,7 @@ struct PluginDesc
 	void add(const QString &attrName, const QIntList &attrValue, int isAnimated = false);
 	void add(const QString &attrName, const QFloatList &attrValue, int isAnimated = false);
 	void add(const QString &attrName, const QColorList &attrValue, int isAnimated = false);
+	void add(const QString &attrName, const QCharStringList &attrValue, int isAnimated = false);
 	void add(const QString &attrName, const QValueList &attrValue, int isAnimated = false);
 	void add(const QString &attrName, const VRay::VUtils::CharStringRefList &attrValue, int isAnimated = false);
 	void add(const QString &attrName, const VRay::VUtils::ColorRefList &attrValue, int isAnimated = false);

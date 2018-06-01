@@ -227,6 +227,12 @@ PrimContext PrimContextStack::popContext()
 	return primContexts.pop();
 }
 
+VRay::Transform PrimContextStack::getWorldTm() const
+{
+	initCurrentContext();
+	return currentContext.worldTm;
+}
+
 VRay::Transform PrimContextStack::getTm() const
 {
 	initCurrentContext();
@@ -295,7 +301,11 @@ void PrimContextStack::initCurrentContext() const
 		currentContext.id ^= ctx.id;
 		currentContext.vel = ctx.vel * currentContext.vel;
 		currentContext.tm  = ctx.tm * currentContext.tm;
+
+		currentContext.worldTm = ctx.worldTm * currentContext.worldTm;
 	}
+
+	currentContext.worldTm = currentContext.worldTm * currentContext.tm;
 
 	const PrimContext &lastCtx = primContexts.last();
 
@@ -680,7 +690,7 @@ void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const GA_Primitive &pri
 	exint primID = 0;
 	Hash::MurmurHash3_x86_32(&volumePrimHash, sizeof(volumePrimHash), 42, &primID);
 
-	const VRay::Transform &tm = VRayExporter::getObjTransform(&objNode, ctx, false) * getTm();
+	const VRay::Transform &tm = getWorldTm();
 
 	PluginList volumePlugins;
 
@@ -882,6 +892,10 @@ void ObjectExporter::processPrimitives(OBJ_Node &objNode, const GU_Detail &gdp, 
 			instancerItems += item;
 		}
 	}
+
+	// Mesh data is intanced with Instancer and cached.
+	if (exportMode == geoExportModeNonInstancerOnly)
+		return;
 
 	// Polygon / hair.
 	// NOTE: For polygon and hair material overrides are baked as map channels.
@@ -1508,18 +1522,27 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 
 	const GA_PrimitiveTypeId primTypeID = prim.getTypeId();
 
-	if (primTypeID == primPackedTypeIDs.vrayProxyRef) {
-		return exportVRayProxyRef(objNode, prim);
+	if (primTypeID == primPackedTypeIDs.vraySceneRef) {
+		exportVRaySceneRef(objNode, prim);
+		return VRay::Plugin();
 	}
 	if (primTypeID == primPackedTypeIDs.packedGeometry) {
-		exportPackedGeometry(objNode, prim);
-		// exportPackedGeometry() will add plugins to instances table and
+		// This will add plugins to instances table and
 		// does not return any plugin.
+		exportPackedGeometry(objNode, prim);
 		return VRay::Plugin();
 	}
 	if (primTypeID == GU_PackedFragment::typeId()) {
 		exportPackedFragment(objNode, prim);
 		return VRay::Plugin();
+	}
+
+	// Mesh data is intanced with Instancer and cached.
+	if (exportMode == geoExportModeNonInstancerOnly)
+		return VRay::Plugin();
+
+	if (primTypeID == primPackedTypeIDs.vrayProxyRef) {
+		return exportVRayProxyRef(objNode, prim);
 	}
 	if (primTypeID == primPackedTypeIDs.alembicRef) {
 		return exportAlembicRef(objNode, prim);
@@ -1527,15 +1550,11 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 	if (primTypeID == primPackedTypeIDs.packedDisk) {
 		return exportPackedDisk(objNode, prim);
 	}
-	if (primTypeID == primPackedTypeIDs.vraySceneRef) {
-		exportVRaySceneRef(objNode, prim);
-		return VRay::Plugin();
-	}
 	if (primTypeID == primPackedTypeIDs.geomPlaneRef) {
 		return exportGeomPlaneRef(objNode, prim);
 	}
 	if (primTypeID == primPackedTypeIDs.pgYetiRef) {
-		return exportPgYetiRef(objNode, prim);;
+		return exportPgYetiRef(objNode, prim);
 	}
 
 	const GA_PrimitiveDefinition &lookupTypeDef = prim.getTypeDef();
@@ -1650,25 +1669,36 @@ VRay::Plugin ObjectExporter::exportPgYetiRef(OBJ_Node &objNode, const GU_PrimPac
 
 VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_PrimPacked &prim)
 {
-	if (!doExportGeometry) {
+	if (!doExportGeometry)
 		return VRay::Plugin();
-	}
 
-	const int key = getPrimPackedID(prim);
+#pragma pack(push, 1)
+	const struct VRaySceneKey {
+		int optionsHash;
+		exint detailID;
+		GA_Offset primOffset;
+	} vraySceneKey = {
+		getPrimPackedID(prim),
+		getDetailID(),
+		prim.getMapOffset()
+	};
+#pragma pack(pop)
 
-	Attrs::PluginDesc pluginDesc(SL("VRayScene|") % QString::number(key) % SL("@") % QString::number(prim.getMapOffset()),
-	                             "VRayScene");
+	const uint32 vraySceneID = VUtils::hashlittle(&vraySceneKey, sizeof(VRaySceneKey));
+
+	Attrs::PluginDesc pluginDesc(QString::asprintf("VRayScene|%X", vraySceneID),
+	                             SL("VRayScene"));
 
 	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
 
 	const UT_Options &options = vraysceneref->getOptions();
 
-	VRay::Transform fullTm = pluginExporter.getObjTransform(&objNode, ctx) * getTm();
+	VRay::Transform fullTm = getWorldTm();
 	const bool shouldFlip = options.getOptionB("should_flip");
 	if (shouldFlip) {
 		fullTm = flipYZTm * fullTm;
 	}
-	pluginDesc.add(Attrs::PluginAttr("transform", fullTm));
+	pluginDesc.add(SL("transform"), fullTm);
 
 	if (options.getOptionI("use_overrides")) {
 		const UT_StringHolder &overrideSnippet = options.getOptionS("override_snippet");
@@ -2164,6 +2194,20 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 			continue;
 		}
 
+#pragma pack(push, 1)
+		const struct PointInstanceKey {
+			int objID;
+			exint instaceObjID;
+			GA_Offset pointOffset;
+		} pointInstanceKey = {
+			objNode.getUniqueId(),
+			instaceObjNode->getUniqueId(),
+			pointOffset
+		};
+#pragma pack(pop)
+
+		const uint32 pointInstanceID = VUtils::hashlittle(&pointInstanceKey, sizeof(PointInstanceKey));
+
 		const VRay::Transform &pointTm =
 			getPointInstanceTM(gdp, pointInstanceAttrs, pointOffset);
 
@@ -2171,7 +2215,7 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 		if (isLight) {
 			PrimContext lightCtx;
 			lightCtx.objNode = &objNode;
-			lightCtx.id = objNode.getUniqueId() ^ gdp.getUniqueId() ^ pointOffset;
+			lightCtx.id = pointInstanceID;
 			lightCtx.mat.matNode = instaceObjNode->getMaterialNode(t);
 			// Push point transform. Lights are using full transform.
 			lightCtx.tm = pointTm;
@@ -2191,14 +2235,16 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 				pointVel.offset.set(vel.x(), vel.y(), vel.z());
 			}
 
-			// NOTE: Do not push point transform for objects (Node).
-			// It'll be baked into InstancerItem.
-			PrimContext objCtx;
-			objCtx.objNode = &objNode;
-			objCtx.id = objNode.getUniqueId() ^ gdp.getUniqueId() ^ pointOffset;
-			objCtx.mat.matNode = instaceObjNode->getMaterialNode(t);
+			PrimContext instanceObjCtx;
+			instanceObjCtx.objNode = instaceObjNode;
+			instanceObjCtx.id = pointInstanceID;
+			instanceObjCtx.mat.matNode = instaceObjNode->getMaterialNode(t);
 
-			PrimContextAuto objCtxPush(*this, objCtx);
+			// NOTE: Do not push local (point) transform for objects (Node);
+			// it'll be baked into InstancerItem, will push "worldTm" here instead.
+			instanceObjCtx.worldTm = pointTm;
+
+			const PrimContextAuto instanceObjCtxPush(*this, instanceObjCtx);
 
 			const VRay::Plugin node = pluginExporter.exportObject(instaceObjNode);
 			if (node.isNotEmpty()) {
@@ -2242,6 +2288,7 @@ void ObjectExporter::exportGeometry(OBJ_Node &objNode, SOP_Node &sopNode)
 	objCtx.id = gdp.getUniqueId();
 	objCtx.styler = currentStyler;
 	objCtx.mat.matNode = objNode.getMaterialNode(t);
+	objCtx.worldTm = VRayExporter::getObjTransform(&objNode, ctx);
 
 	PrimContextAuto rootAutoCtxPush(*this, objCtx);
 
@@ -2304,7 +2351,7 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 		else {
 			pluginExporter.setAttrsFromOpNodePrms(pluginDesc, &objLight);
 
-			VRay::Transform tm = getTm();
+			VRay::Transform tm = getWorldTm();
 
 			const int isDomeLight = vrayNode->getPluginID() == static_cast<int>(VRayPluginID::LightDome);
 			if (isDomeLight) {
@@ -2397,7 +2444,7 @@ VRay::Plugin ObjectExporter::exportLight(OBJ_Light &objLight)
 			               objLight.evalFloat("light_color", 2, t));
 		}
 
-		pluginDesc.add(Attrs::PluginAttr("transform", getTm()));
+		pluginDesc.add(Attrs::PluginAttr("transform", getWorldTm()));
 	}
 
 	pluginDesc.pluginName = SL("Light|") % QString::number(getDetailID()) % SL("@") % objLight.getName().buffer();
@@ -2409,11 +2456,16 @@ VRay::Plugin ObjectExporter::exportNode(OBJ_Node &objNode, SOP_Node *overrideSOP
 {
 	using namespace Attrs;
 
+	const VRay::Plugin geometry = exportGeometry(objNode, overrideSOP);
+	if (exportMode == geoExportModeNonInstancerOnly) {
+		// It's ok to return empty plugin in this case.
+		return VRay::Plugin();
+	}
+
 	// NOTE [MacOS]: Do not remove namespace here.
 	Attrs::PluginDesc nodeDesc(VRayExporter::getPluginName(objNode, "Node"),
 	                           vrayPluginTypeNode.buffer());
 
-	const VRay::Plugin geometry = exportGeometry(objNode, overrideSOP);
 	// May be NULL if geometry was not re-exported during RT sessions.
 	if (geometry.isNotEmpty()) {
 		nodeDesc.add(PluginAttr("geometry", geometry));
@@ -2529,11 +2581,11 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 	if (objNode.castToOBJLight()) {
 		OBJ_Light &objLight = *objNode.castToOBJLight();
 
-		PrimContext primCtx;
-		primCtx.objNode = &objNode;
-		primCtx.tm = VRayExporter::getObjTransform(&objNode, ctx);
+		PrimContext lightCtx;
+		lightCtx.objNode = &objNode;
+		lightCtx.worldTm = VRayExporter::getObjTransform(&objNode, ctx);
 
-		pushContext(primCtx);
+		const PrimContextAuto lightCtxPush(*this, lightCtx);
 
 		// NOTE: We do not cache light plugins because they are not instancable,
 		// so we need to create a new plugin for every instance.
@@ -2546,12 +2598,16 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 
 		ObjLightCacheEntry &lightEntry = cacheMan.getObjLightEntry(objLight);
 		lightEntry.lights.append(plugin);
-
-		popContext();
 	}
-	else if (!getPluginFromCache(objNode, plugin)) {
+	else if (getPluginFromCache(objNode, plugin)) {
+		// If plugin is cached we may still need to export instances
+		// for non-Instancer2 data types.
+		exportMode = geoExportModeNonInstancerOnly;
+		exportNode(objNode);
+		exportMode = geoExportModeFull;
+	}
+	else {
 		plugin = exportNode(objNode);
-
 		if (plugin.isNotEmpty()) {
 			appendToLightIlluminationLists(cacheMan, objNode);
 

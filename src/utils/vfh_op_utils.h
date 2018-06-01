@@ -27,6 +27,19 @@ const int vfhSocketMaterialOutputMaterialIndex   = 0;
 const int vfhSocketMaterialOutputSurfaceIndex    = 1;
 const int vfhSocketMaterialOutputSimulationIndex = 2;
 
+static const char vfhStreamSaveSeparator[] = "\n";
+
+/// Try to read some data and check if we read the appropriate amount.
+#define readSome(declare, expected, expression)                        \
+	declare;                                                           \
+	if ((expected) != (expression)) {                                  \
+		if (success) { /* save exp and expr only on the first error */ \
+			expectedStr = #expected;                                   \
+			expressionStr = #expression;                               \
+		}                                                              \
+		success = false;                                               \
+	}
+
 /// Match node operator type.
 /// @param opNode OP_Node instance.
 /// @param opName Operator type.

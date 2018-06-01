@@ -39,25 +39,6 @@ soptoolutils.genericTool(kwargs, 'VRayNodePhxShaderCache', nodename="phoenixcach
     </script>
 </tool>
 
-<tool name="sop_VRayNodeVRayScene" label="V-Ray Scene" icon="ROP_vray">
-    <readOnly/>
-    <toolMenuContext name="viewer">
-        <contextNetType>SOP</contextNetType>
-    </toolMenuContext>
-    <toolMenuContext name="network">
-        <contextOpType>Sop/VRayNodeVRayScene</contextOpType>
-    </toolMenuContext>
-    <toolSubmenu>V-Ray</toolSubmenu>
-    <script scriptType="python">
-<![CDATA[
-
-import soptoolutils;
-soptoolutils.genericTool(kwargs, 'VRayNodeVRayScene', nodename="vrayscene")
-
-]]>
-    </script>
-</tool>
-
 <tool name="sop_VRayNodeVRayProxy" label="V-Ray Proxy Import" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">

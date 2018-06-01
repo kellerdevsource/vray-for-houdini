@@ -189,6 +189,12 @@ PluginAttr::PluginAttr(const QString &attrName, const QColorList &attrValue, int
 	, paramValue(toRefList(attrValue), isAnimated)
 {}
 
+PluginAttr::PluginAttr(const QString &attrName, const QCharStringList &attrValue, int isAnimated)
+	: paramName(attrName)
+	, paramType(AttrTypeRawListCharString)
+	, paramValue(toRefList(attrValue), isAnimated)
+{}
+
 PluginAttr::PluginAttr(const QString &attrName, const QValueList &attrValue, int isAnimated)
 	: paramName(attrName)
 	, paramType(AttrTypeRawListValue)
@@ -388,6 +394,11 @@ void Attrs::PluginDesc::add(const QString &attrName, const QFloatList &attrValue
 }
 
 void Attrs::PluginDesc::add(const QString &attrName, const QColorList &attrValue, int isAnimated)
+{
+	add(PluginAttr(attrName, attrValue, isAnimated));
+}
+
+void Attrs::PluginDesc::add(const QString &attrName, const QCharStringList &attrValue, int isAnimated)
 {
 	add(PluginAttr(attrName, attrValue, isAnimated));
 }

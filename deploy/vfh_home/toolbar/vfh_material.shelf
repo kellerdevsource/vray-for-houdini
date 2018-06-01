@@ -121,6 +121,26 @@ voptoolutils.genericTool(kwargs, 'VRayNodeMtlMaterialID', nodename="materialid")
 </tool>
 
 
+<tool name="vop_VRayNodeMtlVRayMesh" label="V-Ray Proxy Material" icon="ROP_vray">
+    <readOnly/>
+    <toolMenuContext name="viewer">
+        <contextNetType>VOP</contextNetType>
+    </toolMenuContext>
+    <toolMenuContext name="network">
+        <contextOpType>Vop/VRayNodeMtlVRayMesh</contextOpType>
+    </toolMenuContext>
+    <toolSubmenu>V-Ray/Material</toolSubmenu>
+    <script scriptType="python">
+<![CDATA[
+
+import voptoolutils;
+voptoolutils.genericTool(kwargs, 'VRayNodeMtlVRayMesh', nodename="vrayMeshMtl")
+
+]]>
+    </script>
+</tool>
+
+
 <tool name="vop_VRayNodeMtlMulti" label="Multi ID" icon="ROP_vray">
     <readOnly/>
     <toolMenuContext name="viewer">

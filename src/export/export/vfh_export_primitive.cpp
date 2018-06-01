@@ -416,7 +416,22 @@ void VolumeExporter::exportPrimitive(const GA_Primitive &prim, const PrimMateria
 		return;
 	}
 
-	const QString phxShaderSimName = SL("PhxShaderSim@") % QString::number(primID) % objNode.getName().buffer();
+#pragma pack(push, 1)
+	const struct PhxShaderSimKey {
+		uint32 hash;
+		exint detailID;
+		GA_Offset primOffset;
+	} phxShaderSimKey = {
+		objNode.getFullPath().hash(),
+		pluginExporter.getObjectExporter().getDetailID(),
+		prim.getMapOffset()
+	};
+#pragma pack(pop)
+
+	const uint32 phxShaderSimID = VUtils::hashlittle(&phxShaderSimKey, sizeof(PhxShaderSimKey));
+
+	const QString phxShaderSimName =
+		QString::asprintf("PhxShaderSim|%X", phxShaderSimID);
 
 	Attrs::PluginDesc phxSim(phxShaderSimName,
 	                         SL("PhxShaderSim"));

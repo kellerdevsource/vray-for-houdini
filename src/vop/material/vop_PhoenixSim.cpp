@@ -13,6 +13,7 @@
 #include "vfh_tex_utils.h"
 #include "vfh_hou_utils.h"
 #include "vfh_attr_utils.h"
+#include "vfh_op_utils.h" 
 
 #include "vop_PhoenixSim.h"
 #include "gu_volumegridref.h"
@@ -334,7 +335,6 @@ using namespace VRayForHoudini;
 using namespace VOP;
 
 static PRM_Template * AttrItems = nullptr;
-static const char * SAVE_SEPARATOR = "\n";
 static const char * SAVE_TOKEN = "phx_ramp_data";
 
 namespace {
@@ -831,7 +831,7 @@ void PhxShaderSim::finishedLoadingNetwork(bool is_child_call)
 
 bool PhxShaderSim::savePresetContents(std::ostream &os)
 {
-	os << SAVE_TOKEN << SAVE_SEPARATOR;
+	os << SAVE_TOKEN << vfhStreamSaveSeparator;
 	return saveRamps(os) && VOP_Node::savePresetContents(os);
 }
 
@@ -848,7 +848,7 @@ bool PhxShaderSim::loadPresetContents(const char *tok, UT_IStream &is)
 
 OP_ERROR PhxShaderSim::saveIntrinsic(std::ostream &os, const OP_SaveFlags &sflags)
 {
-	os << SAVE_TOKEN << SAVE_SEPARATOR;
+	os << SAVE_TOKEN << vfhStreamSaveSeparator;
 	saveRamps(os);
 
 	return VOP_Node::saveIntrinsic(os, sflags);
@@ -874,7 +874,7 @@ bool PhxShaderSim::loadPacket(UT_IStream &is, const char *token, const char *pat
 /// foreach channel: @rampPointCount SEP @rampKeys SEP @rampValues SEP @rampInterpolations SEP
 bool PhxShaderSim::saveRamps(std::ostream & os)
 {
-	os << static_cast<int>(m_ramps.size()) << SAVE_SEPARATOR;
+	os << static_cast<int>(m_ramps.size()) << vfhStreamSaveSeparator;
 
 	for (RampContexts::const_iterator it = m_ramps.begin(); it != m_ramps.end(); ++it) {
 		const QString &rampName = it.key();
@@ -884,29 +884,29 @@ bool PhxShaderSim::saveRamps(std::ostream & os)
 		}
 
 		const auto type = m_rampTypes[rampName];
-		os << qPrintable(rampName) << SAVE_SEPARATOR; // token
-		os << static_cast<int>(type) << SAVE_SEPARATOR; // type
+		os << qPrintable(rampName) << vfhStreamSaveSeparator; // token
+		os << static_cast<int>(type) << vfhStreamSaveSeparator; // type
 
-		os << static_cast<int>(ramp->getActiveChannel()) << SAVE_SEPARATOR; // active channel
+		os << static_cast<int>(ramp->getActiveChannel()) << vfhStreamSaveSeparator; // active channel
 
 		for (int chanIdx = 0; chanIdx < RampContext::CHANNEL_COUNT; ++chanIdx) {
 			const auto & data = ramp->m_data[chanIdx][RampContext::rampTypeToIdx(type)];
 			const int pointCount = data.m_xS.size();
 
-			os << pointCount << SAVE_SEPARATOR; // point count
+			os << pointCount << vfhStreamSaveSeparator; // point count
 
 			for (int c = 0; c < pointCount; ++c) {
-				os << data.m_xS[c] << SAVE_SEPARATOR; // keys
+				os << data.m_xS[c] << vfhStreamSaveSeparator; // keys
 			}
 
 			const int components = type == RampType_Curve ? 1 : 3;
 			for (int c = 0; c < pointCount * components; ++c) {
-				os << data.m_yS[c] << SAVE_SEPARATOR; // values
+				os << data.m_yS[c] << vfhStreamSaveSeparator; // values
 			}
 
 			if (type == RampType_Curve) {
 				for (int pointIdx = 0; pointIdx < pointCount; ++pointIdx) {
-					os << static_cast<int>(data.m_interps[pointIdx]) << SAVE_SEPARATOR; // interpolations
+					os << static_cast<int>(data.m_interps[pointIdx]) << vfhStreamSaveSeparator; // interpolations
 				}
 			}
 		}
@@ -922,17 +922,6 @@ bool PhxShaderSim::loadRamps(UT_IStream & is)
 
 	const char* expectedStr = "";
 	const char* expressionStr = "";
-
-	// Try to read some data and check if we read the appropriate amount
-#define readSome(declare, expected, expression)                       \
-	declare;                                                          \
-	if ((expected) != (expression)) {                                 \
-		if (success) { /* save exp and expr only on the first error */\
-			expectedStr = #expected;                                  \
-			expressionStr = #expression;                              \
-		}                                                             \
-		success = false;                                              \
-	}
 
 	readSome(int rampCount, 1, is.read(&rampCount));
 	for (int c = 0; c < rampCount && success; ++c) {
