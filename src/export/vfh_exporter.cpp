@@ -1614,13 +1614,13 @@ void VRayExporter::exportDelayed()
 			if (OBJ_Node *objNode = CAST_OBJNODE(item.opNode)) {
 				if (OBJ_Light *objLight = objNode->castToOBJLight()) {
 					const ObjLightCacheEntry &lightEntry = cacheMan.getLightEntry(*objLight);
-					if (lightEntry.lights.size()) {
+					if (!lightEntry.lights.empty()) {
 						pluginDesc.add(item.parmName, lightEntry.lights[0]);
 					}
 				}
 				else if (objNode->castToOBJGeometry()) {
 					const ObjCacheEntry &objEntry = cacheMan.getObjEntry(*objNode);
-					if (objEntry.nodes.size()) {
+					if (!objEntry.nodes.empty()) {
 						pluginDesc.add(item.parmName, objEntry.nodes[0]);
 					}
 				}
