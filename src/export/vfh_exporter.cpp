@@ -424,6 +424,7 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc,
 	}
 	else if (attrDesc.value.type == Parm::eListNode) {
 		DelayedExportItem item;
+		item.type = DelayedExportItem::ItemType::typeExcludeList;
 		item.opNode = &opNode;
 		item.pluginName = pluginDesc.pluginName;
 		item.pluginID = pluginDesc.pluginID;
@@ -1572,39 +1573,57 @@ void VRayExporter::exportDelayed()
 
 		Attrs::PluginDesc pluginDesc(item.pluginName, item.pluginID);
 
-		if (item.attrDesc.value.type == Parm::eListNode) {
-			UT_String listAttrValue;
-			item.opNode->evalString(listAttrValue, qPrintable(item.parmName), 0, t);
+		if (item.type == DelayedExportItem::ItemType::typeExcludeList) {
+			if (item.attrDesc.value.type == Parm::eListNode) {
+				UT_String listAttrValue;
+				item.opNode->evalString(listAttrValue, qPrintable(item.parmName), 0, t);
 
-			const int isListExcludeAll = listAttrValue.equal("*");
-			const int isListExcludeNone = listAttrValue.equal("");
-			if (isListExcludeAll || isListExcludeNone) {
-				int isListInclusive = false;
-				if (!item.attrDesc.value.nodeList.inclusiveFlag.isEmpty()) {
-					isListInclusive = item.opNode->evalInt(qPrintable(item.attrDesc.value.nodeList.inclusiveFlag), 0, 0.0);
+				const int isListExcludeAll = listAttrValue.equal("*");
+				const int isListExcludeNone = listAttrValue.equal("");
+				if (isListExcludeAll || isListExcludeNone) {
+					int isListInclusive = false;
+					if (!item.attrDesc.value.nodeList.inclusiveFlag.isEmpty()) {
+						isListInclusive = item.opNode->evalInt(qPrintable(item.attrDesc.value.nodeList.inclusiveFlag), 0, 0.0);
+					}
+
+					pluginDesc.add(item.attrDesc.value.nodeList.inclusiveFlag, !isListInclusive ^ isListExcludeNone);
+					pluginDesc.add(item.parmName, Attrs::QValueList());
 				}
+				else {
+					Attrs::QValueList excludeList;
 
-				pluginDesc.add(item.attrDesc.value.nodeList.inclusiveFlag, !isListInclusive ^ isListExcludeNone);
-				pluginDesc.add(item.parmName, Attrs::QValueList());
-			}
-			else {
-				Attrs::QValueList excludeList;
+					OP_Bundle *opBundle = getBundleFromOpNodePrm(*item.opNode, qPrintable(item.parmName), t);
+					if (opBundle) {
+						OP_NodeList opList;
+						opBundle->getMembers(opList);
 
-				OP_Bundle *opBundle = getBundleFromOpNodePrm(*item.opNode, qPrintable(item.parmName), t);
-				if (opBundle) {
-					OP_NodeList opList;
-					opBundle->getMembers(opList);
+						for (OP_Node *listNode : opList) {
+							if (OBJ_Node *objNode = listNode->castToOBJNode()) {
+								const ObjCacheEntry &objEntry = cacheMan.getObjEntry(*objNode);
 
-					for (OP_Node *listNode : opList) {
-						if (OBJ_Node *objNode = listNode->castToOBJNode()) {
-							const ObjCacheEntry &objEntry = cacheMan.getObjEntry(*objNode);
-
-							mergePluginListToValueList(excludeList, objEntry.nodes);
+								mergePluginListToValueList(excludeList, objEntry.nodes);
+							}
 						}
 					}
-				}
 
-				pluginDesc.add(item.parmName, excludeList);
+					pluginDesc.add(item.parmName, excludeList);
+				}
+			}
+		}
+		else if (item.type == DelayedExportItem::ItemType::typeLightPlugin) {
+			if (OBJ_Node *objNode = CAST_OBJNODE(item.opNode)) {
+				if (OBJ_Light *objLight = objNode->castToOBJLight()) {
+					const ObjLightCacheEntry &lightEntry = cacheMan.getLightEntry(*objLight);
+					if (lightEntry.lights.size()) {
+						pluginDesc.add(item.parmName, lightEntry.lights[0]);
+					}
+				}
+				else if (objNode->castToOBJGeometry()) {
+					const ObjCacheEntry &objEntry = cacheMan.getObjEntry(*objNode);
+					if (objEntry.nodes.size()) {
+						pluginDesc.add(item.parmName, objEntry.nodes[0]);
+					}
+				}
 			}
 		}
 

@@ -293,7 +293,7 @@ struct OpCacheMan
 {
 	/// Get writable object entry.
 	/// @param objNode OBJ_Node instance.
-	ObjCacheEntry &getObjEntry(const OBJ_Node &objNode);
+	ObjCacheEntry &getCreateObjEntry(const OBJ_Node &objNode);
 
 	/// Get object entry.
 	/// @param objNode OBJ_Node instance.
@@ -301,11 +301,11 @@ struct OpCacheMan
 
 	/// Get writable light entry.
 	/// @param objLight OBJ_Light instance.
-	ObjLightCacheEntry &getObjLightEntry(const OBJ_Light &objLight);
+	ObjLightCacheEntry &getCreateLightEntry(const OBJ_Light &objLight);
 
 	/// Get light cache entry.
 	/// @param objLight OBJ_Light instance.
-	const ObjLightCacheEntry &getObjLightEntry(const OBJ_Light &objLight) const;
+	const ObjLightCacheEntry &getLightEntry(const OBJ_Light &objLight) const;
 
 	/// Get lights cache list.
 	const ObjLightPluginsCache &getLightPlugins() const { return objLightPlugins; }

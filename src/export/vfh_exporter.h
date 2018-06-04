@@ -653,6 +653,14 @@ private:
 	OpCacheMan cacheMan;
 
 	struct DelayedExportItem {
+		enum ItemType {
+			typeNone = 0,
+			typeExcludeList,
+			typeNodePlugin,
+			typeLightPlugin,
+		};
+
+		int type = typeNone;
 		OP_Node *opNode;
 		QString pluginID;
 		QString pluginName;

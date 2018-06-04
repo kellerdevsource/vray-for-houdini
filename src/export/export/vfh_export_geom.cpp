@@ -313,7 +313,7 @@ void PrimContextStack::initCurrentContext() const
 	currentContext.prim = lastCtx.prim;
 }
 
-ObjCacheEntry &OpCacheMan::getObjEntry(const OBJ_Node &objNode)
+ObjCacheEntry &OpCacheMan::getCreateObjEntry(const OBJ_Node &objNode)
 {
 	return objPlugins[&objNode];
 }
@@ -326,12 +326,12 @@ const ObjCacheEntry &OpCacheMan::getObjEntry(const OBJ_Node &objNode) const
 	return it != objPlugins.end() ? it.value() : fakeEntry;
 }
 
-ObjLightCacheEntry &OpCacheMan::getObjLightEntry(const OBJ_Light &objLight)
+ObjLightCacheEntry &OpCacheMan::getCreateLightEntry(const OBJ_Light &objLight)
 {
 	return objLightPlugins[&objLight];
 }
 
-const ObjLightCacheEntry &OpCacheMan::getObjLightEntry(const OBJ_Light &objLight) const
+const ObjLightCacheEntry &OpCacheMan::getLightEntry(const OBJ_Light &objLight) const
 {
 	static const ObjLightCacheEntry fakeEntry;
 
@@ -718,7 +718,7 @@ void ObjectExporter::exportPrimVolume(OBJ_Node &objNode, const GA_Primitive &pri
 		addGenerated(objNode, plugin);
 	}
 
-	ObjCacheEntry &objEntry = cacheMan.getObjEntry(objNode);
+	ObjCacheEntry &objEntry = cacheMan.getCreateObjEntry(objNode);
 	mergePluginList(objEntry.volumes, volumePlugins);
 #endif
 }
@@ -1099,7 +1099,7 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 
 	// Instancer node items must be stored on the top-level node.
 	const OBJ_Node &cacheOwner = getGenerator(objNode);
-	ObjCacheEntry &objEntry = cacheMan.getObjEntry(cacheOwner);
+	ObjCacheEntry &objEntry = cacheMan.getCreateObjEntry(cacheOwner);
 
 	for (const InstancerItem &primItem : instancerItems) {
 		ensureDynamicGeometryForInstancer(primItem.geometry);
@@ -2554,7 +2554,7 @@ static void appendToLightIlluminationLists(OpCacheMan &cacheMan, OBJ_Node &objNo
 	if (lightOpList.isEmpty())
 		return;
 
-	const ObjCacheEntry &objEntry = cacheMan.getObjEntry(objNode);
+	const ObjCacheEntry &objEntry = cacheMan.getCreateObjEntry(objNode);
 	if (objEntry.nodes.isEmpty() &&
 		objEntry.volumes.isEmpty())
 		return;
@@ -2568,7 +2568,7 @@ static void appendToLightIlluminationLists(OpCacheMan &cacheMan, OBJ_Node &objNo
 		if (!objLight)
 			continue;
 
-		ObjLightCacheEntry &lightEntry = cacheMan.getObjLightEntry(*objLight);
+		ObjLightCacheEntry &lightEntry = cacheMan.getCreateLightEntry(*objLight);
 		mergePluginList(lightEntry.includeNodes, objEntry.nodes);
 		mergePluginList(lightEntry.includeNodes, objEntry.volumes);
 	}
@@ -2593,10 +2593,10 @@ VRay::Plugin ObjectExporter::exportObject(OBJ_Node &objNode)
 
 		const OBJ_Node &objCacheOwner = getGenerator(objNode);
 
-		ObjCacheEntry &objEntry = cacheMan.getObjEntry(objCacheOwner);
+		ObjCacheEntry &objEntry = cacheMan.getCreateObjEntry(objCacheOwner);
 		objEntry.lights.append(plugin);
 
-		ObjLightCacheEntry &lightEntry = cacheMan.getObjLightEntry(objLight);
+		ObjLightCacheEntry &lightEntry = cacheMan.getCreateLightEntry(objLight);
 		lightEntry.lights.append(plugin);
 	}
 	else if (getPluginFromCache(objNode, plugin)) {

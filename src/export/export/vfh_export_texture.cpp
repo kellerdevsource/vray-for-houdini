@@ -21,7 +21,10 @@ void VRayExporter::fillNodeTexSky(const OP_Node &opNode, Attrs::PluginDesc &plug
 {
 	OP_Node *sunOp = nullptr;
 
-	if (opNode.evalInt("auto_sun", 0, 0.0)) {
+	if (!opNode.evalInt("auto_sun", 0, 0.0)) {
+		sunOp = getOpNodeFromAttr(opNode, "sun");
+	}
+	else {
 		// Take the first SunLight node found in OBJ.
 		OP_Node *objContext = OPgetDirector()->findNode("/obj");
 		vassert(objContext);
@@ -48,18 +51,15 @@ void VRayExporter::fillNodeTexSky(const OP_Node &opNode, Attrs::PluginDesc &plug
 			                    opNode.getFullPath().buffer());
 		}
 	}
-	else {
-		sunOp = getOpNodeFromAttr(opNode, "sun");
-	}
 
 	if (sunOp) {
-		VRay::Plugin sunPlugin;
+		DelayedExportItem item;
+		item.type = DelayedExportItem::ItemType::typeLightPlugin;
+		item.opNode = sunOp;
+		item.pluginName = pluginDesc.pluginName;
+		item.pluginID = pluginDesc.pluginID;
+		item.parmName = SL("sun");
 
-		// A bit tricky; should work in this particular case since TexSky will be avaluated last.
-		if (getObjectExporter().getPluginFromCache(*sunOp, sunPlugin)) {
-			if (sunPlugin.isNotEmpty()) {
-				pluginDesc.add(PluginAttr("sun", sunPlugin));
-			}
-		}
+		delayedExport.append(item);
 	}
 }
