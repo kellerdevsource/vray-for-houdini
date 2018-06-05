@@ -453,6 +453,10 @@ void VolumeExporter::exportPrimitive(const GA_Primitive &prim, const PrimMateria
 
 	if (rendMode == VOP::PhxShaderSim::RenderMode::Volumetric) {
 		volumePlugins.append(overwriteSim);
+
+		const Attrs::PluginDesc simVol(SL("__PhxShaderGlobalVolume__"),
+		                               SL("PhxShaderSimVol"));
+		pluginExporter.exportPlugin(simVol);
 	}
 	else {
 		const bool isMesh = rendMode == VOP::PhxShaderSim::RenderMode::Mesh;
