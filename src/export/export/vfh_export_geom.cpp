@@ -1188,8 +1188,8 @@ VRay::Plugin ObjectExporter::exportDetailInstancer(OBJ_Node &objNode)
 		VRay::VUtils::ValueRefList item(itemSize);
 		int indexOffs = 0;
 		item[indexOffs++].setDouble(instanceIdx++);
-		item[indexOffs++].setTransform(tm);
-		item[indexOffs++].setTransform(vel);
+		item[indexOffs++].setTransform(toVRayVutilsTm(tm));
+		item[indexOffs++].setTransform(toVRayVutilsTm(vel));
 		item[indexOffs++].setDouble(bool(additional_params_flags & VRay::InstancerParamFlags::useParentTimes));
 		item[indexOffs++].setDouble(instancerTime + primItem.timeOffset);
 		item[indexOffs++].setDouble(additional_params_flags);
@@ -1684,7 +1684,7 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	};
 #pragma pack(pop)
 
-	const uint32 vraySceneID = VUtils::hashlittle(&vraySceneKey, sizeof(VRaySceneKey));
+	const uint32 vraySceneID = Hash::hashLittle(vraySceneKey);
 
 	Attrs::PluginDesc pluginDesc(QString::asprintf("VRayScene|%X", vraySceneID),
 	                             SL("VRayScene"));
@@ -2206,7 +2206,7 @@ void ObjectExporter::exportPointInstancer(OBJ_Node &objNode, const GU_Detail &gd
 		};
 #pragma pack(pop)
 
-		const uint32 pointInstanceID = VUtils::hashlittle(&pointInstanceKey, sizeof(PointInstanceKey));
+		const uint32 pointInstanceID = Hash::hashLittle(pointInstanceKey);
 
 		const VRay::Transform &pointTm =
 			getPointInstanceTM(gdp, pointInstanceAttrs, pointOffset);

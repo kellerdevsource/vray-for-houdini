@@ -163,5 +163,15 @@ groupsimple {
         hidewhen "{ exp_compressed == 1 }"
         VFH_TAG_VRAY
     }
+
+    parm {
+        name    "exp_hextm"
+        label   "Export Transforms In Hex Format"
+        type    toggle
+        default { "1" }
+        disablewhen "{ render_export_mode == 0 }"
+        hidewhen "{ exp_compressed == 1 }"
+        VFH_TAG_VRAY
+    }
 #endif
 }

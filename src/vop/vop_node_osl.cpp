@@ -475,7 +475,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 template <bool MTL>
 const char * OSLNodeBase<MTL>::getOutputName() const
 {
-	strcpy(m_outputNameBuff, qPrintable(m_outputName));
+	strcpy(m_outputNameBuff, m_outputName.buffer());
 	return m_outputNameBuff;
 }
 
@@ -526,7 +526,7 @@ template <bool MTL>
 int	OSLNodeBase<MTL>::getOutputFromName(const UT_String &out) const
 {
 	updateParamsIfNeeded();
-	if (out.equal(qPrintable(m_outputName))) {
+	if (out.equal(m_outputName)) {
 		return OSLNodeBase<MTL>::getNumVisibleOutputs() + 0; // this is index so number of outputs before us is our index
 	}
 	return NodeBase::getOutputFromName(out);
@@ -693,10 +693,10 @@ OP::VRayNode::PluginResult OSLNodeBase<MTL>::asPluginDesc(Attrs::PluginDesc &plu
 
 	if (MTL) {
 		// TODO: if output is not closure, we can insert MTL single here
-		pluginDesc.add(Attrs::PluginAttr("output_closure", qPrintable(m_outputName)));
+		pluginDesc.add(SL("output_closure"), m_outputName.buffer());
 	} else {
 		// TODO: TexOSL supports output_alpha also
-		pluginDesc.add(Attrs::PluginAttr("output_color", qPrintable(m_outputName)));
+		pluginDesc.add(SL("output_color"), m_outputName.buffer());
 	}
 
 	Attrs::QValueList oslParams;

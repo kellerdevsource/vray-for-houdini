@@ -1914,7 +1914,8 @@ void VRayExporter::exportToVrscene(int currentFrameOnly)
 	}
 	else {
 		VRay::VRayExportSettings expSettings;
-		expSettings.useHexFormat = m_rop->evalInt("exp_hexdata", 0, t);
+		expSettings.hexArrays = m_rop->evalInt("exp_hexdata", 0, t);
+		expSettings.hexTransforms = m_rop->evalInt("exp_hextm", 0, t);
 		expSettings.compressed = m_rop->evalInt("exp_compressed", 0, t);
 
 		// TODO: Set motion blur interval.
@@ -2306,7 +2307,8 @@ void VRayExporter::exportEnd()
 			const QString &jobSceneFilePath = JobFilePath::createFilePath();
 			if (!jobSceneFilePath.isEmpty()) {
 				VRay::VRayExportSettings expSettings;
-				expSettings.useHexFormat = true;
+				expSettings.hexArrays = true;
+				expSettings.hexTransforms = true;
 				expSettings.compressed = true;
 
 				if (exportVrscene(jobSceneFilePath, expSettings)) {
