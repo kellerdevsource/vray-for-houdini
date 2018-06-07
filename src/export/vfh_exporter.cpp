@@ -973,7 +973,9 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 		}
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED: {
-			exporter.exportShaderNode(CAST_VOPNODE(caller));
+			ShaderExporter &shaderExporter = exporter.getShaderExporter();
+			shaderExporter.reset();
+			shaderExporter.exportShaderNode(*caller);
 			break;
 		}
 		case OP_NODE_PREDELETE: {

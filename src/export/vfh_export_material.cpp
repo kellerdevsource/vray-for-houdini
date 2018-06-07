@@ -35,6 +35,9 @@ void VRayExporter::RtCallbackSurfaceShop(OP_Node *caller, void *callee, OP_Event
 					   OPeventToString(type), caller->getName().buffer());
 
 	if (type == OP_INPUT_REWIRED) {
+		ShaderExporter &shaderExporter = exporter.getShaderExporter();
+		shaderExporter.reset();
+
 		exporter.exportMaterial(caller);
 	}
 	else if (type == OP_NODE_PREDELETE) {
