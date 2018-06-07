@@ -41,7 +41,7 @@ static const UT_DMatrix4 yAxisUpRotationMatrix(1.0, 0.0, 0.0, 0.0,
 /// Get input socket VOP_Type.
 /// @param vopNode VOP_Node instance.
 /// @param socketIndex Socket index.
-static VOP_Type getVopInputSocketType(VOP_Node &vopNode, int socketIndex)
+static VOP_Type getVopInputSocketType(const VOP_Node &vopNode, int socketIndex)
 {
 	return vopNode.getInputType(socketIndex);
 }
@@ -49,15 +49,15 @@ static VOP_Type getVopInputSocketType(VOP_Node &vopNode, int socketIndex)
 /// Get output socket VOP_Type.
 /// @param vopNode VOP_Node instance.
 /// @param socketIndex Socket index.
-static VOP_Type getVopOutputSocketType(VOP_Node &vopNode, int socketIndex)
+static VOP_Type getVopOutputSocketType(const VOP_Node &vopNode, int socketIndex)
 {
-	return vopNode.getOutputType(socketIndex);
+	return const_cast<VOP_Node&>(vopNode).getOutputType(socketIndex);
 }
 
 /// Set some defaults for render channel (e.g. if channel name is missing).
 /// @param chanNode Render channel node.
 /// @param pluginDesc Render channel plugin description.
-static void setDefaultsRenderChannel(VOP_Node &chanNode, Attrs::PluginDesc &pluginDesc)
+static void setDefaultsRenderChannel(const VOP_Node &chanNode, Attrs::PluginDesc &pluginDesc)
 {
 	Attrs::PluginAttr *attrChanName = pluginDesc.get(SL("name"));
 	if (!attrChanName || attrChanName->paramValue.valString.isEmpty()) {
@@ -84,13 +84,13 @@ static void setDefaultsUVWGenEnvironment(Attrs::PluginDesc &pluginDesc)
 /// @param opNetwork OP_Network node.
 /// @param opType Node operator type to search for.
 /// @returns OP_Node* instance if found, nullptr - otherwise.
-static OP_Node *getOpNodeByType(OP_Network &opNetwork, const char *opType)
+static OP_Node *getOpNodeByType(const OP_Network &opNetwork, const char *opType)
 {
 	if (!opNetwork.isNetwork())
 		return nullptr;
 
 	OP_NodeList opList;
-	if (opNetwork.getOpsByName(opType, opList)) {
+	if (const_cast<OP_Network&>(opNetwork).getOpsByName(opType, opList)) {
 		return opList(0);
 	}
 
@@ -101,7 +101,7 @@ static OP_Node *getOpNodeByType(OP_Network &opNetwork, const char *opType)
 /// @param socketIndex Socket index.
 /// @param opNode Socket owner.
 /// @returns Output socket index of the node @a socketIndex is connected to.
-static int getConnectedOutputIndex(int socketIndex, OP_Node &opNode)
+static int getConnectedOutputIndex(int socketIndex, const OP_Node &opNode)
 {
 	OP_Input *conOutput = opNode.getInputReferenceConst(socketIndex);
 	if (!conOutput)
@@ -139,20 +139,6 @@ static int hasMaterialSceneName(const VRay::PluginRef &plugin)
 {
 	return plugin.getType() == SL("MtlSingleBRDF") ||
 	       plugin.getType() == SL("MtlMulti");
-}
-
-/// Check if plugin has specific output.
-/// @param plugin Non empty plugin instance.
-/// @param outputName Output name to test against.
-static int hasPluginOutput(const VRay::Plugin &plugin, const QString &outputName)
-{
-	const Parm::VRayPluginInfo &vrayPlugInfo = *Parm::getVRayPluginInfo(plugin.getType());
-
-	for (const Parm::SocketDesc &sock : vrayPlugInfo.outputs)
-		if (sock.attrName == outputName)
-			return true;
-
-	return false;
 }
 
 ShaderExporter::ShaderExporter(VRayExporter &pluginExporter)
@@ -200,7 +186,18 @@ int ShaderExporter::isSocketLinked(const VOP_Node &vopNode, int socketIndex)
 	return getConnectedNode(vopNode, socketIndex) != nullptr;
 }
 
-VRay::PluginRef ShaderExporter::exportSubnet(VOP_Node &subnet, const SocketInfo &fromSocket)
+int ShaderExporter::hasPluginOutput(const VRay::Plugin &plugin, const QString &outputName)
+{
+	const Parm::VRayPluginInfo &vrayPlugInfo = *Parm::getVRayPluginInfo(plugin.getType());
+
+	for (const Parm::SocketDesc &sock : vrayPlugInfo.outputs)
+		if (sock.attrName == outputName)
+			return true;
+
+	return false;
+}
+
+VRay::PluginRef ShaderExporter::exportSubnet(const VOP_Node &subnet, const SocketInfo &fromSocket)
 {
 	vassert(fromSocket.vopNode);
 
@@ -242,7 +239,7 @@ VRay::PluginRef ShaderExporter::exportSubnet(VOP_Node &subnet, const SocketInfo 
 	return exportConnectedSocket(*conNode, subnetOutputInfo);
 }
 
-VRay::PluginRef ShaderExporter::exportSubnetInput(VOP_Node &subnetInput, const SocketInfo &fromSocket)
+VRay::PluginRef ShaderExporter::exportSubnetInput(const VOP_Node &subnetInput, const SocketInfo &fromSocket)
 {
 	// Get "subnet" node this "subinput" belongs to.
 	VOP_Node *subnet = CAST_VOPNODE(subnetInput.getParentNetwork());
@@ -284,9 +281,9 @@ VRay::PluginRef ShaderExporter::exportSubnetInput(VOP_Node &subnetInput, const S
 	return exportConnectedSocket(*conNode, subnetInputInfo);
 }
 
-void ShaderExporter::exportConnectedSockets(VOP_Node &vopNode, Attrs::PluginDesc &pluginDesc)
+void ShaderExporter::exportConnectedSockets(const VOP_Node &vopNode, Attrs::PluginDesc &pluginDesc)
 {
-	OP::VRayNode &vrayNode = static_cast<OP::VRayNode&>(static_cast<VOP::NodeBase&>(vopNode));
+	const OP::VRayNode &vrayNode = static_cast<const OP::VRayNode&>(static_cast<const VOP::NodeBase&>(vopNode));
 
 	const Parm::VRayPluginInfo &pluginInfo = *Parm::getVRayPluginInfo(pluginDesc.pluginID);
 
@@ -381,11 +378,11 @@ VRay::Transform ShaderExporter::getTransformFromXform(const VOP_Node &transform,
 	return VRayExporter::Matrix4ToTransform(m4);
 }
 
-VRay::PluginRef ShaderExporter::exportVRayNode(VOP_Node &vopNode, const SocketInfo &fromSocket)
+VRay::PluginRef ShaderExporter::exportVRayNode(const VOP_Node &vopNode, const SocketInfo &fromSocket)
 {
 	VRay::PluginRef plugin;
 
-	VOP::NodeBase &vrayNode = static_cast<VOP::NodeBase&>(vopNode);
+	const VOP::NodeBase &vrayNode = static_cast<const VOP::NodeBase&>(vopNode);
 
 	if (!cacheMan.getShaderPlugin(vopNode, plugin)) {
 		Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(vopNode),
@@ -395,7 +392,9 @@ VRay::PluginRef ShaderExporter::exportVRayNode(VOP_Node &vopNode, const SocketIn
 			pluginExporter.fillNodeTexSky(vopNode, pluginDesc);
 		}
 
-		const OP::VRayNode::PluginResult res = vrayNode.asPluginDesc(pluginDesc, pluginExporter);
+		const OP::VRayNode::PluginResult res =
+			const_cast<VOP::NodeBase&>(vrayNode).asPluginDesc(pluginDesc, pluginExporter);
+
 		if (res == OP::VRayNode::PluginResultError) {
 			Log::getLog().error("Error creating plugin descripion for node \"%s\"!",
 			                    vopNode.getFullPath().nonNullBuffer());
@@ -449,7 +448,7 @@ VRay::PluginRef ShaderExporter::exportVRayNode(VOP_Node &vopNode, const SocketIn
 	return plugin;
 }
 
-VRay::PluginRef ShaderExporter::exportNull(VOP_Node &null, const SocketInfo &fromSocket)
+VRay::PluginRef ShaderExporter::exportNull(const VOP_Node &null, const SocketInfo &fromSocket)
 {
 	VOP_Node *conNode = getConnectedNode(null, 0);
 	if (!conNode)
@@ -457,7 +456,7 @@ VRay::PluginRef ShaderExporter::exportNull(VOP_Node &null, const SocketInfo &fro
 	return exportConnectedSocket(*conNode, fromSocket);
 }
 
-VRay::PluginRef ShaderExporter::exportSwitcher(VOP_Node &switcher, const SocketInfo &fromSocket)
+VRay::PluginRef ShaderExporter::exportSwitcher(const VOP_Node &switcher, const SocketInfo &fromSocket)
 {
 	const fpreal t = pluginExporter.getContext().getTime();
 
@@ -470,7 +469,7 @@ VRay::PluginRef ShaderExporter::exportSwitcher(VOP_Node &switcher, const SocketI
 	return exportConnectedSocket(*conNode, fromSocket);
 }
 
-VRay::PluginRef ShaderExporter::exportConnectedSocket(VOP_Node &vopNode, const SocketInfo &fromSocket)
+VRay::PluginRef ShaderExporter::exportConnectedSocket(const VOP_Node &vopNode, const SocketInfo &fromSocket)
 {
 	VRay::PluginRef plugin;
 
@@ -593,13 +592,13 @@ VRay::PluginRef ShaderExporter::exportConnectedSocket(VOP_Node &vopNode, const S
 		}
 
 		// Attach IPR callback.
-		pluginExporter.addOpCallback(&vopNode, VRayExporter::RtCallbackVop);
+		pluginExporter.addOpCallback(const_cast<VOP_Node*>(&vopNode), VRayExporter::RtCallbackVop);
 	}
 
 	return plugin;
 }
 
-VRay::PluginRef ShaderExporter::exportConnectedSocket(VOP_Node &vopNode, const UT_String &socketName)
+VRay::PluginRef ShaderExporter::exportConnectedSocket(const VOP_Node &vopNode, const UT_String &socketName)
 {
 	const int socketIndex = vopNode.getInputFromName(socketName.buffer());
 	if (socketIndex < 0)
@@ -617,13 +616,13 @@ VRay::PluginRef ShaderExporter::exportConnectedSocket(VOP_Node &vopNode, const U
 	return exportConnectedSocket(*conNode, fromSocket);
 }
 
-VRay::PluginRef ShaderExporter::exportConnectedSocket(VOP_Node &vopNode, const QString &socketName)
+VRay::PluginRef ShaderExporter::exportConnectedSocket(const VOP_Node &vopNode, const QString &socketName)
 {
 	const UT_String utSocketName(qPrintable(socketName), true);
 	return exportConnectedSocket(vopNode, utSocketName);
 }
 
-VRay::PluginRef ShaderExporter::exportConnectedSocket(VOP_Node &vopNode, int socketIndex)
+VRay::PluginRef ShaderExporter::exportConnectedSocket(const VOP_Node &vopNode, int socketIndex)
 {
 	if (socketIndex < 0)
 		return VRay::PluginRef();
@@ -639,7 +638,7 @@ VRay::PluginRef ShaderExporter::exportConnectedSocket(VOP_Node &vopNode, int soc
 	return exportConnectedSocket(*conNode, fromSocket);
 }
 
-VRay::PluginRef ShaderExporter::exportVRayMaterialBuilder(SHOP_Node &shopNode)
+VRay::PluginRef ShaderExporter::exportVRayMaterialBuilder(const SHOP_Node &shopNode)
 {
 	OP_Node *opNode = getOpNodeByType(shopNode, vfhNodeMaterialOutput);
 	if (opNode) {
@@ -652,7 +651,7 @@ VRay::PluginRef ShaderExporter::exportVRayMaterialBuilder(SHOP_Node &shopNode)
 	return VRay::PluginRef();
 }
 
-VRay::PluginRef ShaderExporter::exportVRayMaterialOutput(VOP_Node &materailOutput)
+VRay::PluginRef ShaderExporter::exportVRayMaterialOutput(const VOP_Node &materailOutput)
 {
 	VOP_Node *conNode = getConnectedNode(materailOutput, vfhSocketMaterialOutputMaterialIndex);
 	if (!conNode) {
@@ -669,16 +668,16 @@ VRay::PluginRef ShaderExporter::exportVRayMaterialOutput(VOP_Node &materailOutpu
 	return exportConnectedSocket(*conNode, materialSocket);
 }
 
-VRay::PluginRef ShaderExporter::exportShaderNode(OP_Node &opNode)
+VRay::PluginRef ShaderExporter::exportShaderNode(const OP_Node &opNode)
 {
 	if (isOpType(opNode, vfhNodeMaterialBuilder)) {
-		SHOP_Node *shopNode = CAST_SHOPNODE(&opNode);
+		const SHOP_Node *shopNode = CAST_SHOPNODE(&opNode);
 		vassert(shopNode);
 
 		return exportVRayMaterialBuilder(*shopNode);
 	}
 
-	VOP_Node *vopNode = CAST_VOPNODE(&opNode);
+	const VOP_Node *vopNode = CAST_VOPNODE(&opNode);
 	if (vopNode) {
 		const SocketInfo dummyInfo;
 		return exportConnectedSocket(*vopNode, dummyInfo);

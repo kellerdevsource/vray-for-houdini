@@ -16,7 +16,7 @@
 using namespace VRayForHoudini;
 using namespace Attrs;
 
-static VRay::Plugin exportTexUserColor(VRayExporter &exporter, OP_Node &opNode, const char *parmName, int lookUpPriority=0)
+static VRay::Plugin exportTexUserColor(VRayExporter &exporter, const OP_Node &opNode, const char *parmName, int lookUpPriority=0)
 {
 	const fpreal t = exporter.getContext().getTime();
 
@@ -36,7 +36,7 @@ static VRay::Plugin exportTexUserColor(VRayExporter &exporter, OP_Node &opNode, 
 	return exporter.exportPlugin(texUserColor);
 }
 
-VRay::Plugin VRayExporter::exportPrincipledShader(OP_Node &opNode)
+VRay::Plugin VRayExporter::exportPrincipledShader(const OP_Node &opNode)
 {
 	const fpreal t = getContext().getTime();
 

@@ -72,7 +72,7 @@ inline VRAY_InterpolationType mapToVray(HOU_InterpolationType type) {
 ///        closest one supported by V-Ray
 void exportRampAttribute(VRayExporter &exporter,
                          Attrs::PluginDesc &pluginDesc,
-                         OP_Node &opNode,
+                         const OP_Node &opNode,
                          const QString &rampAttrName,
                          const QString &colAttrName,
                          const QString &posAttrName,
@@ -104,7 +104,7 @@ enum CurveDataFlags {
 /// @param isAnimated This will be set to 1 if any of the values is animated.
 /// @param flags Data export flags. Refer to CurveDataFlags enum.
 void getCurveData(VRayExporter &exporter,
-                  OP_Node &opNode,
+                  const OP_Node &opNode,
                   const QString &curveAttrName,
                   VRay::VUtils::IntRefList &interpolations,
                   VRay::VUtils::FloatRefList &positions,

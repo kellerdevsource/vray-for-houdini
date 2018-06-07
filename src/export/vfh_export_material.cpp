@@ -114,7 +114,7 @@ VRay::Plugin VRayExporter::exportDefaultMaterial()
 }
 
 
-void VRayExporter::setAttrsFromNetworkParameters(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode)
+void VRayExporter::setAttrsFromNetworkParameters(Attrs::PluginDesc &pluginDesc, const VOP_Node &vopNode)
 {
 	OP_Network *creator = vopNode.getCreator();
 	if (!creator)
@@ -127,7 +127,7 @@ void VRayExporter::setAttrsFromNetworkParameters(Attrs::PluginDesc &pluginDesc, 
 	const fpreal t = m_context.getTime();
 
 	VOP_ParmGeneratorList prmVOPs;
-	vopNode.getParmInputs(prmVOPs);
+	const_cast<VOP_Node&>(vopNode).getParmInputs(prmVOPs);
 
 	for (VOP_ParmGenerator *prmVOP : prmVOPs) {
 		const int inpidx = vopNode.whichInputIs(prmVOP);
