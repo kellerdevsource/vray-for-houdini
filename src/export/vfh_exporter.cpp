@@ -1930,7 +1930,7 @@ int VRayExporter::renderFrame(int locked)
 	Log::getLog().debug("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
 
 	if (sessionType == VfhSessionType::production &&
-		exportFilePerFrame &&
+		(exportFilePerFrame || !isAnimation()) &&
 	    (m_workMode == ExpExport ||
 	     m_workMode == ExpExportRender))
 	{
@@ -2331,7 +2331,7 @@ void VRayExporter::exportEnd()
 		}
 	}
 	else if (sessionType == VfhSessionType::production &&
-	         !exportFilePerFrame &&
+	         (!exportFilePerFrame && isAnimation()) &&
 	         (m_workMode == ExpExport ||
 	          m_workMode == ExpExportRender))
 	{
