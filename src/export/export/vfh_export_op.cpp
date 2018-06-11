@@ -264,7 +264,7 @@ VRay::Plugin VRayExporter::exportCopNodeWithDefaultMapping(COP2_Node &copNode, D
 
 VRay::Plugin VRayExporter::exportFileTextureBitmapBuffer(const UT_String &filePath, BitmapBufferColorSpace colorSpace)
 {
-	Attrs::PluginDesc bitmapBufferDesc(SL("BitmapBuffer|") % QString::number(VUtils::hashlittle(filePath.buffer(), filePath.length())),
+	Attrs::PluginDesc bitmapBufferDesc(SL("BitmapBuffer|") % QString::number(filePath.hash()),
 									   SL("BitmapBuffer"));
 
 	bitmapBufferDesc.add(PluginAttr(SL("color_space"), colorSpace));

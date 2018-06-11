@@ -55,7 +55,6 @@ FORCEINLINE VRay::Transform toAppSdkTm(const VUtils::TraceTransform &tm)
 			VRay::Vector(tm.offs.x, tm.offs.y, tm.offs.z));
 }
 
-
 FORCEINLINE VUtils::TraceTransform toVutilsTm(const VRay::Transform &tm)
 {
 	return VUtils::TraceTransform(
@@ -65,6 +64,15 @@ FORCEINLINE VUtils::TraceTransform toVutilsTm(const VRay::Transform &tm)
 				VUtils::Vector(tm.matrix.v2.x, tm.matrix.v2.y, tm.matrix.v2.z)
 			),
 			VUtils::Vector(tm.offset.x, tm.offset.y, tm.offset.z));
+}
+
+FORCEINLINE VRay::VUtils::TraceTransform toVRayVutilsTm(const VRay::Transform &tm)
+{
+	VRay::VUtils::TraceTransform ttm(1.0f);
+	ttm.m = tm.matrix;
+	ttm.offs = tm.offset;
+
+	return ttm;
 }
 
 #define SL(x) QStringLiteral(x)

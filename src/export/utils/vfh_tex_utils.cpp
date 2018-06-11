@@ -33,7 +33,7 @@ static const QString FmtColorPluginName(SL("%1|%2"));
 
 void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter,
                                                   Attrs::PluginDesc &pluginDesc,
-                                                  OP_Node &opNode,
+                                                  const OP_Node &opNode,
                                                   const QString &rampAttrName,
                                                   const QString &colAttrName,
                                                   const QString &posAttrName,
@@ -136,7 +136,7 @@ void VRayForHoudini::Texture::exportRampAttribute(VRayExporter &exporter,
 }
 
 void VRayForHoudini::Texture::getCurveData(VRayExporter &exporter,
-                                           OP_Node &opNode,
+                                           const OP_Node &opNode,
                                            const QString &curveAttrName,
                                            VRay::VUtils::IntRefList &interpolations,
                                            VRay::VUtils::FloatRefList &positions,

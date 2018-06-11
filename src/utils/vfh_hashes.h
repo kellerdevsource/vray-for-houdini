@@ -19,6 +19,11 @@ void MurmurHash3_x86_32 (const void *key, int len, uint32_t seed, void *out);
 void MurmurHash3_x86_128(const void *key, int len, uint32_t seed, void *out);
 void MurmurHash3_x64_128(const void *key, int len, uint32_t seed, void *out);
 
+template <typename T>
+uint32 hashLittle(const T &key) {
+	return VUtils::hashlittle(&key, sizeof(T));
+}
+
 } // namespace Hash
 } // namespace VRayForHoudini
 

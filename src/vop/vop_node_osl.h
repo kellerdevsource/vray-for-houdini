@@ -45,7 +45,9 @@ public:
 	typedef QVector<ParamInfo> OSLParamList;
 
 	OSLNodeBase(OP_Network *parent, const char *name, OP_Operator *entry)
-		: NodeBase(parent, name, entry), m_codeHash(0)
+		: NodeBase(parent, name, entry)
+		, m_codeHash(0)
+		, m_outputNameBuff{}
 	{}
 
 	PluginResult asPluginDesc(Attrs::PluginDesc &pluginDesc,

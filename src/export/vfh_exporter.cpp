@@ -336,7 +336,7 @@ static void mergePluginListToValueList(Attrs::QValueList &dstList, const ListTyp
 
 void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc,
                                              const Parm::AttrDesc &attrDesc,
-                                             OP_Node &opNode,
+                                             const OP_Node &opNode,
                                              const QString &parmNameStr)
 {
 	if (!Parm::isParmExist(opNode, parmNameStr))
@@ -424,6 +424,7 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc,
 	}
 	else if (attrDesc.value.type == Parm::eListNode) {
 		DelayedExportItem item;
+		item.type = DelayedExportItem::ItemType::typeExcludeList;
 		item.opNode = &opNode;
 		item.pluginName = pluginDesc.pluginName;
 		item.pluginID = pluginDesc.pluginID;
@@ -449,10 +450,10 @@ void VRayExporter::setAttrValueFromOpNodePrm(Attrs::PluginDesc &pluginDesc,
 	}
 }
 
-void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, OP_Node *opNode, const QString &prefix,
+void VRayExporter::setAttrsFromOpNodePrms(Attrs::PluginDesc &pluginDesc, const OP_Node *opNode, const QString &prefix,
                                           bool remapInterp)
 {
-	if (VOP_Node *vopNode = CAST_VOPNODE(opNode)) {
+	if (const VOP_Node *vopNode = CAST_VOPNODE(opNode)) {
 		// This handles "parameter" VOP overrides.
 		setAttrsFromNetworkParameters(pluginDesc, *vopNode);
 	}
@@ -972,7 +973,9 @@ void VRayExporter::RtCallbackVop(OP_Node *caller, void *callee, OP_EventType typ
 		}
 		case OP_INPUT_CHANGED:
 		case OP_INPUT_REWIRED: {
-			exporter.exportShaderNode(CAST_VOPNODE(caller));
+			ShaderExporter &shaderExporter = exporter.getShaderExporter();
+			shaderExporter.reset();
+			shaderExporter.exportShaderNode(*caller);
 			break;
 		}
 		case OP_NODE_PREDELETE: {
@@ -1125,6 +1128,15 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 	csect.leave();
 }
 
+static void exportPluginFromSocket(ShaderExporter &shaderExporter, const VOP_Node &vopNode, const QString &socketName, Attrs::PluginDesc &pluginDesc)
+{
+	const VRay::PluginRef displacementTexColor =
+		shaderExporter.exportConnectedSocket(vopNode, socketName);
+	if (displacementTexColor.isNotEmpty()) {
+		pluginDesc.add(socketName, displacementTexColor);
+	}
+}
+
 int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const QString &parmNamePrefix)
 {
 	const fpreal t = getContext().getTime();
@@ -1137,118 +1149,32 @@ int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &
 			VRay::Plugin texture = exportNodeFromPathWithDefaultMapping(texPath,
 			                                                            defaultMappingChannelName,
 			                                                            bitmapBufferColorSpaceLinear);
-			if (texture.isEmpty()) {
+			if (texture.isEmpty())
 				return false;
-			}
 
-			// Check if plugin has "out_intensity" output
-			bool hasOutIntensity = false;
-
-			const Parm::VRayPluginInfo *texPluginInfo = Parm::getVRayPluginInfo(texture.getType());
-			if (!texPluginInfo) {
-				Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
-									opNode.getName().buffer(), texture.getType());
-				return false;
-			}
-
-			for (const Parm::SocketDesc &sock : texPluginInfo->outputs) {
-				if (sock.attrName == SL("out_intensity")) {
-					hasOutIntensity = true;
-					break;
-				}
-			}
-
-			// Wrap texture with TexOutput
-			if (!hasOutIntensity) {
+			// If plugin doesn't have "out_intensity" output wrap it into TexOutput.
+			if (!ShaderExporter::hasPluginOutput(texture, SL("out_intensity"))) {
 				Attrs::PluginDesc texOutputDesc(SL("Out@") % texture.getName(),
 												SL("TexOutput"));
-				texOutputDesc.add(Attrs::PluginAttr("texmap", texture));
+				texOutputDesc.add(SL("texmap"), texture);
 
 				texture = exportPlugin(texOutputDesc);
 			}
 
-			pluginDesc.add(Attrs::PluginAttr(SL("displacement_tex_color"), texture));
-			pluginDesc.add(Attrs::PluginAttr(SL("displacement_tex_float"), texture, SL("out_intensity")));
+			pluginDesc.add(SL("displacement_tex_color"), texture);
+			pluginDesc.add(SL("displacement_tex_float"), texture, SL("out_intensity"));
 
 			return true;
 		}
 	}
 
-	// TODO: XXX: Refactor this!
-#if 0
-	if (CAST_VOPNODE(&opNode)) {
-		const int idxTexCol = opNode.getInputFromName("displacement_tex_color");
-		OP_Node *texCol = opNode.getInput(idxTexCol);
-
-		const int idxTexFloat = opNode.getInputFromName("displacement_tex_float");
-		OP_Node *texFloat = opNode.getInput(idxTexFloat);
-
-		if (texCol) {
-			VRay::Plugin texture = exportVop(texCol);
-			if (texture.isNotEmpty()) {
-				const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(&opNode, SL("displacement_tex_color"));
-				if (fromSocketInfo &&
-				    fromSocketInfo->attrType >= Parm::ParmType::eOutputColor &&
-				    fromSocketInfo->attrType < Parm::ParmType::eUnknown)
-				{
-					pluginDesc.add(Attrs::PluginAttr(SL("displacement_tex_color"), texture, fromSocketInfo->attrName));
-				}
-				else {
-					pluginDesc.add(Attrs::PluginAttr(SL("displacement_tex_color"), texture));
-				}
-
-				if (!texFloat) {
-					// Check if plugin has "out_intensity" output
-					bool hasOutIntensity = false;
-					const Parm::VRayPluginInfo *texPluginInfo = Parm::getVRayPluginInfo(texture.getType());
-					if (NOT(texPluginInfo)) {
-						Log::getLog().error("Node \"%s\": Plugin \"%s\" description is not found!",
-						                    opNode.getName().buffer(), texture.getType());
-						return OP::VRayNode::PluginResultError;
-					}
-
-					for (const Parm::SocketDesc &sock : texPluginInfo->outputs) {
-						if (sock.attrName == SL("out_intensity")) {
-							hasOutIntensity = true;
-							break;
-						}
-					}
-
-					// Wrap texture with TexOutput
-					if (!hasOutIntensity) {
-						Attrs::PluginDesc texOutputDesc(getPluginName(*texCol, SL("Out@")),
-						                                SL("TexOutput"));
-						texOutputDesc.add(Attrs::PluginAttr(SL("texmap"), texture));
-
-						texture = exportPlugin(texOutputDesc);
-
-						pluginDesc.add(Attrs::PluginAttr(SL("displacement_tex_float"), texture, SL("out_intensity")));
-					}
-				}
-			}
-		}
-
-		if (texFloat) {
-			VRay::Plugin texture = exportVop(texFloat);
-			if (texture.isNotEmpty()) {
-				const Parm::SocketDesc *fromSocketInfo = getConnectedOutputType(&opNode, SL("displacement_tex_float"));
-				if (fromSocketInfo &&
-				    fromSocketInfo->attrType >= Parm::ParmType::eOutputColor &&
-				    fromSocketInfo->attrType < Parm::ParmType::eUnknown)
-				{
-					pluginDesc.add(Attrs::PluginAttr(SL("displacement_tex_float"), texture, fromSocketInfo->attrName));
-				}
-				else {
-					pluginDesc.add(Attrs::PluginAttr(SL("displacement_tex_float"), texture));
-				}
-
-				pluginDesc.add(Attrs::PluginAttr(SL("displacement_tex_color"), texture));
-			}
-		}
+	if (VOP_Node *vopNode = CAST_VOPNODE(&opNode)) {
+		exportPluginFromSocket(shaderExporter, *vopNode, SL("displacement_tex_float"), pluginDesc);
+		exportPluginFromSocket(shaderExporter, *vopNode, SL("displacement_tex_color"), pluginDesc);
+		return true;
 	}
-#endif
 
-	return true;
+	return false;
 }
 
 static void setGeomDisplacedMeshType(OP_Node &opNode, const QString &parmTypeName, Attrs::PluginDesc &pluginDesc)
@@ -1572,39 +1498,58 @@ void VRayExporter::exportDelayed()
 
 		Attrs::PluginDesc pluginDesc(item.pluginName, item.pluginID);
 
-		if (item.attrDesc.value.type == Parm::eListNode) {
-			UT_String listAttrValue;
-			item.opNode->evalString(listAttrValue, qPrintable(item.parmName), 0, t);
+		if (item.type == DelayedExportItem::ItemType::typeExcludeList) {
+			if (item.attrDesc.value.type == Parm::eListNode) {
+				UT_String listAttrValue;
+				item.opNode->evalString(listAttrValue, qPrintable(item.parmName), 0, t);
 
-			const int isListExcludeAll = listAttrValue.equal("*");
-			const int isListExcludeNone = listAttrValue.equal("");
-			if (isListExcludeAll || isListExcludeNone) {
-				int isListInclusive = false;
-				if (!item.attrDesc.value.nodeList.inclusiveFlag.isEmpty()) {
-					isListInclusive = item.opNode->evalInt(qPrintable(item.attrDesc.value.nodeList.inclusiveFlag), 0, 0.0);
+				const int isListExcludeAll = listAttrValue.equal("*");
+				const int isListExcludeNone = listAttrValue.equal("");
+				if (isListExcludeAll || isListExcludeNone) {
+					int isListInclusive = false;
+					if (!item.attrDesc.value.nodeList.inclusiveFlag.isEmpty()) {
+						isListInclusive = item.opNode->evalInt(qPrintable(item.attrDesc.value.nodeList.inclusiveFlag), 0, 0.0);
+					}
+
+					pluginDesc.add(item.attrDesc.value.nodeList.inclusiveFlag, !isListInclusive ^ isListExcludeNone);
+					pluginDesc.add(item.parmName, Attrs::QValueList());
 				}
+				else {
+					Attrs::QValueList excludeList;
 
-				pluginDesc.add(item.attrDesc.value.nodeList.inclusiveFlag, !isListInclusive ^ isListExcludeNone);
-				pluginDesc.add(item.parmName, Attrs::QValueList());
-			}
-			else {
-				Attrs::QValueList excludeList;
+					OP_Bundle *opBundle =
+						getBundleFromOpNodePrm(const_cast<OP_Node&>(*item.opNode), qPrintable(item.parmName), t);
+					if (opBundle) {
+						OP_NodeList opList;
+						opBundle->getMembers(opList);
 
-				OP_Bundle *opBundle = getBundleFromOpNodePrm(*item.opNode, qPrintable(item.parmName), t);
-				if (opBundle) {
-					OP_NodeList opList;
-					opBundle->getMembers(opList);
+						for (OP_Node *listNode : opList) {
+							if (OBJ_Node *objNode = listNode->castToOBJNode()) {
+								const ObjCacheEntry &objEntry = cacheMan.getObjEntry(*objNode);
 
-					for (OP_Node *listNode : opList) {
-						if (OBJ_Node *objNode = listNode->castToOBJNode()) {
-							const ObjCacheEntry &objEntry = cacheMan.getObjEntry(*objNode);
-
-							mergePluginListToValueList(excludeList, objEntry.nodes);
+								mergePluginListToValueList(excludeList, objEntry.nodes);
+							}
 						}
 					}
-				}
 
-				pluginDesc.add(item.parmName, excludeList);
+					pluginDesc.add(item.parmName, excludeList);
+				}
+			}
+		}
+		else if (item.type == DelayedExportItem::ItemType::typeLightPlugin) {
+			if (const OBJ_Node *objNode = CAST_OBJNODE(item.opNode)) {
+				if (const OBJ_Light *objLight = const_cast<OBJ_Node*>(objNode)->castToOBJLight()) {
+					const ObjLightCacheEntry &lightEntry = cacheMan.getLightEntry(*objLight);
+					if (!lightEntry.lights.empty()) {
+						pluginDesc.add(item.parmName, lightEntry.lights[0]);
+					}
+				}
+				else if (const_cast<OBJ_Node*>(objNode)->castToOBJGeometry()) {
+					const ObjCacheEntry &objEntry = cacheMan.getObjEntry(*objNode);
+					if (!objEntry.nodes.empty()) {
+						pluginDesc.add(item.parmName, objEntry.nodes[0]);
+					}
+				}
 			}
 		}
 
@@ -1895,7 +1840,8 @@ void VRayExporter::exportToVrscene(int currentFrameOnly)
 	}
 	else {
 		VRay::VRayExportSettings expSettings;
-		expSettings.useHexFormat = m_rop->evalInt("exp_hexdata", 0, t);
+		expSettings.hexArrays = m_rop->evalInt("exp_hexdata", 0, t);
+		expSettings.hexTransforms = m_rop->evalInt("exp_hextm", 0, t);
 		expSettings.compressed = m_rop->evalInt("exp_compressed", 0, t);
 
 		// TODO: Set motion blur interval.
@@ -1910,7 +1856,7 @@ int VRayExporter::renderFrame(int locked)
 	Log::getLog().debug("VRayExporter::renderFrame(%.3f)", m_context.getFloatFrame());
 
 	if (sessionType == VfhSessionType::production &&
-		exportFilePerFrame &&
+		(exportFilePerFrame || !isAnimation()) &&
 	    (m_workMode == ExpExport ||
 	     m_workMode == ExpExportRender))
 	{
@@ -2287,7 +2233,8 @@ void VRayExporter::exportEnd()
 			const QString &jobSceneFilePath = JobFilePath::createFilePath();
 			if (!jobSceneFilePath.isEmpty()) {
 				VRay::VRayExportSettings expSettings;
-				expSettings.useHexFormat = true;
+				expSettings.hexArrays = true;
+				expSettings.hexTransforms = true;
 				expSettings.compressed = true;
 
 				if (exportVrscene(jobSceneFilePath, expSettings)) {
@@ -2310,7 +2257,7 @@ void VRayExporter::exportEnd()
 		}
 	}
 	else if (sessionType == VfhSessionType::production &&
-	         !exportFilePerFrame &&
+	         (!exportFilePerFrame && isAnimation()) &&
 	         (m_workMode == ExpExport ||
 	          m_workMode == ExpExportRender))
 	{

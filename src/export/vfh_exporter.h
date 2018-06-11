@@ -509,16 +509,16 @@ public:
 	/// @param parmDesc[in] - plugin attribute description
 	/// @param opNode[in] - the node
 	/// @param parmName[in] - parameter name
-	void setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, OP_Node &opNode, const QString &parmName);
+	void setAttrValueFromOpNodePrm(Attrs::PluginDesc &plugin, const Parm::AttrDesc &parmDesc, const OP_Node &opNode, const QString &parmName);
 
 	/// Helper function to fill in plugin description attributes from matching node parameters
 	/// @param pluginDesc[out] - the plugin description
 	/// @param opNode[in] - the node
 	/// @param prefix[in] - common prefix for the name of related parameters
 	/// @param remapInterp[in] - whether to remap ramp interpotaion type (used for ramp parameters)
-	void setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, OP_Node *opNode, const QString &prefix="", bool remapInterp=false);
+	void setAttrsFromOpNodePrms(Attrs::PluginDesc &plugin, const OP_Node *opNode, const QString &prefix="", bool remapInterp=false);
 
-	VRay::Plugin exportPrincipledShader(OP_Node &opNode);
+	VRay::Plugin exportPrincipledShader(const OP_Node &opNode);
 
 	void fillNodeTexSky(const OP_Node &opNode, Attrs::PluginDesc &pluginDesc);
 
@@ -560,7 +560,7 @@ private:
 	/// description.
 	/// @param pluginDesc VOP plugin description.
 	/// @param vopNode VOP node instance.
-	void setAttrsFromNetworkParameters(Attrs::PluginDesc &pluginDesc, VOP_Node &vopNode);
+	void setAttrsFromNetworkParameters(Attrs::PluginDesc &pluginDesc, const VOP_Node &vopNode);
 
 	/// The driver node bound to this exporter.
 	OP_Node *m_rop;
@@ -653,7 +653,15 @@ private:
 	OpCacheMan cacheMan;
 
 	struct DelayedExportItem {
-		OP_Node *opNode;
+		enum ItemType {
+			typeNone = 0,
+			typeExcludeList,
+			typeNodePlugin,
+			typeLightPlugin,
+		};
+
+		int type = typeNone;
+		const OP_Node *opNode;
 		QString pluginID;
 		QString pluginName;
 		QString parmName;
