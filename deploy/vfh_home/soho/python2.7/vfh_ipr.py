@@ -154,6 +154,17 @@ def main():
         printDebug("Camera: %s" % camera)
         printDebug("Now: %.3f" % now)
 
+        for obj in soho.objectList('objlist:instance'):
+            # Register SOP as IPR dependency.
+            obj.getDefaultedString('object:soppath', now, [''])
+
+            # Register SHOP as IPR dependency.
+            # TODO: Investigave this. Use OP_Node::addOpInterest() for now.
+            # shader = []
+            # shader_type   = []
+            # shader_handle = []
+            # obj.evalShaderAndType("shop_materialpath", now, shader, shader_type, shader_handle)
+
         _vfh_ipr.init(rop=ropPath, port=port, now=now, viewParams=getViewParams(camera, sohoCam, now))
 
     elif mode in {"update"}:
