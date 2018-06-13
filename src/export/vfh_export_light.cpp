@@ -90,8 +90,9 @@ VRay::Plugin VRayExporter::exportDefaultHeadlight(bool update)
 		}
 	}
 
-	Attrs::PluginDesc pluginDesc(theHeadlightNameToken.buffer(), "LightDirect");
-	pluginDesc.add(Attrs::PluginAttr("transform", m_viewParams.renderView.tm));
+	Attrs::PluginDesc pluginDesc(theHeadlightNameToken.buffer(),
+	                             SL("MayaLightDirect"));
+	pluginDesc.add(SL("transform"), m_viewParams.renderView.tm);
 
 	return exportPlugin(pluginDesc);
 }
