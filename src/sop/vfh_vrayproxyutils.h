@@ -11,12 +11,13 @@
 #ifndef VRAY_FOR_HOUDINI_VRAYPROXYCACHE_H
 #define VRAY_FOR_HOUDINI_VRAYPROXYCACHE_H
 
+#include "vfh_hashes.h"
+#include "vfh_defines.h"
+#include "vfh_vray.h"
+
 #include <GU/GU_DetailHandle.h>
 #include <UT/UT_BoundingBox.h>
 #include <UT/UT_String.h>
-
-#include <charstring.h>
-#include <vfh_defines.h>
 
 namespace VRayForHoudini {
 
@@ -60,6 +61,35 @@ struct VRayProxyRefKey {
 
 	bool operator <(const VRayProxyRefKey &other) const {
 		return hash() < other.hash();
+	}
+
+	Hash::MHash getHash() const {
+#pragma pack(push, 1)
+		struct SettingsKey {
+			int lod;
+			int frame;
+			int animType;
+			int animOffset;
+			int animSpeed;
+			int animOverride;
+			int animLength;
+			int numPreviewFaces;
+		} settingsKey = {
+			static_cast<int>(lod),
+			VUtils::fast_floor(f * 100.0),
+			animType,
+			VUtils::fast_floor(animOffset * 100.0),
+			VUtils::fast_floor(animSpeed * 100.0),
+			animOverride,
+			animLength,
+			previewFaces
+		};
+#pragma pack(pop)
+
+		Hash::MHash data;
+		Hash::MurmurHash3_x86_32(&settingsKey, sizeof(SettingsKey), 42, &data);
+
+		return data;
 	}
 
 	/// Checks for difference between two instances,

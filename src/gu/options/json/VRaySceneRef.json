@@ -2,8 +2,11 @@
     "class_name" : "VRaySceneRef",
     "intrinsics" : [
         { "type": "CHAR", "name" : "filepath", "value" : "" },
+        { "type": "CHAR", "name" : "object_path", "value" : "" },
         { "type": "BOOL", "name" : "add_nodes", "value" : true },
         { "type": "BOOL", "name" : "add_lights", "value" : true },
+        { "type": "BOOL", "name" : "use_preview_faces", "value" : true },
+        { "type": "INT", "name" : "preview_faces", "value" : 100000 },
         { "type": "BOOL", "name" : "anim_override", "value" : false },
         { "type": "FLOAT", "name" : "anim_speed", "value" : 1 },
         { "type": "INT", "name" : "anim_type", "value" : 0 },

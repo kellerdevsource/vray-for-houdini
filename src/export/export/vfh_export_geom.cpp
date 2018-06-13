@@ -26,6 +26,7 @@
 #include "gu/gu_vraysceneref.h"
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
+#include "sop/sop_vrayscene.h"
 #include "vop/vop_node_base.h"
 #include "obj/obj_node_base.h"
 
@@ -1694,6 +1695,8 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	if (!doExportGeometry)
 		return VRay::Plugin();
 
+	const VRaySceneRef &vraySceneRef = static_cast<const VRaySceneRef&>(*prim.implementation());
+
 #pragma pack(push, 1)
 	const struct VRaySceneKey {
 		int optionsHash;
@@ -1708,23 +1711,38 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 
 	const uint32 vraySceneID = Hash::hashLittle(vraySceneKey);
 
+	const SOP::VRaySceneFlipAxisMode flipAxis = SOP::parseFlipAxisMode(vraySceneRef.getFlipAxis());
+
 	Attrs::PluginDesc pluginDesc(QString::asprintf("VRayScene|%X", vraySceneID),
 	                             SL("VRayScene"));
+	pluginDesc.add(SL("transform"), getWorldTm());
+	pluginDesc.add(SL("flip_axis"), static_cast<int>(flipAxis));
 
-	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
+	{
+		VRay::VUtils::CharStringRefList namesList;
 
-	const UT_Options &options = vraysceneref->getOptions();
+		const VUtils::CharString &objectPath = vraySceneRef.getObjectPath();
+		if (!objectPath.empty()) {
+			namesList = vraySceneRef.getObjectNamesFromPath();
+		}
 
-	VRay::Transform fullTm = getWorldTm();
-	const bool shouldFlip = options.getOptionB("should_flip");
-	if (shouldFlip) {
-		fullTm = flipYZTm * fullTm;
+		if (namesList.count()) {
+			pluginDesc.add(Attrs::PluginAttr(SL("hidden_objects"), namesList));
+			pluginDesc.add(Attrs::PluginAttr(SL("hidden_objects_inclusive"), false));
+		}
 	}
-	pluginDesc.add(SL("transform"), fullTm);
 
-	if (options.getOptionI("use_overrides")) {
-		const UT_StringHolder &overrideSnippet = options.getOptionS("override_snippet");
-		const UT_StringHolder &overrideFilePath = options.getOptionS("override_filepath");
+	const PrimMaterial &primMaterial = getPrimMaterial();
+	if (primMaterial.matNode) {
+		const VRay::Plugin &materialOverride = pluginExporter.exportMaterial(primMaterial.matNode);
+		if (materialOverride.isNotEmpty()) {
+			pluginDesc.add(Attrs::PluginAttr(SL("material_override"), materialOverride));
+		}
+	}
+
+	if (vraySceneRef.getUseOverrides()) {
+		const UT_StringHolder &overrideSnippet = vraySceneRef.getOverrideSnippet();
+		const UT_StringHolder &overrideFilePath = vraySceneRef.getOverrideFilepath();
 
 		const int hasOverrideSnippet = overrideSnippet.isstring();
 		const int hasOverrideFile = overrideFilePath.isstring();
@@ -1733,7 +1751,7 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 
 		if (hasOverrideData) {
 			// Export plugin mappings.
-			const UT_StringHolder &pluginMappings = options.getOptionS("plugin_mapping");
+			const UT_StringHolder &pluginMappings = vraySceneRef.getPluginMapping();
 			if (pluginMappings.isstring()) {
 				VUtils::Table<VUtils::CharString> pluginMappingPairs;
 				VUtils::tokenize(pluginMappings.buffer(), ";", pluginMappingPairs);
@@ -1783,7 +1801,7 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 		}
 	}
 
-	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
+	pluginExporter.setAttrsFromUTOptions(pluginDesc, vraySceneRef.getOptions());
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }

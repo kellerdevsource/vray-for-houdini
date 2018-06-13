@@ -18,7 +18,6 @@
 #include <GU/GU_PackedImpl.h>
 #include <GU/GU_PackedFactory.h>
 #include <GU/GU_PrimPacked.h>
-#include <GT/GT_GEOAttributeFilter.h>
 #include <GT/GT_GEOPrimCollect.h>
 #include <GT/GT_GEOPrimPacked.h>
 #include <GT/GT_PrimInstance.h>
@@ -51,7 +50,7 @@ public:
 	void update(const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
 #endif
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
-	GU_ConstDetailHandle getPackedDetail(GU_PackedContext *context = 0) const VRAY_OVERRIDE;
+	GU_ConstDetailHandle getPackedDetail(GU_PackedContext *context=nullptr) const VRAY_OVERRIDE;
 	int64 getMemoryUsage(bool inclusive) const VRAY_OVERRIDE;
 	void countMemory(UT_MemoryCounter &counter, bool inclusive) const VRAY_OVERRIDE;
 
@@ -83,8 +82,13 @@ protected:
 	GU_DetailHandle m_detail;
 };
 
+/// Primitive collection sharing the same underlying detail.
+/// @tparam key Detail hash.
+/// @tparam value Primitives list.
+typedef QMap<uint, GT_GEOOffsetList> DetailToPrimitive;
+
 struct VRayBaseRefCollectData
-	: GT_GEOPrimCollectOffsets
+	: GT_GEOPrimCollectData
 {
 	explicit VRayBaseRefCollectData(const GA_PrimitiveTypeId &typeId)
 		: myPrimTypeId(typeId)
@@ -93,18 +97,19 @@ struct VRayBaseRefCollectData
 	/// Returns VRayBaseRef packed primitive type ID.
 	GA_PrimitiveTypeId getMyTypeID() const;
 
-	/// Returns VRayBaseRef packed primitive.
-	const GU_PrimPacked *getMyPrim() const;
-
 	/// Sets VRayBaseRef packed primitive.
-	void setMyPrim(const GU_PrimPacked *value);
+	void addPrim(uint key, const GU_PrimPacked *value);
+
+	/// Get primitive collection sharing the same underlying detail.
+	const DetailToPrimitive& getPrimitives() const;
 
 private:
-	/// VRayBaseRef packed primitive.
-	const GU_PrimPacked *myPrim = nullptr;
-
 	/// VRayBaseRef primitive type ID.
 	const GA_PrimitiveTypeId &myPrimTypeId;
+
+	/// Primitive collection based on sharing underlying detail.
+	/// We'll instance primitives sharing the same detail.
+	DetailToPrimitive detailInstances;
 
 	VUTILS_DISABLE_COPY(VRayBaseRefCollectData)
 };
