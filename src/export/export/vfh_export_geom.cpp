@@ -1266,15 +1266,13 @@ void ObjectExporter::exportHair(OBJ_Node &objNode, const GU_Detail &gdp, const G
 
 #pragma pack(push, 1)
 	struct HairPrimKey {
-		HairPrimKey(exint detailID, exint keyDataPoly)
-			: detailID(detailID)
-			, keyDataPoly(keyDataPoly)
-		{}
-		exint detailID;
+		exint gdpID;
 		exint keyDataPoly;
-	} hairPrimKey(getDetailID(), keyDataHair);
+	} hairPrimKey = {
+		gdp.getUniqueId(),
+		keyDataHair
+	};
 #pragma pack(pop)
-
 	Hash::MHash hairKey;
 	Hash::MurmurHash3_x86_32(&hairPrimKey, sizeof(HairPrimKey), 42, &hairKey);
 
@@ -1311,16 +1309,15 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 		return;
 
 #pragma pack(push, 1)
-	struct MeshPrimKey {
-		GA_Index primOffset;
-		exint detailID;
+	const struct MeshPrimKey {
+		exint gdpID;
 		exint keyDataPoly;
 	} meshPrimKey = {
-		0, getDetailID(), keyDataPoly
+		gdp.getUniqueId(),
+		keyDataPoly
 	};
 #pragma pack(pop)
-	Hash::MHash meshKey = 0;
-	Hash::MurmurHash3_x86_32(&meshPrimKey, sizeof(meshPrimKey), 42, &meshKey);
+	const Hash::MHash meshKey = Hash::hashMur(meshPrimKey);
 
 	InstancerItem item;
 	item.primMaterial = getPrimMaterial();
@@ -1335,16 +1332,14 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 
 	// This will set/update material/override.
 #pragma pack(push, 1)
-	struct MeshOverridesKey {
+	const struct MeshOverridesKey {
 		Hash::MHash meshKey;
 		Hash::MHash styleHash;
 	} meshOverridesKey = {
 		meshKey, styleHash
 	};
 #pragma pack(pop)
-
-	Hash::MHash styleKey;
-	Hash::MurmurHash3_x86_32(&meshOverridesKey, sizeof(MeshOverridesKey), 42, &styleKey);
+	const Hash::MHash styleKey = Hash::hashMur(meshOverridesKey);
 
 	if (!getPluginFromCacheImpl(pluginCache.polyMaterial, styleKey, item.material)) {
 		item.material = polyMeshExporter.getMaterial();
@@ -1357,32 +1352,37 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 		addPluginToCacheImpl(pluginCache.polyMapChannels, styleKey, item.mapChannels);
 	}
 
-	bool hasPolySoup = true;
-	for (const auto *prim : primList) {
-		hasPolySoup = hasPolySoup && prim->getTypeId() == GEO_PRIMPOLYSOUP;
-	}
-
 	if (doExportGeometry) {
+		const int hasPolySoup = gdp.containsPrimitiveType(GEO_PRIMPOLYSOUP);
+
 		if (hasPolySoup && partitionAttribute.isstring()) {
+#pragma pack(push, 1)
+			struct MeshPrimSoupKey {
+				exint primIndex;
+				exint gdpID;
+				exint keyDataPoly;
+			};
+#pragma pack(pop)
+
 			bool allCached = false;
 
 			InstancerItems soupItems;
 
 			const exint keyDetailID = getDetailID();
 
+			UT_Array<const GA_Primitive*> primSoupList;
+			gdp.getPrimitivesOfType(GEO_PRIMPOLYSOUP, primSoupList);
+
 			// Check what we have in cache.
-			for (const auto *prim : primList) {
-				if (prim->getTypeId() != GEO_PRIMPOLYSOUP) {
-					continue;
-				}
+			for (const GA_Primitive *prim : primSoupList) {
+				const MeshPrimSoupKey meshPrimSoupKey = {
+					prim->getMapIndex(), keyDetailID, keyDataPoly
+				};
 
-				const MeshPrimKey key = { prim->getMapIndex(), keyDetailID, keyDataPoly };
-				Hash::MHash meshKeyHash = 0;
-				Hash::MurmurHash3_x86_32(&key, sizeof(key), 42, &meshKeyHash);
-
+				const Hash::MHash polySoupHash = Hash::hashMur(meshPrimSoupKey);
 				VRay::Plugin polySoupGeom;
 
-				if (!getMeshPluginFromCache(meshKeyHash, polySoupGeom)) {
+				if (!getMeshPluginFromCache(polySoupHash, polySoupGeom)) {
 					allCached = false;
 					break;
 				}
@@ -1405,9 +1405,8 @@ void ObjectExporter::exportPolyMesh(OBJ_Node &objNode, const GU_Detail &gdp, con
 
 				// re-add to cache
 				for (const InstancerItem &primSoup : soupItems) {
-					const MeshPrimKey key = { primSoup.primID, keyDetailID, keyDataPoly };
-					Hash::MHash meshKeyHash = 0;
-					Hash::MurmurHash3_x86_32(&key, sizeof(key), 42, &meshKeyHash);
+					const MeshPrimSoupKey key = { primSoup.primID, keyDetailID, keyDataPoly };
+					const Hash::MHash meshKeyHash = Hash::hashMur(key);
 
 					addMeshPluginToCache(meshKeyHash, item.geometry);
 				}

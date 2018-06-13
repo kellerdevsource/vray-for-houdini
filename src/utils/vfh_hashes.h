@@ -24,6 +24,13 @@ uint32 hashLittle(const T &key) {
 	return VUtils::hashlittle(&key, sizeof(T));
 }
 
+template <typename T>
+MHash hashMur(const T &key) {
+	MHash keyHash = 0;
+	Hash::MurmurHash3_x86_32(&key, sizeof(T), 42, &keyHash);
+	return keyHash;
+}
+
 } // namespace Hash
 } // namespace VRayForHoudini
 
