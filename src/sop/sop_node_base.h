@@ -36,6 +36,20 @@ protected:
 	virtual void setTimeDependent();
 };
 
+struct PrimWithOptions {
+	PrimWithOptions() = default;
+	PrimWithOptions(const PrimWithOptions &other)
+		: prim(other.prim)
+	{
+		options.merge(other.options);
+	}
+
+	GU_PrimPacked *prim = nullptr;
+	OP_Options options;
+};
+
+typedef QMap<QString, PrimWithOptions> PrimWithOptionsList;
+
 /// Base class for custom SOP nodes that generate packed primitives.
 class NodePackedBase
 	: public NodeBase
@@ -59,7 +73,7 @@ protected:
 	virtual void updatePrimitiveFromOptions(const OP_Options &options);
 
 	/// Use existing or create a new primitive.
-	void getCreatePrimitive();
+	virtual void getCreatePrimitive();
 
 	/// Packed primitive type.
 	const UT_String m_primType;
