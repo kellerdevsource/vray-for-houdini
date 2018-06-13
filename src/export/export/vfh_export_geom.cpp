@@ -1464,9 +1464,12 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 		prim.getIntrinsic(prim.findIntrinsic(intrGeometryID), geoID);
 		return geoID;
 	}
-	if (primTypeID == primPackedTypeIDs.alembicRef ||
-		primTypeID == primPackedTypeIDs.packedDisk)
-	{
+	if (primTypeID == primPackedTypeIDs.packedDisk) {
+		UT_String path;
+		prim.getIntrinsic(prim.findIntrinsic(intrPackedPath), path);
+		return path.hash();
+	}
+	if (primTypeID == primPackedTypeIDs.alembicRef) {
 		UT_String objName;
 		prim.getIntrinsic(prim.findIntrinsic(intrAlembicObjectPath), objName);
 
@@ -1525,7 +1528,9 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 		exportVRaySceneRef(objNode, prim);
 		return VRay::Plugin();
 	}
-	if (primTypeID == primPackedTypeIDs.packedGeometry) {
+	if (primTypeID == primPackedTypeIDs.packedGeometry ||
+		primTypeID == primPackedTypeIDs.packedDisk)
+	{
 		// This will add plugins to instances table and
 		// does not return any plugin.
 		exportPackedGeometry(objNode, prim);
@@ -1536,7 +1541,7 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 		return VRay::Plugin();
 	}
 
-	// Mesh data is intanced with Instancer and cached.
+	// Mesh data is instanced with Instancer and cached.
 	if (exportMode == geoExportModeNonInstancerOnly)
 		return VRay::Plugin();
 
@@ -1545,9 +1550,6 @@ VRay::Plugin ObjectExporter::exportPrimPacked(OBJ_Node &objNode, const GU_PrimPa
 	}
 	if (primTypeID == primPackedTypeIDs.alembicRef) {
 		return exportAlembicRef(objNode, prim);
-	}
-	if (primTypeID == primPackedTypeIDs.packedDisk) {
-		return exportPackedDisk(objNode, prim);
 	}
 	if (primTypeID == primPackedTypeIDs.geomPlaneRef) {
 		return exportGeomPlaneRef(objNode, prim);
@@ -1777,29 +1779,6 @@ VRay::Plugin ObjectExporter::exportGeomPlaneRef(OBJ_Node &objNode, const GU_Prim
 	                                   SL("GeomPlane"));
 
 	return pluginExporter.exportPlugin(pluginDesc);
-}
-
-VRay::Plugin ObjectExporter::exportPackedDisk(OBJ_Node &objNode, const GU_PrimPacked &prim)
-{
-	if (!doExportGeometry) {
-		return VRay::Plugin();
-	}
-
-#if 0
-	UT_String primname;
-	prim.getIntrinsic(prim.findIntrinsic(intrPackedPrimName), primname);
-
-	UT_String filename;
-	prim.getIntrinsic(prim.findIntrinsic(intrFilename), filename);
-
-	Attrs::PluginDesc pluginDesc(VRayExporter::getPluginName(objNode, primname.buffer()),
-								 "GeomMeshFile");
-	pluginDesc.add(Attrs::PluginAttr("file", filename));
-
-	return pluginExporter.exportPlugin(pluginDesc);
-#else
-	return VRay::Plugin();
-#endif
 }
 
 void ObjectExporter::exportPackedFragment(OBJ_Node &objNode, const GU_PrimPacked &prim)

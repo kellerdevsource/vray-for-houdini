@@ -463,8 +463,6 @@ public:
 
 	VRay::Plugin exportAlembicRef(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
-	VRay::Plugin exportPackedDisk(OBJ_Node &objNode, const GU_PrimPacked &prim);
-
 	void exportPackedFragment(OBJ_Node &objNode, const GU_PrimPacked &prim);
 
 	void exportPackedGeometry(OBJ_Node &objNode, const GU_PrimPacked &prim);
