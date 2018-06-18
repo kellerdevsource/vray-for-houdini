@@ -10,6 +10,8 @@
 
 #include "vfh_vray.h" // For proper "systemstuff.h" inclusion
 
+#include <UT/UT_String.h>
+
 namespace VRayForHoudini {
 namespace Hash {
 
@@ -19,17 +21,31 @@ void MurmurHash3_x86_32 (const void *key, int len, uint32_t seed, void *out);
 void MurmurHash3_x86_128(const void *key, int len, uint32_t seed, void *out);
 void MurmurHash3_x64_128(const void *key, int len, uint32_t seed, void *out);
 
-FORCEINLINE uint32 hashLittle(const char *key) {
-	return VUtils::hashlittle(key, strlen(key));
-}
-
-FORCEINLINE uint32 hashLittle(const VUtils::CharString &key) {
-	return VUtils::hashlittle(key.ptr(), key.length());
+FORCEINLINE uint32 hashLittle(const char *key)
+{
+	if (key && *key)
+		return VUtils::hashlittle(key, strlen(key));
+	return 0;
 }
 
 template <typename T>
-uint32 hashLittle(const T &key) {
+uint32 hashLittle(const T &key)
+{
 	return VUtils::hashlittle(&key, sizeof(T));
+}
+
+FORCEINLINE uint32 hashLittle(const VUtils::CharString &key)
+{
+	if (key.empty())
+		return 0;
+	return VUtils::hashlittle(key.ptr(), key.length());
+}
+
+FORCEINLINE uint32 hashLittle(const UT_String &key)
+{
+	if (key.isstring())
+		return VUtils::hashlittle(key.buffer(), key.length());
+	return 0;
 }
 
 template <typename T>

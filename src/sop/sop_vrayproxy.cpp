@@ -81,6 +81,9 @@ VRayProxy::VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry)
 	// mySopFlags.setManagesDataIDs(true);
 }
 
+VRayProxy::~VRayProxy()
+{}
+
 void VRayProxy::setPluginType()
 {
 	pluginType = VRayPluginType::GEOMETRY;
@@ -114,6 +117,8 @@ void VRayProxy::enumObjectInfo(const VUtils::ObjectInfoChannelData &chanData, in
 {
 	using namespace VUtils;
 
+	const int objectType = int(objectInfoIdToObjectType(channelID));
+
 	for (int i = 0; i < chanData.getNumObjectInfos(); ++i) {
 		const ObjectInfo &objectInfo = chanData[i];
 
@@ -122,7 +127,7 @@ void VRayProxy::enumObjectInfo(const VUtils::ObjectInfoChannelData &chanData, in
 		PrimWithOptions &prim = createPrimitive(objectPath.ptr());
 		prim.options.setOptionS("object_path", objectPath.ptr());
 		prim.options.setOptionI("object_id", objectInfo.id);
-		prim.options.setOptionI("object_type", int(objectInfoIdToObjectType(channelID)));
+		prim.options.setOptionI("object_type", objectType);
 
 		GA_PrimitiveGroup *primGroup = gdp->newPrimitiveGroup(objectPath.ptr());
 		vassert(primGroup);
@@ -144,12 +149,12 @@ void VRayProxy::enumMeshFile(const char *filePath)
 		return;
 	}
 
-	if (meshFile->init(filePath).error()) {
-		Log::getLog().error("\"%s\": Can't initialize \"%s\"!",
-		                    getFullPath().buffer(), filePath);
+	const ErrorCode res = meshFile->init(filePath);
+	if (res.error()) {
+		Log::getLog().error("\"%s\": Can't initialize \"%s\" [%s]!",
+		                    getFullPath().buffer(), filePath, res.getErrorString().ptrOrValue("UNKNOWN"));
 	}
 	else {
-		// We don't need any preview  here.
 		meshFile->setNumPreviewFaces(0);
 		meshFile->setNumPreviewHairs(0);
 		meshFile->setNumPreviewParticles(0);
@@ -232,10 +237,6 @@ void VRayProxy::updatePrimitive(const OP_Context &context)
 		const PRM_Parm &prm = getParm(i);
 		primOptions.setOptionFromTemplate(this, prm, *prm.getTemplatePtr(), t);
 	}
-
-	UT_String objectPath;
-	evalString(objectPath, "object_path", 0, 0.0);
-	primOptions.setOptionS("object_path", objectPath);
 
 	primOptions.setOptionI("preview_type", evalInt("preview_type", 0, 0.0));
 	primOptions.setOptionF("current_frame", flags().getTimeDep() ? context.getFloatFrame() : 0.0f);

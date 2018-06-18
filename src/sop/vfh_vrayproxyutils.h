@@ -46,7 +46,7 @@ struct VRayProxyRefKey {
 	VUtils::CharString filePath;
 	VUtils::CharString objectPath;
 	VRayProxyObjectType objectType = VRayProxyObjectType::none;
-	int objectID;
+	int objectID = 0;
 	VRayProxyPreviewType lod = VRayProxyPreviewType::preview;
 	fpreal f = 0;
 	int animType = 0;
@@ -59,50 +59,22 @@ struct VRayProxyRefKey {
 
 	uint32 hash() const;
 
+	bool operator ==(const VRayProxyRefKey &other) const {
+		return hash() == other.hash();
+	}
+
 	bool operator <(const VRayProxyRefKey &other) const {
 		return hash() < other.hash();
 	}
 
-	Hash::MHash getHash() const {
-#pragma pack(push, 1)
-		struct SettingsKey {
-			int lod;
-			int frame;
-			int animType;
-			int animOffset;
-			int animSpeed;
-			int animOverride;
-			int animLength;
-			int numPreviewFaces;
-		} settingsKey = {
-			static_cast<int>(lod),
-			VUtils::fast_floor(f * 100.0),
-			animType,
-			VUtils::fast_floor(animOffset * 100.0),
-			VUtils::fast_floor(animSpeed * 100.0),
-			animOverride,
-			animLength,
-			previewFaces
-		};
-#pragma pack(pop)
-
-		Hash::MHash data;
-		Hash::MurmurHash3_x86_32(&settingsKey, sizeof(SettingsKey), 42, &data);
-
-		return data;
-	}
-
-	/// Checks for difference between two instances,
-	/// without taking frame into account
-	bool isDifferent(const VRayProxyRefKey &other) const {
-		return hash() != other.hash();
-	}
+private:
+	mutable uint32 keyHash = 0;
 };
 
 /// VRayProxy cache item.
 struct VRayProxyRefItem {
 	/// Preview detail.
-	GU_DetailHandle gdp;
+	GU_DetailHandle detail;
 
 	/// Bounding box.
 	UT_BoundingBox bbox;

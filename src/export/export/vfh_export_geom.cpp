@@ -1603,9 +1603,13 @@ VRay::Plugin ObjectExporter::exportAlembicRef(OBJ_Node &objNode, const GU_PrimPa
 static QString vrayProxyObjectTypeToVisilityListName(VRayProxyObjectType objectType)
 {
 	switch (objectType) {
+		case VRayProxyObjectType::geometry:   return SL("visibility");
 		case VRayProxyObjectType::hair:       return SL("hair_visibility");
 		case VRayProxyObjectType::particles:  return SL("particle_visibility");
-		default:                              return SL("visibility");
+		default: {
+			vassert(false);
+			return SL("unknown");
+		}
 	}
 }
 

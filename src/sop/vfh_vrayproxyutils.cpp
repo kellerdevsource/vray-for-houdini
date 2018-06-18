@@ -24,6 +24,9 @@ using namespace VRayForHoudini;
 
 uint32 VRayProxyRefKey::hash() const
 {
+	if (keyHash)
+		return keyHash;
+
 #pragma pack(push, 1)
 	const struct VRayProxyRefHashKey {
 		uint32 filePath;
@@ -54,7 +57,8 @@ uint32 VRayProxyRefKey::hash() const
 	};
 #pragma pack(pop)
 
-	return Hash::hashLittle(vrayProxyRefHashKey);
+	keyHash = Hash::hashLittle(vrayProxyRefHashKey);
+	return keyHash;
 }
 
 VRayProxyObjectType VRayForHoudini::objectInfoIdToObjectType(int channelID)
@@ -63,7 +67,10 @@ VRayProxyObjectType VRayForHoudini::objectInfoIdToObjectType(int channelID)
 		case OBJECT_INFO_CHANNEL:          return VRayProxyObjectType::geometry;
 		case HAIR_OBJECT_INFO_CHANNEL:     return VRayProxyObjectType::hair;
 		case PARTICLE_OBJECT_INFO_CHANNEL: return VRayProxyObjectType::particles;
-		default:                           return VRayProxyObjectType::none;
+		default: {
+			vassert(false);
+			return VRayProxyObjectType::none;
+		}
 	}
 }
 
@@ -73,7 +80,10 @@ int VRayForHoudini::objectTypeToObjectInfoId(VRayProxyObjectType objectType)
 		case VRayProxyObjectType::geometry:  return OBJECT_INFO_CHANNEL;
 		case VRayProxyObjectType::hair:      return HAIR_OBJECT_INFO_CHANNEL;
 		case VRayProxyObjectType::particles: return PARTICLE_OBJECT_INFO_CHANNEL;
-		default:                             return 0;
+		default: {
+			vassert(false);
+			return 0;
+		}
 	}
 }
 
@@ -301,19 +311,21 @@ static int getFrame(VUtils::MeshFile &meshFile, const VRayProxyRefKey &options)
 static VRayProxyRefItem buildDetail(const VRayProxyRefKey &options)
 {
 	VUtils::CharString path(options.filePath);
-	if (!bmpCheckAssetPath(path, NULL, NULL, false)) {
-		Log::getLog().error("VRayProxyCache: Can't find file \"%s\"", path.ptr());
+	if (!VUtils::bmpCheckAssetPath(path, NULL, NULL, false)) {
+		Log::getLog().error("VRayProxy: Can't find file \"%s\"", path.ptr());
 		return VRayProxyRefItem();
 	}
 
 	VUtils::MeshFile *meshFile = VUtils::newDefaultMeshFile(path.ptr());
 	if (!meshFile) {
-		Log::getLog().error("VRayProxyCache: Can't allocate MeshFile \"%s\"", path.ptr());
+		Log::getLog().error("VRayProxy: Can't open \"%s\"", path.ptr());
 		return VRayProxyRefItem();
 	}
 
-	if (meshFile->init(path.ptr()).error()) {
-		Log::getLog().error("VRayProxyCache: Can't open file \"%s\"", path.ptr());
+	const VUtils::ErrorCode res = meshFile->init(path.ptr());
+	if (res.error()) {
+		Log::getLog().error("VRayProxy: Can't initialize \"%s\" [%s]!",
+		                    path.ptr(), res.getErrorString().ptrOrValue("UNKNOWN"));
 		return VRayProxyRefItem();
 	}
 
@@ -330,14 +342,17 @@ static VRayProxyRefItem buildDetail(const VRayProxyRefKey &options)
 		static const int geomFlags = MVF_GEOMETRY_VOXEL|MVF_HAIR_GEOMETRY_VOXEL|MVF_PARTICLE_GEOMETRY_VOXEL;
 
 		const int numVoxels = meshFile->getNumVoxels();
-		const int singleObjectMode = !options.objectPath.empty() && options.objectType != VRayProxyObjectType::none;
+		const int singleObjectMode = !options.objectPath.empty() &&
+		                             options.objectType != VRayProxyObjectType::none;
 
 		uint32 meshVoxelFlags = previewFlags;
 		int maxPreviewFaces = options.previewFaces;
 
 		if (singleObjectMode) {
 			meshVoxelFlags = geomFlags;
-			maxPreviewFaces = VUtils::fast_ceil(float(options.previewFaces) / float(numVoxels-1));
+			maxPreviewFaces = numVoxels == 1
+				              ? maxPreviewFaces
+				              : VUtils::fast_ceil(float(options.previewFaces) / float(numVoxels - 1));
 		}
 		else if (options.lod == VRayProxyPreviewType::full) {
 			meshVoxelFlags = geomFlags;
@@ -345,55 +360,41 @@ static VRayProxyRefItem buildDetail(const VRayProxyRefKey &options)
 		}
 
 		if (singleObjectMode) {
-			for (int i = numVoxels - 1; i >= 0; i--) {
-				const uint32 flags = meshFile->getVoxelFlags(i);
+			const int channelID =
+				objectTypeToObjectInfoId(options.objectType);
 
-				if (flags & MVF_PREVIEW_VOXEL) {
-					MeshVoxelRAII voxelRaii(meshFile, i);
-					if (!voxelRaii.isValid())
-						continue;
+			VUtils::ObjectInfoChannelData objectInfo;
+			if (readObjectInfoChannelData(meshFile, objectInfo, channelID)) {
+				enum class VisibilityListType {
+					exclude = 0,
+					include = 1,
+				};
 
-					VUtils::MeshVoxel &previewVoxel = voxelRaii.getVoxel();
-
-					const int channelID =
-						objectTypeToObjectInfoId(options.objectType);
-
-					VUtils::ObjectInfoChannelData objectInfo;
-					if (readObjectInfoChannelData(&previewVoxel, objectInfo, channelID)) {
-						enum class VisibilityListType {
-							exclude = 0,
-							include = 1,
-						};
-
-						VUtils::Table<int> objIDs;
-						VUtils::Table<VUtils::CharString> objNames(1, options.objectPath);
+				VUtils::Table<int> objIDs;
+				VUtils::Table<VUtils::CharString> objNames(1, options.objectPath);
 #if 0
-						VUtils::BitSet previewVisibility;
-						objectInfo.getVisibility(previewVisibility, objNames, objIDs, int(VisibilityListType::include), false);
+				VUtils::BitSet previewVisibility;
+				objectInfo.getVisibility(previewVisibility, objNames, objIDs, int(VisibilityListType::include), false);
 
-						switch (options.objectType) {
-							case VRayProxyObjectType::geometry:
-								removeInvisiblePreviewFaces(&previewVoxel, previewVisibility);
-								break;
-							case VRayProxyObjectType::hair:
-								removeInvisiblePreviewHairs(&previewVoxel, previewVisibility);
-								break;
-							case VRayProxyObjectType::particles:
-								removeInvisiblePreviewParticles(&previewVoxel, previewVisibility);
-								break;
-							default:
-								break;
-						}
-#endif
-						VUtils::BitSet voxelVisibility;
-						objectInfo.getVisibility(voxelVisibility, objNames, objIDs, int(VisibilityListType::include), true);
-
-						meshFile->setUseFullNames(true);
-						meshFile->setVoxelVisibility(voxelVisibility);
-					}
-
-					break;
+				switch (options.objectType) {
+					case VRayProxyObjectType::geometry:
+						removeInvisiblePreviewFaces(&previewVoxel, previewVisibility);
+						break;
+					case VRayProxyObjectType::hair:
+						removeInvisiblePreviewHairs(&previewVoxel, previewVisibility);
+						break;
+					case VRayProxyObjectType::particles:
+						removeInvisiblePreviewParticles(&previewVoxel, previewVisibility);
+						break;
+					default:
+						break;
 				}
+#endif
+				VUtils::BitSet voxelVisibility;
+				objectInfo.getVisibility(voxelVisibility, objNames, objIDs, int(VisibilityListType::include), true);
+
+				meshFile->setUseFullNames(false);
+				meshFile->setVoxelVisibility(voxelVisibility);
 			}
 		}
 
@@ -412,8 +413,6 @@ static VRayProxyRefItem buildDetail(const VRayProxyRefKey &options)
 
 				addVoxelData(*gdp, *voxel, flags, tm, maxPreviewFaces);
 
-				printf("%i\n", voxel->getNumFaces());
-
 				meshFile->releaseVoxel(voxel);
 			}
 		}
@@ -421,16 +420,16 @@ static VRayProxyRefItem buildDetail(const VRayProxyRefKey &options)
 
 	VUtils::deleteDefaultMeshFile(meshFile);
 
-	GU_DetailHandle gdpHandle;
-	gdpHandle.allocateAndSet(gdp);
+	VRayProxyRefItem item;
+
+	gdp->computeQuickBounds(item.bbox);
+
+	item.detail.allocateAndSet(gdp);
 
 	GU_Detail *gdpPacked = new GU_Detail;
-	GU_PackedGeometry::packGeometry(*gdpPacked, gdpHandle);
+	GU_PackedGeometry::packGeometry(*gdpPacked, item.detail);
 
-	VRayProxyRefItem item;
-	item.gdp.allocateAndSet(gdpPacked);
-
-	gdpPacked->computeQuickBounds(item.bbox);
+	item.detail.allocateAndSet(gdpPacked);
 
 	return item;
 }

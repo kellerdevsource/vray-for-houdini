@@ -22,6 +22,9 @@ VRayScene::VRayScene(OP_Network *parent, const char *name, OP_Operator *entry)
 	: NodePackedBase("VRaySceneRef", parent, name, entry)
 {}
 
+VRayScene::~VRayScene()
+{}
+
 void VRayScene::setPluginType()
 {
 	pluginType = VRayPluginType::GEOMETRY;

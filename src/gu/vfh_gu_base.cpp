@@ -164,27 +164,41 @@ GT_GEOPrimCollectData *VRayBaseRefCollect::beginCollecting(const GT_GEODetailLis
 }
 
 GT_PrimitiveHandle VRayBaseRefCollect::collect(const GT_GEODetailListHandle & /*geometry*/,
-                                               const GEO_Primitive * const*prim_list,
+                                               const GEO_Primitive* const *prim_list,
                                                int /*nsegments*/,
                                                GT_GEOPrimCollectData *data) const
 {
 	VRayBaseRefCollectData &collectData =
 		*data->asPointer<VRayBaseRefCollectData>();
 
-	const GU_PrimPacked *curPrim = UTverify_cast<const GU_PrimPacked*>(prim_list[0]);
-	if (curPrim->getTypeId() != collectData.getMyTypeID())
+	const GU_PrimPacked *prim = UTverify_cast<const GU_PrimPacked*>(prim_list[0]);
+	if (prim->getTypeId() != collectData.getMyTypeID())
 		return GT_PrimitiveHandle();
 
-	if (curPrim->viewportLOD() == GEO_VIEWPORT_HIDDEN)
+	if (prim->viewportLOD() == GEO_VIEWPORT_HIDDEN)
 		return GT_PrimitiveHandle();
 
-	GU_ConstDetailHandle packedHandle = curPrim->implementation()->getPackedDetail();
+	vassert(prim->implementation());
+
+	GU_ConstDetailHandle packedHandle = prim->getPackedDetail();
 	if (!packedHandle.isValid())
 		return GT_PrimitiveHandle();
 
-	collectData.addPrim(packedHandle.hash(), curPrim);
+	collectData.addPrim(packedHandle.hash(), prim);
 
 	return GT_PrimitiveHandle();
+}
+
+static GT_TransformHandle getPrimTransform(const GU_PrimPacked &prim)
+{
+	UT_Matrix4D m;
+	prim.getFullTransform4(m);
+
+	GT_TransformHandle xform(new GT_Transform);
+	xform->alloc(1);
+	xform->setMatrix(m, 0);
+
+	return xform;
 }
 
 GT_PrimitiveHandle VRayBaseRefCollect::endCollecting(const GT_GEODetailListHandle &geometry,
@@ -200,42 +214,38 @@ GT_PrimitiveHandle VRayBaseRefCollect::endCollecting(const GT_GEODetailListHandl
 
 	GT_PrimCollect *primCollect = new GT_PrimCollect;
 
-	for (const GT_GEOOffsetList &offsets : collectData.getPrimitives()) {
-		const GT_GEOAttributeFilter filter;
+	const GT_GEOAttributeFilter filter;
 
-		const GT_AttributeListHandle uniform =
+	const GT_AttributeListHandle detailAttrs =
+		geometry->getDetailAttributes(filter);
+
+	for (const GT_GEOOffsetList &offsets : collectData.getPrimitives()) {
+		const GT_AttributeListHandle primAttrs =
 			geometry->getPrimitiveAttributes(filter, &offsets);
-		const GT_AttributeListHandle detail =
-			geometry->getDetailAttributes(filter);
+
+		const GU_PrimPacked *prim =
+			UTverify_cast<const GU_PrimPacked*>(gdp.getGEOPrimitive(offsets(0)));
+
+		GT_GEOPrimPacked *geoPrimPacked = new GT_GEOPrimPacked(gdh, prim);
+
+		const int numPrims = offsets.entries();
 
 		GT_TransformArrayHandle transforms(new GT_TransformArray);
-		transforms->setEntries(offsets.entries());
+		transforms->setEntries(numPrims);
 
-		const GU_PrimPacked *prim = nullptr;
-
-		for (int i = 0; i < offsets.entries(); ++i) {
-			const GU_PrimPacked *currentPrim =
+		for (int i = 0; i < numPrims; ++i) {
+			const GU_PrimPacked *primInstance =
 				UTverify_cast<const GU_PrimPacked*>(gdp.getGEOPrimitive(offsets(i)));
-			if (!prim) {
-				prim = currentPrim;
-			}
 
-			UT_Matrix4D m;
-			currentPrim->getFullTransform4(m);
-
-			GT_TransformHandle xform(new GT_Transform);
-			xform->alloc(1);
-			xform->setMatrix(m, 0);
-
-			transforms->set(i, xform);
+			transforms->set(i, getPrimTransform(*primInstance));
 		}
 
-		primCollect->appendPrimitive(GT_PrimitiveHandle(new GT_PrimInstance(new GT_GEOPrimPacked(gdh, prim),
+		/// XXX: GT_PrimInstance() "source" argument causes crash with single instance.
+		primCollect->appendPrimitive(GT_PrimitiveHandle(new GT_PrimInstance(geoPrimPacked,
 		                                                                    transforms,
 		                                                                    offsets,
-		                                                                    uniform,
-		                                                                    detail,
-		                                                                    geometry)));
+		                                                                    primAttrs,
+		                                                                    detailAttrs)));
 	}
 
 	return GT_PrimitiveHandle(primCollect);

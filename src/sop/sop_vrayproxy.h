@@ -23,7 +23,7 @@ public:
 	static PRM_Template* getPrmTemplate();
 
 	VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry);
-	virtual ~VRayProxy() {}
+	~VRayProxy() VRAY_OVERRIDE;
 
 protected:
 	// From VRayNode.

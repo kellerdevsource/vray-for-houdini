@@ -587,34 +587,6 @@
                 parmtag { "vray_pluginattr" "subdiv_preserve_map_borders" }
                 parmtag { "vray_type" "enum" }
             }
-
-            parm {
-                name    "use_full_names"
-                label   "Use Full Names"
-                type    toggle
-                default { "0" }
-                help    "read the full path instead of only the name"
-                range   { 0 1 }
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "GeomMeshFile" }
-                parmtag { "vray_pluginattr" "use_full_names" }
-                parmtag { "vray_type" "boolean" }
-                invisible
-            }
-
-            parm {
-                name    "object_path"
-                label   "Starting Object Path"
-                type    string
-                default { "" }
-                help    "Starting object path in Alembic hierarchy"
-                range   { 0 1 }
-                parmtag { "cook_dependent" "1" }
-                parmtag { "vray_plugin" "GeomMeshFile" }
-                parmtag { "vray_pluginattr" "object_path" }
-                parmtag { "vray_type" "string" }
-                invisible
-            }
         }
 
         group {

@@ -67,7 +67,7 @@ class VRaySceneRef
 {
 public:
 	static GA_PrimitiveTypeId typeId();
-	static void install(GA_PrimitiveFactory *gafactory);
+	static void install(GA_PrimitiveFactory *primFactory);
 
 	VRaySceneRef();
 	VRaySceneRef(const VRaySceneRef &src);
@@ -90,9 +90,6 @@ private:
 
 	/// Get cache entry settings.
 	SettingsWrapper getSettings() const;
-
-	/// Currently loaded *.vrscene file path.
-	VUtils::CharString filePath;
 };
 
 } // namespace VRayForHoudini

@@ -24,6 +24,8 @@
 using namespace VRayForHoudini;
 using namespace VUtils::Vrscene::Preview;
 
+typedef VRayBaseRefFactory<VRaySceneRef> VRaySceneRefFactory;
+
 /// *.vrscene preview data manager.
 VrsceneDescManager VRayForHoudini::vrsceneMan(NULL);
 
@@ -326,23 +328,20 @@ private:
 			appendObject(*gdp, *ob, settings, retValue.box, t);
 		}
 
-		GU_DetailHandle detail;
-		detail.allocateAndSet(gdp);
+		GU_DetailHandle gdpHandle;
+		gdpHandle.allocateAndSet(gdp);
 
 		GU_Detail *gdpPacked = new GU_Detail;
-		GU_PackedGeometry::packGeometry(*gdpPacked, detail);
+		GU_PackedGeometry::packGeometry(*gdpPacked, gdpHandle);
 
-		detail.allocateAndSet(gdpPacked);
+		gdpHandle.allocateAndSet(gdpPacked);
 
-		return detail;
+		return gdpHandle;
 	}
 };
 
 static VrsceneDescBuilder builder;
 static DetailCachePrototype<ReturnSettings, SettingsWrapper> cache(builder);
-
-typedef VRayBaseRefFactory<VRaySceneRef> VRaySceneRefFactory;
-
 static VRaySceneRefFactory theFactory("VRaySceneRef");
 
 Hash::MHash SettingsWrapper::getHash() const
@@ -396,7 +395,6 @@ VRaySceneRef::VRaySceneRef()
 
 VRaySceneRef::VRaySceneRef(const VRaySceneRef &src)
 	: VRaySceneRefBase(src)
-	, filePath(src.filePath)
 {
 	// TODO: Rework cache registration / deregistration.
 }

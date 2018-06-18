@@ -8,14 +8,10 @@
 // Full license text: https://github.com/ChaosGroup/vray-for-houdini/blob/master/LICENSE
 //
 
-#include <QMutexLocker>
-
 #include "vfh_vray.h"
 #include "vfh_gu_cache.h"
 
 #include "gu_vrayproxyref.h"
-
-#include <GT/GT_GEODetail.h>
 
 using namespace VRayForHoudini;
 
@@ -24,7 +20,8 @@ typedef VRayBaseRefFactory<VRayProxyRef> VRayProxyRefFactory;
 
 static GA_PrimitiveTypeId theTypeId(-1);
 static VRayProxyRefFactory theFactory("VRayProxyRef");
-static VRayProxyRefCache vrayProxyRefCache;
+static VRayProxyRefCache theCache;
+static UT_Lock theLock;
 
 void VRayProxyRef::install(GA_PrimitiveFactory *primFactory)
 {
@@ -75,11 +72,6 @@ bool VRayProxyRef::getLocalTransform(UT_Matrix4D &m) const
 	return true;
 }
 
-bool VRayProxyRef::getBounds(UT_BoundingBox &box) const
-{
-	return true;
-}
-
 bool VRayProxyRef::unpack(GU_Detail&) const
 {
 	// This will show error and indicate that we don't support unpacking.
@@ -92,7 +84,7 @@ VRayProxyRefKey VRayProxyRef::getKey() const
 	key.filePath = getFile();
 	key.objectPath = getObjectPath();
 	key.objectType = static_cast<VRayProxyObjectType>(getObjectType());
-	key.objectID = 0;
+	key.objectID = getObjectId();
 	key.lod = static_cast<VRayProxyPreviewType>(getPreviewType());
 	key.f = getCurrentFrame();
 	key.animType = getAnimType();
@@ -105,26 +97,25 @@ VRayProxyRefKey VRayProxyRef::getKey() const
 	return key;
 }
 
-static QMutex mutex;
-
 int VRayProxyRef::detailRebuild()
 {
-	const VRayProxyRefKey &vrmeshKey = getKey();
+	VRayProxyRefCache::iterator it; {
+		UT_AutoLock locker(theLock);
 
-	VRayProxyRefCache::iterator it;
-	QMutexLocker locker(&mutex); {
-		it = vrayProxyRefCache.find(vrmeshKey.hash());
-		if (it == vrayProxyRefCache.end()) {
-			it = vrayProxyRefCache.insert(vrmeshKey.hash(), getVRayProxyDetail(vrmeshKey));
+		const VRayProxyRefKey vrmeshKey(getKey());
+
+		it = theCache.find(vrmeshKey.hash());
+		if (it == theCache.end()) {
+			it = theCache.insert(vrmeshKey.hash(), getVRayProxyDetail(vrmeshKey));
 		}
 	}
 
 	const VRayProxyRefItem &vrmeshItem = it.value();
 
-	const int res = m_detail != vrmeshItem.gdp;
-	m_detail = vrmeshItem.gdp;
+	const int res = m_detail != vrmeshItem.detail;
 
-	printf("P %i\n", m_detail.gdp()->getUniqueId());
+	m_detail = vrmeshItem.detail;
+	m_bbox = vrmeshItem.bbox;
 
 	return res;
 }

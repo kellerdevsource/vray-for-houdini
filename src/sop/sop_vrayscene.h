@@ -40,7 +40,7 @@ enum class VRaySceneObjectNameType {
 // FlipAxisMode enum value.
 /// @flipAxisModeS The value of the flip_axis parameter
 /// @returns The corresponding to flipAxisModeS enum value
-static VRaySceneFlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
+FORCEINLINE VRaySceneFlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
 {
 	VRaySceneFlipAxisMode mode = VRaySceneFlipAxisMode::none;
 	if (flipAxisModeS.isInteger()) {
@@ -54,26 +54,13 @@ static VRaySceneFlipAxisMode parseFlipAxisMode(const UT_String &flipAxisModeS)
 /// VRaySceneFlipAxisMode enum value.
 /// @param vraySceneSOP VRayScene SOP node instance.
 /// @returns @a value as VRaySceneFlipAxisMode.
-FORCEINLINE VRaySceneFlipAxisMode getFlipAxisMode(OP_Node &vraySceneSOP) {
+FORCEINLINE VRaySceneFlipAxisMode getFlipAxisMode(OP_Node &vraySceneSOP)
+{
 	UT_String value;
 	vraySceneSOP.evalString(value, "flip_axis", 0, 0.0);
 
 	return parseFlipAxisMode(value);
 }
-
-struct PrimWithOptions {
-	PrimWithOptions() = default;
-	PrimWithOptions(const PrimWithOptions &other)
-		: prim(other.prim)
-	{
-		options.merge(other.options);
-	}
-
-	GU_PrimPacked *prim = nullptr;
-	OP_Options options;
-};
-
-typedef QMap<QString, PrimWithOptions> PrimWithOptionsList;
 
 class VRayScene
 	: public NodePackedBase
@@ -81,6 +68,7 @@ class VRayScene
 { 
 public:
 	VRayScene(OP_Network *parent, const char *name, OP_Operator *entry);
+	~VRayScene() VRAY_OVERRIDE;
 
 protected:
 	// From VRayNode.
