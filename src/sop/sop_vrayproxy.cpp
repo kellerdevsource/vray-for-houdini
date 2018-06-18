@@ -90,11 +90,52 @@ void VRayProxy::setPluginType()
 	pluginID = SL("GeomMeshFile");
 }
 
+static int getNumVRayProxyFrames(OP_Node &owner, const UT_String &filePath)
+{
+	using namespace VUtils;
+
+	MeshFile *meshFile = newDefaultMeshFile(filePath);
+	if (!meshFile) {
+		Log::getLog().error("\"%s\": Can't open \"%s\"!",
+		                    owner.getFullPath().buffer(), filePath);
+		return 0;
+	}
+
+	int numFrames = 0;
+
+	const ErrorCode res = meshFile->init(filePath);
+	if (res.error()) {
+		Log::getLog().error("\"%s\": Can't initialize \"%s\" [%s]!",
+		                    owner.getFullPath().buffer(), filePath, res.getErrorString().ptrOrValue("UNKNOWN"));
+	}
+	else {
+		numFrames = meshFile->getNumFrames();
+	}
+
+	deleteDefaultMeshFile(meshFile);
+
+	return numFrames;
+}
+
 void VRayProxy::setTimeDependent()
 {
-	const VUtils::MeshFileAnimType::Enum animType =
-		static_cast<VUtils::MeshFileAnimType::Enum>(evalInt("anim_type", 0, 0.0));
-	flags().setTimeDep(animType != VUtils::MeshFileAnimType::Still);
+	int numFrames = 0;
+
+	UT_String filePath;
+	evalString(filePath, "file", 0, 0.0);
+	if (filePath.isstring()) {
+		numFrames = getNumVRayProxyFrames(*this, filePath);
+	}
+
+	if (numFrames <= 1) {
+		flags().setTimeDep(false);
+	}
+	else {
+		const VUtils::MeshFileAnimType::Enum animType =
+			static_cast<VUtils::MeshFileAnimType::Enum>(evalInt("anim_type", 0, 0.0));
+
+		flags().setTimeDep(animType != VUtils::MeshFileAnimType::Still);
+	}
 }
 
 PrimWithOptions& VRayProxy::createPrimitive(const QString &name)
