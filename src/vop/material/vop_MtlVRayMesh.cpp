@@ -95,7 +95,10 @@ void MtlVRayMeshShaderSets::init(const OP_Node &self, const UT_String &filePath)
 						setsData.readFromBuffer(reinterpret_cast<char*>(mayaInfoChannel->data),
 						                        mayaInfoChannel->elementSize * mayaInfoChannel->numElements);
 					}
+
+					meshFile->releaseVoxel(voxel);
 				}
+
 				break;
 			}
 		}

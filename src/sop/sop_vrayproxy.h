@@ -23,7 +23,7 @@ public:
 	static PRM_Template* getPrmTemplate();
 
 	VRayProxy(OP_Network *parent, const char *name, OP_Operator *entry);
-	virtual ~VRayProxy() {}
+	~VRayProxy() VRAY_OVERRIDE;
 
 protected:
 	// From VRayNode.
@@ -31,7 +31,18 @@ protected:
 
 	// From NodePackedBase.
 	void setTimeDependent() VRAY_OVERRIDE;
+	void getCreatePrimitive() VRAY_OVERRIDE;
+	void updatePrimitiveFromOptions(const OP_Options &options) VRAY_OVERRIDE;
 	void updatePrimitive(const OP_Context &context) VRAY_OVERRIDE;
+
+private:
+	PrimWithOptions &createPrimitive(const QString &name);
+
+	void enumObjectInfo(const VUtils::ObjectInfoChannelData &chanData, int channelID);
+	void enumMeshFile(const char *filePath);
+
+	/// Packed primitives list.
+	PrimWithOptionsList prims;
 };
 
 } // namespace SOP

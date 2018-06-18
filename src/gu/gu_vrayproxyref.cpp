@@ -10,63 +10,18 @@
 
 #include "vfh_vray.h"
 #include "vfh_gu_cache.h"
-#include "vfh_hashes.h"
 
 #include "gu_vrayproxyref.h"
 
-#include <GT/GT_GEODetail.h>
-
 using namespace VRayForHoudini;
 
+typedef QMap<uint32, VRayProxyRefItem> VRayProxyRefCache;
 typedef VRayBaseRefFactory<VRayProxyRef> VRayProxyRefFactory;
 
 static GA_PrimitiveTypeId theTypeId(-1);
 static VRayProxyRefFactory theFactory("VRayProxyRef");
-
-struct VRayProxyRefKeyHasher {
-	uint32 operator()(const VRayProxyRefKey &key) const {
-#pragma pack(push, 1)
-		struct SettingsKey {
-			int lod;
-			int frame;
-			int animType;
-			int animOffset;
-			int animSpeed;
-			int animOverride;
-			int animLength;
-			int numPreviewFaces;
-		} settingsKey = {
-			static_cast<int>(key.lod),
-			VUtils::fast_floor(key.f * 100.0),
-			key.animType,
-			VUtils::fast_floor(key.animOffset * 100.0),
-			VUtils::fast_floor(key.animSpeed * 100.0),
-			key.animOverride,
-			key.animLength,
-			key.previewFaces
-		};
-#pragma pack(pop)
-		Hash::MHash data;
-		Hash::MurmurHash3_x86_32(&settingsKey, sizeof(SettingsKey), 42, &data);
-		return data;
-	}
-};
-
-class VRayProxyRefKeyBuilder
-	: public DetailBuilder<VRayProxyRefKey, bool>
-{
-public:
-	GU_DetailHandle buildDetail(const VUtils::CharString &filepath, const VRayProxyRefKey &settings, fpreal t, bool &rval) override {
-		return getVRayProxyDetail(settings);
-	}
-
-	void cleanResource(const VUtils::CharString &filepath) override {
-		clearVRayProxyCache(filepath.ptr());
-	}
-};
-
-static VRayProxyRefKeyBuilder builder;
-static DetailCachePrototype<bool, VRayProxyRefKey, VRayProxyRefKeyHasher> cache(builder);
+static VRayProxyRefCache theCache;
+static UT_Lock theLock;
 
 void VRayProxyRef::install(GA_PrimitiveFactory *primFactory)
 {
@@ -82,16 +37,10 @@ VRayProxyRef::VRayProxyRef()
 
 VRayProxyRef::VRayProxyRef(const VRayProxyRef &src)
 	: VRayProxyRefBase(src)
-{
-	const VRayProxyRefKey &key = getKey();
-	cache.registerInCache(key.filePath, key);
-}
+{}
 
 VRayProxyRef::~VRayProxyRef()
-{
-	const VRayProxyRefKey &key = getKey();
-	cache.unregister(key.filePath, key);
-}
+{}
 
 GU_PackedFactory* VRayProxyRef::getFactory() const
 {
@@ -123,12 +72,6 @@ bool VRayProxyRef::getLocalTransform(UT_Matrix4D &m) const
 	return true;
 }
 
-bool VRayProxyRef::getBounds(UT_BoundingBox &box) const
-{
-	const VRayProxyRefKey &vrmeshKey = getKey();
-	return getVRayProxyBoundingBox(vrmeshKey, box);
-}
-
 bool VRayProxyRef::unpack(GU_Detail&) const
 {
 	// This will show error and indicate that we don't support unpacking.
@@ -139,6 +82,9 @@ VRayProxyRefKey VRayProxyRef::getKey() const
 {
 	VRayProxyRefKey key;
 	key.filePath = getFile();
+	key.objectPath = getObjectPath();
+	key.objectType = static_cast<VRayProxyObjectType>(getObjectType());
+	key.objectID = getObjectId();
 	key.lod = static_cast<VRayProxyPreviewType>(getPreviewType());
 	key.f = getCurrentFrame();
 	key.animType = getAnimType();
@@ -153,21 +99,23 @@ VRayProxyRefKey VRayProxyRef::getKey() const
 
 int VRayProxyRef::detailRebuild()
 {
-	const VRayProxyRefKey &vrmeshKey = getKey();
-	updateCacheVars(vrmeshKey);
+	VRayProxyRefCache::iterator it; {
+		UT_AutoLock locker(theLock);
 
-	const GU_DetailHandle &getail = cache.getDetail(vrmeshKey.filePath, vrmeshKey, vrmeshKey.f);
+		const VRayProxyRefKey vrmeshKey(getKey());
 
-	const int res = m_detail != getail;
-	m_detail = getail;
+		it = theCache.find(vrmeshKey.hash());
+		if (it == theCache.end()) {
+			it = theCache.insert(vrmeshKey.hash(), getVRayProxyDetail(vrmeshKey));
+		}
+	}
+
+	const VRayProxyRefItem &vrmeshItem = it.value();
+
+	const int res = m_detail != vrmeshItem.detail;
+
+	m_detail = vrmeshItem.detail;
+	m_bbox = vrmeshItem.bbox;
 
 	return res;
-}
-
-void VRayProxyRef::updateCacheVars(const VRayProxyRefKey &newKey) {
-	if (lastKey.differingSettings(newKey)) {
-		cache.registerInCache(newKey.filePath, lastKey);
-		cache.unregister(lastKey.filePath, lastKey);
-		lastKey = newKey;
-	}
 }

@@ -23,7 +23,7 @@ class VRayProxyRef
 	: public VRayProxyRefBase
 {
 public:
-	static void install(GA_PrimitiveFactory *gafactory);
+	static void install(GA_PrimitiveFactory *primFactory);
 
 	VRayProxyRef();
 	VRayProxyRef(const VRayProxyRef &src);
@@ -34,17 +34,12 @@ public:
 	GU_PackedImpl *copy() const VRAY_OVERRIDE;
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
 	bool getLocalTransform(UT_Matrix4D &m) const VRAY_OVERRIDE;
-	bool getBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
 
 private:
-	/// Returns a key for cache look-up.
-	VRayProxyRefKey getKey() const;
-
 	int detailRebuild() VRAY_OVERRIDE;
 
-	void updateCacheVars(const VRayProxyRefKey &newKey);
-
-	VRayProxyRefKey lastKey;
+	/// Returns a key for cache look-up.
+	VRayProxyRefKey getKey() const;
 };
 
 } // namespace VRayForHoudini

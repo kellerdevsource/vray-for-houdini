@@ -14,6 +14,8 @@
 #include "vfh_includes.h"
 #include "vfh_VRaySceneRefBase.h"
 
+#include <OP/OP_Options.h>
+
 #include <vrscene_preview.h>
 
 namespace VUtils {
@@ -26,13 +28,46 @@ struct VrsceneDesc;
 
 namespace VRayForHoudini {
 
+extern VUtils::Vrscene::Preview::VrsceneDescManager vrsceneMan;
+
+class VRaySceneRef;
+
+struct SettingsWrapper {
+	SettingsWrapper() = default;
+
+	explicit SettingsWrapper(const VUtils::Vrscene::Preview::VrsceneSettings &settings)
+		: settings(settings)
+	{}
+
+	SettingsWrapper(const SettingsWrapper &other)
+		: settings(other.settings)
+		, objectPath(other.objectPath)
+		, addNodes(other.addNodes)
+		, addLights(other.addLights)
+		, flipAxis(other.flipAxis)
+	{
+		options.merge(other.options);
+	}
+
+	/// Returns current settings hash.
+	Hash::MHash getHash() const;
+
+	VUtils::Vrscene::Preview::VrsceneSettings settings;
+	VUtils::CharString objectPath;
+	int addNodes = true;
+	int addLights = true;
+	int flipAxis = false;
+
+	OP_Options options;
+};
+
 /// VRayScene preview mesh implemented as a packed primitive.
 class VRaySceneRef
 	: public VRaySceneRefBase
 {
 public:
 	static GA_PrimitiveTypeId typeId();
-	static void install(GA_PrimitiveFactory *gafactory);
+	static void install(GA_PrimitiveFactory *primFactory);
 
 	VRaySceneRef();
 	VRaySceneRef(const VRaySceneRef &src);
@@ -41,7 +76,10 @@ public:
 	// From GU_PackedImpl.
 	GU_PackedFactory *getFactory() const VRAY_OVERRIDE;
 	GU_PackedImpl *copy() const VRAY_OVERRIDE;
-	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
+	bool unpack(GU_Detail &destGdp) const VRAY_OVERRIDE;
+
+	/// Collect plugin names list from the *.vrscene that this primitive is loading.
+	VRay::VUtils::CharStringRefList getObjectNamesFromPath() const;
 
 private:
 	int detailRebuild() VRAY_OVERRIDE;
@@ -50,11 +88,8 @@ private:
 	/// @param t Current time.
 	double getFrame(fpreal t) const;
 
-	void updateCacheRelatedVars();
-
-	VUtils::CharString vrsceneFile;
-	VUtils::Vrscene::Preview::VrsceneSettings vrsSettings;
-	bool shouldFlipAxis;
+	/// Get cache entry settings.
+	SettingsWrapper getSettings() const;
 };
 
 } // namespace VRayForHoudini

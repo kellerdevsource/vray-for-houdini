@@ -26,6 +26,7 @@
 #include "gu/gu_vraysceneref.h"
 #include "rop/vfh_rop.h"
 #include "sop/sop_node_base.h"
+#include "sop/sop_vrayscene.h"
 #include "vop/vop_node_base.h"
 #include "obj/obj_node_base.h"
 
@@ -1480,7 +1481,7 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 		prim.getIntrinsic(prim.findIntrinsic(intrAlembicUseTransform), isWorldTransform);
 
 #pragma pack(push, 1)
-		struct AlembicPrimKey {
+		const struct AlembicPrimKey {
 			uint32 fileName;
 			uint32 objName;
 			int isWorld;
@@ -1491,10 +1492,7 @@ int ObjectExporter::getPrimPackedID(const GU_PrimPacked &prim) const
 		};
 #pragma pack(pop)
 
-		int alembicPrimHash = 0;
-		Hash::MurmurHash3_x86_32(&alembicPrimKey, sizeof(AlembicPrimKey), 42, &alembicPrimHash);
-
-		return alembicPrimHash;
+		return Hash::hashMur(alembicPrimKey);
 	}
 	if (primTypeID == primPackedTypeIDs.pgYetiRef) {
 		const VRayPgYetiRef *pgYetiRef =
@@ -1602,6 +1600,19 @@ VRay::Plugin ObjectExporter::exportAlembicRef(OBJ_Node &objNode, const GU_PrimPa
 	return pluginExporter.exportPlugin(pluginDesc);
 }
 
+static QString vrayProxyObjectTypeToVisilityListName(VRayProxyObjectType objectType)
+{
+	switch (objectType) {
+		case VRayProxyObjectType::geometry:   return SL("visibility");
+		case VRayProxyObjectType::hair:       return SL("hair_visibility");
+		case VRayProxyObjectType::particles:  return SL("particle_visibility");
+		default: {
+			vassert(false);
+			return SL("unknown");
+		}
+	}
+}
+
 VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_PrimPacked &prim)
 {
 	if (!doExportGeometry) {
@@ -1613,15 +1624,30 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 	Attrs::PluginDesc pluginDesc(SL("VRayProxy|") % QString::number(key),
 								 SL("GeomMeshFile"));
 
-	const VRayProxyRef *vrayproxyref = UTverify_cast<const VRayProxyRef*>(prim.implementation());
+	const VRayProxyRef &vrayproxyref = static_cast<const VRayProxyRef&>(*prim.implementation());
 
 	// Scale will be exported as primitive transform.
-	pluginDesc.add(Attrs::PluginAttr("scale", 1.0f));
+	pluginDesc.add(SL("scale"), 1.0f);
 
 	// Axis flipping is also baked into primitive transform.
-	pluginDesc.add(Attrs::PluginAttr("flip_axis", 0));
+	pluginDesc.add(SL("flip_axis"), 0);
 
-	const UT_Options &options = vrayproxyref->getOptions();
+	const char *objectPath = vrayproxyref.getObjectPath();
+	const VRayProxyObjectType objectType = VRayProxyObjectType(vrayproxyref.getObjectType());
+	if (UTisstring(objectPath) && objectType != VRayProxyObjectType::none) {
+		const QString visiblity = vrayProxyObjectTypeToVisilityListName(objectType);
+
+		const QString visibilityListType = SL("%1_lists_type").arg(visiblity);
+		const QString visibilityListNames = SL("%1_list_names").arg(visiblity);
+
+		VRay::VUtils::CharStringRefList visibilityList(1);
+		visibilityList[0] = objectPath;
+
+		pluginDesc.add(visibilityListType, 1);
+		pluginDesc.add(visibilityListNames, visibilityList);
+	}
+
+	const UT_Options &options = vrayproxyref.getOptions();
 	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
 
 	if (options.hasOption("alembic_layers")) {
@@ -1633,7 +1659,7 @@ VRay::Plugin ObjectExporter::exportVRayProxyRef(OBJ_Node &objNode, const GU_Prim
 				alembicLayers[i].set(layerFiles(i).buffer());
 			}
 
-			pluginDesc.add(Attrs::PluginAttr("alembic_layers", alembicLayers));
+			pluginDesc.add(SL("alembic_layers"), alembicLayers);
 		}
 	}
 
@@ -1673,6 +1699,8 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 	if (!doExportGeometry)
 		return VRay::Plugin();
 
+	const VRaySceneRef &vraySceneRef = static_cast<const VRaySceneRef&>(*prim.implementation());
+
 #pragma pack(push, 1)
 	const struct VRaySceneKey {
 		int optionsHash;
@@ -1687,23 +1715,38 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 
 	const uint32 vraySceneID = Hash::hashLittle(vraySceneKey);
 
+	const SOP::VRaySceneFlipAxisMode flipAxis = SOP::parseFlipAxisMode(vraySceneRef.getFlipAxis());
+
 	Attrs::PluginDesc pluginDesc(QString::asprintf("VRayScene|%X", vraySceneID),
 	                             SL("VRayScene"));
+	pluginDesc.add(SL("transform"), getWorldTm());
+	pluginDesc.add(SL("flip_axis"), static_cast<int>(flipAxis));
 
-	const VRaySceneRef *vraysceneref = UTverify_cast<const VRaySceneRef*>(prim.implementation());
+	{
+		VRay::VUtils::CharStringRefList namesList;
 
-	const UT_Options &options = vraysceneref->getOptions();
+		const VUtils::CharString &objectPath = vraySceneRef.getObjectPath();
+		if (!objectPath.empty()) {
+			namesList = vraySceneRef.getObjectNamesFromPath();
+		}
 
-	VRay::Transform fullTm = getWorldTm();
-	const bool shouldFlip = options.getOptionB("should_flip");
-	if (shouldFlip) {
-		fullTm = flipYZTm * fullTm;
+		if (namesList.count()) {
+			pluginDesc.add(Attrs::PluginAttr(SL("hidden_objects"), namesList));
+			pluginDesc.add(Attrs::PluginAttr(SL("hidden_objects_inclusive"), false));
+		}
 	}
-	pluginDesc.add(SL("transform"), fullTm);
 
-	if (options.getOptionI("use_overrides")) {
-		const UT_StringHolder &overrideSnippet = options.getOptionS("override_snippet");
-		const UT_StringHolder &overrideFilePath = options.getOptionS("override_filepath");
+	const PrimMaterial &primMaterial = getPrimMaterial();
+	if (primMaterial.matNode) {
+		const VRay::Plugin &materialOverride = pluginExporter.exportMaterial(primMaterial.matNode);
+		if (materialOverride.isNotEmpty()) {
+			pluginDesc.add(Attrs::PluginAttr(SL("material_override"), materialOverride));
+		}
+	}
+
+	if (vraySceneRef.getUseOverrides()) {
+		const UT_StringHolder &overrideSnippet = vraySceneRef.getOverrideSnippet();
+		const UT_StringHolder &overrideFilePath = vraySceneRef.getOverrideFilepath();
 
 		const int hasOverrideSnippet = overrideSnippet.isstring();
 		const int hasOverrideFile = overrideFilePath.isstring();
@@ -1712,7 +1755,7 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 
 		if (hasOverrideData) {
 			// Export plugin mappings.
-			const UT_StringHolder &pluginMappings = options.getOptionS("plugin_mapping");
+			const UT_StringHolder &pluginMappings = vraySceneRef.getPluginMapping();
 			if (pluginMappings.isstring()) {
 				VUtils::Table<VUtils::CharString> pluginMappingPairs;
 				VUtils::tokenize(pluginMappings.buffer(), ";", pluginMappingPairs);
@@ -1762,7 +1805,7 @@ VRay::Plugin ObjectExporter::exportVRaySceneRef(OBJ_Node &objNode, const GU_Prim
 		}
 	}
 
-	pluginExporter.setAttrsFromUTOptions(pluginDesc, options);
+	pluginExporter.setAttrsFromUTOptions(pluginDesc, vraySceneRef.getOptions());
 
 	return pluginExporter.exportPlugin(pluginDesc);
 }
