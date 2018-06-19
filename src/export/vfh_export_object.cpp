@@ -236,7 +236,9 @@ void VRayExporter::RtCallbackSOPChanged(OP_Node *caller, void *callee, OP_EventT
 
 				objExporter.exportObject(objNode);
 
-				exporter.addOpCallback(geomNode, RtCallbackSOPChanged);
+				if (exporter.getSessionType() == VfhSessionType::rt) {
+					exporter.addOpCallback(geomNode, RtCallbackSOPChanged);
+				}
 			}
 			break;
 		}
@@ -378,8 +380,10 @@ VRay::Plugin VRayExporter::exportObject(OP_Node *opNode)
 				addOpCallback(opNode, RtCallbackLight);
 			}
 			else {
-				addOpCallback(opNode, RtCallbackOBJGeometry);
-				addOpCallback(renderOp, RtCallbackSOPChanged);
+				if (sessionType == VfhSessionType::rt) {
+					addOpCallback(opNode, RtCallbackOBJGeometry);
+					addOpCallback(renderOp, RtCallbackSOPChanged);
+				}
 			}
 		}
 
