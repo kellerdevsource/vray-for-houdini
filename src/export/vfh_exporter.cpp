@@ -2330,6 +2330,8 @@ VRay::VRayRenderer::RenderMode VRayForHoudini::getRendererIprMode(const OP_Node 
 
 VRayExporter::ExpWorkMode VRayForHoudini::getExportMode(const OP_Node &rop)
 {
+	if (!Parm::isParmExist(rop, "render_export_mode"))
+		return VRayExporter::ExpRender;
 	return static_cast<VRayExporter::ExpWorkMode>(rop.evalInt("render_export_mode", 0, 0.0));
 }
 
