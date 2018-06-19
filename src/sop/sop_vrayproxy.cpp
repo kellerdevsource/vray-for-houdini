@@ -43,6 +43,40 @@ static int cbClearCache(void *data, int index, fpreal t, const PRM_Template *tpl
 	return 0;
 }
 
+static int cbInitFromFile(void *data, int index, fpreal t, const PRM_Template *tplate)
+{
+	OP_Node &owner = *reinterpret_cast<OP_Node*>(data);
+
+	UT_String filePath;
+	owner.evalString(filePath, "file", 0, t);
+
+	if (filePath.isstring()) {
+		using namespace VUtils;
+
+		MeshFile *meshFile = newDefaultMeshFile(filePath.buffer());
+		if (!meshFile) {
+			Log::getLog().error("\"%s\": Can't open \"%s\"!",
+			                    owner.getFullPath().buffer(), filePath.buffer());
+		}
+		else {
+			const ErrorCode res = meshFile->init(filePath.buffer());
+			if (res.error()) {
+				Log::getLog().error("\"%s\": Can't initialize \"%s\" [%s]!",
+				                    owner.getFullPath().buffer(), filePath.buffer(), res.getErrorString().ptrOrValue("UNKNOWN"));
+			}
+			else {
+				const int numFrames = meshFile->getNumFrames();
+				owner.setInt("anim_length", 0, 0.0, numFrames);
+			}
+
+			deleteDefaultMeshFile(meshFile);
+		}
+	}
+
+	return 0;
+}
+
+
 PRM_Template* VRayProxy::getPrmTemplate()
 {
 	static PRM_Template* myPrmList = nullptr;
@@ -56,7 +90,9 @@ PRM_Template* VRayProxy::getPrmTemplate()
 	while (prmIt && prmIt->getType() != PRM_LIST_TERMINATOR) {
 		if (vutils_strcmp(prmIt->getToken(), "reload") == 0) {
 			prmIt->setCallback(cbClearCache);
-			break;
+		}
+		else if (vutils_strcmp(prmIt->getToken(), "init_from_file") == 0) {
+			prmIt->setCallback(cbInitFromFile);
 		}
 		prmIt++;
 	}
@@ -238,10 +274,13 @@ void VRayProxy::getCreatePrimitive()
 	UT_String filePath;
 	evalString(filePath, "file", 0, 0.0);
 	if (filePath.isstring()) {
-		enumMeshFile(filePath.buffer());
+		const int expandPrimitives = evalInt("expand_primitives", 0, 0.0);
+		if (expandPrimitives) {
+			enumMeshFile(filePath.buffer());
+		}
 
-		// If OBJECT_INFO_CHANNEL was not found - add a single primitive
-		// for the whole *.vrmesh file.
+		// If OBJECT_INFO_CHANNEL was not found or "expand_primitives" is off -
+		// add a single primitive for the whole *.vrmesh file.
 		if (prims.empty()) {
 			createPrimitive(SL("vrmesh"));
 		}

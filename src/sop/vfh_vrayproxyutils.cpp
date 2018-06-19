@@ -308,6 +308,22 @@ static int getFrame(VUtils::MeshFile &meshFile, const VRayProxyRefKey &options)
 	                                        options.animSpeed));
 }
 
+static VUtils::MeshVoxel* getPreviewVoxel(VUtils::MeshInterface &owner)
+{
+	for (int i = owner.getNumVoxels() - 1; i >= 0; i--) {
+		if (owner.getVoxelFlags(i) & MVF_PREVIEW_VOXEL) {
+			return owner.getVoxel(i);
+		}
+	}
+	return nullptr;
+}
+
+static void releasePreviewVoxel(VUtils::MeshInterface &owner, VUtils::MeshVoxel &voxel)
+{
+	owner.releaseVoxel(&voxel);
+}
+
+
 static VRayProxyRefItem buildDetail(const VRayProxyRefKey &options)
 {
 	VUtils::CharString path(options.filePath);
@@ -363,38 +379,50 @@ static VRayProxyRefItem buildDetail(const VRayProxyRefKey &options)
 			const int channelID =
 				objectTypeToObjectInfoId(options.objectType);
 
-			VUtils::ObjectInfoChannelData objectInfo;
-			if (readObjectInfoChannelData(meshFile, objectInfo, channelID)) {
-				enum class VisibilityListType {
-					exclude = 0,
-					include = 1,
-				};
+			VUtils::MeshVoxel *previewVoxel = getPreviewVoxel(*meshFile);
+			if (previewVoxel) {
+				VUtils::ObjectInfoChannelData objectInfo;
+				if (readObjectInfoChannelData(previewVoxel, objectInfo, channelID)) {
+					enum class VisibilityListType {
+						exclude = 0,
+						include = 1,
+					};
 
-				VUtils::Table<int> objIDs;
-				VUtils::Table<VUtils::CharString> objNames(1, options.objectPath);
-#if 0
-				VUtils::BitSet previewVisibility;
-				objectInfo.getVisibility(previewVisibility, objNames, objIDs, int(VisibilityListType::include), false);
+					VUtils::Table<int> objIDs;
+					VUtils::Table<VUtils::CharString> objNames(1, options.objectPath);
 
-				switch (options.objectType) {
-					case VRayProxyObjectType::geometry:
-						removeInvisiblePreviewFaces(&previewVoxel, previewVisibility);
-						break;
-					case VRayProxyObjectType::hair:
-						removeInvisiblePreviewHairs(&previewVoxel, previewVisibility);
-						break;
-					case VRayProxyObjectType::particles:
-						removeInvisiblePreviewParticles(&previewVoxel, previewVisibility);
-						break;
-					default:
-						break;
+					VUtils::BitSet previewVisibility;
+					objectInfo.getVisibility(previewVisibility, objNames, objIDs, int(VisibilityListType::include), false);
+
+					if (previewVisibility.getNumRaisedBits()) {
+						switch (options.objectType) {
+							case VRayProxyObjectType::geometry:
+								removeInvisiblePreviewFaces(previewVoxel, previewVisibility);
+								break;
+							case VRayProxyObjectType::hair:
+								removeInvisiblePreviewHairs(previewVoxel, previewVisibility);
+								break;
+							case VRayProxyObjectType::particles:
+								removeInvisiblePreviewParticles(previewVoxel, previewVisibility);
+								break;
+							default:
+								break;
+						}
+
+						// Could switch back to preview voxel mode.
+						meshVoxelFlags = previewFlags;
+						maxPreviewFaces = 0;
+					}
+					else {
+						VUtils::BitSet voxelVisibility;
+						objectInfo.getVisibility(voxelVisibility, objNames, objIDs, int(VisibilityListType::include), true);
+
+						meshFile->setUseFullNames(false);
+						meshFile->setVoxelVisibility(voxelVisibility);
+					}
 				}
-#endif
-				VUtils::BitSet voxelVisibility;
-				objectInfo.getVisibility(voxelVisibility, objNames, objIDs, int(VisibilityListType::include), true);
 
-				meshFile->setUseFullNames(false);
-				meshFile->setVoxelVisibility(voxelVisibility);
+				releasePreviewVoxel(*meshFile, *previewVoxel);
 			}
 		}
 

@@ -1,3 +1,4 @@
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 {
     name GeomMeshFile
     label "VRayProxy"
@@ -28,6 +29,12 @@
             label "Reload Geometry"
             type button
         }
+
+        VFH_UI_PARM_TOGGLE("expand_primitives",
+            "Expand Primitives",
+            "Expand primitives per-object (if available)",
+            0
+        )
 
         parm {
             name "missingfile"
@@ -210,8 +217,8 @@
             default { "0" }
             help    "Animated proxy playback type"
             menu    {
-                "0"  "Loop"
-                "1"  "Once"
+                "0" "Loop"
+                "1" "Once"
                 "2" "Ping-pong"
                 "3" "Still"
             }
@@ -219,6 +226,25 @@
             parmtag { "vray_plugin" "GeomMeshFile" }
             parmtag { "vray_pluginattr" "anim_type" }
             parmtag { "vray_type" "enum" }
+        }
+
+        parm {
+            name "init_from_file"
+            label "Init From File"
+            type button
+        }
+
+        parm {
+            name    "anim_offset"
+            label   "Start Offset"
+            help    "Animated proxy initial frame offset"
+            type    float
+            default { "0" }
+            range   { 0 100 }
+            parmtag { "cook_dependent" "1" }
+            parmtag { "vray_plugin" "GeomMeshFile" }
+            parmtag { "vray_pluginattr" "anim_offset" }
+            parmtag { "vray_type" "float" }
         }
 
         parm {
@@ -245,20 +271,6 @@
             parmtag { "cook_dependent" "1" }
             parmtag { "vray_plugin" "GeomMeshFile" }
             parmtag { "vray_pluginattr" "anim_speed" }
-            parmtag { "vray_type" "float" }
-        }
-
-        parm {
-            name    "anim_offset"
-            label   "Start Offset"
-            type    float
-            default { "0" }
-            help    "Animated proxy initial frame offset"
-            disablewhen "{ anim_override != 1 }"
-            range   { 0 64 }
-            parmtag { "cook_dependent" "1" }
-            parmtag { "vray_plugin" "GeomMeshFile" }
-            parmtag { "vray_pluginattr" "anim_offset" }
             parmtag { "vray_type" "float" }
         }
 
