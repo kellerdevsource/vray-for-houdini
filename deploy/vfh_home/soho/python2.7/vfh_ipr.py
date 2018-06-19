@@ -29,7 +29,13 @@ def main():
 
     from soho import SohoParm
 
-    LogLevel = type('Enum', (), {'Msg':0, 'Info':1, 'Progress':2, 'Warning':3, 'Error':4, 'Debug':5})
+    LogLevel = type('Enum', (), {
+        'Info'     : 0,
+        'Progress' : 1,
+        'Warning'  : 2,
+        'Error'    : 3,
+        'Debug'    : 4,
+    })
 
     def logMessage(level, fmt, *args):
         _vfh_ipr.logMessage(level, fmt % args)
@@ -190,6 +196,9 @@ def main():
         else:
             # Have to handle "time" event manually here.
             _vfh_ipr.setTime(now)
+
+            for obj in soho.objectList('objlist:dirtyinstance'):
+                obj.getDefaultedString('object:soppath', now, [''])
 
             exportObjects("objlist:dirtyinstance")
             exportObjects("objlist:dirtylight")
