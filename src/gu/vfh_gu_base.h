@@ -42,13 +42,8 @@ public:
 	bool getRenderingBounds(UT_BoundingBox &box) const VRAY_OVERRIDE;
 	void getVelocityRange(UT_Vector3 &min, UT_Vector3 &max) const VRAY_OVERRIDE;
 	void getWidthRange(fpreal &wmin, fpreal &wmax) const VRAY_OVERRIDE;
-#ifdef HDK_16_5
 	bool load(GU_PrimPacked *prim, const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(prim, options); }
 	void update(GU_PrimPacked *prim, const UT_Options &options) VRAY_OVERRIDE { updateFrom(prim, options); }
-#else
-	bool load(const UT_Options &options, const GA_LoadMap &map) VRAY_OVERRIDE { return updateFrom(options); }
-	void update(const UT_Options &options) VRAY_OVERRIDE { updateFrom(options); }
-#endif
 	bool unpack(GU_Detail &destgdp) const VRAY_OVERRIDE;
 	GU_ConstDetailHandle getPackedDetail(GU_PackedContext *context=nullptr) const VRAY_OVERRIDE;
 	int64 getMemoryUsage(bool inclusive) const VRAY_OVERRIDE;
@@ -57,7 +52,7 @@ public:
 private:
 	/// Rebuilds detail geometry.
 	/// @returns True if geometry changed.
-	virtual int detailRebuild()=0;
+	virtual int detailRebuild(GU_PrimPacked *prim)=0;
 
 protected:
 	/// Clear detail.
@@ -66,11 +61,7 @@ protected:
 	/// Updates detail from options if needed.
 	/// @param options New options set.
 	/// @returns True if detail was changed, false - otherwise.
-#ifdef HDK_16_5
 	virtual int updateFrom(GU_PrimPacked *prim, const UT_Options &options);
-#else
-	virtual int updateFrom(const UT_Options &options);
-#endif
 
 	/// Current options set.
 	UT_Options m_options;

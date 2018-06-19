@@ -9,6 +9,7 @@
 //
 
 #include "vfh_vray.h"
+#include "vfh_log.h"
 #include "vfh_gu_cache.h"
 
 #include "gu_vrayproxyref.h"
@@ -97,8 +98,10 @@ VRayProxyRefKey VRayProxyRef::getKey() const
 	return key;
 }
 
-int VRayProxyRef::detailRebuild()
+int VRayProxyRef::detailRebuild(GU_PrimPacked *prim)
 {
+	Log::getLog().debug("0x%X VRayProxyRef::detailRebuild(0x%X)", this, prim);
+
 	VRayProxyRefCache::iterator it; {
 		UT_AutoLock locker(theLock);
 

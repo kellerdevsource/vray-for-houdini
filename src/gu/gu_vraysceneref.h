@@ -82,7 +82,7 @@ public:
 	VRay::VUtils::CharStringRefList getObjectNamesFromPath() const;
 
 private:
-	int detailRebuild() VRAY_OVERRIDE;
+	int detailRebuild(GU_PrimPacked *prim) VRAY_OVERRIDE;
 
 	/// Returns mesh sample time based on animation overrides settings.
 	/// @param t Current time.

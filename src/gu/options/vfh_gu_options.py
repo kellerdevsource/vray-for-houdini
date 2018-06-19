@@ -348,10 +348,23 @@ using namespace VRayForHoudini;
 		def getOptionsGetterImpl(intrAttr):
 			pass
 
-		def getOptionsSetterImpl(intrAttr):
-			if intrAttr.intrType == VECTOR:
-				return "m_options.setOptionV3(IntrinsicNames::%ATTR_NAME%, value[0], value[1], value[2])"
-			return "m_options.%SETTER%(IntrinsicNames::%ATTR_NAME%, value)"
+		def getOptionsSetterImpl(intrAttr, primAttr = False):
+			setterImpl = ""
+			def getSetOption(intrType, options):
+				if intrAttr.intrType == VECTOR:
+					return options + ".setOptionV3(IntrinsicNames::%ATTR_NAME%, value[0], value[1], value[2]);"
+				else:
+					return options + ".%SETTER%(IntrinsicNames::%ATTR_NAME%, value);"
+			if primAttr:
+				setterImpl += "UT_Options options;"
+				setterImpl += "\n\t\toptions.merge(m_options);"
+				setterImpl += "\n\t\t" + getSetOption(intrAttr.intrType, "options")
+				setterImpl += "\n\t\tvassert(prim);"
+				setterImpl += "\n\t\tvassert(prim->implementation());"
+				setterImpl += "\n\t\tprim->implementation()->update(prim, options);"
+			else:
+				setterImpl += getSetOption(intrAttr.intrType, "m_options")
+			return setterImpl
 
 		def getSetterImpl(intrAttr, setArgs, primAttr = False):
 			getSetTmpl = "\n\t/// Sets \"%ATTR_NAME%\" intrinsic value."
@@ -372,11 +385,11 @@ using namespace VRayForHoudini;
 			getSetTmpl += setArgs
 
 			getSetTmpl += ") {"
-			getSetTmpl += "\n\t\t%OPTION_SETTER_IMPL%;"
+			getSetTmpl += "\n\t\t%OPTION_SETTER_IMPL%"
 			getSetTmpl += "\n\t}\n"
 
 			getSetTmpl = replaceByDict(getSetTmpl, {
-				'OPTION_SETTER_IMPL' : getOptionsSetterImpl(intrAttr),
+				'OPTION_SETTER_IMPL' : getOptionsSetterImpl(intrAttr, primAttr),
 			})
 			return getSetTmpl
 

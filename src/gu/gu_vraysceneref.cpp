@@ -517,7 +517,7 @@ SettingsWrapper VRaySceneRef::getSettings() const
 	return settings;
 }
 
-int VRaySceneRef::detailRebuild()
+int VRaySceneRef::detailRebuild(GU_PrimPacked *prim)
 {
 	// TODO: Cached detail is not storing bbox so it'll be invalid!
 	// TODO: Rework cache registration / deregistration.

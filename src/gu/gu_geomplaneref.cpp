@@ -70,7 +70,7 @@ static void addPlainPoint(GU_Detail &gdp, UT_BoundingBox &bbox,
 	bbox.enlargeBounds(point);
 }
 
-int GeomPlaneRef::detailRebuild()
+int GeomPlaneRef::detailRebuild(GU_PrimPacked *prim)
 {
 	const float size = getPlaneSize();
 

@@ -104,11 +104,7 @@ void VRayBaseRef::detailClear()
 	m_detail.clear();
 }
 
-#ifdef HDK_16_5
 int VRayBaseRef::updateFrom(GU_PrimPacked *prim, const UT_Options &options)
-#else
-int VRayBaseRef::updateFrom(const UT_Options &options)
-#endif
 {
 	if (m_options == options)
 		return false;
@@ -117,14 +113,10 @@ int VRayBaseRef::updateFrom(const UT_Options &options)
 
 	detailClear();
 
-	if (detailRebuild()) {
-#ifdef HDK_16_5
+	if (detailRebuild(prim)) {
 		prim->topologyDirty();
 		prim->attributeDirty();
 		prim->transformDirty();
-#else
-		topologyDirty();
-#endif
 	}
 
 	return true;

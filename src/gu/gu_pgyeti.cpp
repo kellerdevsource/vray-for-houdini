@@ -158,7 +158,7 @@ static void buildHairDetailFromGroup(const H5::Group &furGroup, GU_Detail &gdp, 
 	}
 }
 
-int VRayPgYetiRef::detailRebuild()
+int VRayPgYetiRef::detailRebuild(GU_PrimPacked *prim)
 {
 	GU_Detail *gdp = new GU_Detail();
 

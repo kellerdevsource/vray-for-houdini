@@ -36,7 +36,7 @@ public:
 	bool getLocalTransform(UT_Matrix4D &m) const VRAY_OVERRIDE;
 
 private:
-	int detailRebuild() VRAY_OVERRIDE;
+	int detailRebuild(GU_PrimPacked *prim) VRAY_OVERRIDE;
 
 	/// Returns a key for cache look-up.
 	VRayProxyRefKey getKey() const;

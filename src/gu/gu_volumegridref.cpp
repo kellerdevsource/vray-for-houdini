@@ -252,7 +252,7 @@ bool VRayVolumeGridRef::getBounds(UT_BoundingBox &box) const
 	return true;
 }
 
-int VRayVolumeGridRef::detailRebuild()
+int VRayVolumeGridRef::detailRebuild(GU_PrimPacked *prim)
 {
 	using namespace std;
 	using namespace chrono;

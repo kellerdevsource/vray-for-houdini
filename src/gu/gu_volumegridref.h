@@ -144,7 +144,7 @@ protected:
 	int updateFrom(const UT_Options &options) VRAY_OVERRIDE;
 #endif
 
-	int detailRebuild() VRAY_OVERRIDE;
+	int detailRebuild(GU_PrimPacked *prim) VRAY_OVERRIDE;
 
 private:
 	/// Get all channels present in the current cache
