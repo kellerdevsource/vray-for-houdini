@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mainMenu>
+	<menuBar>
+		<subMenu id="render_menu">
+			<subMenu id="render_create_submenu">
+				<separatorItem id="vray_separator">
+					<insertAfter>h.create_mantra_pbr</insertAfter>
+				</separatorItem>
+
+				<scriptItem id="vray_renderer_rop">
+					<label>V-Ray</label>
+					<insertAfter>vray_separator</insertAfter>
+					<scriptCode><![CDATA[__import__('roptoolutils').createRenderNode('vray_renderer')]]></scriptCode>
+				</scriptItem>
+
+				<scriptItem id="vray_renderer_ipr_rop">
+					<label>V-Ray IPR</label>
+					<insertAfter>vray_renderer_rop</insertAfter>
+					<scriptCode><![CDATA[__import__('roptoolutils').createRenderNode('vray')]]></scriptCode>
+				</scriptItem>
+			</subMenu>
+		</subMenu>
+	</menuBar>
+</mainMenu>
