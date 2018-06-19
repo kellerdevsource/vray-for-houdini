@@ -394,7 +394,10 @@ static VRayProxyRefItem buildDetail(const VRayProxyRefKey &options)
 					VUtils::BitSet previewVisibility;
 					objectInfo.getVisibility(previewVisibility, objNames, objIDs, int(VisibilityListType::include), false);
 
-					if (previewVisibility.getNumRaisedBits()) {
+					VUtils::MeshChannel *faceTopoChannel = previewVoxel->getChannel(FACE_TOPO_CHANNEL);
+
+					const int numBitsSet = previewVisibility.getNumRaisedBits();
+					if (faceTopoChannel && numBitsSet < int(faceTopoChannel->numElements)) {
 						switch (options.objectType) {
 							case VRayProxyObjectType::geometry:
 								removeInvisiblePreviewFaces(previewVoxel, previewVisibility);
