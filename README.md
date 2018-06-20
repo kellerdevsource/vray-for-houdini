@@ -43,6 +43,19 @@ Houdini License Restrictions
     - Maximum render size for animations is 1920 x 1080 (for 16.5 and later 4096 x 4096).
     - *.vrscene file export is not allowed.
 
+Running Binary Builds
+---------------------
+
+### houdini.env
+
+If you're running V-Ray for Houdini with the launcher script and have `HOUDINI_PATH` set to some custom value in `houdini.env` make sure to include `HOUDINI_PATH` enviroment variable, like this:
+
+```
+HOUDINI_PATH="${HOUDINI_PATH};C:/my/custom/path;&"
+```
+
+NOTE: Use `:` separator for Linux / macOS.
+
 Building From Source
 --------------------
 
