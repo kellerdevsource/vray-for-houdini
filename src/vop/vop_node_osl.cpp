@@ -362,7 +362,7 @@ void OSLNodeBase<MTL>::updateParamsIfNeeded() const
 		}
 	}
 
-	if (MTL && m_outputName.isstring()) {
+	if (MTL && !m_outputName.isstring()) {
 		self->m_outputName = "Ci";
 	}
 
@@ -488,7 +488,7 @@ const char * OSLNodeBase<MTL>::outputLabel(unsigned idx) const
 	}
 
 	updateParamsIfNeeded();
-	if (!m_outputName.isstring()) {
+	if (m_outputName.isstring()) {
 		return OSLNodeBase<MTL>::getOutputName();
 	} else {
 		Log::getLog().warning("outputLabel(%d) out of range", idx);
@@ -550,7 +550,7 @@ void OSLNodeBase<MTL>::getOutputNameSubclass(UT_String &out, int idx) const
 {
 	if (idx >= NodeBase::getNumVisibleOutputs()) {
 		updateParamsIfNeeded();
-		if (!m_outputName.isstring()) {
+		if (m_outputName.isstring()) {
 			out = m_outputName;
 		} else {
 			Log::getLog().warning("Output index out of range");
@@ -598,7 +598,7 @@ void OSLNodeBase<MTL>::getOutputTypeInfoSubclass(VOP_TypeInfo &type_info, int id
 {
 	if (idx >= NodeBase::getNumVisibleOutputs()) {
 		updateParamsIfNeeded();
-		if (!m_outputName.isstring()) {
+		if (m_outputName.isstring()) {
 			type_info.setType(OSLNodeBase<MTL>::getOutputType());
 		} else {
 			Log::getLog().warning("Trying to get output type of non-existent output!");
@@ -654,7 +654,7 @@ template <bool MTL>
 unsigned OSLNodeBase<MTL>::maxOutputs() const
 {
 	updateParamsIfNeeded();
-	return NodeBase::maxOutputs() + !m_outputName.isstring();
+	return NodeBase::maxOutputs() + m_outputName.isstring();
 }
 
 template <bool MTL>
