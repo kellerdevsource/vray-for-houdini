@@ -179,7 +179,10 @@ int VRayForHoudini::newVRayInit()
 			if (is->vrayInit) {
 				addDummyRenderer = true;
 
-				Log::getLog().info("Using V-Ray AppSDK %s", VRay::getSDKVersionDetails());
+				const VRay::APIVersion appSdkVer = VRay::getAPIVersion();
+
+				Log::getLog().info("Using V-Ray AppSDK %u.%02u.%02u",
+				                   appSdkVer.major, appSdkVer.minor, appSdkVer.revision);
 			}
 		}
 
