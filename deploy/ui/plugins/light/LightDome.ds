@@ -1,3 +1,4 @@
+#include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 #include "vfh_light_common.ds"
 
 {
@@ -36,6 +37,14 @@
             parmtag { "vray_pluginattr" "dome_spherical" }
             parmtag { "vray_type" "boolean" }
         }
+
+        VFH_PLUGIN_PARM_TOGGLE("LightDome",
+            "dome_adaptive",
+            "Adaptive Dome",
+            "Enable adaptive dome algorithm",
+            0
+        )
+
         parm {
             name    "invisible"
             label   "Invisible"
