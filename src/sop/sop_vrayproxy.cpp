@@ -133,7 +133,7 @@ static int getNumVRayProxyFrames(OP_Node &owner, const UT_String &filePath)
 	MeshFile *meshFile = newDefaultMeshFile(filePath);
 	if (!meshFile) {
 		Log::getLog().error("\"%s\": Can't open \"%s\"!",
-		                    owner.getFullPath().buffer(), filePath);
+		                    owner.getFullPath().buffer(), filePath.buffer());
 		return 0;
 	}
 
@@ -142,7 +142,7 @@ static int getNumVRayProxyFrames(OP_Node &owner, const UT_String &filePath)
 	const ErrorCode res = meshFile->init(filePath);
 	if (res.error()) {
 		Log::getLog().error("\"%s\": Can't initialize \"%s\" [%s]!",
-		                    owner.getFullPath().buffer(), filePath, res.getErrorString().ptrOrValue("UNKNOWN"));
+		                    owner.getFullPath().buffer(), filePath.buffer(), res.getErrorString().ptrOrValue("UNKNOWN"));
 	}
 	else {
 		numFrames = meshFile->getNumFrames();
