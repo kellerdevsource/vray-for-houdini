@@ -1,34 +1,17 @@
 #include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 
-
 parm {
-    VFH_NAME("displacement_tex_color")
-    label "Color"
+    VFH_NAME("displacement_tex")
+    label "Texture"
+    help "The displacement texture"
     type color
     size 4
     default { "0" "0" "0" }
-    help "The displacement texture"
-    range { 0 1 }
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_custom_handling" "1" }
     parmtag { "vray_plugin" "GeomDisplacedMesh" }
     parmtag { "vray_pluginattr" "displacement_tex_color" }
     parmtag { "vray_type" "Texture" }
-    invisible
-}
-
-parm {
-    VFH_NAME("displacement_tex_float")
-    label "Float"
-    type float
-    default { "0" }
-    help "The displacement texture"
-    range { 0 1 }
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_custom_handling" "1" }
-    parmtag { "vray_plugin" "GeomDisplacedMesh" }
-    parmtag { "vray_pluginattr" "displacement_tex_float" }
-    parmtag { "vray_type" "TextureFloat" }
     invisible
 }
 
@@ -41,17 +24,16 @@ groupsimple {
     parm {
         VFH_NAME("type")
         label "Mode"
-        type string
-        default { "0" }
         help "Displacement type"
+        type string
         menu {
-            0 "Normal"
-            1 "2D"
-            2 "Vector"
-            3 "Vector (Absolute)"
-            4 "Vector (Object)"
+            "0" "2D Displacement"
+            "1" "Normal Displacement"
+            "2" "Vector"
+            "3" "Vector (Absolute)"
+            "4" "Vector (Object)"
         }
-        range { 0 1 }
+        default { "1" }
         parmtag { "cook_dependent" "1" }
         parmtag { "vray_custom_handling" "1" }
         parmtag { "vray_enumkeys" "0,1,2,3,4" }

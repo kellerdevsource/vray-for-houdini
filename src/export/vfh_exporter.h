@@ -52,6 +52,14 @@ enum class ReturnValue {
 	Success
 };
 
+enum VRayDisplacementType {
+	displ_type_2d = 0,
+	displ_type_3d = 1,
+	displ_type_vector = 2,
+	displ_type_vector_signed = 3,
+	displ_type_vector_object = 4,
+};
+
 enum BitmapBufferColorSpace {
 	bitmapBufferColorSpaceLinear = 0,
 	bitmapBufferColorGammaCorrected = 1,
@@ -238,7 +246,7 @@ public:
 
 	/// Tries to set displacement texture from path attribute.
 	/// Otherwise texture connected to socket will be used if found.
-	int exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const QString &parmNamePrefix);
+	int exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const QString &parmNamePrefix, VRayDisplacementType displaceType);
 
 	int exportDisplacementFromSubdivInfo(const SubdivInfo &subdivInfo, Attrs::PluginDesc &pluginDesc);
 

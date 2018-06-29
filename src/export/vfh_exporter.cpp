@@ -67,6 +67,36 @@ enum FrameNumberMatchedItem {
 	frameNumberMatchedItemFramePadding = 1,
 };
 
+static VRayDisplacementType getDisplacementType(OP_Node &opNode, const QString &parmTypeName)
+{
+	UT_String dispTypeMenu;
+	opNode.evalString(dispTypeMenu, qPrintable(parmTypeName), 0, 0.0);
+
+	vassert(dispTypeMenu.isInteger());
+
+	return static_cast<VRayDisplacementType>(dispTypeMenu.toInt());
+}
+
+static void setGeomDisplacedMeshType(Attrs::PluginDesc &pluginDesc, VRayDisplacementType displaceType)
+{
+	if (displaceType == displ_type_2d) {
+		pluginDesc.add(SL("displace_2d"), true);
+		pluginDesc.setIngore(SL("vector_displacement"));
+	}
+	else {
+		if (displaceType == displ_type_vector) {
+			pluginDesc.add(SL("vector_displacement"), 1);
+		}
+		else if (displaceType == displ_type_vector_signed) {
+			pluginDesc.add(SL("vector_displacement"), 2);
+		}
+		else if (displaceType == displ_type_vector_object) {
+			pluginDesc.add(SL("vector_displacement"), 3);
+		}
+		pluginDesc.setIngore(SL("displace_2d"));
+	}
+}
+
 /// Checks if we're exporting frames into separate *.vrscene files.
 static int isExportFramesToSeparateFiles(OP_Node &rop)
 {
@@ -1128,100 +1158,65 @@ void VRayExporter::RtCallbackDisplacementVop(OP_Node *caller, void *callee, OP_E
 	csect.leave();
 }
 
-static void exportPluginFromSocket(ShaderExporter &shaderExporter, const VOP_Node &vopNode, const QString &socketName, Attrs::PluginDesc &pluginDesc)
-{
-	const VRay::PluginRef displacementTexColor =
-		shaderExporter.exportConnectedSocket(vopNode, socketName);
-	if (displacementTexColor.isNotEmpty()) {
-		pluginDesc.add(socketName, displacementTexColor);
-	}
-}
-
-int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const QString &parmNamePrefix)
+int VRayExporter::exportDisplacementTexture(OP_Node &opNode, Attrs::PluginDesc &pluginDesc, const QString &parmNamePrefix, VRayDisplacementType displaceType)
 {
 	const fpreal t = getContext().getTime();
 	const QString &attrName = parmNamePrefix % SL("displacement_texture");
+
+	VRay::PluginRef texture;
 
 	const PRM_Parm *parm = Parm::getParm(opNode, qPrintable(attrName));
 	if (parm) {
 		const UT_String &texPath = getOpPathFromAttr(opNode, attrName, t);
 		if (texPath.isstring()) {
-			VRay::Plugin texture = exportNodeFromPathWithDefaultMapping(texPath,
-			                                                            defaultMappingChannelName,
-			                                                            bitmapBufferColorSpaceLinear);
-			if (texture.isEmpty())
-				return false;
-
-			// If plugin doesn't have "out_intensity" output wrap it into TexOutput.
-			if (!ShaderExporter::hasPluginOutput(texture, SL("out_intensity"))) {
-				Attrs::PluginDesc texOutputDesc(SL("Out@") % texture.getName(),
-												SL("TexOutput"));
-				texOutputDesc.add(SL("texmap"), texture);
-
-				texture = exportPlugin(texOutputDesc);
-			}
-
-			pluginDesc.add(SL("displacement_tex_color"), texture);
-			pluginDesc.add(SL("displacement_tex_float"), texture, SL("out_intensity"));
-
-			return true;
+			texture = exportNodeFromPathWithDefaultMapping(texPath,
+			                                               defaultMappingChannelName,
+			                                               bitmapBufferColorSpaceLinear);
 		}
 	}
 
-	if (VOP_Node *vopNode = CAST_VOPNODE(&opNode)) {
-		exportPluginFromSocket(shaderExporter, *vopNode, SL("displacement_tex_float"), pluginDesc);
-		exportPluginFromSocket(shaderExporter, *vopNode, SL("displacement_tex_color"), pluginDesc);
-		return true;
+	if (texture.isEmpty()) {
+		if (VOP_Node *vopNode = CAST_VOPNODE(&opNode)) {
+			texture = shaderExporter.exportConnectedSocket(*vopNode, SL("displacement_tex"));
+		}
 	}
 
-	return false;
-}
+	if (texture.isEmpty())
+		return false;
 
-static void setGeomDisplacedMeshType(OP_Node &opNode, const QString &parmTypeName, Attrs::PluginDesc &pluginDesc)
-{
-	UT_String dispTypeMenu;
-	opNode.evalString(dispTypeMenu, qPrintable(parmTypeName), 0, 0.0);
+	if (displaceType == displ_type_3d ||
+		displaceType == displ_type_2d)
+	{
+		// If plugin doesn't have "out_intensity" output wrap it into TexOutput.
+		if (!ShaderExporter::hasPluginOutput(texture, SL("out_intensity"))) {
+			Attrs::PluginDesc texOutputDesc(SL("Out@") % texture.getName(),
+											SL("TexOutput"));
+			texOutputDesc.add(SL("texmap"), texture);
 
-	vassert(dispTypeMenu.isInteger());
+			texture = exportPlugin(texOutputDesc);
+		}
 
-	enum VRayDisplacementType {
-		displ_type_2d = 0,
-		displ_type_3d = 1,
-		displ_type_vector = 2,
-		displ_type_vector_signed = 3,
-		displ_type_vector_object = 4,
-	};
-
-	const VRayDisplacementType displaceType =
-		static_cast<VRayDisplacementType>(dispTypeMenu.toInt());
-
-	if (displaceType == displ_type_2d) {
-		pluginDesc.add(Attrs::PluginAttr(SL("displace_2d"), true));
-		pluginDesc.add(Attrs::PluginAttr(SL("vector_displacement"), 0));
+		pluginDesc.add(SL("displacement_tex_float"), texture, SL("out_intensity"));
 	}
-	else if (displaceType == displ_type_vector) {
-		pluginDesc.add(Attrs::PluginAttr(SL("displace_2d"), false));
-		pluginDesc.add(Attrs::PluginAttr(SL("vector_displacement"), 1));
+	else {
+		pluginDesc.add(SL("displacement_tex_color"), texture);
 	}
-	else if (displaceType == displ_type_vector_signed) {
-		pluginDesc.add(Attrs::PluginAttr(SL("displace_2d"), false));
-		pluginDesc.add(Attrs::PluginAttr(SL("vector_displacement"), 2));
-	}
-	else if (displaceType == displ_type_vector_object) {
-		pluginDesc.add(Attrs::PluginAttr(SL("displace_2d"), false));
-		pluginDesc.add(Attrs::PluginAttr(SL("vector_displacement"), 3));
-	}
+
+	return true;
 }
 
 int VRayExporter::exportDisplacementFromSubdivInfo(const SubdivInfo &subdivInfo, struct Attrs::PluginDesc &pluginDesc)
 {
 	const QString &parmNamePrefix = subdivInfo.needParmNamePrefix() ? pluginDesc.pluginID % SL("_") : SL("");
 
-	exportDisplacementTexture(*subdivInfo.parmHolder, pluginDesc, parmNamePrefix);
+	const QString displacementTypeAttr = parmNamePrefix + SL("type");
 
-	if (subdivInfo.type == SubdivisionType::displacement) {
-		setGeomDisplacedMeshType(*subdivInfo.parmHolder, parmNamePrefix + SL("type"), pluginDesc);
-	}
+	const VRayDisplacementType displacementType = subdivInfo.type == SubdivisionType::displacement
+		                                              ? getDisplacementType(*subdivInfo.parmHolder, displacementTypeAttr)
+		                                              : displ_type_3d;
+
+	setGeomDisplacedMeshType(pluginDesc, displacementType);
+	exportDisplacementTexture(*subdivInfo.parmHolder, pluginDesc, parmNamePrefix, displacementType);
 
 	setAttrsFromOpNodePrms(pluginDesc, subdivInfo.parmHolder, parmNamePrefix);
 
@@ -1249,7 +1244,7 @@ VRay::Plugin VRayExporter::exportDisplacement(OBJ_Node &objNode, const VRay::Plu
 	pluginDesc.pluginName = SL("Subdiv@") % geomPlugin.getName();
 	pluginDesc.pluginID = subdivisionPluginFromType(subdivInfo.type);
 
-	pluginDesc.add(Attrs::PluginAttr(SL("mesh"), geomPlugin));
+	pluginDesc.add(SL("mesh"), geomPlugin);
 
 	if (!exportDisplacementFromSubdivInfo(subdivInfo, pluginDesc))
 		return geomPlugin; 

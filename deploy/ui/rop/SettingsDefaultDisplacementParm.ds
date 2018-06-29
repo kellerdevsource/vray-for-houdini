@@ -2,7 +2,7 @@ parm {
     name    "SettingsDefaultDisplacement_override_on"
     label   "Override Settings Globally"
     type    toggle
-    default { "0" }
+    default { "1" }
     help    "Override settings globally"
     range   { 0 1 }
     export  none
@@ -12,6 +12,7 @@ parm {
     parmtag { "vray_pluginattr" "override_on" }
     parmtag { "vray_type" "boolean" }
 }
+
 parm {
     name    "SettingsDefaultDisplacement_edgeLength"
     label   "Edge Length"
@@ -26,6 +27,7 @@ parm {
     parmtag { "vray_pluginattr" "edgeLength" }
     parmtag { "vray_type" "float" }
 }
+
 parm {
     name    "SettingsDefaultDisplacement_viewDependent"
     label   "View Dependent"
@@ -40,11 +42,12 @@ parm {
     parmtag { "vray_pluginattr" "viewDependent" }
     parmtag { "vray_type" "boolean" }
 }
+
 parm {
     name    "SettingsDefaultDisplacement_maxSubdivs"
     label   "Max Subdivs"
     type    int
-    default { "4" }
+    default { "256" }
     help    "Determines the maximum subdivisions for a triangle of the original mesh"
     range   { 1 16 }
     export  none
@@ -54,6 +57,7 @@ parm {
     parmtag { "vray_pluginattr" "maxSubdivs" }
     parmtag { "vray_type" "int" }
 }
+
 parm {
     name    "SettingsDefaultDisplacement_tightBounds"
     label   "Tight Bounds"
@@ -68,6 +72,7 @@ parm {
     parmtag { "vray_pluginattr" "tightBounds" }
     parmtag { "vray_type" "boolean" }
 }
+
 parm {
     name    "SettingsDefaultDisplacement_amount"
     label   "Amount"
@@ -82,12 +87,12 @@ parm {
     parmtag { "vray_pluginattr" "amount" }
     parmtag { "vray_type" "float" }
 }
+
 parm {
     name    "SettingsDefaultDisplacement_relative"
     label   "Relative"
     type    toggle
-    invisible
-    default { "0" }
+    default { "1" }
     range   { 0 1 }
     export  none
     hidewhen " { SettingsOptions_geom_displacement == 0 } "
@@ -95,5 +100,5 @@ parm {
     parmtag { "vray_plugin" "SettingsDefaultDisplacement" }
     parmtag { "vray_pluginattr" "relative" }
     parmtag { "vray_type" "boolean" }
+    invisible
 }
-
