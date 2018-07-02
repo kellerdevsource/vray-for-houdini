@@ -1,33 +1,17 @@
 #include "$VRAY_UI_DS_PATH/vfh_macros.ds"
 
 parm {
-    VFH_NAME("displacement_tex_color")
-    label "Color"
+    VFH_NAME("displacement_tex")
+    label "Texture"
+    help "The displacement texture"
     type color
     size 4
     default { "0" "0" "0" }
-    help "The displacement texture"
-    range { 0 1 }
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_custom_handling" "1" }
     parmtag { "vray_plugin" "GeomStaticSmoothedMesh" }
-    parmtag { "vray_pluginattr" "displacement_tex_color" }
+    parmtag { "vray_pluginattr" "displacement_tex" }
     parmtag { "vray_type" "Texture" }
-    invisible
-}
-
-parm {
-    VFH_NAME("displacement_tex_float")
-    label "Float"
-    type float
-    default { "0" }
-    help "The displacement texture"
-    range { 0 1 }
-    parmtag { "cook_dependent" "1" }
-    parmtag { "vray_custom_handling" "1" }
-    parmtag { "vray_plugin" "GeomStaticSmoothedMesh" }
-    parmtag { "vray_pluginattr" "displacement_tex_float" }
-    parmtag { "vray_type" "TextureFloat" }
     invisible
 }
 

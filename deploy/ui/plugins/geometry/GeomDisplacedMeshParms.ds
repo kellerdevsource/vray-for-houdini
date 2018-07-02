@@ -10,7 +10,7 @@ parm {
     parmtag { "cook_dependent" "1" }
     parmtag { "vray_custom_handling" "1" }
     parmtag { "vray_plugin" "GeomDisplacedMesh" }
-    parmtag { "vray_pluginattr" "displacement_tex_color" }
+    parmtag { "vray_pluginattr" "displacement_tex" }
     parmtag { "vray_type" "Texture" }
     invisible
 }
