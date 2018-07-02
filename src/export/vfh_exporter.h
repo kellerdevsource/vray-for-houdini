@@ -58,6 +58,7 @@ enum VRayDisplacementType {
 	displ_type_vector = 2,
 	displ_type_vector_signed = 3,
 	displ_type_vector_object = 4,
+	displ_type_subdivision,
 };
 
 enum BitmapBufferColorSpace {

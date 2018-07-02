@@ -1211,11 +1211,13 @@ int VRayExporter::exportDisplacementFromSubdivInfo(const SubdivInfo &subdivInfo,
 
 	const QString displacementTypeAttr = parmNamePrefix + SL("type");
 
-	const VRayDisplacementType displacementType = subdivInfo.type == SubdivisionType::displacement
-		                                              ? getDisplacementType(*subdivInfo.parmHolder, displacementTypeAttr)
-		                                              : displ_type_3d;
+	VRayDisplacementType displacementType = displ_type_subdivision;
 
-	setGeomDisplacedMeshType(pluginDesc, displacementType);
+	if (subdivInfo.type == SubdivisionType::displacement) {
+		displacementType = getDisplacementType(*subdivInfo.parmHolder, displacementTypeAttr);
+		setGeomDisplacedMeshType(pluginDesc, displacementType);
+	}
+
 	exportDisplacementTexture(*subdivInfo.parmHolder, pluginDesc, parmNamePrefix, displacementType);
 
 	setAttrsFromOpNodePrms(pluginDesc, subdivInfo.parmHolder, parmNamePrefix);
