@@ -34,23 +34,23 @@ OP_Node* VRayForHoudini::getVRayNodeFromOp(OP_Node &matNode, const char *socketN
 {
 	OP_Node *res = nullptr;
 
-	OP_Node *vrayMaterialOutput = nullptr;
+	VOP_Node *vrayMaterialOutput = nullptr;
 
 	if (isVRayMaterialOutput(matNode)) {
-		vrayMaterialOutput = &matNode;
+		vrayMaterialOutput = CAST_VOPNODE(&matNode);
 	}
 	else if (matNode.isNetwork()) {
 		OP_Network &matNetwork = static_cast<OP_Network&>(matNode);
 
 		OP_NodeList opList;
 		if (matNetwork.getOpsByName(vfhNodeMaterialOutput, opList)) {
-			vrayMaterialOutput = opList(0);
+			vrayMaterialOutput = CAST_VOPNODE(opList(0));
 		}
 	}
 
 	if (vrayMaterialOutput) {
 		const int socketIdx = vrayMaterialOutput->getInputFromName(socketName);
-		res = vrayMaterialOutput->getInput(socketIdx);
+		res = vrayMaterialOutput->findSimpleInput(socketIdx);
 	}
 
 	if (pluginID && res) {
