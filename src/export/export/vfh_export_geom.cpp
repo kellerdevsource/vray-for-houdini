@@ -2095,7 +2095,7 @@ static VRay::Transform getPointInstanceTM(const GU_Detail &gdp, const PointInsta
 		attrs.up.isValid() &&
 		!up.isEqual(UT_Vector3F(0.0f, 0.0f, 0.0f)))
 	{
-		L.lookat(n, up, 0);
+		L.lookat(n, 0, up);
 	}
 	else if (attrs.n.isValid()) {
 		L.dihedral(a, n);
@@ -2104,7 +2104,7 @@ static VRay::Transform getPointInstanceTM(const GU_Detail &gdp, const PointInsta
 			 attrs.up.isValid() &&
 			 !up.isEqual(UT_Vector3F(0.0f, 0.0f, 0.0f)))
 	{
-		L.lookat(v, up, 0);
+		L.lookat(v, 0, up);
 	}
 	else if (attrs.v.isValid()) {
 		L.dihedral(a, v);

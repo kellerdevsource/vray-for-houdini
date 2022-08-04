@@ -27,6 +27,7 @@
 *.exe
 *.out
 *.app
+*.vs
 
 # Misc
 deploy/vfh_home/otls/backup
